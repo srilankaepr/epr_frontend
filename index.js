@@ -41,6 +41,7 @@ const transporter = nodemailer.createTransport({
     }
 });
 
+
 let otpStore = {}; // OTP තාවකාලිකව මතක තියාගන්න මේකත් ඕනේ.............................ok
 
 
