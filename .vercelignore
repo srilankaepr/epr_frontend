@@ -1,5 +1,9 @@
-node_modules
-.git
+node_modules/
+**/node_modules/
+frontend/
+client/
+.git/
 *.zip
 *.rar
-*.7z
+build/
+dist/
