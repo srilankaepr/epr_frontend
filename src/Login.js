@@ -137,68 +137,70 @@ const Login = () => {
 
 <style>
     {`
-        /* 1. පොදු Styles (Animations) */
-        @keyframes cardFadeIn {
-            from { opacity: 0; transform: scale(0.95); }
-            to { opacity: 1; transform: scale(1); }
-        }
-
-        /* 2. PC එකේ පෙනුම (Desktop) - කිසිම වෙනසක් වෙන්නේ නැත */
+        /* 1. Desktop එකට කිසිම වෙනසක් වෙන්න එපා */
         @media screen and (min-width: 1025px) {
             div[style*="loginCard"] {
                 transform: scale(1) !important;
                 width: 400px !important;
-                padding: 50px 40px !important;
             }
         }
 
-        /* 3. ෆෝන් එකේ පෙනුම (Mobile) - Zoom එක සහ Dark Mode Fix */
+        /* 2. Android සහ iPhone Dark Mode එකට "Ultimate Fix" එක */
         @media screen and (max-width: 480px) {
-            div[style*="loginCard"] { 
-                /* Zoom එක අඩු කළා */
-                transform: scale(0.85) !important;
-                transform-origin: center center;
-                
-                width: 85% !important; 
-                padding: 25px 20px !important;
-                
-                /* Dark Mode එකේදී බලෙන් පාට වෙනස් වීම වැළැක්වීමට */
-                background-color: rgba(255, 255, 255, 0.02) !important;
-                -webkit-backdrop-filter: blur(35px) !important;
-                backdrop-filter: blur(35px) !important;
-                border: 1px solid rgba(255, 255, 255, 0.12) !important;
+            /* මුළු Page එකම Android Force Dark Mode එකෙන් බේරගන්න */
+            html, body {
+                background-color: #000000 !important;
+                color-scheme: light only !important;
             }
 
-            /* ෆෝන් එකේ ලෝගෝ එක සහ අකුරු පොඩ්ඩක් කුඩා කළා Zoom එකට ගැලපෙන්න */
-            div[style*="logoFrame"] { width: 75px !important; height: 75px !important; }
-            h1[style*="title"] { font-size: 20px !important; letter-spacing: 3px !important; }
-            p[style*="subText"] { font-size: 12px !important; }
+            div[style*="loginCard"] { 
+                /* Zoom එක තව පොඩ්ඩක් අඩු කළා */
+                transform: scale(0.78) !important; 
+                transform-origin: center center !important;
+                
+                width: 85% !important; 
+                padding: 20px 15px !important;
+
+                /* Android වල බලෙන්ම පාට මාරු කරනවා නම් ඒක ආයේ හරවන්න */
+                filter: none !important;
+                -webkit-filter: none !important;
+                
+                background: rgba(255, 255, 255, 0.02) !important;
+                backdrop-filter: blur(35px) !important;
+                -webkit-backdrop-filter: blur(35px) !important;
+                border: 1px solid rgba(255, 255, 255, 0.15) !important;
+            }
+
+            /* Android Dark Mode එකේදී අකුරු කළු වුණොත් ඒවා බලෙන්ම සුදු කරන්න */
+            h1, p, label, span, input {
+                color: #ffffff !important;
+                -webkit-text-fill-color: #ffffff !important;
+                background-color: transparent !important;
+            }
+
+            /* Input එකේ Background එක වෙනම හදනවා */
+            input {
+                background: rgba(255, 255, 255, 0.05) !important;
+                border: 1px solid rgba(255, 255, 255, 0.1) !important;
+            }
+
+            div[style*="logoFrame"] { 
+                width: 65px !important; 
+                height: 65px !important; 
+                background: #ffffff !important; /* ලෝගෝ එක පිටිපස්ස සුදු පාටම තියනවා */
+            }
             
-            /* වීඩියෝ එක ෆෝන් එකට හරිගැස්සුවා */
             video[style*="videoBg"] {
                 height: 100vh !important;
                 width: auto !important;
-            }
-
-            /* Dark Mode එකේදී Input වලට සිද්ධ වෙන අවුල විසඳීම */
-            input {
-                background-color: rgba(255, 255, 255, 0.05) !important;
-                color: white !important;
-                -webkit-text-fill-color: white !important; /* iPhone dark mode fix */
+                filter: brightness(0.4) !important;
             }
         }
 
-        /* 4. Force Light Mode - සියලුම Devices වලට */
-        :root {
-            color-scheme: light only !important;
-        }
-
-        input:focus {
-            border-color: #2ecc71 !important;
-            background: rgba(255, 255, 255, 0.05) !important;
-            outline: none;
-            box-shadow: 0 0 15px rgba(46, 204, 113, 0.2);
-        }
+        /* 3. පොදු Styles */
+        :root { color-scheme: light only !important; }
+        @keyframes cardFadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+        input:focus { border-color: #2ecc71 !important; outline: none; }
     `}
 </style>
         </div>
