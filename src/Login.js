@@ -1,20 +1,21 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import logo from './logo.png';
 import earthVideo from './assets/earth.mp4'; 
 
+const API_BASE_URL = 'https://eprbackend-production.up.railway.app/api';
 const Login = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
 
- const handleSubmit = async (e) => {
+ const handleSubmit = useCallback(async (e) => {
     e.preventDefault();
-    setLoading(true); // 1. බටන් එක ලෝඩ් වෙන්න පටන් ගන්නවා
+    setLoading(true);
 
     try {
-        const response = await fetch('https://eprbackend-production.up.railway.app/api/login', {
+        const response = await fetch(`${API_BASE_URL}/login`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email, password }),
@@ -23,7 +24,6 @@ const Login = () => {
         const data = await response.json();
 
         if (response.ok) {
-            // ඩේටා ටික සේව් කරගන්නවා
             localStorage.setItem('userRole', data.role);
             localStorage.setItem('userName', data.user.fullName);
             localStorage.setItem('userEmail', data.user.email);
@@ -33,16 +33,12 @@ const Login = () => {
                 localStorage.setItem('profilePic', data.user.profilePic);
             }
 
-            // 2. Alert එක අයින් කරා (මේකෙන් තමයි සයිට් එක වේගවත් වෙන්නේ)
-            // Alert එක දාපුවම ඒක OK කරනකම් ඊළඟ පේජ් එකට යන්නේ නැහැ.
-            
-            if (data.role === 'ADMIN') {
-                navigate('/dashboard');
-            } else if (data.role === 'CUSTOMER') {
-                navigate('/user-dashboard'); 
-            } else if (data.role === 'PARTNER') {
-                navigate('/partner-dashboard');
-            }
+         const routes = {
+                'ADMIN': '/dashboard',
+                'CUSTOMER': '/user-dashboard',
+                'PARTNER': '/partner-dashboard'
+            };
+            navigate(routes[data.role] || '/');
         } else {
             alert(`❌ ${data.error || "Login Failed"}`);
         }
@@ -50,9 +46,11 @@ const Login = () => {
         console.error("Login error:", error);
         alert("⚠️ Connection Error! Please try again.");
     } finally {
-        setLoading(false); // 3. වැඩේ ඉවර වුණාම බටන් එක ආයේ සාමාන්‍ය තත්වයට පත් කරනවා
+        setLoading(false); 
     }
-};
+}, [email, password, navigate]);
+
+
     return (
         <div style={styles.container}>
             <video 
@@ -61,7 +59,7 @@ const Login = () => {
     muted 
     playsInline 
     style={styles.videoBg}
-    preload="none" // මේක තමයි මැජික් එක!
+    preload="none"
 >
     <source src={earthVideo} type="video/mp4" />
 </video>
@@ -121,9 +119,7 @@ const Login = () => {
     {loading ? 'AUTHENTICATING...' : 'LOGIN TO DASHBOARD'}
 </button>
 
-
-
-                </form>
+               </form>
 
                 <div style={styles.footer}>
                     <p style={styles.signupText}>
@@ -139,20 +135,52 @@ const Login = () => {
                 </div>
             </div>
 
-            <style>
-                {`
-                @keyframes cardFadeIn {
-                    from { opacity: 0; transform: scale(0.95); }
-                    to { opacity: 1; transform: scale(1); }
-                }
-                input:focus {
-                    border-color: #2ecc71 !important;
-                    background: rgba(255, 255, 255, 0.05) !important;
-                    outline: none;
-                    box-shadow: 0 0 15px rgba(46, 204, 113, 0.2);
-                }
-                `}
-            </style>
+<style>
+    {`
+        /* 1. Animations සහ පොදු Styles */
+        @keyframes cardFadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        input:focus {
+            border-color: #2ecc71 !important;
+            background: rgba(255, 255, 255, 0.05) !important;
+            outline: none;
+            box-shadow: 0 0 15px rgba(46, 204, 113, 0.2);
+        }
+
+        /* 2. පද්ධතියෙන් කලර්ස් වෙනස් කරන එක වළක්වනවා (Force Dark Mode Fix) */
+        :root {
+            color-scheme: only light;
+        }
+
+        /* 3. ෆෝන් එකට ගැලපෙන Responsive Styles (Media Query) */
+        @media (max-width: 480px) {
+            div[style*="loginCard"] { 
+                width: 88% !important; 
+                padding: 30px 20px !important; 
+                -webkit-backdrop-filter: blur(35px) !important; /* iPhone blur fix */
+                backdrop-filter: blur(35px) !important;
+            }
+            
+            div[style*="logoFrame"] {
+                width: 80px !important;
+                height: 80px !important;
+            }
+
+            h1[style*="title"] {
+                font-size: 22px !important;
+                letter-spacing: 3px !important;
+            }
+            
+            video[style*="videoBg"] {
+                height: 100vh !important;
+                width: auto !important;
+            }
+        }
+    `}
+</style>
         </div>
     );
 };
