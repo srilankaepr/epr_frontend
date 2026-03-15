@@ -1,4 +1,5 @@
 {
+<<<<<<< HEAD
   "name": "frontend",
   "version": "0.1.0",
   "private": true,
@@ -60,3 +61,26 @@
     ]
   }
 }
+=======
+  "name": "epr-backend",
+  "version": "1.0.0",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "axios": "^1.13.4",
+    "bcryptjs": "^3.0.3",
+    "cors": "^2.8.6",
+    "dotenv": "^17.3.1",
+    "express": "^5.2.1",
+    "jsonwebtoken": "^9.0.3",
+    "mongodb": "^7.1.0",
+    "mongoose": "8.10",
+    "multer": "^2.0.2",
+    "nodemailer": "^8.0.1",
+    "qrcode": "^1.5.4"
+  }
+}
+>>>>>>> ab82645dbf2f93f23c592677c4dfbf9a614f37db
