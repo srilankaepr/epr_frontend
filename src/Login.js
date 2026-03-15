@@ -68,14 +68,9 @@ const Login = () => {
             
             <div style={styles.loginCard}>
                 <div style={styles.headerArea}>
-                   <div style={{
-    ...styles.logoFrame, 
-    background: '#ffffff', 
-    backgroundColor: '#ffffff', 
-    forcedColorAdjust: 'none'
-}}>
-    <img src={logo} alt="EPR Logo" style={{...styles.logoImg, filter: 'none'}} />
-</div>
+                    <div style={styles.logoFrame}>
+                        <img src={logo} alt="EPR Logo" style={styles.logoImg} />
+                    </div>
                     <h1 style={styles.title}>EPR PORTAL</h1>
                     <p style={styles.subText}>Leading the Path to Global Circular Economy</p>
                 </div>
@@ -142,73 +137,86 @@ const Login = () => {
 
 <style>
     {`
-        /* 1. Desktop එකට කිසිම වෙනසක් වෙන්න එපා */
+        /* 1. පොදු Styles (Animations) */
+        @keyframes cardFadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        /* 2. PC එකේ පෙනුම (Desktop) - කිසිම වෙනසක් වෙන්නේ නැත */
         @media screen and (min-width: 1025px) {
             div[style*="loginCard"] {
                 transform: scale(1) !important;
                 width: 400px !important;
+                padding: 50px 40px !important;
             }
         }
 
-        /* 2. Android සහ iPhone Dark Mode එකට "Ultimate Fix" එක */
+        /* 3. ෆෝන් එකේ පෙනුම (Mobile) - Zoom එක සහ Dark Mode Fix */
         @media screen and (max-width: 480px) {
-            /* මුළු Page එකම Android Force Dark Mode එකෙන් බේරගන්න */
-            html, body {
-                background-color: #000000 !important;
-                color-scheme: light only !important;
-            }
-
             div[style*="loginCard"] { 
-                /* Zoom එක තව පොඩ්ඩක් අඩු කළා */
-                transform: scale(0.78) !important; 
-                transform-origin: center center !important;
+                /* Zoom එක තව පොඩ්ඩක් අඩු කළා ලස්සනට පේන්න */
+                transform: scale(0.8) !important;
+                transform-origin: center center;
                 
                 width: 85% !important; 
-                padding: 20px 15px !important;
-
-                /* Android වල බලෙන්ම පාට මාරු කරනවා නම් ඒක ආයේ හරවන්න */
-                filter: none !important;
-                -webkit-filter: none !important;
+                padding: 25px 20px !important;
                 
-                background: rgba(255, 255, 255, 0.02) !important;
-                backdrop-filter: blur(35px) !important;
+                background-color: rgba(255, 255, 255, 0.02) !important;
                 -webkit-backdrop-filter: blur(35px) !important;
-                border: 1px solid rgba(255, 255, 255, 0.15) !important;
+                backdrop-filter: blur(35px) !important;
+                border: 1px solid rgba(255, 255, 255, 0.12) !important;
             }
 
-            /* Android Dark Mode එකේදී අකුරු කළු වුණොත් ඒවා බලෙන්ම සුදු කරන්න */
-            h1, p, label, span, input {
-                color: #ffffff !important;
-                -webkit-text-fill-color: #ffffff !important;
-                background-color: transparent !important;
-            }
-
-            /* Input එකේ Background එක වෙනම හදනවා */
-            input {
-                background: rgba(255, 255, 255, 0.05) !important;
-                border: 1px solid rgba(255, 255, 255, 0.1) !important;
-            }
-
-           div[style*="logoFrame"] { 
-    width: 65px !important; 
-    height: 65px !important; 
-    background-color: #ffffff !important; 
-    background: #ffffff !important;
-    forced-color-adjust: none !important; /* මේක තමයි ප්‍රධානම එක */
-    filter: none !important;
-}
+            div[style*="logoFrame"] { width: 70px !important; height: 70px !important; }
+            h1[style*="title"] { font-size: 18px !important; letter-spacing: 2px !important; }
+            p[style*="subText"] { font-size: 11px !important; }
             
             video[style*="videoBg"] {
                 height: 100vh !important;
                 width: auto !important;
-                filter: brightness(0.4) !important;
+            }
+
+            input {
+                background-color: rgba(255, 255, 255, 0.05) !important;
+                color: white !important;
+                -webkit-text-fill-color: white !important;
             }
         }
 
-        /* 3. පොදු Styles */
-        :root { color-scheme: light only !important; }
-        @keyframes cardFadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
-        input:focus { border-color: #2ecc71 !important; outline: none; }
+        /* 4. Force Light Mode - සියලුම Devices වලට */
+        :root {
+            color-scheme: light only !important;
+        }
+
+        input:focus {
+            border-color: #2ecc71 !important;
+            background: rgba(255, 255, 255, 0.05) !important;
+            outline: none;
+            box-shadow: 0 0 15px rgba(46, 204, 113, 0.2);
+        }
+
+        /* 5. Landscape Scroll Fix - ෆෝන් එක හරහට හැරෙව්වම වැඩ කරන කොටස */
+        @media screen and (max-height: 500px) and (orientation: landscape) {
+            div[style*="loginContainer"] {
+                height: auto !important;
+                min-height: 100vh !important;
+                display: block !important; /* මැදට වී හිරවීම නවත්වයි */
+                padding: 40px 0 !important;
+                overflow-y: auto !important;
+            }
+
+            div[style*="loginCard"] {
+                margin: 0 auto !important;
+                transform: scale(0.75) !important; /* හරහට නිසා තවත් පොඩ්ඩක් කුඩා කළා */
+            }
+
+            video[style*="videoBg"] {
+                position: fixed !important;
+                height: 100% !important;
+                width: 200% !important;
+            }
+        }
     `}
 </style>
         </div>
@@ -243,18 +251,15 @@ const styles = {
         animation: 'cardFadeIn 0.8s ease-out forwards'
     },
     headerArea: { marginBottom: '35px', textAlign: 'center' },
- logoFrame: {
-    width: '110px', height: '110px',
-    background: '#ffffff', // මෙතන #fff වෙනුවට #ffffff ම දාන්න
-    backgroundColor: '#ffffff',
-    borderRadius: '50%',
-    margin: '0 auto 15px',
-    display: 'flex', justifyContent: 'center', alignItems: 'center',
-    boxShadow: '0 0 40px rgba(46, 204, 113, 0.4)',
-    border: '4px solid #2ecc71',
-    forcedColorAdjust: 'none', 
-    WebkitPrintColorAdjust: 'exact'
-},
+    logoFrame: {
+        width: '110px', height: '110px',
+        background: '#fff',
+        borderRadius: '50%',
+        margin: '0 auto 15px',
+        display: 'flex', justifyContent: 'center', alignItems: 'center',
+        boxShadow: '0 0 40px rgba(46, 204, 113, 0.4)',
+        border: '4px solid #2ecc71'
+    },
     logoImg: { width: '80%' },
     title: { fontSize: '28px', fontWeight: '900', letterSpacing: '5px', color: '#fff', margin: '0' },
     subText: { fontSize: '14px', color: '#2ecc71', marginTop: '10px', fontWeight: '600', letterSpacing: '0.5px' },
