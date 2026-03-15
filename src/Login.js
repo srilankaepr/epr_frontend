@@ -68,9 +68,14 @@ const Login = () => {
             
             <div style={styles.loginCard}>
                 <div style={styles.headerArea}>
-                    <div style={styles.logoFrame}>
-                        <img src={logo} alt="EPR Logo" style={styles.logoImg} />
-                    </div>
+                   <div style={{
+    ...styles.logoFrame, 
+    background: '#ffffff', 
+    backgroundColor: '#ffffff', 
+    forcedColorAdjust: 'none'
+}}>
+    <img src={logo} alt="EPR Logo" style={{...styles.logoImg, filter: 'none'}} />
+</div>
                     <h1 style={styles.title}>EPR PORTAL</h1>
                     <p style={styles.subText}>Leading the Path to Global Circular Economy</p>
                 </div>
@@ -184,11 +189,14 @@ const Login = () => {
                 border: 1px solid rgba(255, 255, 255, 0.1) !important;
             }
 
-            div[style*="logoFrame"] { 
-                width: 65px !important; 
-                height: 65px !important; 
-                background: #ffffff !important; /* ලෝගෝ එක පිටිපස්ස සුදු පාටම තියනවා */
-            }
+           div[style*="logoFrame"] { 
+    width: 65px !important; 
+    height: 65px !important; 
+    background-color: #ffffff !important; 
+    background: #ffffff !important;
+    forced-color-adjust: none !important; /* මේක තමයි ප්‍රධානම එක */
+    filter: none !important;
+}
             
             video[style*="videoBg"] {
                 height: 100vh !important;
@@ -235,15 +243,18 @@ const styles = {
         animation: 'cardFadeIn 0.8s ease-out forwards'
     },
     headerArea: { marginBottom: '35px', textAlign: 'center' },
-    logoFrame: {
-        width: '110px', height: '110px',
-        background: '#fff',
-        borderRadius: '50%',
-        margin: '0 auto 15px',
-        display: 'flex', justifyContent: 'center', alignItems: 'center',
-        boxShadow: '0 0 40px rgba(46, 204, 113, 0.4)',
-        border: '4px solid #2ecc71'
-    },
+ logoFrame: {
+    width: '110px', height: '110px',
+    background: '#ffffff', // මෙතන #fff වෙනුවට #ffffff ම දාන්න
+    backgroundColor: '#ffffff',
+    borderRadius: '50%',
+    margin: '0 auto 15px',
+    display: 'flex', justifyContent: 'center', alignItems: 'center',
+    boxShadow: '0 0 40px rgba(46, 204, 113, 0.4)',
+    border: '4px solid #2ecc71',
+    forcedColorAdjust: 'none', 
+    WebkitPrintColorAdjust: 'exact'
+},
     logoImg: { width: '80%' },
     title: { fontSize: '28px', fontWeight: '900', letterSpacing: '5px', color: '#fff', margin: '0' },
     subText: { fontSize: '14px', color: '#2ecc71', marginTop: '10px', fontWeight: '600', letterSpacing: '0.5px' },
