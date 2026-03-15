@@ -150,28 +150,45 @@ const Login = () => {
             box-shadow: 0 0 15px rgba(46, 204, 113, 0.2);
         }
 
-        /* 2. පද්ධතියෙන් කලර්ස් වෙනස් කරන එක වළක්වනවා (Force Dark Mode Fix) */
+        /* 2. පද්ධතියෙන් කලර්ස් වෙනස් කරන එක වළක්වනවා */
         :root {
-            color-scheme: only light;
+            color-scheme: only light !important;
         }
 
-        /* 3. ෆෝන් එකට ගැලපෙන Responsive Styles (Media Query) */
+        @media (prefers-color-scheme: dark) {
+            div[style*="loginCard"] {
+                background-color: rgba(255, 255, 255, 0.02) !important;
+                -webkit-backdrop-filter: blur(35px) !important;
+                backdrop-filter: blur(35px) !important;
+            }
+            input {
+                background-color: rgba(255, 255, 255, 0.03) !important;
+                color: white !important;
+            }
+        }
+
+        /* 3. Zoom එක අඩු කිරීමට කළ වෙනස්කම් (Media Query) */
         @media (max-width: 480px) {
             div[style*="loginCard"] { 
-                width: 88% !important; 
-                padding: 30px 20px !important; 
-                -webkit-backdrop-filter: blur(35px) !important; /* iPhone blur fix */
+                width: 82% !important; /* පළල තවත් ටිකක් අඩු කළා */
+                padding: 25px 20px !important; /* ඇතුළේ ඉඩ (padding) අඩු කළා */
+                transform: scale(0.95); /* මුළු කාඩ් එකම පොඩ්ඩක් Zoom out කළා */
+                -webkit-backdrop-filter: blur(35px) !important;
                 backdrop-filter: blur(35px) !important;
             }
             
             div[style*="logoFrame"] {
-                width: 80px !important;
-                height: 80px !important;
+                width: 70px !important; /* ලෝගෝ එකේ සයිස් එක අඩු කළා */
+                height: 70px !important;
             }
 
             h1[style*="title"] {
-                font-size: 22px !important;
-                letter-spacing: 3px !important;
+                font-size: 18px !important; /* අකුරු වල සයිස් එක අඩු කළා */
+                letter-spacing: 2px !important;
+            }
+
+            p[style*="subText"] {
+                font-size: 11px !important; /* Sub-text එකත් කුඩා කළා */
             }
             
             video[style*="videoBg"] {
