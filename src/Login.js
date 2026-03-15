@@ -137,10 +137,60 @@ const Login = () => {
 
 <style>
     {`
-        /* 1. Animations සහ පොදු Styles */
+        /* 1. පොදු Styles (Animations) */
         @keyframes cardFadeIn {
             from { opacity: 0; transform: scale(0.95); }
             to { opacity: 1; transform: scale(1); }
+        }
+
+        /* 2. PC එකේ පෙනුම (Desktop) - කිසිම වෙනසක් වෙන්නේ නැත */
+        @media screen and (min-width: 1025px) {
+            div[style*="loginCard"] {
+                transform: scale(1) !important;
+                width: 400px !important;
+                padding: 50px 40px !important;
+            }
+        }
+
+        /* 3. ෆෝන් එකේ පෙනුම (Mobile) - Zoom එක සහ Dark Mode Fix */
+        @media screen and (max-width: 480px) {
+            div[style*="loginCard"] { 
+                /* Zoom එක අඩු කළා */
+                transform: scale(0.85) !important;
+                transform-origin: center center;
+                
+                width: 85% !important; 
+                padding: 25px 20px !important;
+                
+                /* Dark Mode එකේදී බලෙන් පාට වෙනස් වීම වැළැක්වීමට */
+                background-color: rgba(255, 255, 255, 0.02) !important;
+                -webkit-backdrop-filter: blur(35px) !important;
+                backdrop-filter: blur(35px) !important;
+                border: 1px solid rgba(255, 255, 255, 0.12) !important;
+            }
+
+            /* ෆෝන් එකේ ලෝගෝ එක සහ අකුරු පොඩ්ඩක් කුඩා කළා Zoom එකට ගැලපෙන්න */
+            div[style*="logoFrame"] { width: 75px !important; height: 75px !important; }
+            h1[style*="title"] { font-size: 20px !important; letter-spacing: 3px !important; }
+            p[style*="subText"] { font-size: 12px !important; }
+            
+            /* වීඩියෝ එක ෆෝන් එකට හරිගැස්සුවා */
+            video[style*="videoBg"] {
+                height: 100vh !important;
+                width: auto !important;
+            }
+
+            /* Dark Mode එකේදී Input වලට සිද්ධ වෙන අවුල විසඳීම */
+            input {
+                background-color: rgba(255, 255, 255, 0.05) !important;
+                color: white !important;
+                -webkit-text-fill-color: white !important; /* iPhone dark mode fix */
+            }
+        }
+
+        /* 4. Force Light Mode - සියලුම Devices වලට */
+        :root {
+            color-scheme: light only !important;
         }
 
         input:focus {
@@ -148,67 +198,6 @@ const Login = () => {
             background: rgba(255, 255, 255, 0.05) !important;
             outline: none;
             box-shadow: 0 0 15px rgba(46, 204, 113, 0.2);
-        }
-
-        /* 2. පද්ධතියෙන් කලර්ස් වෙනස් කරන එක වළක්වනවා - FULL FORCE FIX */
-        :root {
-            color-scheme: light only !important;
-        }
-
-        @media (prefers-color-scheme: dark) {
-            html, body {
-                background-color: #000000 !important;
-            }
-            div[style*="loginCard"] {
-                background-color: rgba(255, 255, 255, 0.02) !important;
-                -webkit-backdrop-filter: blur(35px) !important;
-                backdrop-filter: blur(35px) !important;
-                border: 1px solid rgba(255, 255, 255, 0.12) !important;
-            }
-            input {
-                background-color: rgba(255, 255, 255, 0.03) !important;
-                color: white !important;
-            }
-            h1, p, span, label {
-                color: inherit !important; /* Force keep original colors */
-            }
-        }
-
-        /* 3. Zoom එක තවත් අඩු කිරීමට කළ වෙනස්කම් (Media Query) */
-        @media (max-width: 480px) {
-            div[style*="loginCard"] { 
-                width: 78% !important; /* පළල තවත් පොඩ්ඩක් අඩු කළා (Zoom Out Effect) */
-                padding: 20px 18px !important; /* ඇතුළේ ඉඩ තවත් අඩු කළා */
-                transform: scale(0.90) !important; /* 10% කින් Zoom Out කළා */
-                -webkit-backdrop-filter: blur(35px) !important;
-                backdrop-filter: blur(35px) !important;
-                margin-top: -20px; /* පොඩ්ඩක් උඩට ගත්තා Zoom out එකත් එක්ක ලස්සන වෙන්න */
-            }
-            
-            div[style*="logoFrame"] {
-                width: 65px !important; /* ලෝගෝ එක තවත් පොඩ්ඩක් කුඩා කළා */
-                height: 65px !important;
-            }
-
-            h1[style*="title"] {
-                font-size: 17px !important; /* අකුරු වල සයිස් එක තව පොඩ්ඩක් අඩු කළා */
-                letter-spacing: 2px !important;
-            }
-
-            p[style*="subText"] {
-                font-size: 10px !important; /* Sub-text එකත් කුඩා කළා */
-            }
-            
-            video[style*="videoBg"] {
-                height: 100vh !important;
-                width: auto !important;
-            }
-            
-            /* Button එකේ සයිස් එකත් පොඩ්ඩක් අඩු කළා Compact වෙන්න */
-            button[style*="loginBtn"] {
-                padding: 14px !important;
-                font-size: 13px !important;
-            }
         }
     `}
 </style>
