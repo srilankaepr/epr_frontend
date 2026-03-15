@@ -150,50 +150,64 @@ const Login = () => {
             box-shadow: 0 0 15px rgba(46, 204, 113, 0.2);
         }
 
-        /* 2. පද්ධතියෙන් කලර්ස් වෙනස් කරන එක වළක්වනවා */
+        /* 2. පද්ධතියෙන් කලර්ස් වෙනස් කරන එක වළක්වනවා - FULL FORCE FIX */
         :root {
-            color-scheme: only light !important;
+            color-scheme: light only !important;
         }
 
         @media (prefers-color-scheme: dark) {
+            html, body {
+                background-color: #000000 !important;
+            }
             div[style*="loginCard"] {
                 background-color: rgba(255, 255, 255, 0.02) !important;
                 -webkit-backdrop-filter: blur(35px) !important;
                 backdrop-filter: blur(35px) !important;
+                border: 1px solid rgba(255, 255, 255, 0.12) !important;
             }
             input {
                 background-color: rgba(255, 255, 255, 0.03) !important;
                 color: white !important;
             }
+            h1, p, span, label {
+                color: inherit !important; /* Force keep original colors */
+            }
         }
 
-        /* 3. Zoom එක අඩු කිරීමට කළ වෙනස්කම් (Media Query) */
+        /* 3. Zoom එක තවත් අඩු කිරීමට කළ වෙනස්කම් (Media Query) */
         @media (max-width: 480px) {
             div[style*="loginCard"] { 
-                width: 82% !important; /* පළල තවත් ටිකක් අඩු කළා */
-                padding: 25px 20px !important; /* ඇතුළේ ඉඩ (padding) අඩු කළා */
-                transform: scale(0.95); /* මුළු කාඩ් එකම පොඩ්ඩක් Zoom out කළා */
+                width: 78% !important; /* පළල තවත් පොඩ්ඩක් අඩු කළා (Zoom Out Effect) */
+                padding: 20px 18px !important; /* ඇතුළේ ඉඩ තවත් අඩු කළා */
+                transform: scale(0.90) !important; /* 10% කින් Zoom Out කළා */
                 -webkit-backdrop-filter: blur(35px) !important;
                 backdrop-filter: blur(35px) !important;
+                margin-top: -20px; /* පොඩ්ඩක් උඩට ගත්තා Zoom out එකත් එක්ක ලස්සන වෙන්න */
             }
             
             div[style*="logoFrame"] {
-                width: 70px !important; /* ලෝගෝ එකේ සයිස් එක අඩු කළා */
-                height: 70px !important;
+                width: 65px !important; /* ලෝගෝ එක තවත් පොඩ්ඩක් කුඩා කළා */
+                height: 65px !important;
             }
 
             h1[style*="title"] {
-                font-size: 18px !important; /* අකුරු වල සයිස් එක අඩු කළා */
+                font-size: 17px !important; /* අකුරු වල සයිස් එක තව පොඩ්ඩක් අඩු කළා */
                 letter-spacing: 2px !important;
             }
 
             p[style*="subText"] {
-                font-size: 11px !important; /* Sub-text එකත් කුඩා කළා */
+                font-size: 10px !important; /* Sub-text එකත් කුඩා කළා */
             }
             
             video[style*="videoBg"] {
                 height: 100vh !important;
                 width: auto !important;
+            }
+            
+            /* Button එකේ සයිස් එකත් පොඩ්ඩක් අඩු කළා Compact වෙන්න */
+            button[style*="loginBtn"] {
+                padding: 14px !important;
+                font-size: 13px !important;
             }
         }
     `}
