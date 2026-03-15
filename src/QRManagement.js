@@ -398,7 +398,7 @@ const fetchDashboardCounts = async () => {
 
                 const uniqueSuffix = Math.random().toString(36).substring(2, 7).toUpperCase();
                 const fullID = `EPR-${idDateCode}-${i.toString().padStart(4, '0')}-${uniqueSuffix}`;
-                const qrValue = `http://https://eprbackend-production.up.railway.app:3000/verify-product?id=${fullID}`;
+                const qrValue = `https://eprbackend-production.up.railway.app:3000/verify-product?id=${fullID}`;
 
                 const qrDataURL = await QRCode.toDataURL(qrValue, { width: 800, margin: 4, errorCorrectionLevel: 'H' });
                 await new Promise((resolve, reject) => {
