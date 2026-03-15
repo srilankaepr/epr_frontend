@@ -7,54 +7,64 @@ const Login = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const navigate = useNavigate();
+    const [loading, setLoading] = useState(false);
 
-  const handleSubmit = async (e) => {
-        e.preventDefault();
-        try {
-            // Backend එකේ API එකට fetch කරනවා
-            const response = await fetch('https://eprbackend-production.up.railway.app/api/login', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email, password }),
-            });
+ const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true); // 1. බටන් එක ලෝඩ් වෙන්න පටන් ගන්නවා
 
-            const data = await response.json();
+    try {
+        const response = await fetch('https://eprbackend-production.up.railway.app/api/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password }),
+        });
 
-            if (response.ok) {
-                // දත්ත localStorage වල දානවා
-                localStorage.setItem('userRole', data.role);
-                localStorage.setItem('userName', data.user.fullName);
-                localStorage.setItem('userEmail', data.user.email);
-                localStorage.setItem('coPartnerId', data.user.coPartnerId);
-                
-                if (data.user.profilePic) {
-                    localStorage.setItem('profilePic', data.user.profilePic);
-                }
+        const data = await response.json();
 
-                alert(`✅ ${data.role} Login Successful!`);
-
-                // Role එක අනුව Dashboard එකට යවනවා
-                if (data.role === 'ADMIN') {
-                    navigate('/dashboard');
-                } else if (data.role === 'CUSTOMER') {
-                    navigate('/user-dashboard'); 
-                } else if (data.role === 'PARTNER') {
-                    navigate('/partner-dashboard');
-                }
-            } else {
-                alert(`❌ ${data.error || "Login Failed"}`);
+        if (response.ok) {
+            // ඩේටා ටික සේව් කරගන්නවා
+            localStorage.setItem('userRole', data.role);
+            localStorage.setItem('userName', data.user.fullName);
+            localStorage.setItem('userEmail', data.user.email);
+            localStorage.setItem('coPartnerId', data.user.coPartnerId);
+            
+            if (data.user.profilePic) {
+                localStorage.setItem('profilePic', data.user.profilePic);
             }
-        } catch (error) {
-            console.error("Login error:", error);
-            alert("⚠️ Connection Error! Please make sure your server is running.");
-        }
-    };
 
+            // 2. Alert එක අයින් කරා (මේකෙන් තමයි සයිට් එක වේගවත් වෙන්නේ)
+            // Alert එක දාපුවම ඒක OK කරනකම් ඊළඟ පේජ් එකට යන්නේ නැහැ.
+            
+            if (data.role === 'ADMIN') {
+                navigate('/dashboard');
+            } else if (data.role === 'CUSTOMER') {
+                navigate('/user-dashboard'); 
+            } else if (data.role === 'PARTNER') {
+                navigate('/partner-dashboard');
+            }
+        } else {
+            alert(`❌ ${data.error || "Login Failed"}`);
+        }
+    } catch (error) {
+        console.error("Login error:", error);
+        alert("⚠️ Connection Error! Please try again.");
+    } finally {
+        setLoading(false); // 3. වැඩේ ඉවර වුණාම බටන් එක ආයේ සාමාන්‍ය තත්වයට පත් කරනවා
+    }
+};
     return (
         <div style={styles.container}>
-            <video autoPlay loop muted playsInline style={styles.videoBg}>
-                <source src={earthVideo} type="video/mp4" />
-            </video>
+            <video 
+    autoPlay 
+    loop 
+    muted 
+    playsInline 
+    style={styles.videoBg}
+    preload="none" // මේක තමයි මැජික් එක!
+>
+    <source src={earthVideo} type="video/mp4" />
+</video>
 
             <div style={styles.overlay}></div>
             
@@ -103,7 +113,16 @@ const Login = () => {
                         />
                     </div>
 
-                    <button type="submit" style={styles.loginBtn}>AUTHORIZE ACCESS</button>
+<button 
+    type="submit" 
+    style={{...styles.loginBtn, opacity: loading ? 0.7 : 1}} 
+    disabled={loading}
+>
+    {loading ? 'AUTHENTICATING...' : 'LOGIN TO DASHBOARD'}
+</button>
+
+
+
                 </form>
 
                 <div style={styles.footer}>
