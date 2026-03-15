@@ -256,7 +256,7 @@ const Login = () => {
 
 const styles = {
     container: {
-        minheight: '100vh', width: '100vw',
+        height: '100vh', width: '100vw',
         display: 'flex', justifyContent: 'center', alignItems: 'center',
         position: 'relative', overflow: 'auto', backgroundColor: '#000'
     },
