@@ -52,7 +52,7 @@ const Login = () => {
 
 
     return (
-        <div style={styles.container} className='loginContainer'>
+        <div style={styles.container}>
             <video 
     autoPlay 
     loop 
@@ -261,7 +261,7 @@ const styles = {
         position: 'relative', overflow: 'auto', backgroundColor: '#000'
     },
     videoBg: {
-        position: 'fixed', top: '50%', left: '50%',
+        position: 'absolute', top: '50%', left: '50%',
         width: '100%', height: '100%', objectFit: 'cover',
         transform: 'translate(-50%, -50%)', zIndex: 1, filter: 'brightness(0.45)'
     },
@@ -274,7 +274,7 @@ const styles = {
         position: 'relative', zIndex: 3,
         width: '90%', maxWidth: '400px',
         padding: '50px 40px',
-        background: 'var(--card-bg)',
+        background: 'rgba(255, 255, 255, 0.02)',
         backdropFilter: 'blur(35px)',
         borderRadius: '30px',
         border: '1px solid rgba(255, 255, 255, 0.12)',
