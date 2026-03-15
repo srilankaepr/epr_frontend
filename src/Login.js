@@ -52,7 +52,7 @@ const Login = () => {
 
 
     return (
-        <div style={styles.container}>
+        <div style={styles.container} className='loginContainer'>
             <video 
     autoPlay 
     loop 
@@ -137,7 +137,7 @@ const Login = () => {
 
 <style>
     {`
-        /* 1. මුළු Page එකේම Scroll හිරවීම වැළැක්වීම */
+        /* 1. මුළු Page එකේම Scroll හිරවීම සම්පූර්ණයෙන් නැවැත්වීම */
         html, body {
             height: auto !important;
             min-height: 100vh !important;
@@ -145,108 +145,81 @@ const Login = () => {
             overflow-y: auto !important;
             margin: 0;
             padding: 0;
-            background-color: #000 !important; /* පසුබිම කළු කර තැබීම */
+            background-color: #000 !important;
         }
 
-        /* 2.Animations */
-        @keyframes cardFadeIn {
-            from { opacity: 0; transform: scale(0.95); }
-            to { opacity: 1; transform: scale(1); }
+        /* 2. React JS Object එකේ තියෙන styles.container එක Overwrite කිරීම */
+        div[style*="height: 100vh"], 
+        div[style*="height:100vh"],
+        .login-container { 
+            height: auto !important; 
+            min-height: 100vh !important;
+            overflow-y: auto !important;
+            display: flex !important;
+            flex-direction: column !important;
+            justify-content: flex-start !important;
+            align-items: center !important;
+            padding: 40px 0 !important;
         }
 
-        /* 3. PC එකේ පෙනුම (Desktop) - ඔයාගේ Original Look එක */
-        @media screen and (min-width: 1025px) {
-            div[style*="loginContainer"] {
-                height: 100vh !important;
-                display: flex !important;
-                align-items: center !important;
-                justify-content: center !important;
-            }
-            div[style*="loginCard"] {
-                transform: scale(1) !important;
-                width: 400px !important;
-                padding: 50px 40px !important;
-            }
+        /* 3. Dark Mode එකේදී Logo එකේ සුදු රවුම කළු වීම වැළැක්වීම */
+        div[style*="logoFrame"], 
+        div[style*="width: 110px"] {
+            background-color: #ffffff !important;
+            background: #ffffff !important;
+            forced-color-adjust: none !important;
+            -webkit-print-color-adjust: exact;
         }
 
-        /* 4. ෆෝන් එකේ පෙනුම (Mobile Portrait) */
-        @media screen and (max-width: 480px) {
-            div[style*="loginContainer"] {
-                height: auto !important;
-                min-height: 100vh !important;
-                display: flex !important;
-                flex-direction: column !important;
-                justify-content: flex-start !important; /* උඩ ඉඳන් පටන් ගන්නවා */
-                padding: 30px 0 !important;
-                overflow-y: auto !important;
-            }
-
-            div[style*="loginCard"] { 
-                transform: scale(0.8) !important; /* Zoom එක අඩු කළා */
-                transform-origin: top center !important;
-                margin: 20px auto !important;
-                width: 85% !important; 
-                padding: 25px 20px !important;
-                
-                background-color: rgba(255, 255, 255, 0.02) !important;
-                -webkit-backdrop-filter: blur(35px) !important;
-                backdrop-filter: blur(35px) !important;
-                border: 1px solid rgba(255, 255, 255, 0.12) !important;
-            }
-
-            div[style*="logoFrame"] { width: 70px !important; height: 70px !important; }
-            h1[style*="title"] { font-size: 18px !important; letter-spacing: 2px !important; }
-            p[style*="subText"] { font-size: 11px !important; }
-            
-            video[style*="videoBg"] {
-                position: fixed !important;
-                top: 0;
-                left: 0;
-                height: 100vh !important;
-                width: auto !important;
-                z-index: -1;
-            }
-
-            input {
-                background-color: rgba(255, 255, 255, 0.05) !important;
-                color: white !important;
-                -webkit-text-fill-color: white !important;
-            }
+        /* 4. Login Card එක Landscape සහ Mobile වලදී පේන විදිහ */
+        div[style*="loginCard"],
+        div[style*="borderRadius: 30px"] {
+            position: relative !important;
+            margin: 20px auto !important;
+            transform: scale(0.85) !important;
+            transform-origin: top center !important;
+            background-color: rgba(255, 255, 255, 0.02) !important;
+            backdrop-filter: blur(35px) !important;
+            -webkit-backdrop-filter: blur(35px) !important;
+            border: 1px solid rgba(255, 255, 255, 0.12) !important;
         }
 
-        /* 5. Landscape Fix - ෆෝන් එක හරහට හැරෙව්වම Scroll කරන කොටස */
+        /* 5. Landscape Fix (හරහට හැරෙව්වම) */
         @media screen and (max-height: 500px) and (orientation: landscape) {
-            div[style*="loginContainer"] {
-                height: auto !important;
-                min-height: 100vh !important;
-                display: block !important; /* හිරවීම වළක්වයි */
-                padding: 20px 0 !important;
-                overflow-y: auto !important;
-            }
-
             div[style*="loginCard"] {
-                margin: 10px auto !important;
-                transform: scale(0.7) !important; /* හරහට නිසා තවත් Zoom Out කළා */
-                transform-origin: top center !important;
+                transform: scale(0.65) !important;
+                margin-top: 10px !important;
             }
-
-            video[style*="videoBg"] {
-                position: fixed !important;
-                height: 100% !important;
-                width: 150% !important;
+            div[style*="logoFrame"] {
+                width: 70px !important;
+                height: 70px !important;
             }
         }
 
-        /* 6. Dark Mode Force Fix */
+        /* 6. Video එක පසුබිමේ Fixed කර තැබීම */
+        video {
+            position: fixed !important;
+            top: 50% !important;
+            left: 50% !important;
+            transform: translate(-50%, -50%) !important;
+            min-width: 100% !important;
+            min-height: 100% !important;
+            z-index: -1 !important;
+        }
+
+        /* 7. Dark Mode එකේදී Input අකුරු සුදු පාටටම තබා ගැනීම */
+        input {
+            color: #ffffff !important;
+            -webkit-text-fill-color: #ffffff !important;
+        }
+
         :root {
             color-scheme: light only !important;
         }
 
-        input:focus {
-            border-color: #2ecc71 !important;
-            background: rgba(255, 255, 255, 0.05) !important;
-            outline: none;
-            box-shadow: 0 0 15px rgba(46, 204, 113, 0.2);
+        @keyframes cardFadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
         }
     `}
 </style>
@@ -256,12 +229,12 @@ const Login = () => {
 
 const styles = {
     container: {
-        height: '100vh', width: '100vw',
+        minheight: '100vh', width: '100vw',
         display: 'flex', justifyContent: 'center', alignItems: 'center',
-        position: 'relative', overflow: 'hidden', backgroundColor: '#000'
+        position: 'relative', overflow: 'auto', backgroundColor: '#000'
     },
     videoBg: {
-        position: 'absolute', top: '50%', left: '50%',
+        position: 'fixed', top: '50%', left: '50%',
         width: '100%', height: '100%', objectFit: 'cover',
         transform: 'translate(-50%, -50%)', zIndex: 1, filter: 'brightness(0.45)'
     },
@@ -274,7 +247,7 @@ const styles = {
         position: 'relative', zIndex: 3,
         width: '90%', maxWidth: '400px',
         padding: '50px 40px',
-        background: 'rgba(255, 255, 255, 0.02)',
+        background: 'var(--card-bg)',
         backdropFilter: 'blur(35px)',
         borderRadius: '30px',
         border: '1px solid rgba(255, 255, 255, 0.12)',
