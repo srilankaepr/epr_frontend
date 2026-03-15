@@ -1,0 +1,300 @@
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios'; 
+import logo from './logo.png';
+import earthVideo from './assets/earth.mp4'; 
+
+const RegisterCustomer = () => {
+    const navigate = useNavigate();
+    const [formData, setFormData] = useState({
+        orgRole: '', 
+        companyName: '', 
+        companyWebsite: '', 
+        phone: '', whatsapp: '', officialEmail: '',
+        address1: '', address2: '', postalCode: '', country: '',
+        contactPersonName: '', contactPersonMobile: '',
+        dob: '', 
+        password: '', confirmPassword: ''
+    });
+
+    const handleChange = (e) => {
+        setFormData({ ...formData, [e.target.name]: e.target.value });
+    };
+
+    const validatePhone = (number) => {
+        const regex = /^[0-9]{10}$/; 
+        return regex.test(number);
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+
+        if (formData.password !== formData.confirmPassword) {
+            alert("❌ Passwords do not match!");
+            return;
+        }
+
+        if (!validatePhone(formData.phone)) {
+            alert("❌ Please enter a valid 10-digit Phone Number.");
+            return;
+        }
+        if (formData.whatsapp && !validatePhone(formData.whatsapp)) {
+            alert("❌ Please enter a valid 10-digit WhatsApp Number.");
+            return;
+        }
+        if (!validatePhone(formData.contactPersonMobile)) {
+            alert("❌ Please enter a valid 10-digit Mobile Number for the Contact Person.");
+            return;
+        }
+
+        try {
+            const response = await axios.post('https://eprbackend-production.up.railway.app/api/customers/register', formData);
+            if (response.status === 201) {
+                alert("✅ Customer Registration Successful!");
+                navigate('/'); 
+            }
+        } catch (error) {
+            console.error("Registration Error:", error);
+            const errorMessage = error.response?.data?.error || "Registration failed. Please try again.";
+            alert("❌ Error: " + errorMessage);
+        }
+    };
+
+    return (
+        <div style={styles.container}>
+            <video autoPlay loop muted playsInline style={styles.videoBg}>
+                <source src={earthVideo} type="video/mp4" />
+            </video>
+
+            <div style={styles.overlay}></div>
+            
+            <div style={styles.glassCard}>
+                <div style={styles.headerArea}>
+                    <div style={styles.logoFrame}>
+                        <img src={logo} alt="EPR Logo" style={styles.logoImg} />
+                    </div>
+                    <h2 style={styles.title}>CUSTOMER REGISTRATION</h2>
+                    <p style={styles.subText}>Establish your organization in the circular ecosystem</p>
+                </div>
+
+                <form onSubmit={handleSubmit} style={styles.form}>
+                    
+                    <h3 style={styles.sectionHeader}>1. Organization Details</h3>
+                    <div style={styles.inputWrapper}>
+                        <label style={styles.label}>ORGANIZATION ROLE</label>
+                        <select 
+                            name="orgRole" 
+                            style={styles.selectInput} 
+                            onChange={handleChange} 
+                            required
+                        >
+                            <option value="" style={styles.selectOption}>Select Role</option>
+                            <option value="Brand Owner" style={styles.selectOption}>Brand Owner</option>
+                            <option value="Importer" style={styles.selectOption}>Importer</option>
+                            <option value="Producer" style={styles.selectOption}>Producer</option>
+                            <option value="Manufacturer" style={styles.selectOption}>Manufacturer</option>
+                            <option value="Recycler" style={styles.selectOption}>Recycler</option>
+                            <option value="Collector" style={styles.selectOption}>Collector</option>
+                            <option value="Distributer" style={styles.selectOption}>Distributer</option>
+                            <option value="Other" style={styles.selectOption}>Other</option>
+                        </select>
+                    </div>
+
+                    <div style={styles.inputWrapper}>
+                        <label style={styles.label}>COMPANY NAME</label>
+                        <input name="companyName" type="text" placeholder="Legal Entity Name" style={styles.input} onChange={handleChange} required />
+                    </div>
+
+                    <div style={styles.inputWrapper}>
+                        <label style={styles.label}>COMPANY WEBSITE (OPTIONAL)</label>
+                        <input name="companyWebsite" type="text" placeholder="https://www.company.com" style={styles.input} onChange={handleChange} />
+                    </div>
+
+                    <h3 style={styles.sectionHeader}>2. Contact & Address</h3>
+                    <div style={styles.row}>
+                        <div style={styles.rowItem}>
+                            <label style={styles.label}>PHONE</label>
+                            <input 
+                                name="phone" 
+                                type="text" 
+                                maxLength="10" 
+                                placeholder="0112345678" 
+                                style={styles.input} 
+                                onChange={handleChange} 
+                                required 
+                            />
+                        </div>
+                        <div style={styles.rowItem}>
+                            <label style={styles.label}>WHATSAPP</label>
+                            <input 
+                                name="whatsapp" 
+                                type="text" 
+                                maxLength="10" 
+                                placeholder="0712345678" 
+                                style={styles.input} 
+                                onChange={handleChange} 
+                            />
+                        </div>
+                    </div>
+                    
+                    <div style={styles.inputWrapper}>
+                        <label style={styles.label}>OFFICIAL EMAIL</label>
+                        <input name="officialEmail" type="email" placeholder="info@company.com" style={styles.input} onChange={handleChange} required />
+                    </div>
+
+                    <div style={styles.inputWrapper}>
+                        <label style={styles.label}>STREET ADDRESS</label>
+                        <input name="address1" type="text" placeholder="Street & Number" style={styles.input} onChange={handleChange} required />
+                        <input name="address2" type="text" placeholder="Suite, Unit, Floor (Optional)" style={{...styles.input, marginTop: '10px'}} onChange={handleChange} />
+                    </div>
+
+                    <div style={styles.row}>
+                        <div style={styles.rowItem}>
+                            <label style={styles.label}>POSTAL CODE</label>
+                            <input name="postalCode" type="text" placeholder="10100" style={styles.input} onChange={handleChange} />
+                        </div>
+                        <div style={styles.rowItem}>
+                            <label style={styles.label}>COUNTRY</label>
+                            <input name="country" type="text" placeholder="Sri Lanka" style={styles.input} onChange={handleChange} required />
+                        </div>
+                    </div>
+
+                    <h3 style={styles.sectionHeader}>3. Focal Point & Security</h3>
+                    <div style={styles.row}>
+                        <div style={styles.rowItem}>
+                            <label style={styles.label}>CONTACT PERSON</label>
+                            <input name="contactPersonName" type="text" placeholder="Full Name" style={styles.input} onChange={handleChange} required />
+                        </div>
+                        <div style={styles.rowItem}>
+                            <label style={styles.label}>MOBILE</label>
+                            <input 
+                                name="contactPersonMobile" 
+                                type="text" 
+                                maxLength="10" 
+                                placeholder="0771234567" 
+                                style={styles.input} 
+                                onChange={handleChange} 
+                                required 
+                            />
+                        </div>
+                    </div>
+
+                    <div style={styles.inputWrapper}>
+                        <label style={styles.label}>ESTABLISHED DATE / DOB</label>
+                        <input name="dob" type="date" style={styles.input} onChange={handleChange} required />
+                    </div>
+
+                    <div style={styles.row}>
+                        <div style={styles.rowItem}>
+                            <label style={styles.label}>PASSWORD</label>
+                            <input name="password" type="password" placeholder="••••••••" style={styles.input} onChange={handleChange} required />
+                        </div>
+                        <div style={styles.rowItem}>
+                            <label style={styles.label}>CONFIRM</label>
+                            <input name="confirmPassword" type="password" placeholder="••••••••" style={styles.input} onChange={handleChange} required />
+                        </div>
+                    </div>
+
+                    <button type="submit" style={styles.registerBtn}>AUTHORIZE & REGISTER</button>
+                </form>
+
+                <div style={styles.footer}>
+                    <p style={styles.backLink} onClick={() => navigate('/select-role')}>
+                        ← Back to Selection
+                    </p>
+                    <p style={styles.footerText}>
+                        Already registered? 
+                        <span style={styles.loginLink} onClick={() => navigate('/')}> Secure Login</span>
+                    </p>
+                </div>
+            </div>
+
+            <style>
+                {`
+                ::-webkit-calendar-picker-indicator { filter: invert(1); }
+                input:focus, select:focus { border-color: #2ecc71 !important; outline: none; background: rgba(0,0,0,0.5) !important; }
+                option { background-color: #121212 !important; color: white !important; }
+                `}
+            </style>
+        </div>
+    );
+};
+
+const styles = {
+    container: {
+        minHeight: '100vh', width: '100vw',
+        display: 'flex', justifyContent: 'center', alignItems: 'center',
+        position: 'relative', overflowY: 'auto', backgroundColor: '#000',
+        padding: '60px 20px'
+    },
+    videoBg: {
+        position: 'fixed', top: 0, left: 0, width: '100%', height: '100%',
+        objectFit: 'cover', zIndex: 1, filter: 'brightness(0.35)'
+    },
+    overlay: {
+        position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+        background: 'radial-gradient(circle, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.85) 100%)',
+        zIndex: 2
+    },
+    glassCard: {
+        position: 'relative', zIndex: 3,
+        width: '100%', maxWidth: '650px',
+        padding: '50px 40px',
+        background: 'rgba(255, 255, 255, 0.02)',
+        backdropFilter: 'blur(35px)',
+        borderRadius: '40px',
+        border: '1px solid rgba(255, 255, 255, 0.12)',
+        boxShadow: '0 40px 100px rgba(0,0,0,0.8)',
+        textAlign: 'center'
+    },
+    headerArea: { marginBottom: '35px' },
+    logoFrame: {
+        width: '90px', height: '90px',
+        background: '#fff', borderRadius: '50%',
+        margin: '0 auto 15px',
+        display: 'flex', justifyContent: 'center', alignItems: 'center',
+        border: '3px solid #2ecc71',
+        boxShadow: '0 0 30px rgba(46, 204, 113, 0.4)'
+    },
+    logoImg: { width: '80%' },
+    title: { fontSize: '26px', fontWeight: '900', letterSpacing: '3px', color: '#fff', margin: '0' },
+    subText: { fontSize: '13px', color: '#3498db', marginTop: '10px', fontWeight: 'bold', letterSpacing: '1px' },
+    sectionHeader: { 
+        color: '#2ecc71', fontSize: '16px', textAlign: 'left', 
+        marginTop: '30px', marginBottom: '20px', 
+        borderBottom: '1px solid rgba(46, 204, 113, 0.2)', 
+        paddingBottom: '8px', fontWeight: 'bold', letterSpacing: '1px' 
+    },
+    form: { textAlign: 'left' },
+    inputWrapper: { marginBottom: '18px' },
+    label: { display: 'block', fontSize: '14px', color: '#aaa', marginBottom: '8px', letterSpacing: '1px', fontWeight: 'bold' },
+    input: {
+        width: '100%', padding: '15px',
+        borderRadius: '12px', border: '1px solid rgba(255,255,255,0.1)',
+        background: 'rgba(255, 255, 255, 0.04)', color: '#fff', fontSize: '17px',
+        boxSizing: 'border-box', transition: '0.3s'
+    },
+    selectInput: {
+        width: '100%', padding: '15px',
+        borderRadius: '12px', border: '1px solid rgba(255,255,255,0.1)',
+        background: '#121212', color: '#fff', fontSize: '17px',
+        boxSizing: 'border-box', transition: '0.3s', cursor: 'pointer'
+    },
+    selectOption: { background: '#121212', color: '#fff', padding: '10px' },
+    row: { display: 'flex', flexWrap: 'wrap', gap: '20px', marginBottom: '18px' },
+    rowItem: { flex: '1 1 200px' },
+    registerBtn: {
+        width: '100%', padding: '18px',
+        borderRadius: '12px', border: 'none',
+        background: '#3498db', color: '#fff',
+        fontWeight: '900', fontSize: '17px', letterSpacing: '2px',
+        cursor: 'pointer', boxShadow: '0 10px 30px rgba(52, 152, 219, 0.3)',
+        marginTop: '25px', transition: '0.3s'
+    },
+    footer: { marginTop: '40px', borderTop: '1px solid rgba(255,255,255,0.05)', paddingTop: '25px' },
+    backLink: { color: '#888', cursor: 'pointer', fontSize: '15px', marginBottom: '15px', transition: '0.3s' },
+    footerText: { color: '#aaa', fontSize: '16px' },
+    loginLink: { color: '#2ecc71', fontWeight: 'bold', cursor: 'pointer' }
+};
+
+export default RegisterCustomer;
