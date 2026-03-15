@@ -137,14 +137,31 @@ const Login = () => {
 
 <style>
     {`
-        /* 1. පොදු Styles (Animations) */
+        /* 1. මුළු Page එකේම Scroll හිරවීම වැළැක්වීම */
+        html, body {
+            height: auto !important;
+            min-height: 100vh !important;
+            overflow-x: hidden !important;
+            overflow-y: auto !important;
+            margin: 0;
+            padding: 0;
+            background-color: #000 !important; /* පසුබිම කළු කර තැබීම */
+        }
+
+        /* 2.Animations */
         @keyframes cardFadeIn {
             from { opacity: 0; transform: scale(0.95); }
             to { opacity: 1; transform: scale(1); }
         }
 
-        /* 2. PC එකේ පෙනුම (Desktop) - කිසිම වෙනසක් වෙන්නේ නැත */
+        /* 3. PC එකේ පෙනුම (Desktop) - ඔයාගේ Original Look එක */
         @media screen and (min-width: 1025px) {
+            div[style*="loginContainer"] {
+                height: 100vh !important;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+            }
             div[style*="loginCard"] {
                 transform: scale(1) !important;
                 width: 400px !important;
@@ -152,13 +169,22 @@ const Login = () => {
             }
         }
 
-        /* 3. ෆෝන් එකේ පෙනුම (Mobile) - Zoom එක සහ Dark Mode Fix */
+        /* 4. ෆෝන් එකේ පෙනුම (Mobile Portrait) */
         @media screen and (max-width: 480px) {
+            div[style*="loginContainer"] {
+                height: auto !important;
+                min-height: 100vh !important;
+                display: flex !important;
+                flex-direction: column !important;
+                justify-content: flex-start !important; /* උඩ ඉඳන් පටන් ගන්නවා */
+                padding: 30px 0 !important;
+                overflow-y: auto !important;
+            }
+
             div[style*="loginCard"] { 
-                /* Zoom එක තව පොඩ්ඩක් අඩු කළා ලස්සනට පේන්න */
-                transform: scale(0.8) !important;
-                transform-origin: center center;
-                
+                transform: scale(0.8) !important; /* Zoom එක අඩු කළා */
+                transform-origin: top center !important;
+                margin: 20px auto !important;
                 width: 85% !important; 
                 padding: 25px 20px !important;
                 
@@ -173,8 +199,12 @@ const Login = () => {
             p[style*="subText"] { font-size: 11px !important; }
             
             video[style*="videoBg"] {
+                position: fixed !important;
+                top: 0;
+                left: 0;
                 height: 100vh !important;
                 width: auto !important;
+                z-index: -1;
             }
 
             input {
@@ -184,7 +214,30 @@ const Login = () => {
             }
         }
 
-        /* 4. Force Light Mode - සියලුම Devices වලට */
+        /* 5. Landscape Fix - ෆෝන් එක හරහට හැරෙව්වම Scroll කරන කොටස */
+        @media screen and (max-height: 500px) and (orientation: landscape) {
+            div[style*="loginContainer"] {
+                height: auto !important;
+                min-height: 100vh !important;
+                display: block !important; /* හිරවීම වළක්වයි */
+                padding: 20px 0 !important;
+                overflow-y: auto !important;
+            }
+
+            div[style*="loginCard"] {
+                margin: 10px auto !important;
+                transform: scale(0.7) !important; /* හරහට නිසා තවත් Zoom Out කළා */
+                transform-origin: top center !important;
+            }
+
+            video[style*="videoBg"] {
+                position: fixed !important;
+                height: 100% !important;
+                width: 150% !important;
+            }
+        }
+
+        /* 6. Dark Mode Force Fix */
         :root {
             color-scheme: light only !important;
         }
@@ -194,28 +247,6 @@ const Login = () => {
             background: rgba(255, 255, 255, 0.05) !important;
             outline: none;
             box-shadow: 0 0 15px rgba(46, 204, 113, 0.2);
-        }
-
-        /* 5. Landscape Scroll Fix - ෆෝන් එක හරහට හැරෙව්වම වැඩ කරන කොටස */
-        @media screen and (max-height: 500px) and (orientation: landscape) {
-            div[style*="loginContainer"] {
-                height: auto !important;
-                min-height: 100vh !important;
-                display: block !important; /* මැදට වී හිරවීම නවත්වයි */
-                padding: 40px 0 !important;
-                overflow-y: auto !important;
-            }
-
-            div[style*="loginCard"] {
-                margin: 0 auto !important;
-                transform: scale(0.75) !important; /* හරහට නිසා තවත් පොඩ්ඩක් කුඩා කළා */
-            }
-
-            video[style*="videoBg"] {
-                position: fixed !important;
-                height: 100% !important;
-                width: 200% !important;
-            }
         }
     `}
 </style>
