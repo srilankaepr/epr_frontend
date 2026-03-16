@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import API from '../api';
+import API from './api';
 import { useNavigate } from 'react-router-dom';
 import JSZip from 'jszip';
 import { saveAs } from 'file-saver';
