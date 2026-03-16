@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import API from '../api'; // 👈 මෙන්න මේක අලුතින් දාන්න
 import { useNavigate } from 'react-router-dom';
 import JSZip from 'jszip';
 import { saveAs } from 'file-saver';
@@ -167,15 +166,15 @@ const handleSaveProduct = async () => {
         }
     };
 
-const fetchProducts = async () => {
-    try {
-        const response = await API.get('/get-products'); // මෙතන baseURL එක ඔටෝම වැටෙනවා
-        setProductList(response.data);
-    } catch (err) {
-        console.error("Error fetching products:", err);
-    }
-};
-
+    const fetchProducts = async () => {
+        try {
+            const response = await fetch('https://eprbackend-production.up.railway.app/api/get-products');
+            const data = await response.json();
+            setProductList(data);
+        } catch (err) {
+            console.error("Error fetching products:", err);
+        }
+    };
 
     const fetchRegisteredQRs = async () => {
         try {
@@ -227,8 +226,7 @@ const fetchProducts = async () => {
                 }
             });
 
-
-
+            // 3. 🧹 පිරිසිදු කිරීම: කො-පාර්ට්නර් කලෙක්ට් කරපු ගමන් ලිස්ට් එකෙන් අයින් කරනවා
             setNotifications(prev => prev.filter(n => 
                 pendingRequests.some(r => r._id === n.requestId)
             ));
