@@ -19,13 +19,12 @@ import CoPartner from './CoPartner';
 import PartnerDashboard from './PartnerDashboard';
 import CoPartnerScan from './CoPartnerScan';
 import ForgotPassword from './ForgotPassword';
-
-
-// ProtectedRoute එක Import කරගන්නවා
+import { AuthProvider } from './AuthContext';
 import ProtectedRoute from './ProtectedRoute'; 
 
 function App() {
   return (
+    <AuthProvider>
     <Router>
       <Routes>
         {/* --- PUBLIC ROUTES --- */}
@@ -62,6 +61,7 @@ function App() {
 
       </Routes>
     </Router>
+    </AuthProvider>
   );
 }
 
