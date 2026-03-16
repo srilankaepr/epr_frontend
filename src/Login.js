@@ -14,52 +14,63 @@ const Login = () => {
     // AuthContext එකෙන් login function එක මෙතනට ගන්නවා
     const { login } = useAuth(); 
 
-    const handleSubmit = useCallback(async (e) => {
-        e.preventDefault();
-        setLoading(true);
+const handleSubmit = useCallback(async (e) => {
+    e.preventDefault();
+    setLoading(true);
 
-        try {
-            const response = await fetch(`${API_BASE_URL}/login`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email, password }),
-            });
+    try {
+        const response = await fetch(`${API_BASE_URL}/login`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password }),
+        });
 
-            const data = await response.json();
+        const data = await response.json();
 
-            if (response.ok) {
-                // 3. දත්ත LocalStorage එකේ සේව් කරනවා
-                localStorage.setItem('userRole', data.role);
-                localStorage.setItem('userName', data.user.fullName);
-                localStorage.setItem('userEmail', data.user.email);
-                localStorage.setItem('coPartnerId', data.user.coPartnerId);
-                
-                if (data.user.profilePic) {
-                    localStorage.setItem('profilePic', data.user.profilePic);
-                }
+        if (response.ok) {
+            // ✅ Backend එකෙන් එන role එක හරියටම ගන්නවා
+            const userRole = data.role; 
+            const userData = data.user;
 
-                // 4. ✅ වැදගත්ම දේ: AuthProvider එක හරහා Global State එක Update කරනවා
-                // මේක නැතුව ProtectedRoute එක වැඩ කරන්නේ නැහැ
-                login(data.user, data.role); 
-
-                // 5. දැන් නියමිත පේජ් එකට යවනවා
-                const routes = {
-                    'ADMIN': '/dashboard',
-                    'CUSTOMER': '/user-dashboard',
-                    'PARTNER': '/partner-dashboard'
-                };
-                
-                navigate(routes[data.role.toUpperCase()] || '/');
-            } else {
-                alert(`❌ ${data.error || "Login Failed"}`);
+            // ✅ LocalStorage එකට එකින් එක දානවා
+            localStorage.setItem('userRole', userRole);
+            localStorage.setItem('userName', userData.fullName || '');
+            localStorage.setItem('userEmail', userData.email || '');
+            localStorage.setItem('coPartnerId', userData.coPartnerId || '');
+            
+            if (userData.profilePic) {
+                localStorage.setItem('profilePic', userData.profilePic);
             }
-        } catch (error) {
-            console.error("Login error:", error);
-            alert("⚠️ Connection Error! Please try again.");
-        } finally {
-            setLoading(false); 
+
+            // ✅ AuthContext එක Update කරනවා (මේක අනිවාර්යයි)
+            login(userData, userRole); 
+
+            // ✅ Redirect Logic එක
+            const routes = {
+                'ADMIN': '/dashboard',
+                'CUSTOMER': '/user-dashboard',
+                'PARTNER': '/partner-dashboard'
+            };
+
+            // අකුරු වල size එකේ ප්‍රශ්නයක් නොවෙන්න toUpperCase() කරනවා
+            const targetPath = routes[userRole.toUpperCase()];
+            
+            if (targetPath) {
+                navigate(targetPath);
+            } else {
+                navigate('/');
+            }
+
+        } else {
+            alert(`❌ ${data.error || "Login Failed"}`);
         }
-    }, [email, password, navigate, login]);
+    } catch (error) {
+        console.error("Login error:", error);
+        alert("⚠️ Connection Error! Please try again.");
+    } finally {
+        setLoading(false); 
+    }
+}, [email, password, navigate, login]);
 
 //......................................................................................................................
     return (
