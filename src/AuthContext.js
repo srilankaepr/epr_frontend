@@ -20,21 +20,24 @@ export const AuthProvider = ({ children }) => {
         setLoading(false);
     }, []);
 
-    // ✅ Login function එක දැන් පරාමිතීන් 3ක් ලබා ගන්නවා (userData, role, token)
+
     const login = (userData, role, token) => {
-        setUser({ ...userData, role, token }); // React State එක Update කිරීම
+        setUser({ ...userData, role, token }); 
         
         // 🛡️ LocalStorage එකට දත්ත දැමීම
-        localStorage.setItem('accessToken', token); // 👈 අලුතින් එක් කළා (මේක තමයි වැදගත්ම)
+        localStorage.setItem('accessToken', token); 
         localStorage.setItem('userRole', role);
         localStorage.setItem('userName', userData.fullName || userData.name || '');
         localStorage.setItem('userEmail', userData.email || '');
         
-        if(userData.coPartnerId) {
+if (userData.coPartnerId) {
             localStorage.setItem('coPartnerId', userData.coPartnerId);
+        } else {
+            localStorage.removeItem('coPartnerId');
         }
     };
 
+    
     const logout = () => {
         setUser(null);
         localStorage.clear(); // සියලුම දත්ත මකා දමයි (Token එක ඇතුළුව)
