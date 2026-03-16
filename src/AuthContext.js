@@ -7,36 +7,42 @@ export const AuthProvider = ({ children }) => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        // පේජ් එක Refresh කරද්දී දත්ත ටික නැවත ගන්නවා
+        // 🔄 පේජ් එක Refresh කරද්දී LocalStorage එකෙන් දත්ත නැවත ලබා ගැනීම
         const role = localStorage.getItem('userRole');
         const name = localStorage.getItem('userName');
         const email = localStorage.getItem('userEmail');
+        const token = localStorage.getItem('accessToken'); // 👈 අලුතින් එක් කළා (Security Token එක)
 
-        if (role) {
-            setUser({ role, name, email });
+        if (token && role) {
+            // ටෝකන් එක සහ රෝල් එක දෙකම තියෙනවා නම් විතරක් යූසර්ව ලොග් කරනවා
+            setUser({ role, name, email, token });
         }
         setLoading(false);
     }, []);
 
-    // ✅ මෙතන පරාමිතීන් දෙකක් ගන්න විදිහට හැදුවා
-    const login = (userData, role) => {
-        setUser({ ...userData, role }); // State එකට දානවා
+    // ✅ Login function එක දැන් පරාමිතීන් 3ක් ලබා ගන්නවා (userData, role, token)
+    const login = (userData, role, token) => {
+        setUser({ ...userData, role, token }); // React State එක Update කිරීම
         
-        // LocalStorage එකටත් දානවා (ProtectedRoute එකට පේන්න)
+        // 🛡️ LocalStorage එකට දත්ත දැමීම
+        localStorage.setItem('accessToken', token); // 👈 අලුතින් එක් කළා (මේක තමයි වැදගත්ම)
         localStorage.setItem('userRole', role);
         localStorage.setItem('userName', userData.fullName || userData.name || '');
         localStorage.setItem('userEmail', userData.email || '');
-        if(userData.coPartnerId) localStorage.setItem('coPartnerId', userData.coPartnerId);
+        
+        if(userData.coPartnerId) {
+            localStorage.setItem('coPartnerId', userData.coPartnerId);
+        }
     };
 
     const logout = () => {
         setUser(null);
-        localStorage.clear();
+        localStorage.clear(); // සියලුම දත්ත මකා දමයි (Token එක ඇතුළුව)
         window.location.href = '/'; 
     };
 
     return (
-        <AuthContext.Provider value={{ user, role: user?.role, login, logout, loading }}>
+        <AuthContext.Provider value={{ user, login, logout, loading }}>
             {children}
         </AuthContext.Provider>
     );

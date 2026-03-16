@@ -27,12 +27,14 @@ const handleSubmit = useCallback(async (e) => {
 
         const data = await response.json();
 
-        if (response.ok) {
-            // ✅ Backend එකෙන් එන role එක හරියටම ගන්නවා
+  if (response.ok) {
+            // ✅ Backend එකෙන් එන role එක සහ Token එක ගන්නවා
             const userRole = data.role; 
             const userData = data.user;
+            const token = data.token; // 👈 1. අලුතින් එකතු කළා (Backend එකෙන් එන Token එක)
 
             // ✅ LocalStorage එකට එකින් එක දානවා
+            localStorage.setItem('accessToken', token); // 👈 2. අලුතින් එකතු කළා (Token එක save කිරීම)
             localStorage.setItem('userRole', userRole);
             localStorage.setItem('userName', userData.fullName || '');
             localStorage.setItem('userEmail', userData.email || '');
@@ -42,17 +44,17 @@ const handleSubmit = useCallback(async (e) => {
                 localStorage.setItem('profilePic', userData.profilePic);
             }
 
-            // ✅ AuthContext එක Update කරනවා (මේක අනිවාර්යයි)
-            login(userData, userRole); 
+            // ✅ AuthContext එක Update කරනවා
+            // 🚨 3. අලුතින් එකතු කළා (login function එකට token එකත් යැවීම)
+            login(userData, userRole, token); 
 
-            // ✅ Redirect Logic එක
+            // ✅ Redirect Logic එක (ඔයා එවපු විදිහටමයි)
             const routes = {
                 'ADMIN': '/dashboard',
                 'CUSTOMER': '/user-dashboard',
                 'PARTNER': '/partner-dashboard'
             };
 
-            // අකුරු වල size එකේ ප්‍රශ්නයක් නොවෙන්න toUpperCase() කරනවා
             const targetPath = routes[userRole.toUpperCase()];
             
             if (targetPath) {
