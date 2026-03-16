@@ -31,24 +31,18 @@ const handleSubmit = useCallback(async (e) => {
             // ✅ Backend එකෙන් එන role එක හරියටම ගන්නවා
             const userRole = data.role; 
             const userData = data.user;
-            
-                        
-            localStorage.setItem('token', data.token); // 👈 මෙන්න මේක අනිවාර්යයෙන්ම දාන්න
 
+            // ✅ LocalStorage එකට එකින් එක දානවා
             localStorage.setItem('userRole', userRole);
             localStorage.setItem('userName', userData.fullName || '');
             localStorage.setItem('userEmail', userData.email || '');
-            if (userRole === 'PARTNER' && userData.coPartnerId) {
-            localStorage.setItem('coPartnerId', userData.coPartnerId);
-} else {
-    localStorage.removeItem('coPartnerId');
-}            
+            localStorage.setItem('coPartnerId', userData.coPartnerId || '');
+            
             if (userData.profilePic) {
                 localStorage.setItem('profilePic', userData.profilePic);
             }
 
-
-
+            // ✅ AuthContext එක Update කරනවා (මේක අනිවාර්යයි)
             login(userData, userRole); 
 
             // ✅ Redirect Logic එක
