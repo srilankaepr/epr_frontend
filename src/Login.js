@@ -4,6 +4,7 @@ import logo from './logo.png';
 import earthVideo from './assets/earth.mp4'; 
 import { useAuth } from './AuthContext';
 
+const API_BASE_URL = 'https://eprbackend-production.up.railway.app/api';
 const Login = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
