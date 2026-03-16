@@ -50,7 +50,7 @@ const [showNotifications, setShowNotifications] = useState(false);
 
 
 
-// Add Company registration function
+// --- 1. Add Company (Updated to API) ---
 const handleRegisterCompany = async () => {
     const nameUpper = qrcompanyName.trim().toUpperCase();
     const emailLower = qrcompanyEmail.trim().toLowerCase();
@@ -60,87 +60,63 @@ const handleRegisterCompany = async () => {
         return;
     }
 
-    const isDuplicate = companiesList.some(c => c.name.toUpperCase() === nameUpper);
-    if (isDuplicate) {
-        alert("This company name is already registered!");
+    try {
+        // fetch වෙනුවට API.post පාවිච්චි කරන්න
+        const response = await API.post('/add-company', { name: nameUpper, email: emailLower });
+
+        if (response.status === 200 || response.status === 201) {
+            alert("Company Registered Successfully!");
+            setQrCompanyName('');
+            setQrCompanyEmail('');
+            fetchCompanies(); 
+            fetchDashboardCounts(); // Count එකත් update කරන්න
+        }
+    } catch (err) {
+        console.error("Company registration failed:", err);
+        alert(err.response?.data?.error || "Registration failed.");
+    }
+};
+
+// --- 2. Delete Company (Updated to API) ---
+const deleteCompany = async (companyId) => {
+    if (!window.confirm("Are you sure?")) return;
+
+    try {
+        const response = await API.delete(`/delete-company/${companyId}`);
+        if (response.status === 200) {
+            alert("Company deleted!");
+            fetchCompanies();
+            fetchDashboardCounts();
+        }
+    } catch (err) {
+        console.error("Delete error:", err);
+        alert("Delete failed.");
+    }
+};
+
+// --- 3. Save Product (Updated to API) ---
+const handleSaveProduct = async () => {
+    if (!prodCategory || !prodBrand) {
+        alert("Please fill all fields!");
         return;
     }
 
     try {
-        const response = await fetch('https://eprbackend-production.up.railway.app/api/add-company', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ name: nameUpper, email: emailLower })
+        const response = await API.post('/add-product', {
+            category: prodCategory.trim().toUpperCase(),
+            brand: prodBrand.trim().toUpperCase()
         });
 
-        if (response.ok) {
-            alert("Company Registered Successfully!");
-            setQrCompanyName('');
-            setQrCompanyEmail('');
-            fetchCompanies();  // List refresh කරන්න
-        } else {
-            alert("Failed to register company.");
+        if (response.status === 200 || response.status === 201) {
+            alert("Product Added!");
+            setProdCategory('');
+            setProdBrand('');
+            fetchProducts();
+            fetchDashboardCounts();
         }
     } catch (err) {
-        console.error("Company registration failed:", err);
-        alert("Connection error with server.");
+        alert("Failed to add product.");
     }
-};
-
-const deleteCompany = async (companyId) => {
-  if (!window.confirm("Are you sure you want to delete this company? This action cannot be undone.")) {
-    return;
-  }
-
-  try {
-    const response = await fetch(`https://eprbackend-production.up.railway.app/api/delete-company/${companyId}`, {
-      method: 'DELETE',
-      headers: { 'Content-Type': 'application/json' }
-    });
-
-    if (response.ok) {
-      alert("Company deleted successfully!");
-      fetchCompanies(); // List refresh කරන්න
-    } else {
-      const errorData = await response.json();
-      alert("Failed to delete company: " + (errorData.message || "Unknown error"));
-    }
-  } catch (err) {
-    console.error("Delete company error:", err);
-    alert("Connection error with server. Please try again.");
-  }
-};
-
-
-
-const handleSaveProduct = async () => {
-  if (!prodCategory || !prodBrand) {
-    alert("Please fill Product Category and Brand!");
-    return;
-  }
-
-  try {
-    const response = await fetch('https://eprbackend-production.up.railway.app/api/add-product', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        category: prodCategory.trim().toUpperCase(),
-        brand: prodBrand.trim().toUpperCase()
-      })
-    });
-
-    if (response.ok) {
-      alert("Product Added Successfully!");
-      setProdCategory('');
-      setProdBrand('');
-      fetchProducts(); // Product list refresh කරන්න
-    } else {
-      alert("Failed to add product.");
-    }
-  } catch (err) {
-    console.error("Product save error:", err);
-    alert("Connection error with server.");
-  }
 };
 
 
