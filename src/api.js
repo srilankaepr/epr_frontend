@@ -1,8 +1,8 @@
 import axios from 'axios';
 
 const API = axios.create({
-    baseURL: 'https://eprbackend-production.up.railway.app/api',
-    withCredentials: true
+    baseURL: 'https://eprbackend-production.up.railway.app/api'
+    // withCredentials: true 👈 මේක මකන්න හෝ comment කරන්න
 });
 
 API.interceptors.request.use((config) => {
