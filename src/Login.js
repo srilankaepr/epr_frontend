@@ -31,6 +31,9 @@ const handleSubmit = useCallback(async (e) => {
             // ✅ Backend එකෙන් එන role එක හරියටම ගන්නවා
             const userRole = data.role; 
             const userData = data.user;
+            
+                        
+            localStorage.setItem('token', data.token); // 👈 මෙන්න මේක අනිවාර්යයෙන්ම දාන්න
 
             localStorage.setItem('userRole', userRole);
             localStorage.setItem('userName', userData.fullName || '');
@@ -44,7 +47,8 @@ const handleSubmit = useCallback(async (e) => {
                 localStorage.setItem('profilePic', userData.profilePic);
             }
 
-            // ✅ AuthContext එක Update කරනවා (මේක අනිවාර්යයි)
+
+
             login(userData, userRole); 
 
             // ✅ Redirect Logic එක
