@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import API from './api';
+import API from '../api'; // 👈 මෙන්න මේක අලුතින් දාන්න
 import { useNavigate } from 'react-router-dom';
 import JSZip from 'jszip';
 import { saveAs } from 'file-saver';
@@ -50,7 +50,7 @@ const [showNotifications, setShowNotifications] = useState(false);
 
 
 
-// --- 1. Add Company (Updated to API) ---
+// Add Company registration function
 const handleRegisterCompany = async () => {
     const nameUpper = qrcompanyName.trim().toUpperCase();
     const emailLower = qrcompanyEmail.trim().toLowerCase();
@@ -60,187 +60,241 @@ const handleRegisterCompany = async () => {
         return;
     }
 
-    try {
-        // fetch වෙනුවට API.post පාවිච්චි කරන්න
-        const response = await API.post('/add-company', { name: nameUpper, email: emailLower });
-
-        if (response.status === 200 || response.status === 201) {
-            alert("Company Registered Successfully!");
-            setQrCompanyName('');
-            setQrCompanyEmail('');
-            fetchCompanies(); 
-            fetchDashboardCounts(); // Count එකත් update කරන්න
-        }
-    } catch (err) {
-        console.error("Company registration failed:", err);
-        alert(err.response?.data?.error || "Registration failed.");
-    }
-};
-
-// --- 2. Delete Company (Updated to API) ---
-const deleteCompany = async (companyId) => {
-    if (!window.confirm("Are you sure?")) return;
-
-    try {
-        const response = await API.delete(`/delete-company/${companyId}`);
-        if (response.status === 200) {
-            alert("Company deleted!");
-            fetchCompanies();
-            fetchDashboardCounts();
-        }
-    } catch (err) {
-        console.error("Delete error:", err);
-        alert("Delete failed.");
-    }
-};
-
-// --- 3. Save Product (Updated to API) ---
-const handleSaveProduct = async () => {
-    if (!prodCategory || !prodBrand) {
-        alert("Please fill all fields!");
+    const isDuplicate = companiesList.some(c => c.name.toUpperCase() === nameUpper);
+    if (isDuplicate) {
+        alert("This company name is already registered!");
         return;
     }
 
     try {
-        const response = await API.post('/add-product', {
-            category: prodCategory.trim().toUpperCase(),
-            brand: prodBrand.trim().toUpperCase()
+        const response = await fetch('https://eprbackend-production.up.railway.app/api/add-company', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name: nameUpper, email: emailLower })
         });
 
-        if (response.status === 200 || response.status === 201) {
-            alert("Product Added!");
-            setProdCategory('');
-            setProdBrand('');
-            fetchProducts();
-            fetchDashboardCounts();
+        if (response.ok) {
+            alert("Company Registered Successfully!");
+            setQrCompanyName('');
+            setQrCompanyEmail('');
+            fetchCompanies();  // List refresh කරන්න
+        } else {
+            alert("Failed to register company.");
         }
     } catch (err) {
-        alert("Failed to add product.");
+        console.error("Company registration failed:", err);
+        alert("Connection error with server.");
+    }
+};
+
+const deleteCompany = async (companyId) => {
+  if (!window.confirm("Are you sure you want to delete this company? This action cannot be undone.")) {
+    return;
+  }
+
+  try {
+    const response = await fetch(`https://eprbackend-production.up.railway.app/api/delete-company/${companyId}`, {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' }
+    });
+
+    if (response.ok) {
+      alert("Company deleted successfully!");
+      fetchCompanies(); // List refresh කරන්න
+    } else {
+      const errorData = await response.json();
+      alert("Failed to delete company: " + (errorData.message || "Unknown error"));
+    }
+  } catch (err) {
+    console.error("Delete company error:", err);
+    alert("Connection error with server. Please try again.");
+  }
+};
+
+
+
+const handleSaveProduct = async () => {
+  if (!prodCategory || !prodBrand) {
+    alert("Please fill Product Category and Brand!");
+    return;
+  }
+
+  try {
+    const response = await fetch('https://eprbackend-production.up.railway.app/api/add-product', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        category: prodCategory.trim().toUpperCase(),
+        brand: prodBrand.trim().toUpperCase()
+      })
+    });
+
+    if (response.ok) {
+      alert("Product Added Successfully!");
+      setProdCategory('');
+      setProdBrand('');
+      fetchProducts(); // Product list refresh කරන්න
+    } else {
+      alert("Failed to add product.");
+    }
+  } catch (err) {
+    console.error("Product save error:", err);
+    alert("Connection error with server.");
+  }
+};
+
+
+
+
+
+
+    // Logout
+    const handleLogout = () => {
+        if (window.confirm("Are you sure you want to logout?")) {
+            localStorage.clear();
+            navigate('/');
+        }
+    };
+
+    // Data Fetching
+    const fetchCompanies = async () => {
+        try {
+            const response = await fetch('https://eprbackend-production.up.railway.app/api/get-companies');
+            const data = await response.json();
+            setCompaniesList(data);
+        } catch (err) {
+            console.error("Error fetching companies:", err);
+        }
+    };
+
+const fetchProducts = async () => {
+    try {
+        const response = await API.get('/get-products'); // මෙතන baseURL එක ඔටෝම වැටෙනවා
+        setProductList(response.data);
+    } catch (err) {
+        console.error("Error fetching products:", err);
     }
 };
 
 
- // Logout...................................................................................................................
-// --- 1. Logout Function (With Cookie Clear) ---
-    const handleLogout = async () => {
-        if (window.confirm("Are you sure you want to logout?")) {
-            try {
-                await API.post('/logout'); // Backend එකෙන් Cookie එක මකනවා
-                localStorage.clear();
-                navigate('/');
-            } catch (err) {
-                console.error("Logout failed:", err);
-                navigate('/'); 
-            }
-        }
-    };
-
-    // --- 2. Data Fetching (Using API for Security) ---
-    const fetchCompanies = async () => {
-        try {
-            const response = await API.get('/get-companies');
-            setCompaniesList(response.data);
-        } catch (err) {
-            console.error("Error fetching companies:", err);
-           // if (err.response?.status === 401) navigate('/'); 
-        }
-    };
-
-    const fetchProducts = async () => {
-        try {
-            const response = await API.get('/get-products');
-            setProductList(response.data);
-        } catch (err) {
-            console.error("Error fetching products:", err);
-        }
-    };
-
     const fetchRegisteredQRs = async () => {
         try {
-            const response = await API.get('/qr-registrations/all');
-            setRegisteredQRs(response.data);
+            const response = await fetch('https://eprbackend-production.up.railway.app/api/qr-registrations/all');
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+            const data = await response.json();
+            console.log("Registered QRs:", data);
+            setRegisteredQRs(data);
         } catch (err) {
             console.error("Error fetching registered QRs:", err);
         }
     };
 
-    const fetchRecycleRequests = async () => {
+   const fetchRecycleRequests = async () => {
         try {
-            const response = await API.get('/recycle-requests/all');
-            const data = response.data;
+            const response = await fetch('https://eprbackend-production.up.railway.app/api/recycle-requests/all');
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+            const data = await response.json();
+            
+            console.log("Recycle Requests:", data);
             setRecycleRequests(data);
 
+            // ✅ මේක තමයි අලුතින් එකතු කරන්න ඕනේ පියවර 2 ලොජික් එක
+            
+            // 1. Pending (තවමත් කලෙක්ට් කර නැති) ඒවා විතරක් පෙරලා ගන්නවා
             const pendingRequests = data.filter(req => req.status === 'Pending');
+
+            // 2. අලුත් ඒවා විතරක් Notification List එකට එකතු කරනවා
             pendingRequests.forEach(req => {
-                if (!notifications.some(n => n.requestId === req._id)) {
-                    setNotifications(prev => [
-                        {
+                const isAlreadyInList = notifications.some(n => n.requestId === req._id);
+                if (!isAlreadyInList) {
+                    setNotifications(prev => {
+                        // වැරදිලා හරි කලින් තිබුණොත් ආයේ දාන්නේ නැහැ (Duplicate වැළැක්වීමට)
+                        if (prev.some(p => p.requestId === req._id)) return prev;
+
+                        return [{
                             id: Date.now() + Math.random(),
                             requestId: req._id,
                             message: {
-                                name: req.cuName,
-                                product: req.cuProduct,
-                                date: new Date(req.requestedAt).toLocaleDateString()
+                              name: req.cuName,
+                  address: req.cuAddress || 'No Address Provided',
+                  phone: req.cuPhone || 'No Phone',
+                  product: req.cuProduct,
+                  date: new Date(req.requestedAt).toLocaleDateString(),
+                  time: new Date(req.requestedAt).toLocaleTimeString()
                             }
-                        }, ...prev
-                    ]);
+                        }, ...prev];
+                    });
                 }
             });
+
+
+
+            setNotifications(prev => prev.filter(n => 
+                pendingRequests.some(r => r._id === n.requestId)
+            ));
+
         } catch (err) {
             console.error("Error fetching recycle requests:", err);
         }
     };
 
-    const fetchDashboardCounts = async () => {
-        try {
-            const [comp, prod, recycle, regQR] = await Promise.all([
-                API.get('/get-companies'),
-                API.get('/get-products'),
-                API.get('/recycle-requests/all'),
-                API.get('/qr-registrations/all')
-            ]);
-
-            setCounts({
-                companies: comp.data.length || 0,
-                products: prod.data.length || 0,
-                recycleRequests: recycle.data.length || 0,
-                registeredQRs: regQR.data.length || 0,
-                qrCustomers: regQR.data.length || 0
-            });
-        } catch (err) {
-            console.error("Dashboard counts fetch failed:", err);
-        }
-    };
-
-    const deleteProduct = async (productId) => {
+const deleteProduct = async (productId) => {
         if (!window.confirm("මේ product එක delete කරන්නද? මේක undo කරන්න බැහැ!")) {
             return;
         }
 
         try {
-            // ✅ fetch වෙනුවට අපි හදපු API (Axios) එක පාවිච්චි කරනවා
-            const response = await API.delete(`/delete-product/${productId}`);
+            const response = await fetch(`https://eprbackend-production.up.railway.app/api/delete-product/${productId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    // ඔයාගේ admin token එක තියෙනවා නම් මෙතන දාන්න
+                    // 'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
+                }
+            });
 
-            // Axios වලදී සාර්ථක නම් status එක 200 එනවා
-            if (response.status === 200) {
+            const data = await response.json();
+
+            if (response.ok) {
                 alert("Product එක delete වුණා!");
-                
-                // State එකෙන් අදාළ product එක අයින් කරන්න (පිරිසිදු ක්‍රමය)
-                setProductList(prev => prev.filter(p => p._id !== productId));
-                
-                // Dashboard එකේ ගණන් (counts) අලුත් කරන්න
-                fetchDashboardCounts();
+                // Product list එකෙන් ඉවත් කරන්න (state update)
+                setProductList(productList.filter(p => p._id !== productId));
+            } else {
+                alert("Delete කරන්න බැරි වුණා: " + (data.error || "Unknown error"));
             }
         } catch (error) {
             console.error("Delete error:", error);
-            // Error එකක් ආවොත් ඒක පෙන්වනවා
-            const errorMsg = error.response?.data?.error || "Delete කරන්න බැරි වුණා!";
-            alert("Error: " + errorMsg);
+            alert("Error: " + error.message);
         }
     };
-//...........................................................................................................................
 
+const fetchDashboardCounts = async () => {
+  try {
+    const [compRes, prodRes, recycleRes, regQRRes] = await Promise.all([
+      fetch('https://eprbackend-production.up.railway.app/api/get-companies'),
+      fetch('https://eprbackend-production.up.railway.app/api/get-products'),
+      fetch('https://eprbackend-production.up.railway.app/api/recycle-requests/all'),
+      fetch('https://eprbackend-production.up.railway.app/api/qr-registrations/all')
+    ]);
 
+    const [compData, prodData, recycleData, regQRData] = await Promise.all([
+      compRes.json(),
+      prodRes.json(),
+      recycleRes.json(),
+      regQRRes.json()
+    ]);
+
+    setCounts({
+      companies: Array.isArray(compData) ? compData.length : 0,
+      products: Array.isArray(prodData) ? prodData.length : 0,
+      recycleRequests: Array.isArray(recycleData) ? recycleData.length : 0,
+      registeredQRs: Array.isArray(regQRData) ? regQRData.length : 0,
+      qrCustomers: Array.isArray(regQRData) ? regQRData.length : 0
+    });
+  } catch (err) {
+    console.error("Dashboard counts fetch failed:", err);
+  }
+};
     useEffect(() => {
         fetchCompanies();
         fetchProducts();
