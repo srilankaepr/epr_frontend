@@ -5,7 +5,6 @@ const API = axios.create({
     withCredentials: true
 });
 
-// 👈 මේ කෑල්ල අලුතින් දාන්න
 API.interceptors.request.use((config) => {
     const token = localStorage.getItem('token'); 
     if (token) {
