@@ -2,7 +2,8 @@ import axios from 'axios';
 
 // මුළු project එකටම එකම base URL එක මෙතන තියෙන්නේ
 const API = axios.create({
-    baseURL: 'https://eprbackend-production.up.railway.app/api'
+    baseURL: 'https://eprbackend-production.up.railway.app/api',
+    withCredentials: true
 });
 
 export default API;
