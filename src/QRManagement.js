@@ -142,7 +142,7 @@ const handleSaveProduct = async () => {
             setCompaniesList(response.data);
         } catch (err) {
             console.error("Error fetching companies:", err);
-            if (err.response?.status === 401) navigate('/'); 
+           // if (err.response?.status === 401) navigate('/'); 
         }
     };
 
