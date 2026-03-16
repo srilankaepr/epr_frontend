@@ -18,62 +18,44 @@ const handleSubmit = useCallback(async (e) => {
     e.preventDefault();
     setLoading(true);
 
+    // ✅ FormData පාවිච්චි කරලා input values ටික කෙලින්ම ගන්නවා
+    const formData = new FormData(e.currentTarget);
+    const loginEmail = formData.get('email');
+    const loginPassword = formData.get('password');
+
     try {
         const response = await fetch(`${API_BASE_URL}/login`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email, password }),
+            body: JSON.stringify({ 
+                email: loginEmail, 
+                password: loginPassword 
+            }),
         });
 
         const data = await response.json();
 
-  if (response.ok) {
-            // ✅ Backend එකෙන් එන role එක සහ Token එක ගන්නවා
-            const userRole = data.role; 
-            const userData = data.user;
-            const token = data.token; // 👈 1. අලුතින් එකතු කළා (Backend එකෙන් එන Token එක)
+        if (response.ok) {
+            login(data.user, data.role, data.token); 
 
-            // ✅ LocalStorage එකට එකින් එක දානවා
-            localStorage.setItem('accessToken', token); // 👈 2. අලුතින් එකතු කළා (Token එක save කිරීම)
-            localStorage.setItem('userRole', userRole);
-            localStorage.setItem('userName', userData.fullName || '');
-            localStorage.setItem('userEmail', userData.email || '');
-            localStorage.setItem('coPartnerId', userData.coPartnerId || '');
-            
-            if (userData.profilePic) {
-                localStorage.setItem('profilePic', userData.profilePic);
-            }
-
-            // ✅ AuthContext එක Update කරනවා
-            // 🚨 3. අලුතින් එකතු කළා (login function එකට token එකත් යැවීම)
-            login(userData, userRole, token); 
-
-            // ✅ Redirect Logic එක (ඔයා එවපු විදිහටමයි)
             const routes = {
                 'ADMIN': '/dashboard',
                 'CUSTOMER': '/user-dashboard',
                 'PARTNER': '/partner-dashboard'
             };
 
-            const targetPath = routes[userRole.toUpperCase()];
-            
-            if (targetPath) {
-                navigate(targetPath);
-            } else {
-                navigate('/');
-            }
-
+            const targetPath = routes[data.role.toUpperCase()];
+            navigate(targetPath || '/');
         } else {
             alert(`❌ ${data.error || "Login Failed"}`);
         }
     } catch (error) {
         console.error("Login error:", error);
-        alert("⚠️ Connection Error! Please try again.");
+        alert("⚠️ Connection Error!");
     } finally {
         setLoading(false); 
     }
-}, [email, password, navigate, login]);
-
+}, [navigate, login]); // ✅ දැන් මේ function එක හැදෙන්නේ navigate හෝ login වෙනස් වුණොත් විතරයි.
 //......................................................................................................................
     return (
         <div style={styles.container}>
@@ -333,7 +315,7 @@ const styles = {
         borderRadius: '12px', border: 'none',
         background: '#32c56f', color: '#fff',
         fontWeight: '900', fontSize: '15px', letterSpacing: '2px',
-        cursor: 'pointer', boxShadow: '0 10px 30px rgba(46, 204, 113, 0.4)', transition: '0.3s'
+        cursor: loading ? 'not-allowed' : 'pointer', opacity: loading ? 0.6 : 1, boxShadow: '0 10px 30px rgba(46, 204, 113, 0.4)', transition: '0.3s'
     },
     footer: { marginTop: '30px', textAlign: 'center', borderTop: '1px solid rgba(248, 243, 243, 0.05)', paddingTop: '20px' },
     signupText: { fontSize: '19px', color: '#aaa', marginBottom: '15px' },
