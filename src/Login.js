@@ -32,12 +32,14 @@ const handleSubmit = useCallback(async (e) => {
             const userRole = data.role; 
             const userData = data.user;
 
-            // ✅ LocalStorage එකට එකින් එක දානවා
             localStorage.setItem('userRole', userRole);
             localStorage.setItem('userName', userData.fullName || '');
             localStorage.setItem('userEmail', userData.email || '');
-            localStorage.setItem('coPartnerId', userData.coPartnerId || '');
-            
+            if (userRole === 'PARTNER' && userData.coPartnerId) {
+            localStorage.setItem('coPartnerId', userData.coPartnerId);
+} else {
+    localStorage.removeItem('coPartnerId');
+}            
             if (userData.profilePic) {
                 localStorage.setItem('profilePic', userData.profilePic);
             }
