@@ -7,22 +7,26 @@ export const AuthProvider = ({ children }) => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        // පේජ් එක Refresh කරද්දී LocalStorage එකේ තියෙන Token එක බලනවා
-        const token = localStorage.getItem('token');
+        // පේජ් එක Refresh කරද්දී දත්ත ටික නැවත ගන්නවා
         const role = localStorage.getItem('userRole');
         const name = localStorage.getItem('userName');
+        const email = localStorage.getItem('userEmail');
 
-        if (token && role) {
-            setUser({ role, name, token });
+        if (role) {
+            setUser({ role, name, email });
         }
         setLoading(false);
     }, []);
 
-    const login = (userData) => {
-        setUser(userData);
-        localStorage.setItem('token', userData.token);
-        localStorage.setItem('userRole', userData.role);
-        localStorage.setItem('userName', userData.name);
+    // ✅ මෙතන පරාමිතීන් දෙකක් ගන්න විදිහට හැදුවා
+    const login = (userData, role) => {
+        setUser({ ...userData, role }); // State එකට දානවා
+        
+        // LocalStorage එකටත් දානවා (ProtectedRoute එකට පේන්න)
+        localStorage.setItem('userRole', role);
+        localStorage.setItem('userName', userData.fullName || userData.name || '');
+        localStorage.setItem('userEmail', userData.email || '');
+        if(userData.coPartnerId) localStorage.setItem('coPartnerId', userData.coPartnerId);
     };
 
     const logout = () => {
@@ -32,8 +36,8 @@ export const AuthProvider = ({ children }) => {
     };
 
     return (
-        <AuthContext.Provider value={{ user, login, logout, loading }}>
-            {!loading && children}
+        <AuthContext.Provider value={{ user, role: user?.role, login, logout, loading }}>
+            {children}
         </AuthContext.Provider>
     );
 };
