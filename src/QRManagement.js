@@ -235,6 +235,33 @@ const handleSaveProduct = async () => {
             console.error("Dashboard counts fetch failed:", err);
         }
     };
+
+    const deleteProduct = async (productId) => {
+        if (!window.confirm("මේ product එක delete කරන්නද? මේක undo කරන්න බැහැ!")) {
+            return;
+        }
+
+        try {
+            // ✅ fetch වෙනුවට අපි හදපු API (Axios) එක පාවිච්චි කරනවා
+            const response = await API.delete(`/delete-product/${productId}`);
+
+            // Axios වලදී සාර්ථක නම් status එක 200 එනවා
+            if (response.status === 200) {
+                alert("Product එක delete වුණා!");
+                
+                // State එකෙන් අදාළ product එක අයින් කරන්න (පිරිසිදු ක්‍රමය)
+                setProductList(prev => prev.filter(p => p._id !== productId));
+                
+                // Dashboard එකේ ගණන් (counts) අලුත් කරන්න
+                fetchDashboardCounts();
+            }
+        } catch (error) {
+            console.error("Delete error:", error);
+            // Error එකක් ආවොත් ඒක පෙන්වනවා
+            const errorMsg = error.response?.data?.error || "Delete කරන්න බැරි වුණා!";
+            alert("Error: " + errorMsg);
+        }
+    };
 //...........................................................................................................................
 
 
