@@ -144,157 +144,100 @@ const handleSaveProduct = async () => {
 };
 
 
-
-
-
-
-    // Logout
-    const handleLogout = () => {
+ // Logout...................................................................................................................
+// --- 1. Logout Function (With Cookie Clear) ---
+    const handleLogout = async () => {
         if (window.confirm("Are you sure you want to logout?")) {
-            localStorage.clear();
-            navigate('/');
+            try {
+                await API.post('/logout'); // Backend එකෙන් Cookie එක මකනවා
+                localStorage.clear();
+                navigate('/');
+            } catch (err) {
+                console.error("Logout failed:", err);
+                navigate('/'); 
+            }
         }
     };
 
-    // Data Fetching
+    // --- 2. Data Fetching (Using API for Security) ---
     const fetchCompanies = async () => {
         try {
-            const response = await fetch('https://eprbackend-production.up.railway.app/api/get-companies');
-            const data = await response.json();
-            setCompaniesList(data);
+            const response = await API.get('/get-companies');
+            setCompaniesList(response.data);
         } catch (err) {
             console.error("Error fetching companies:", err);
+            if (err.response?.status === 401) navigate('/'); 
         }
     };
 
-const fetchProducts = async () => {
-    try {
-        const response = await API.get('/get-products'); // මෙතන baseURL එක ඔටෝම වැටෙනවා
-        setProductList(response.data);
-    } catch (err) {
-        console.error("Error fetching products:", err);
-    }
-};
-
+    const fetchProducts = async () => {
+        try {
+            const response = await API.get('/get-products');
+            setProductList(response.data);
+        } catch (err) {
+            console.error("Error fetching products:", err);
+        }
+    };
 
     const fetchRegisteredQRs = async () => {
         try {
-            const response = await fetch('https://eprbackend-production.up.railway.app/api/qr-registrations/all');
-            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-            const data = await response.json();
-            console.log("Registered QRs:", data);
-            setRegisteredQRs(data);
+            const response = await API.get('/qr-registrations/all');
+            setRegisteredQRs(response.data);
         } catch (err) {
             console.error("Error fetching registered QRs:", err);
         }
     };
 
-   const fetchRecycleRequests = async () => {
+    const fetchRecycleRequests = async () => {
         try {
-            const response = await fetch('https://eprbackend-production.up.railway.app/api/recycle-requests/all');
-            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-            const data = await response.json();
-            
-            console.log("Recycle Requests:", data);
+            const response = await API.get('/recycle-requests/all');
+            const data = response.data;
             setRecycleRequests(data);
 
-            // ✅ මේක තමයි අලුතින් එකතු කරන්න ඕනේ පියවර 2 ලොජික් එක
-            
-            // 1. Pending (තවමත් කලෙක්ට් කර නැති) ඒවා විතරක් පෙරලා ගන්නවා
             const pendingRequests = data.filter(req => req.status === 'Pending');
-
-            // 2. අලුත් ඒවා විතරක් Notification List එකට එකතු කරනවා
             pendingRequests.forEach(req => {
-                const isAlreadyInList = notifications.some(n => n.requestId === req._id);
-                if (!isAlreadyInList) {
-                    setNotifications(prev => {
-                        // වැරදිලා හරි කලින් තිබුණොත් ආයේ දාන්නේ නැහැ (Duplicate වැළැක්වීමට)
-                        if (prev.some(p => p.requestId === req._id)) return prev;
-
-                        return [{
+                if (!notifications.some(n => n.requestId === req._id)) {
+                    setNotifications(prev => [
+                        {
                             id: Date.now() + Math.random(),
                             requestId: req._id,
                             message: {
-                              name: req.cuName,
-                  address: req.cuAddress || 'No Address Provided',
-                  phone: req.cuPhone || 'No Phone',
-                  product: req.cuProduct,
-                  date: new Date(req.requestedAt).toLocaleDateString(),
-                  time: new Date(req.requestedAt).toLocaleTimeString()
+                                name: req.cuName,
+                                product: req.cuProduct,
+                                date: new Date(req.requestedAt).toLocaleDateString()
                             }
-                        }, ...prev];
-                    });
+                        }, ...prev
+                    ]);
                 }
             });
-
-
-
-            setNotifications(prev => prev.filter(n => 
-                pendingRequests.some(r => r._id === n.requestId)
-            ));
-
         } catch (err) {
             console.error("Error fetching recycle requests:", err);
         }
     };
 
-const deleteProduct = async (productId) => {
-        if (!window.confirm("මේ product එක delete කරන්නද? මේක undo කරන්න බැහැ!")) {
-            return;
-        }
-
+    const fetchDashboardCounts = async () => {
         try {
-            const response = await fetch(`https://eprbackend-production.up.railway.app/api/delete-product/${productId}`, {
-                method: 'DELETE',
-                headers: {
-                    'Content-Type': 'application/json',
-                    // ඔයාගේ admin token එක තියෙනවා නම් මෙතන දාන්න
-                    // 'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
-                }
+            const [comp, prod, recycle, regQR] = await Promise.all([
+                API.get('/get-companies'),
+                API.get('/get-products'),
+                API.get('/recycle-requests/all'),
+                API.get('/qr-registrations/all')
+            ]);
+
+            setCounts({
+                companies: comp.data.length || 0,
+                products: prod.data.length || 0,
+                recycleRequests: recycle.data.length || 0,
+                registeredQRs: regQR.data.length || 0,
+                qrCustomers: regQR.data.length || 0
             });
-
-            const data = await response.json();
-
-            if (response.ok) {
-                alert("Product එක delete වුණා!");
-                // Product list එකෙන් ඉවත් කරන්න (state update)
-                setProductList(productList.filter(p => p._id !== productId));
-            } else {
-                alert("Delete කරන්න බැරි වුණා: " + (data.error || "Unknown error"));
-            }
-        } catch (error) {
-            console.error("Delete error:", error);
-            alert("Error: " + error.message);
+        } catch (err) {
+            console.error("Dashboard counts fetch failed:", err);
         }
     };
+//...........................................................................................................................
 
-const fetchDashboardCounts = async () => {
-  try {
-    const [compRes, prodRes, recycleRes, regQRRes] = await Promise.all([
-      fetch('https://eprbackend-production.up.railway.app/api/get-companies'),
-      fetch('https://eprbackend-production.up.railway.app/api/get-products'),
-      fetch('https://eprbackend-production.up.railway.app/api/recycle-requests/all'),
-      fetch('https://eprbackend-production.up.railway.app/api/qr-registrations/all')
-    ]);
 
-    const [compData, prodData, recycleData, regQRData] = await Promise.all([
-      compRes.json(),
-      prodRes.json(),
-      recycleRes.json(),
-      regQRRes.json()
-    ]);
-
-    setCounts({
-      companies: Array.isArray(compData) ? compData.length : 0,
-      products: Array.isArray(prodData) ? prodData.length : 0,
-      recycleRequests: Array.isArray(recycleData) ? recycleData.length : 0,
-      registeredQRs: Array.isArray(regQRData) ? regQRData.length : 0,
-      qrCustomers: Array.isArray(regQRData) ? regQRData.length : 0
-    });
-  } catch (err) {
-    console.error("Dashboard counts fetch failed:", err);
-  }
-};
     useEffect(() => {
         fetchCompanies();
         fetchProducts();
