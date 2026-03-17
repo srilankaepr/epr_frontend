@@ -11,7 +11,7 @@ const RegisterCustomer = () => {
     const initialRole = location.state?.selectedRole || '';
 
     const [formData, setFormData] = useState({
-        orgRole: initialRole === 'PIBO_HOLDER' ? '' : initialRole,
+        orgRole: initialRole === 'RECYCLER' ? 'Recycler' : '',
         companyName: '', 
         companyWebsite: '', 
         phone: '', whatsapp: '', officialEmail: '',
@@ -84,10 +84,11 @@ const RegisterCustomer = () => {
                 <form onSubmit={handleSubmit} style={styles.form}>
                     
                     <h3 style={styles.sectionHeader}>1. Organization Details</h3>
-                     <div style={styles.inputWrapper}>
+                    <div style={styles.inputWrapper}>
     <label style={styles.label}>ORGANIZATION ROLE</label>
     
     {initialRole === 'RECYCLER' ? (
+        /* ✅ Supply Chain හරහා ආවොත් මේක විතරයි පේන්නේ. වෙන මුකුත් කරන්න බැහැ */
         <div style={{
             ...styles.input, 
             color: '#f39c12', 
@@ -98,12 +99,13 @@ const RegisterCustomer = () => {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            gap: '10px',
-            letterSpacing: '1px'
+            gap: '12px',
+            cursor: 'not-allowed' // මේක වෙනස් කරන්න බෑ කියන්න මවුස් එක වෙනස් කරනවා
         }}>
-            <span style={{fontSize: '20px'}}>♻️</span> RECYCLER
+            <span style={{fontSize: '22px'}}>♻️</span> RECYCLER
         </div>
     ) : (
+        /* ✅ PIBO හරහා ආවොත් විතරක් මේ කාඩ් 3 පේනවා */
         <div style={{ display: 'flex', gap: '12px', marginTop: '10px', flexWrap: 'wrap' }}>
             {[
                 { label: 'PRODUCER', value: 'Producer', icon: '🏭' },
@@ -120,21 +122,10 @@ const RegisterCustomer = () => {
                         textAlign: 'center', 
                         cursor: 'pointer',
                         transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                        
-                        // ✅ තෝරාගත් විට පෙනුම
-                        background: formData.orgRole === r.value 
-                            ? 'rgba(52, 152, 219, 0.15)' 
-                            : 'rgba(255, 255, 255, 0.03)',
-                        
-                        border: formData.orgRole === r.value 
-                            ? '2px solid #3498db' 
-                            : '1px solid rgba(255, 255, 255, 0.1)',
-                        
-                        boxShadow: formData.orgRole === r.value 
-                            ? '0 10px 20px rgba(52, 152, 219, 0.2)' 
-                            : 'none',
-
-                        transform: formData.orgRole === r.value ? 'scale(1.02)' : 'scale(1)'
+                        background: formData.orgRole === r.value ? 'rgba(52, 152, 219, 0.15)' : 'rgba(255, 255, 255, 0.03)',
+                        border: formData.orgRole === r.value ? '2px solid #3498db' : '1px solid rgba(255, 255, 255, 0.1)',
+                        transform: formData.orgRole === r.value ? 'scale(1.03)' : 'scale(1)',
+                        boxShadow: formData.orgRole === r.value ? '0 10px 25px rgba(52, 152, 219, 0.2)' : 'none'
                     }}
                 >
                     <div style={{ 
