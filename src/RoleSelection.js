@@ -66,6 +66,33 @@ const RoleSelection = () => {
                         <h3 style={styles.roleNameCustomer}>PIBO</h3>
                         <p style={styles.roleDesc}>Operational Access & Services</p>
                     </div>
+
+
+   <div 
+                        style={styles.roleCard} 
+                        onClick={() => navigate('/register-customer')}
+                        onMouseEnter={(e) => {
+                            e.currentTarget.style.transform = 'translateY(-10px)';
+                            e.currentTarget.style.background = 'rgba(52, 152, 219, 0.15)';
+                            e.currentTarget.style.borderColor = '#3498db';
+                        }}
+                        onMouseLeave={(e) => {
+                            e.currentTarget.style.transform = 'translateY(0)';
+                            e.currentTarget.style.background = 'rgba(255, 255, 255, 0.03)';
+                            e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.1)';
+                        }}
+                    >
+                        <div style={styles.iconWrapper}>👤</div>
+                        <h3 style={styles.roleNameCustomer}>PIBO</h3>
+                        <p style={styles.roleDesc}>Operational Access & Services</p>
+                    </div>
+
+
+
+
+
+
+
                 </div>
 
                 <div style={styles.footer}>
