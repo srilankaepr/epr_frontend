@@ -84,9 +84,7 @@ const RegisterCustomer = () => {
                 <form onSubmit={handleSubmit} style={styles.form}>
                     
                     <h3 style={styles.sectionHeader}>1. Organization Details</h3>
-                    <div style={styles.inputWrapper}>
-                        <label style={styles.label}>ORGANIZATION ROLE</label>
-                      <div style={styles.inputWrapper}>
+                     <div style={styles.inputWrapper}>
     <label style={styles.label}>ORGANIZATION ROLE</label>
     
     {initialRole === 'RECYCLER' ? (
@@ -159,7 +157,7 @@ const RegisterCustomer = () => {
         </div>
     )}
 </div>
-                    </div>
+                    
 
                     <div style={styles.inputWrapper}>
                         <label style={styles.label}>COMPANY NAME</label>
