@@ -8,8 +8,8 @@ const RoleSelection = () => {
 
 const roles = [
     { name: 'ADMIN', icon: '🛡️', desc: 'System Governance & Oversight', color: '#2ecc71', bg: 'rgba(46, 204, 113, 0.15)', path: '/register-admin', roleType: 'admin' },
-    { name: 'PIBO', icon: '👤', desc: 'Operational Access & Services', color: '#3498db', bg: 'rgba(52, 152, 219, 0.15)', path: '/register-customer', roleType: 'pibo_parent' }, // PIBO වලට parent tag එකක් දෙනවා
-    { name: 'SUPPLY CHAIN', icon: '🚚', desc: 'Logistics & Material Tracking', color: '#f39c12', bg: 'rgba(243, 156, 18, 0.15)', path: '/register-customer', roleType: 'recycler' } // කෙලින්ම recycler යනවා
+    { name: 'PIBO', icon: '👤', desc: 'Operational Access & Services', color: '#3498db', bg: 'rgba(52, 152, 219, 0.15)', path: '/register-customer', roleType: 'pibo_parent' }, 
+    { name: 'SUPPLY CHAIN', icon: '🚚', desc: 'Logistics & Material Tracking', color: '#f39c12', bg: 'rgba(243, 156, 18, 0.15)', path: '/register-customer', roleType: 'RECYCLER' } 
 ];
 
 
