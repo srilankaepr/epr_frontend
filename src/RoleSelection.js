@@ -7,6 +7,12 @@ import earthVideo from './assets/earth.mp4';
 const RoleSelection = () => {
     const navigate = useNavigate();
 
+const roles = [
+    { name: 'ADMIN', icon: '🛡️', desc: 'System Governance & Oversight', color: '#2ecc71', bg: 'rgba(46, 204, 113, 0.15)', path: '/register-admin', style: styles.roleNameAdmin },
+    { name: 'PIBO', icon: '👤', desc: 'Operational Access & Services', color: '#3498db', bg: 'rgba(52, 152, 219, 0.15)', path: '/register-customer', style: styles.roleNameCustomer },
+    { name: 'SUPPLY CHAIN', icon: '🚚', desc: 'Logistics & Material Tracking', color: '#f39c12', bg: 'rgba(243, 156, 18, 0.15)', path: null, style: styles.roleNameCustomer }
+];
+
     return (
         <div style={styles.container}>
             {/* --- Background Video --- */}
@@ -26,69 +32,29 @@ const RoleSelection = () => {
                     <p style={styles.subText}>SELECT AUTHORIZATION LEVEL</p>
                 </div>
 
-                <div style={styles.buttonContainer}>
-                    {/* Admin Role Card */}
-                    <div 
-                        style={styles.roleCard} 
-                        onClick={() => navigate('/register-admin')}
-                        onMouseEnter={(e) => {
-                            e.currentTarget.style.transform = 'translateY(-10px)';
-                            e.currentTarget.style.background = 'rgba(46, 204, 113, 0.15)';
-                            e.currentTarget.style.borderColor = '#2ecc71';
-                        }}
-                        onMouseLeave={(e) => {
-                            e.currentTarget.style.transform = 'translateY(0)';
-                            e.currentTarget.style.background = 'rgba(255, 255, 255, 0.03)';
-                            e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.1)';
-                        }}
-                    >
-                        <div style={styles.iconWrapper}>🛡️</div>
-                        <h3 style={styles.roleNameAdmin}>ADMIN</h3>
-                        <p style={styles.roleDesc}>System Governance & Oversight</p>
-                    </div>
-
-                    {/* PIBO Card */}
-                    <div 
-                        style={styles.roleCard} 
-                        onClick={() => navigate('/register-customer')}
-                        onMouseEnter={(e) => {
-                            e.currentTarget.style.transform = 'translateY(-10px)';
-                            e.currentTarget.style.background = 'rgba(52, 152, 219, 0.15)';
-                            e.currentTarget.style.borderColor = '#3498db';
-                        }}
-                        onMouseLeave={(e) => {
-                            e.currentTarget.style.transform = 'translateY(0)';
-                            e.currentTarget.style.background = 'rgba(255, 255, 255, 0.03)';
-                            e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.1)';
-                        }}
-                    >
-                        <div style={styles.iconWrapper}>👤</div>
-                        <h3 style={styles.roleNameCustomer}>PIBO</h3>
-                        <p style={styles.roleDesc}>Operational Access & Services</p>
-                    </div>
-
-{/* Supply Chain Card */}
-<div 
-    style={styles.roleCard} 
-    onClick={() => alert('Supply Chain Registration coming soon!')} // දැනට navigate වෙන්නේ නැති නිසා alert එකක් දැම්මා
-    onMouseEnter={(e) => {
-        e.currentTarget.style.transform = 'translateY(-10px)';
-        e.currentTarget.style.background = 'rgba(243, 156, 18, 0.15)'; // Orange/Gold tint
-        e.currentTarget.style.borderColor = '#f39c12';
-    }}
-    onMouseLeave={(e) => {
-        e.currentTarget.style.transform = 'translateY(0)';
-        e.currentTarget.style.background = 'rgba(255, 255, 255, 0.03)';
-        e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.1)';
-    }}
->
-    <div style={styles.iconWrapper}>🚚</div>
-    <h3 style={{...styles.roleNameCustomer, color: '#f39c12'}}>SUPPLY CHAIN</h3>
-    <p style={styles.roleDesc}>Logistics & Material Tracking</p>
+               <div style={styles.buttonContainer}>
+    {roles.map((role) => (
+        <div 
+            key={role.name}
+            style={styles.roleCard} 
+            onClick={() => role.path ? navigate(role.path) : alert(`${role.name} Registration coming soon!`)}
+            onMouseEnter={(e) => {
+                e.currentTarget.style.transform = 'translateY(-10px)';
+                e.currentTarget.style.background = role.bg;
+                e.currentTarget.style.borderColor = role.color;
+            }}
+            onMouseLeave={(e) => {
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.03)';
+                e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.1)';
+            }}
+        >
+            <div style={styles.iconWrapper}>{role.icon}</div>
+            <h3 style={{...role.style, color: role.color}}>{role.name}</h3>
+            <p style={styles.roleDesc}>{role.desc}</p>
+        </div>
+    ))}
 </div>
-
-
-                </div>
 
                 <div style={styles.footer}>
                     <p style={styles.footerText}>
