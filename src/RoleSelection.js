@@ -63,7 +63,7 @@ const RoleSelection = () => {
                         }}
                     >
                         <div style={styles.iconWrapper}>👤</div>
-                        <h3 style={styles.roleNameCustomer}>USER</h3>
+                        <h3 style={styles.roleNameCustomer}>PIBO</h3>
                         <p style={styles.roleDesc}>Operational Access & Services</p>
                     </div>
                 </div>
