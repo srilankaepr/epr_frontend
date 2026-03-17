@@ -47,7 +47,7 @@ const RoleSelection = () => {
                         <p style={styles.roleDesc}>System Governance & Oversight</p>
                     </div>
 
-                    {/* Customer Role Card */}
+                    {/* PIBO Card */}
                     <div 
                         style={styles.roleCard} 
                         onClick={() => navigate('/register-customer')}
@@ -67,30 +67,25 @@ const RoleSelection = () => {
                         <p style={styles.roleDesc}>Operational Access & Services</p>
                     </div>
 
-
-   <div 
-                        style={styles.roleCard} 
-                        onClick={() => navigate('/register-customer')}
-                        onMouseEnter={(e) => {
-                            e.currentTarget.style.transform = 'translateY(-10px)';
-                            e.currentTarget.style.background = 'rgba(52, 152, 219, 0.15)';
-                            e.currentTarget.style.borderColor = '#3498db';
-                        }}
-                        onMouseLeave={(e) => {
-                            e.currentTarget.style.transform = 'translateY(0)';
-                            e.currentTarget.style.background = 'rgba(255, 255, 255, 0.03)';
-                            e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.1)';
-                        }}
-                    >
-                        <div style={styles.iconWrapper}>👤</div>
-                        <h3 style={styles.roleNameCustomer}>PIBO</h3>
-                        <p style={styles.roleDesc}>Operational Access & Services</p>
-                    </div>
-
-
-
-
-
+{/* Supply Chain Card */}
+<div 
+    style={styles.roleCard} 
+    onClick={() => alert('Supply Chain Registration coming soon!')} // දැනට navigate වෙන්නේ නැති නිසා alert එකක් දැම්මා
+    onMouseEnter={(e) => {
+        e.currentTarget.style.transform = 'translateY(-10px)';
+        e.currentTarget.style.background = 'rgba(243, 156, 18, 0.15)'; // Orange/Gold tint
+        e.currentTarget.style.borderColor = '#f39c12';
+    }}
+    onMouseLeave={(e) => {
+        e.currentTarget.style.transform = 'translateY(0)';
+        e.currentTarget.style.background = 'rgba(255, 255, 255, 0.03)';
+        e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.1)';
+    }}
+>
+    <div style={styles.iconWrapper}>🚚</div>
+    <h3 style={{...styles.roleNameCustomer, color: '#f39c12'}}>SUPPLY CHAIN</h3>
+    <p style={styles.roleDesc}>Logistics & Material Tracking</p>
+</div>
 
 
                 </div>
@@ -156,9 +151,13 @@ const styles = {
     logoImg: { width: '80%' },
     title: { fontSize: '28px', fontWeight: '900', letterSpacing: '5px', color: '#fff', margin: '0' },
     subText: { fontSize: '12px', color: '#2ecc71', marginTop: '10px', fontWeight: 'bold', letterSpacing: '2px' },
-    buttonContainer: { 
-        display: 'flex', justifyContent: 'center', gap: '25px', flexWrap: 'wrap' 
-    },
+   buttonContainer: {
+    display: 'flex',
+    gap: '20px',
+    justifyContent: 'center',
+    flexWrap: 'wrap', 
+    marginTop: '20px'
+},
     roleCard: { 
         flex: '1 1 240px', maxWidth: '280px',
         background: 'rgba(255, 255, 255, 0.03)',
