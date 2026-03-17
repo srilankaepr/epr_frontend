@@ -1,17 +1,17 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import logo from './logo.png';
-// Login එකේ පාවිච්චි කරපු වීඩියෝ එකම මෙතනටත් ගන්න
 import earthVideo from './assets/earth.mp4'; 
 
 const RoleSelection = () => {
     const navigate = useNavigate();
 
 const roles = [
-    { name: 'ADMIN', icon: '🛡️', desc: 'System Governance & Oversight', color: '#2ecc71', bg: 'rgba(46, 204, 113, 0.15)', path: '/register-admin', style: styles.roleNameAdmin },
-    { name: 'PIBO', icon: '👤', desc: 'Operational Access & Services', color: '#3498db', bg: 'rgba(52, 152, 219, 0.15)', path: '/register-customer', style: styles.roleNameCustomer },
-    { name: 'SUPPLY CHAIN', icon: '🚚', desc: 'Logistics & Material Tracking', color: '#f39c12', bg: 'rgba(243, 156, 18, 0.15)', path: null, style: styles.roleNameCustomer }
+    { name: 'ADMIN', icon: '🛡️', desc: 'System Governance & Oversight', color: '#2ecc71', bg: 'rgba(46, 204, 113, 0.15)', path: '/register-admin', roleType: 'admin' },
+    { name: 'PIBO', icon: '👤', desc: 'Operational Access & Services', color: '#3498db', bg: 'rgba(52, 152, 219, 0.15)', path: '/register-customer', roleType: 'pibo_parent' }, // PIBO වලට parent tag එකක් දෙනවා
+    { name: 'SUPPLY CHAIN', icon: '🚚', desc: 'Logistics & Material Tracking', color: '#f39c12', bg: 'rgba(243, 156, 18, 0.15)', path: '/register-customer', roleType: 'recycler' } // කෙලින්ම recycler යනවා
 ];
+
 
     return (
         <div style={styles.container}>
@@ -32,12 +32,13 @@ const roles = [
                     <p style={styles.subText}>SELECT AUTHORIZATION LEVEL</p>
                 </div>
 
+{/* 3 of cards */}
                <div style={styles.buttonContainer}>
     {roles.map((role) => (
         <div 
             key={role.name}
             style={styles.roleCard} 
-            onClick={() => role.path ? navigate(role.path) : alert(`${role.name} Registration coming soon!`)}
+onClick={() => role.path ? navigate(role.path, { state: { selectedRole: role.roleType } }) : alert(`${role.name} Registration coming soon!`)}
             onMouseEnter={(e) => {
                 e.currentTarget.style.transform = 'translateY(-10px)';
                 e.currentTarget.style.background = role.bg;

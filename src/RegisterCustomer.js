@@ -1,13 +1,17 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios'; 
 import logo from './logo.png';
 import earthVideo from './assets/earth.mp4'; 
 
 const RegisterCustomer = () => {
+    const location = useLocation(); 
     const navigate = useNavigate();
+    
+    const initialRole = location.state?.selectedRole || '';
+
     const [formData, setFormData] = useState({
-        orgRole: '', 
+        orgRole: initialRole === 'PIBO_HOLDER' ? '' : initialRole,
         companyName: '', 
         companyWebsite: '', 
         phone: '', whatsapp: '', officialEmail: '',
@@ -82,22 +86,79 @@ const RegisterCustomer = () => {
                     <h3 style={styles.sectionHeader}>1. Organization Details</h3>
                     <div style={styles.inputWrapper}>
                         <label style={styles.label}>ORGANIZATION ROLE</label>
-                        <select 
-                            name="orgRole" 
-                            style={styles.selectInput} 
-                            onChange={handleChange} 
-                            required
-                        >
-                            <option value="" style={styles.selectOption}>Select Role</option>
-                            <option value="Brand Owner" style={styles.selectOption}>Brand Owner</option>
-                            <option value="Importer" style={styles.selectOption}>Importer</option>
-                            <option value="Producer" style={styles.selectOption}>Producer</option>
-                            <option value="Manufacturer" style={styles.selectOption}>Manufacturer</option>
-                            <option value="Recycler" style={styles.selectOption}>Recycler</option>
-                            <option value="Collector" style={styles.selectOption}>Collector</option>
-                            <option value="Distributer" style={styles.selectOption}>Distributer</option>
-                            <option value="Other" style={styles.selectOption}>Other</option>
-                        </select>
+                      <div style={styles.inputWrapper}>
+    <label style={styles.label}>ORGANIZATION ROLE</label>
+    
+    {initialRole === 'RECYCLER' ? (
+        <div style={{
+            ...styles.input, 
+            color: '#f39c12', 
+            fontWeight: '900', 
+            textAlign: 'center', 
+            border: '2px solid #f39c12',
+            background: 'rgba(243, 156, 18, 0.1)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '10px',
+            letterSpacing: '1px'
+        }}>
+            <span style={{fontSize: '20px'}}>♻️</span> RECYCLER
+        </div>
+    ) : (
+        <div style={{ display: 'flex', gap: '12px', marginTop: '10px', flexWrap: 'wrap' }}>
+            {[
+                { label: 'PRODUCER', value: 'Producer', icon: '🏭' },
+                { label: 'IMPORTER', value: 'Importer', icon: '🚢' },
+                { label: 'BRAND OWNER', value: 'Brand Owner', icon: '🏷️' }
+            ].map((r) => (
+                <div 
+                    key={r.value}
+                    onClick={() => setFormData({ ...formData, orgRole: r.value })}
+                    style={{
+                        flex: '1 1 120px', 
+                        padding: '15px 10px', 
+                        borderRadius: '15px', 
+                        textAlign: 'center', 
+                        cursor: 'pointer',
+                        transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                        
+                        // ✅ තෝරාගත් විට පෙනුම
+                        background: formData.orgRole === r.value 
+                            ? 'rgba(52, 152, 219, 0.15)' 
+                            : 'rgba(255, 255, 255, 0.03)',
+                        
+                        border: formData.orgRole === r.value 
+                            ? '2px solid #3498db' 
+                            : '1px solid rgba(255, 255, 255, 0.1)',
+                        
+                        boxShadow: formData.orgRole === r.value 
+                            ? '0 10px 20px rgba(52, 152, 219, 0.2)' 
+                            : 'none',
+
+                        transform: formData.orgRole === r.value ? 'scale(1.02)' : 'scale(1)'
+                    }}
+                >
+                    <div style={{ 
+                        fontSize: '24px', 
+                        marginBottom: '8px',
+                        filter: formData.orgRole === r.value ? 'none' : 'grayscale(100%) opacity(0.5)'
+                    }}>
+                        {r.icon}
+                    </div>
+                    <div style={{ 
+                        fontSize: '10px', 
+                        fontWeight: '900', 
+                        letterSpacing: '1px',
+                        color: formData.orgRole === r.value ? '#3498db' : '#888'
+                    }}>
+                        {r.label}
+                    </div>
+                </div>
+            ))}
+        </div>
+    )}
+</div>
                     </div>
 
                     <div style={styles.inputWrapper}>
