@@ -111,12 +111,18 @@ const RoleSelection = () => {
 };
 
 const styles = {
-    container: {
-        height: '100vh', width: '100vw',
-        display: 'flex', justifyContent: 'center', alignItems: 'center',
-        position: 'relative', overflow: 'hidden', backgroundColor: '#000',
-        fontFamily: "'Inter', sans-serif"
-    },
+  container: {
+    minHeight: '100vh',   
+    width: '100vw',
+    display: 'flex', 
+    justifyContent: 'center', 
+    alignItems: 'center',
+    position: 'relative', 
+    overflowY: 'auto',      
+    backgroundColor: '#000',
+    fontFamily: "'Inter', sans-serif",
+    padding: '40px 20px'    
+},
     videoBg: {
         position: 'absolute', top: '50%', left: '50%',
         width: '100%', height: '100%', objectFit: 'cover',
