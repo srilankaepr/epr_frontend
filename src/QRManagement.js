@@ -374,8 +374,8 @@ const fetchDashboardCounts = async () => {
 
         const canvas = document.createElement('canvas');
         const ctx = canvas.getContext('2d');
-        canvas.width = 900;
-        canvas.height = 1080;
+        canvas.width = 164;
+        canvas.height = 164;
         const qrImage = new Image();
 
         try {
