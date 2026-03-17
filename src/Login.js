@@ -119,7 +119,11 @@ const handleSubmit = useCallback(async (e) => {
 
 <button 
     type="submit" 
-    style={{...styles.loginBtn, opacity: loading ? 0.7 : 1}} 
+    style={{
+        ...styles.loginBtn, 
+        opacity: loading ? 0.7 : 1,                 // 👈 මෙතනට දැම්මම හරි
+        cursor: loading ? 'not-allowed' : 'pointer'  // 👈 මෙතනට දැම්මම හරි
+    }} 
     disabled={loading}
 >
     {loading ? 'AUTHENTICATING...' : 'LOGIN TO DASHBOARD'}
@@ -315,7 +319,8 @@ const styles = {
         borderRadius: '12px', border: 'none',
         background: '#32c56f', color: '#fff',
         fontWeight: '900', fontSize: '15px', letterSpacing: '2px',
-        cursor: loading ? 'not-allowed' : 'pointer', opacity: loading ? 0.6 : 1, boxShadow: '0 10px 30px rgba(46, 204, 113, 0.4)', transition: '0.3s'
+        boxShadow: '0 10px 30px rgba(46, 204, 113, 0.4)', 
+    transition: '0.3s'
     },
     footer: { marginTop: '30px', textAlign: 'center', borderTop: '1px solid rgba(248, 243, 243, 0.05)', paddingTop: '20px' },
     signupText: { fontSize: '19px', color: '#aaa', marginBottom: '15px' },
