@@ -17,9 +17,7 @@ const CoPartnerDashboard = () => {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
 
-  // --- අලුතින් එකතු කළ Tab State එක ---
   const [activeTab, setActiveTab] = useState('summary');
-// --- Notification States ---
   const [notifications, setNotifications] = useState([]);
   const [showNotifications, setShowNotifications] = useState(false);
 
@@ -48,9 +46,6 @@ const partnerId = localStorage.getItem('coPartnerId') || 'N/A';
           myCollected: data.myCollected || 0
         });
 
-        const newRequestsFromBackend = data.recentCollected || [];
-
-// 1. මුලින්ම Backend එකෙන් එන ඔක්කොම දත්ත ගන්නවා
         const allRequests = data.recentCollected || [];
 
         // 2. ඒවයින් 'Pending' තත්ත්වයේ තියෙන ඒවා විතරක් වෙන් කරගන්නවා
@@ -414,7 +409,7 @@ return (
             border: '3px solid #2ecc71',
             background: '#fff'
           }}>
-            <img src={logo} alt="Logo" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+            <img src={logo} alt="Logo" style={{ width: 'auto', height: '60px', objectFit: 'contain' }} />
           </div>
           <h1 style={{
             margin: 0,
@@ -893,8 +888,8 @@ const statCardStyle = {
     background: 'rgba(255, 255, 255, 0.05)',
     borderRadius: '20px',
     padding: '25px',
-    position: 'relative', // position එක තිබිය යුතුයි
-    zIndex: 1, // <--- මෙය 1 වැනි කුඩා අගයක තියන්න
+    position: 'relative', 
+    zIndex: 1, 
     backdropFilter: 'blur(12px)'
 };
 
@@ -920,11 +915,10 @@ welcomeCard: {
 container: {
     minHeight: '100vh',
     width: '100%',
-    // බැක්ග්‍රවුන්ඩ් එක මෙතනින් සෙට් කරනවා
     backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.8)), url(${bgImage})`,
     backgroundSize: 'cover',
     backgroundPosition: 'center',
-    backgroundAttachment: 'fixed', // ස්ක්‍රෝල් කරද්දී බැක්ග්‍රවුන්ඩ් එක හොලවන්නේ නැහැ
+    backgroundAttachment: 'fixed', 
     backgroundRepeat: 'no-repeat',
     color: '#fff',
     padding: '20px',
