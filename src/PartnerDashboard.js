@@ -409,7 +409,7 @@ return (
             border: '3px solid #2ecc71',
             background: '#fff'
           }}>
-            <img src={logo} alt="Logo" style={{ width: 'auto', height: '60px', objectFit: 'contain' }} />
+            <img src={logo} alt="Logo" style={{ width: '60px', height: '60px', objectFit: 'contain' }} />
           </div>
           <h1 style={{
             margin: 0,
