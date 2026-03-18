@@ -16,8 +16,6 @@ const CoPartnerDashboard = () => {
   const [recentCollected, setRecentCollected] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
-
-  // --- අලුතින් එකතු කළ Tab State එක ---
   const [activeTab, setActiveTab] = useState('summary');
 // --- Notification States ---
   const [notifications, setNotifications] = useState([]);
@@ -25,7 +23,7 @@ const CoPartnerDashboard = () => {
 
 
   const userName = localStorage.getItem('userName') || 'Partner';
-const partnerId = localStorage.getItem('coPartnerId') || 'N/A';
+  const partnerId = localStorage.getItem('coPartnerId') || 'N/A';
   
 
 // 1. දත්ත Fetch කරන ප්‍රධාන Function එක
@@ -48,12 +46,7 @@ const partnerId = localStorage.getItem('coPartnerId') || 'N/A';
           myCollected: data.myCollected || 0
         });
 
-        const newRequestsFromBackend = data.recentCollected || [];
-
-// 1. මුලින්ම Backend එකෙන් එන ඔක්කොම දත්ත ගන්නවා
         const allRequests = data.recentCollected || [];
-
-        // 2. ඒවයින් 'Pending' තත්ත්වයේ තියෙන ඒවා විතරක් වෙන් කරගන්නවා
         const pendingRequests = allRequests.filter(req => 
           req.status && req.status.toString().toLowerCase() === 'pending'
         );
@@ -101,17 +94,14 @@ const partnerId = localStorage.getItem('coPartnerId') || 'N/A';
 
   // තත්පර 20කට වරක් දත්ත අලුත් කරන එකම useEffect එක
   useEffect(() => {
-    fetchDashboardData(); // පේජ් එක Load වෙද්දී මුලින්ම දත්ත ගනී
+    fetchDashboardData(); 
 
     const interval = setInterval(() => {
-      fetchDashboardData(true); // බැක්ග්‍රවුන්ඩ් එකේ දත්ත අලුත් කරයි
+      fetchDashboardData(true); 
     }, 1200000); 
 
-    return () => clearInterval(interval); // පේජ් එකෙන් අයින් වෙද්දී ටයිමර් එක නවත්වයි
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); // මෙතන හිස්ව තියන්න, එතකොට ගැහෙන්නේ නැහැ
-
-
+    return () => clearInterval(interval); 
+  }, []); 
 
 
  const formatCollectedTime = (dateString) => {
@@ -152,24 +142,10 @@ const partnerId = localStorage.getItem('coPartnerId') || 'N/A';
 if (loading) {
   return (
     <div style={{
-      height: '100vh',
-      display: 'flex',
-      flexDirection: 'column',
-      justifyContent: 'center',
-      alignItems: 'center',
-      background: '#0a0a0a', 
-      color: '#2ecc71',      
-      fontFamily: "'Poppins', sans-serif"
+      height: '100vh', display: 'flex',flexDirection: 'column',justifyContent: 'center', alignItems: 'center', background: '#0a0a0a', color: '#2ecc71',      fontFamily: "'Poppins', sans-serif"
     }}>
       {/* කැරකෙන Spinner එක */}
-      <div style={{
-        width: '50px',
-        height: '50px',
-        border: '5px solid rgba(46, 204, 113, 0.1)',
-        borderTop: '5px solid #2ecc71',
-        borderRadius: '50%',
-        animation: 'spin 1s linear infinite',
-        marginBottom: '20px'
+      <div style={{ width: '50px', height: '50px', border: '5px solid rgba(46, 204, 113, 0.1)', borderTop: '5px solid #2ecc71', borderRadius: '50%', animation: 'spin 1s linear infinite',marginBottom: '20px'
       }}></div>
       
       <p style={{ letterSpacing: '2px', fontSize: '14px', fontWeight: 'bold' }}>
@@ -189,28 +165,15 @@ if (loading) {
 
   // --- Tab Styles ---
   const tabStyle = {
-    padding: '12px 30px',
-    background: 'rgba(255,255,255,0.1)',
-    border: '1px solid rgba(46,204,113,0.3)',
-    borderRadius: '10px',
-    color: '#fff',
-    cursor: 'pointer',
-    transition: '0.3s',
-    fontSize: '16px',
-    fontWeight: '500'
+    padding: '12px 30px', background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(46,204,113,0.3)', borderRadius: '10px', color: '#fff', cursor: 'pointer', transition: '0.3s', fontSize: '16px', fontWeight: '500'
   };
 
   const activeTabStyle = {
     ...tabStyle,
-    background: '#2ecc71',
-    color: '#000',
-    fontWeight: 'bold',
-    boxShadow: '0 0 15px rgba(46,204,113,0.4)'
+    background: '#2ecc71', color: '#000', fontWeight: 'bold', boxShadow: '0 0 15px rgba(46,204,113,0.4)'
   };
 // 1. පාට්නර්ට අදාළ සියලුම රෙකෝඩ්ස් (සර්ච් එකට කලින්)
   const myRecords = recentCollected.filter(req => req.cpId === partnerId);
-
-  // 2. සර්ච් එක නිසා කවුන්ට් එක වෙනස් නොවෙන්න මෙතනට 'myRecords' පාවිච්චි කරන්න
   const lifetimeCount = myRecords.length;
 
   // 3. අද දවසේ කවුන්ට් එකත් 'myRecords' එකෙන්ම ගන්න (සර්ච් එකට අදාළ නැතිව)
@@ -316,9 +279,6 @@ const downloadRecentTablePDF = () => {
     // 1. Header Background Banner (කොළ පාට තීරුවක්)
     doc.setFillColor(46, 204, 113);
     doc.rect(0, 0, 210, 40, 'F'); 
-
-    // 2. Logo එක ඇතුළත් කිරීම (ඔයාගේ logo එක image format එකක් නම්)
-    // Logo එක පාවිච්චි කරනවා නම් පහත පේළිය පාවිච්චි කරන්න, නැත්නම් නම විතරක් දාමු
     doc.setTextColor(255, 255, 255);
     doc.setFontSize(22);
     doc.setFont('helvetica', 'bold');
@@ -402,22 +362,13 @@ return (
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '25px' }}>
           <div style={{
-            width: '100px',
-            height: '100px',
-            borderRadius: '50%',
-            overflow: 'hidden',
-            border: '3px solid #2ecc71',
-            background: '#fff'
+            width: '100px', height: '100px', borderRadius: '50%', overflow: 'hidden',  border: '3px solid #2ecc71',  background: '#fff'
           }}>
             <img src={logo} alt="Logo" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
           </div>
           <h1 style={{
             margin: 0,
-            fontSize: '28px',
-            background: 'linear-gradient(90deg, #2ecc71, #27ae60)',
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
-            fontWeight: 'bold'
+            fontSize: '28px', background: 'linear-gradient(90deg, #2ecc71, #27ae60)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', fontWeight: 'bold'
           }}>
             EPR Co-Partner Dashboard
           </h1>
@@ -426,14 +377,7 @@ return (
         <button 
           onClick={handleLogout}
           style={{
-            padding: '12px 30px',
-            background: 'linear-gradient(135deg, #e74c3c, #c0392b)',
-            border: 'none',
-            borderRadius: '50px',
-            color: '#fff',
-            fontWeight: 'bold',
-            cursor: 'pointer',
-            boxShadow: '0 4px 15px rgba(231,76,60,0.3)'
+            padding: '12px 30px', background: 'linear-gradient(135deg, #e74c3c, #c0392b)', border: 'none', borderRadius: '50px',  color: '#fff',  fontWeight: 'bold', cursor: 'pointer', boxShadow: '0 4px 15px rgba(231,76,60,0.3)'
           }}
         >
           Logout
@@ -458,17 +402,7 @@ return (
   <div 
     onClick={() => setShowNotifications(!showNotifications)} 
     style={{ 
-        fontSize: '36px', 
-        position: 'relative', 
-        cursor: 'pointer',
-        background: 'rgba(255, 255, 255, 0.05)',
-        padding: '10px',
-        borderRadius: '12px',
-        transition: '0.3s',
-        border: '1px solid rgba(255, 255, 255, 0.1)',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center'
+        fontSize: '36px',  position: 'relative',  cursor: 'pointer', background: 'rgba(255, 255, 255, 0.05)', padding: '10px', borderRadius: '12px',  transition: '0.3s',  border: '1px solid rgba(255, 255, 255, 0.1)',  display: 'flex',  alignItems: 'center',  justifyContent: 'center'
     }}
     onMouseOver={(e) => e.currentTarget.style.background = 'rgba(46, 204, 113, 0.15)'}
     onMouseOut={(e) => e.currentTarget.style.background = 'rgba(255, 255, 255, 0.05)'}
@@ -476,11 +410,7 @@ return (
     <span style={{ filter: 'grayscale(1) brightness(1.8)' }}>🔔</span>
     {notifications.length > 0 && (
       <span style={{
-        position: 'absolute', top: '2px', right: '2px',
-        background: '#cc1010', color: '#ffffff', borderRadius: '50%',
-        width: '26px', height: '26px', display: 'flex', alignItems: 'center', justifyContent: 'center',
-        fontSize: '10px', fontWeight: '900',
-        boxShadow: '0 0 10px rgba(46, 204, 113, 0.6)'
+        position: 'absolute', top: '2px', right: '2px',  background: '#cc1010', color: '#ffffff', borderRadius: '50%',  width: '26px', height: '26px', display: 'flex', alignItems: 'center', justifyContent: 'center',  fontSize: '10px', fontWeight: '900',  boxShadow: '0 0 10px rgba(46, 204, 113, 0.6)'
       }}>
         {notifications.length}
       </span>
@@ -797,14 +727,7 @@ return (
                 placeholder="Find by ID or Name..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                style={{
-                  padding: '10px 15px',
-                  width: '250px',
-                  background: 'rgba(255,255,255,0.08)',
-                  border: '1px solid rgba(46,204,113,0.3)',
-                  borderRadius: '8px',
-                  color: '#fff',
-                  outline: 'none'
+                style={{ padding: '10px 15px',  width: '250px',  background: 'rgba(255,255,255,0.08)',  border: '1px solid rgba(46,204,113,0.3)',  borderRadius: '8px',  color: '#fff',  outline: 'none'
                 }}
               />
             </div>
@@ -855,15 +778,7 @@ return (
             <div style={{ fontSize: '12px', color: '#aaa' }}>{req.cuPhone || ''}</div>
           </td>
           <td style={{ padding: '15px' }}>
-            <span style={{
-              background: 'rgba(46, 204, 113, 0.15)',
-              color: '#2ecc71',
-              padding: '6px 12px',
-              borderRadius: '8px',
-              fontSize: '13px',
-              fontWeight: '600',
-              border: '1px solid rgba(46, 204, 113, 0.2)',
-              display: 'inline-block'
+            <span style={{ background: 'rgba(46, 204, 113, 0.15)', color: '#2ecc71',  padding: '6px 12px',  borderRadius: '8px',  fontSize: '13px',  fontWeight: '600', border: '1px solid rgba(46, 204, 113, 0.2)',  display: 'inline-block'
             }}>
               {formatCollectedTime(req.collectedAt)}
             </span>
@@ -884,97 +799,18 @@ return (
   );
 };
 
-const statCardStyle = {
-    background: 'rgba(255, 255, 255, 0.05)',
-    borderRadius: '20px',
-    padding: '25px',
-    position: 'relative', // position එක තිබිය යුතුයි
-    zIndex: 1, // <--- මෙය 1 වැනි කුඩා අගයක තියන්න
-    backdropFilter: 'blur(12px)'
-};
-
 const styles = {
-welcomeCard: {
-    background: 'rgba(255, 255, 255, 0.05)', 
-    padding: '30px 40px',
-    borderRadius: '25px',
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: '40px',
-    border: '1px solid rgba(46, 204, 113, 0.3)', 
-    backdropFilter: 'blur(15px)', 
-    WebkitBackdropFilter: 'blur(15px)',
-    flexWrap: 'wrap',
-    gap: '20px',
-    boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.37)',
-    position: 'relative', 
-    zIndex: 10 
-},
-
-container: {
-    minHeight: '100vh',
-    width: '100%',
-    // බැක්ග්‍රවුන්ඩ් එක මෙතනින් සෙට් කරනවා
-    backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.8)), url(${bgImage})`,
-    backgroundSize: 'cover',
-    backgroundPosition: 'center',
-    backgroundAttachment: 'fixed', // ස්ක්‍රෝල් කරද්දී බැක්ග්‍රවුන්ඩ් එක හොලවන්නේ නැහැ
-    backgroundRepeat: 'no-repeat',
-    color: '#fff',
-    padding: '20px',
-    fontFamily: "'Poppins', sans-serif",
-    boxSizing: 'border-box'
-  },
-
-    welcomeLeft: {
-        flex: 1,
-        minWidth: '280px'
-    },
-    welcomeTitle: {
-        fontSize: '32px',
-        fontWeight: 'bold',
-        color: '#fff',
-        margin: 0,
-        marginBottom: '10px'
-    },
-    highlightText: {
-        color: '#2ecc71',
-        textTransform: 'capitalize'
-    },
-    welcomeSub: {
-        color: '#aaa',
-        fontSize: '16px',
-        margin: 0,
-        maxWidth: '500px',
-        lineHeight: '1.5'
-    },
-    idBadgeContainer: {
-        textAlign: 'right'
-    },
-    idBadge: {
-        background: '#1a1a1a',
-        padding: '12px 25px',
-        borderRadius: '15px',
-        border: '1px solid #2ecc71',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        boxShadow: '0 0 20px rgba(46, 204, 113, 0.1)'
-    },
-    idLabel: {
-        color: '#2ecc71',
-        fontSize: '11px',
-        fontWeight: 'bold',
-        letterSpacing: '2px',
-        marginBottom: '5px'
-    },
-    idValue: {
-        color: '#fff',
-        fontSize: '18px',
-        fontWeight: 'bold',
-        fontFamily: 'monospace'
-    }
+    statCard: {  background: 'rgba(255, 255, 255, 0.05)',   borderRadius: '20px',   padding: '25px', position: 'relative',  zIndex: 1,  backdropFilter: 'blur(12px)'},
+    welcomeCard: { background: 'rgba(255, 255, 255, 0.05)',  padding: '30px 40px', borderRadius: '25px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '40px', border: '1px solid rgba(46, 204, 113, 0.3)',  backdropFilter: 'blur(15px)',   WebkitBackdropFilter: 'blur(15px)', flexWrap: 'wrap', gap: '20px', boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.37)', position: 'relative',  zIndex: 10 },
+    container: { minHeight: '100vh', width: '100%', backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.8)), url(${bgImage})`, backgroundSize: 'cover', backgroundPosition: 'center', backgroundAttachment: 'fixed',  backgroundRepeat: 'no-repeat', color: '#fff',  padding: '20px', fontFamily: "'Poppins', sans-serif",  boxSizing: 'border-box'  },
+    welcomeLeft: {  flex: 1,  minWidth: '280px'  },
+    welcomeTitle: {  fontSize: '32px',  fontWeight: 'bold',  color: '#fff',  margin: 0,   marginBottom: '10px'  },
+    highlightText: {  color: '#2ecc71',  textTransform: 'capitalize'  },
+    welcomeSub: {  color: '#aaa', fontSize: '16px',  margin: 0,  maxWidth: '500px',  lineHeight: '1.5' },
+    idBadgeContainer: {  textAlign: 'right' },
+    idBadge: {  background: '#1a1a1a',  padding: '12px 25px',  borderRadius: '15px',  border: '1px solid #2ecc71',  display: 'flex',  flexDirection: 'column',  alignItems: 'center', boxShadow: '0 0 20px rgba(46, 204, 113, 0.1)'  },
+    idLabel: {  color: '#2ecc71',  fontSize: '11px',  fontWeight: 'bold', letterSpacing: '2px', marginBottom: '5px' },
+    idValue: {  color: '#fff',  fontSize: '18px',  fontWeight: 'bold',  fontFamily: 'monospace'  }
 };
 
 export default CoPartnerDashboard;
