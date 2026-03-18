@@ -16,6 +16,8 @@ const CoPartnerDashboard = () => {
   const [recentCollected, setRecentCollected] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
+
+  // --- අලුතින් එකතු කළ Tab State එක ---
   const [activeTab, setActiveTab] = useState('summary');
 // --- Notification States ---
   const [notifications, setNotifications] = useState([]);
@@ -23,7 +25,7 @@ const CoPartnerDashboard = () => {
 
 
   const userName = localStorage.getItem('userName') || 'Partner';
-  const partnerId = localStorage.getItem('coPartnerId') || 'N/A';
+const partnerId = localStorage.getItem('coPartnerId') || 'N/A';
   
 
 // 1. දත්ත Fetch කරන ප්‍රධාන Function එක
@@ -46,7 +48,12 @@ const CoPartnerDashboard = () => {
           myCollected: data.myCollected || 0
         });
 
+        const newRequestsFromBackend = data.recentCollected || [];
+
+// 1. මුලින්ම Backend එකෙන් එන ඔක්කොම දත්ත ගන්නවා
         const allRequests = data.recentCollected || [];
+
+        // 2. ඒවයින් 'Pending' තත්ත්වයේ තියෙන ඒවා විතරක් වෙන් කරගන්නවා
         const pendingRequests = allRequests.filter(req => 
           req.status && req.status.toString().toLowerCase() === 'pending'
         );
@@ -94,11 +101,11 @@ const CoPartnerDashboard = () => {
 
   // තත්පර 20කට වරක් දත්ත අලුත් කරන එකම useEffect එක
   useEffect(() => {
-    fetchDashboardData(); 
+    fetchDashboardData(); // පේජ් එක Load වෙද්දී මුලින්ම දත්ත ගනී
 
     const interval = setInterval(() => {
       fetchDashboardData(true); // බැක්ග්‍රවුන්ඩ් එකේ දත්ත අලුත් කරයි
-    }, 1200000); 
+    }, 120000); 
 
     return () => clearInterval(interval); // පේජ් එකෙන් අයින් වෙද්දී ටයිමර් එක නවත්වයි
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -108,6 +115,7 @@ const CoPartnerDashboard = () => {
 
 
  const formatCollectedTime = (dateString) => {
+    // 1. දත්තයක් නැතිනම් පෙන්වන පණිවිඩය
     if (!dateString) return "N/A";
 
     const date = new Date(dateString);
@@ -133,14 +141,18 @@ const CoPartnerDashboard = () => {
 
  const handleLogout = () => {
     if (window.confirm("Do you want to logout?")) {
+      // 1. තියෙන ඔක්කොම පරණ දත්ත සහ ටෝකන් අයින් කරනවා
       localStorage.clear();
-      sessionStorage.clear(); 
+      sessionStorage.clear(); // අතිරේක ආරක්ෂාවට
+      
+      // 2. ලොගින් පේජ් එකට යවනවා
       navigate('/');
+
+      // 3. 💡 මෙන්න මේ පේළිය අනිවාර්යයෙන්ම දාන්න
+      // බ්‍රවුසර් එකේ පරණ Memory එක සම්පූර්ණයෙන්ම අලුත් කරලා දානවා
       window.location.reload();
     }
   };
-
-
 
 if (loading) {
   return (
