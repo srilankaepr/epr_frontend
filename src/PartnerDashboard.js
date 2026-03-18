@@ -364,7 +364,7 @@ return (
           <div style={{
             width: '100px', height: '100px', borderRadius: '50%', overflow: 'hidden',  border: '3px solid #2ecc71',  background: '#fff'
           }}>
-            <img src={logo} alt="Logo" style={{ width: 'auto', height: '60px', objectFit: 'contain' }} />
+            <img src={logo} alt="Logo" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
           </div>
           <h1 style={{
             margin: 0,
@@ -388,7 +388,7 @@ return (
       <div style={styles.welcomeCard}>
         <div style={styles.welcomeLeft}>
           <h2 style={styles.welcomeTitle}>
-            Hello, <span style={styles.highlightText}>{userName}</span> 
+            Hello, <span style={styles.highlightText}>{userName}</span> 👋
 
           </h2>
           <p style={styles.welcomeSub}>
@@ -727,7 +727,14 @@ return (
                 placeholder="Find by ID or Name..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                style={{ padding: '10px 15px',  width: '250px',  background: 'rgba(255,255,255,0.08)',  border: '1px solid rgba(46,204,113,0.3)',  borderRadius: '8px',  color: '#fff',  outline: 'none'
+                style={{
+                  padding: '10px 15px',
+                  width: '250px',
+                  background: 'rgba(255,255,255,0.08)',
+                  border: '1px solid rgba(46,204,113,0.3)',
+                  borderRadius: '8px',
+                  color: '#fff',
+                  outline: 'none'
                 }}
               />
             </div>
@@ -778,7 +785,15 @@ return (
             <div style={{ fontSize: '12px', color: '#aaa' }}>{req.cuPhone || ''}</div>
           </td>
           <td style={{ padding: '15px' }}>
-            <span style={{ background: 'rgba(46, 204, 113, 0.15)', color: '#2ecc71',  padding: '6px 12px',  borderRadius: '8px',  fontSize: '13px',  fontWeight: '600', border: '1px solid rgba(46, 204, 113, 0.2)',  display: 'inline-block'
+            <span style={{
+              background: 'rgba(46, 204, 113, 0.15)',
+              color: '#2ecc71',
+              padding: '6px 12px',
+              borderRadius: '8px',
+              fontSize: '13px',
+              fontWeight: '600',
+              border: '1px solid rgba(46, 204, 113, 0.2)',
+              display: 'inline-block'
             }}>
               {formatCollectedTime(req.collectedAt)}
             </span>
@@ -798,6 +813,7 @@ return (
     </div>
   );
 };
+
 
 const styles = {
     statCard: {  background: 'rgba(255, 255, 255, 0.05)',   borderRadius: '20px',   padding: '25px', position: 'relative',  zIndex: 1,  backdropFilter: 'blur(12px)'},
