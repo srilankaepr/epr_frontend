@@ -105,7 +105,7 @@ const partnerId = localStorage.getItem('coPartnerId') || 'N/A';
 
     const interval = setInterval(() => {
       fetchDashboardData(true); // බැක්ග්‍රවුන්ඩ් එකේ දත්ත අලුත් කරයි
-    }, 20000); 
+    }, 120000); 
 
     return () => clearInterval(interval); // පේජ් එකෙන් අයින් වෙද්දී ටයිමර් එක නවත්වයි
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -139,13 +139,17 @@ const partnerId = localStorage.getItem('coPartnerId') || 'N/A';
     navigate('/co-partner/scan');
   };
 
-  const handleLogout = () => {
+ const handleLogout = () => {
     if (window.confirm("Do you want to logout?")) {
       localStorage.clear();
+      sessionStorage.clear(); 
       navigate('/');
+      window.location.reload();
     }
   };
 
+
+  
 if (loading) {
   return (
     <div style={{
