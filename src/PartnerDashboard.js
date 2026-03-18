@@ -105,7 +105,7 @@ const partnerId = localStorage.getItem('coPartnerId') || 'N/A';
 
     const interval = setInterval(() => {
       fetchDashboardData(true); // බැක්ග්‍රවුන්ඩ් එකේ දත්ත අලුත් කරයි
-    }, 120000); 
+    }, 1200000); 
 
     return () => clearInterval(interval); // පේජ් එකෙන් අයින් වෙද්දී ටයිමර් එක නවත්වයි
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -115,7 +115,6 @@ const partnerId = localStorage.getItem('coPartnerId') || 'N/A';
 
 
  const formatCollectedTime = (dateString) => {
-    // 1. දත්තයක් නැතිනම් පෙන්වන පණිවිඩය
     if (!dateString) return "N/A";
 
     const date = new Date(dateString);
@@ -149,7 +148,7 @@ const partnerId = localStorage.getItem('coPartnerId') || 'N/A';
   };
 
 
-  
+
 if (loading) {
   return (
     <div style={{
