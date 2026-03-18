@@ -149,13 +149,11 @@ const handleSaveProduct = async () => {
 
     // Logout
     const handleLogout = () => {
-    if (window.confirm("Do you want to logout?")) {
-      localStorage.clear();
-      sessionStorage.clear(); 
-      navigate('/');
-      window.location.reload();
-    }
-  };
+        if (window.confirm("Are you sure you want to logout?")) {
+            localStorage.clear();
+            navigate('/');
+        }
+    };
 
     // Data Fetching
     const fetchCompanies = async () => {

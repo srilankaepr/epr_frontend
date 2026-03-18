@@ -82,12 +82,14 @@ const Dashboard = () => {
         } catch (error) { console.error(error); }
     };
 
-    const handleLogout = () => {
-        if (window.confirm("Are you sure you want to logout?")) {
-            localStorage.clear();
-            navigate('/');
-        }
-    };
+   const handleLogout = () => {
+    if (window.confirm("Do you want to logout?")) {
+      localStorage.clear();
+      sessionStorage.clear(); 
+      navigate('/');
+      window.location.reload();
+    }
+  };
 
     const handleProfileClick = () => {
         if (adminInfo.profilePic) {
