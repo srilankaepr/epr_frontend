@@ -217,11 +217,17 @@ if (loading) {
   ).length;
 
   // 4. සර්ච් එකට විතරක් 'mySpecificCollected' පාවිච්චි කරන්න (මේක ටේබල් එකට විතරයි)
-  const mySpecificCollected = myRecords.filter(req => 
-    req.qrId.toLowerCase().includes(searchTerm.toLowerCase()) || 
-    req.cpName.toLowerCase().includes(searchTerm.toLowerCase())
+const mySpecificCollected = myRecords.filter(req => {
+  if (!searchTerm) return true;
+  
+  const search = searchTerm.toLowerCase();
+  
+  return (
+    (req.qrId?.toLowerCase().includes(search)) || 
+    (req.cuName?.toLowerCase().includes(search)) ||
+    (req.cuProduct?.toLowerCase().includes(search))
   );
-
+});
 
   // --- Collection Detailed Report  download
 const downloadPDFReport = () => {
