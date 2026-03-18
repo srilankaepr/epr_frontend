@@ -279,6 +279,8 @@ const downloadRecentTablePDF = () => {
     // 1. Header Background Banner (කොළ පාට තීරුවක්)
     doc.setFillColor(46, 204, 113);
     doc.rect(0, 0, 210, 40, 'F'); 
+
+    // 2. Logo එක ඇතුළත් කිරීම (ඔයාගේ logo එක image format එකක් නම්)
     doc.setTextColor(255, 255, 255);
     doc.setFontSize(22);
     doc.setFont('helvetica', 'bold');
@@ -362,13 +364,22 @@ return (
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '25px' }}>
           <div style={{
-            width: '100px', height: '100px', borderRadius: '50%', overflow: 'hidden',  border: '3px solid #2ecc71',  background: '#fff'
+            width: '100px',
+            height: '100px',
+            borderRadius: '50%',
+            overflow: 'hidden',
+            border: '3px solid #2ecc71',
+            background: '#fff'
           }}>
             <img src={logo} alt="Logo" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
           </div>
           <h1 style={{
             margin: 0,
-            fontSize: '28px', background: 'linear-gradient(90deg, #2ecc71, #27ae60)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', fontWeight: 'bold'
+            fontSize: '28px',
+            background: 'linear-gradient(90deg, #2ecc71, #27ae60)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+            fontWeight: 'bold'
           }}>
             EPR Co-Partner Dashboard
           </h1>
@@ -377,7 +388,14 @@ return (
         <button 
           onClick={handleLogout}
           style={{
-            padding: '12px 30px', background: 'linear-gradient(135deg, #e74c3c, #c0392b)', border: 'none', borderRadius: '50px',  color: '#fff',  fontWeight: 'bold', cursor: 'pointer', boxShadow: '0 4px 15px rgba(231,76,60,0.3)'
+            padding: '12px 30px',
+            background: 'linear-gradient(135deg, #e74c3c, #c0392b)',
+            border: 'none',
+            borderRadius: '50px',
+            color: '#fff',
+            fontWeight: 'bold',
+            cursor: 'pointer',
+            boxShadow: '0 4px 15px rgba(231,76,60,0.3)'
           }}
         >
           Logout
@@ -402,7 +420,17 @@ return (
   <div 
     onClick={() => setShowNotifications(!showNotifications)} 
     style={{ 
-        fontSize: '36px',  position: 'relative',  cursor: 'pointer', background: 'rgba(255, 255, 255, 0.05)', padding: '10px', borderRadius: '12px',  transition: '0.3s',  border: '1px solid rgba(255, 255, 255, 0.1)',  display: 'flex',  alignItems: 'center',  justifyContent: 'center'
+        fontSize: '36px', 
+        position: 'relative', 
+        cursor: 'pointer',
+        background: 'rgba(255, 255, 255, 0.05)',
+        padding: '10px',
+        borderRadius: '12px',
+        transition: '0.3s',
+        border: '1px solid rgba(255, 255, 255, 0.1)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center'
     }}
     onMouseOver={(e) => e.currentTarget.style.background = 'rgba(46, 204, 113, 0.15)'}
     onMouseOut={(e) => e.currentTarget.style.background = 'rgba(255, 255, 255, 0.05)'}
@@ -410,7 +438,11 @@ return (
     <span style={{ filter: 'grayscale(1) brightness(1.8)' }}>🔔</span>
     {notifications.length > 0 && (
       <span style={{
-        position: 'absolute', top: '2px', right: '2px',  background: '#cc1010', color: '#ffffff', borderRadius: '50%',  width: '26px', height: '26px', display: 'flex', alignItems: 'center', justifyContent: 'center',  fontSize: '10px', fontWeight: '900',  boxShadow: '0 0 10px rgba(46, 204, 113, 0.6)'
+        position: 'absolute', top: '2px', right: '2px',
+        background: '#cc1010', color: '#ffffff', borderRadius: '50%',
+        width: '26px', height: '26px', display: 'flex', alignItems: 'center', justifyContent: 'center',
+        fontSize: '10px', fontWeight: '900',
+        boxShadow: '0 0 10px rgba(46, 204, 113, 0.6)'
       }}>
         {notifications.length}
       </span>
