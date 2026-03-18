@@ -97,11 +97,14 @@ const CoPartnerDashboard = () => {
     fetchDashboardData(); 
 
     const interval = setInterval(() => {
-      fetchDashboardData(true); 
+      fetchDashboardData(true); // බැක්ග්‍රවුන්ඩ් එකේ දත්ත අලුත් කරයි
     }, 1200000); 
 
-    return () => clearInterval(interval); 
-  }, []); 
+    return () => clearInterval(interval); // පේජ් එකෙන් අයින් වෙද්දී ටයිමර් එක නවත්වයි
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // මෙතන හිස්ව තියන්න, එතකොට ගැහෙන්නේ නැහැ
+
+
 
 
  const formatCollectedTime = (dateString) => {
@@ -142,10 +145,24 @@ const CoPartnerDashboard = () => {
 if (loading) {
   return (
     <div style={{
-      height: '100vh', display: 'flex',flexDirection: 'column',justifyContent: 'center', alignItems: 'center', background: '#0a0a0a', color: '#2ecc71',      fontFamily: "'Poppins', sans-serif"
+      height: '100vh',
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'center',
+      alignItems: 'center',
+      background: '#0a0a0a', 
+      color: '#2ecc71',      
+      fontFamily: "'Poppins', sans-serif"
     }}>
       {/* කැරකෙන Spinner එක */}
-      <div style={{ width: '50px', height: '50px', border: '5px solid rgba(46, 204, 113, 0.1)', borderTop: '5px solid #2ecc71', borderRadius: '50%', animation: 'spin 1s linear infinite',marginBottom: '20px'
+      <div style={{
+        width: '50px',
+        height: '50px',
+        border: '5px solid rgba(46, 204, 113, 0.1)',
+        borderTop: '5px solid #2ecc71',
+        borderRadius: '50%',
+        animation: 'spin 1s linear infinite',
+        marginBottom: '20px'
       }}></div>
       
       <p style={{ letterSpacing: '2px', fontSize: '14px', fontWeight: 'bold' }}>
@@ -165,15 +182,28 @@ if (loading) {
 
   // --- Tab Styles ---
   const tabStyle = {
-    padding: '12px 30px', background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(46,204,113,0.3)', borderRadius: '10px', color: '#fff', cursor: 'pointer', transition: '0.3s', fontSize: '16px', fontWeight: '500'
+    padding: '12px 30px',
+    background: 'rgba(255,255,255,0.1)',
+    border: '1px solid rgba(46,204,113,0.3)',
+    borderRadius: '10px',
+    color: '#fff',
+    cursor: 'pointer',
+    transition: '0.3s',
+    fontSize: '16px',
+    fontWeight: '500'
   };
 
   const activeTabStyle = {
     ...tabStyle,
-    background: '#2ecc71', color: '#000', fontWeight: 'bold', boxShadow: '0 0 15px rgba(46,204,113,0.4)'
+    background: '#2ecc71',
+    color: '#000',
+    fontWeight: 'bold',
+    boxShadow: '0 0 15px rgba(46,204,113,0.4)'
   };
 // 1. පාට්නර්ට අදාළ සියලුම රෙකෝඩ්ස් (සර්ච් එකට කලින්)
   const myRecords = recentCollected.filter(req => req.cpId === partnerId);
+
+  // 2. සර්ච් එක නිසා කවුන්ට් එක වෙනස් නොවෙන්න මෙතනට 'myRecords' පාවිච්චි කරන්න
   const lifetimeCount = myRecords.length;
 
   // 3. අද දවසේ කවුන්ට් එකත් 'myRecords' එකෙන්ම ගන්න (සර්ච් එකට අදාළ නැතිව)
@@ -281,6 +311,7 @@ const downloadRecentTablePDF = () => {
     doc.rect(0, 0, 210, 40, 'F'); 
 
     // 2. Logo එක ඇතුළත් කිරීම (ඔයාගේ logo එක image format එකක් නම්)
+    // Logo එක පාවිච්චි කරනවා නම් පහත පේළිය පාවිච්චි කරන්න, නැත්නම් නම විතරක් දාමු
     doc.setTextColor(255, 255, 255);
     doc.setFontSize(22);
     doc.setFont('helvetica', 'bold');
