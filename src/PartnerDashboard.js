@@ -146,9 +146,43 @@ const partnerId = localStorage.getItem('coPartnerId') || 'N/A';
     }
   };
 
-  if (loading) {
-    return <div style={{ textAlign: 'center', padding: '100px', color: '#2ecc71' }}>Loading dashboard...</div>;
-  }
+if (loading) {
+  return (
+    <div style={{
+      height: '100vh',
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'center',
+      alignItems: 'center',
+      background: '#0a0a0a', // පිටුව කළු පාට කරනවා
+      color: '#2ecc71',      // අකුරු කොළ පාට කරනවා
+      fontFamily: "'Poppins', sans-serif"
+    }}>
+      {/* කැරකෙන Spinner එක */}
+      <div style={{
+        width: '50px',
+        height: '50px',
+        border: '5px solid rgba(46, 204, 113, 0.1)',
+        borderTop: '5px solid #2ecc71',
+        borderRadius: '50%',
+        animation: 'spin 1s linear infinite',
+        marginBottom: '20px'
+      }}></div>
+      
+      <p style={{ letterSpacing: '2px', fontSize: '14px', fontWeight: 'bold' }}>
+        ESTABLISHING SECURE CONNECTION...
+      </p>
+
+      {/* Spinner එක කැරකෙන්න අවශ්‍ය Animation එක */}
+      <style>{`
+        @keyframes spin { 
+          0% { transform: rotate(0deg); } 
+          100% { transform: rotate(360deg); } 
+        }
+      `}</style>
+    </div>
+  );
+}
 
   // --- Tab Styles ---
   const tabStyle = {
