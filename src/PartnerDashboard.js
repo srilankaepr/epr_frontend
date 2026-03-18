@@ -811,57 +811,68 @@ return (
 <th style={{ padding: '15px', textAlign: 'left' }}>Collected Date & Time</th>
               </tr>
             </thead>
-           <tbody>
-
-
-            
-{mySpecificCollected.filter(req => 
-    req.qrId.toLowerCase().includes(searchTerm.toLowerCase()) || 
-    (req.cuProduct && req.cuProduct.toLowerCase().includes(searchTerm.toLowerCase())) ||
-    (req.cuName && req.cuName.toLowerCase().includes(searchTerm.toLowerCase()))
-).length > 0 ? 
-  mySpecificCollected.filter(req => 
-    req.qrId.toLowerCase().includes(searchTerm.toLowerCase()) || 
-    (req.cuProduct && req.cuProduct.toLowerCase().includes(searchTerm.toLowerCase())) ||
-    (req.cuName && req.cuName.toLowerCase().includes(searchTerm.toLowerCase()))
-  ).map((req, idx) => (
-    <tr key={idx} style={{ borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
-      <td style={{ padding: '15px' }}>{req.qrId}</td>
-      <td style={{ padding: '15px' }}>
-        <div style={{ fontWeight: 'bold', color: '#fff' }}>{req.cuProduct || 'N/A'}</div>
-        <div style={{ fontSize: '12px', color: '#2ecc71' }}>{req.cuBrand || 'N/A'}</div>
-      </td>
-      <td style={{ padding: '15px' }}>
-        <div style={{ fontWeight: '500' }}>{req.cuName}</div>
-        <div style={{ fontSize: '12px', color: '#aaa' }}>{req.cuPhone || ''}</div>
-      </td>
-      <td style={{ padding: '15px' }}>
-<span style={{
-                background: 'rgba(46, 204, 113, 0.15)',
-                color: '#2ecc71',
-                padding: '6px 12px',
-                borderRadius: '8px',
-                fontSize: '13px',
-                fontWeight: '600',
-                border: '1px solid rgba(46, 204, 113, 0.2)',
-                display: 'inline-block'
-              }}>
-                {formatCollectedTime(req.collectedAt)}
-              </span>
-      </td>
-    </tr>
-  )) : (
+        
+        <tbody>
+  {mySpecificCollected.filter(req => {
+    // සර්ච් එක හිස් නම් හැම දත්තයක්ම පෙන්වනවා
+    if (!searchTerm) return true;
+    
+    const search = searchTerm.toLowerCase();
+    
+    // මෙතන ?. පාවිච්චි කරලා තියෙන නිසා අගයක් නැති වුණොත් error එකක් එන්නේ නැහැ
+    return (
+      (req.qrId?.toLowerCase().includes(search)) || 
+      (req.cuProduct?.toLowerCase().includes(search)) ||
+      (req.cuName?.toLowerCase().includes(search))
+    );
+  }).length > 0 ? (
+    mySpecificCollected
+      .filter(req => {
+        if (!searchTerm) return true;
+        const search = searchTerm.toLowerCase();
+        return (
+          (req.qrId?.toLowerCase().includes(search)) || 
+          (req.cuProduct?.toLowerCase().includes(search)) ||
+          (req.cuName?.toLowerCase().includes(search))
+        );
+      })
+      .map((req, idx) => (
+        <tr key={idx} style={{ borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
+          <td style={{ padding: '15px' }}>{req.qrId}</td>
+          <td style={{ padding: '15px' }}>
+            <div style={{ fontWeight: 'bold', color: '#fff' }}>{req.cuProduct || 'N/A'}</div>
+            <div style={{ fontSize: '12px', color: '#2ecc71' }}>{req.cuBrand || 'N/A'}</div>
+          </td>
+          <td style={{ padding: '15px' }}>
+            <div style={{ fontWeight: '500' }}>{req.cuName || 'N/A'}</div>
+            <div style={{ fontSize: '12px', color: '#aaa' }}>{req.cuPhone || ''}</div>
+          </td>
+          <td style={{ padding: '15px' }}>
+            <span style={{
+              background: 'rgba(46, 204, 113, 0.15)',
+              color: '#2ecc71',
+              padding: '6px 12px',
+              borderRadius: '8px',
+              fontSize: '13px',
+              fontWeight: '600',
+              border: '1px solid rgba(46, 204, 113, 0.2)',
+              display: 'inline-block'
+            }}>
+              {formatCollectedTime(req.collectedAt)}
+            </span>
+          </td>
+        </tr>
+      ))
+  ) : (
     <tr>
       <td colSpan="4" style={{ textAlign: 'center', padding: '40px', color: '#888' }}>
-        {/* මෙතන message එකත් පොඩ්ඩක් වෙනස් කළා නම් පැහැදිලියි */}
-        You haven't collected any items yet.
+        {searchTerm ? "No matching items found." : "You haven't collected any items yet."}
       </td>
     </tr>
   )}
 </tbody>
-          </table>
-        </div>
-      )}
+</table>
+</div> )}
     </div>
   );
 };
