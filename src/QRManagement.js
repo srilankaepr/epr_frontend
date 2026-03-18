@@ -304,7 +304,7 @@ const fetchDashboardCounts = async () => {
   //  තත්පර 20න් 20ට බැක්ග්‍රවුන්ඩ් එකේ දත්ත අප්ඩේට් කිරීම
         const interval = setInterval(() => {
             fetchRecycleRequests();
-        }, 20000); //
+        }, 120000); //
 
         // Tab change වෙනකොට recycle requests fetch කරන්න
         if (activeTab === 'user_management' && activeSubTab === 'recycling_requests') {
