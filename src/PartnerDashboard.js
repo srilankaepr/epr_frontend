@@ -154,8 +154,8 @@ if (loading) {
       flexDirection: 'column',
       justifyContent: 'center',
       alignItems: 'center',
-      background: '#0a0a0a', // පිටුව කළු පාට කරනවා
-      color: '#2ecc71',      // අකුරු කොළ පාට කරනවා
+      background: '#0a0a0a', 
+      color: '#2ecc71',      
       fontFamily: "'Poppins', sans-serif"
     }}>
       {/* කැරකෙන Spinner එක */}
@@ -812,8 +812,19 @@ return (
               </tr>
             </thead>
            <tbody>
-  {/* මෙතන recentCollected වෙනුවට mySpecificCollected පාවිච්චි කරන්න */}
-  {mySpecificCollected.length > 0 ? mySpecificCollected.map((req, idx) => (
+
+
+            
+{mySpecificCollected.filter(req => 
+    req.qrId.toLowerCase().includes(searchTerm.toLowerCase()) || 
+    (req.cuProduct && req.cuProduct.toLowerCase().includes(searchTerm.toLowerCase())) ||
+    (req.cuName && req.cuName.toLowerCase().includes(searchTerm.toLowerCase()))
+).length > 0 ? 
+  mySpecificCollected.filter(req => 
+    req.qrId.toLowerCase().includes(searchTerm.toLowerCase()) || 
+    (req.cuProduct && req.cuProduct.toLowerCase().includes(searchTerm.toLowerCase())) ||
+    (req.cuName && req.cuName.toLowerCase().includes(searchTerm.toLowerCase()))
+  ).map((req, idx) => (
     <tr key={idx} style={{ borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
       <td style={{ padding: '15px' }}>{req.qrId}</td>
       <td style={{ padding: '15px' }}>
