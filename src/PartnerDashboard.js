@@ -364,7 +364,7 @@ return (
           <div style={{
             width: '100px', height: '100px', borderRadius: '50%', overflow: 'hidden',  border: '3px solid #2ecc71',  background: '#fff'
           }}>
-            <img src={logo} alt="Logo" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+            <img src={logo} alt="Logo" style={{ width: 'auto', height: '60px', objectFit: 'contain' }} />
           </div>
           <h1 style={{
             margin: 0,
@@ -388,7 +388,7 @@ return (
       <div style={styles.welcomeCard}>
         <div style={styles.welcomeLeft}>
           <h2 style={styles.welcomeTitle}>
-            Hello, <span style={styles.highlightText}>{userName}</span> 👋
+            Hello, <span style={styles.highlightText}>{userName}</span> 
 
           </h2>
           <p style={styles.welcomeSub}>
