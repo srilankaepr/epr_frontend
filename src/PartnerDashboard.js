@@ -444,7 +444,7 @@ return (
       <div style={styles.welcomeCard}>
         <div style={styles.welcomeLeft}>
           <h2 style={styles.welcomeTitle}>
-            Hello, <span style={styles.highlightText}>{userName}</span> 👋
+            Hello, <span style={styles.highlightText}>{userName}</span> 
 
           </h2>
           <p style={styles.welcomeSub}>
