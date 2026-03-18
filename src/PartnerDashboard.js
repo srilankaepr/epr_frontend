@@ -812,40 +812,37 @@ return (
               </tr>
             </thead>
         
-        <tbody>
-  {mySpecificCollected.filter(req => {
-    // සර්ච් එක හිස් නම් හැම දත්තයක්ම පෙන්වනවා
+<tbody>
+  {recentCollected && recentCollected.filter(item => {
+    // සර්ච් එක හිස් නම් ඔක්කොම පෙන්වනවා
     if (!searchTerm) return true;
     
     const search = searchTerm.toLowerCase();
     
-    // මෙතන ?. පාවිච්චි කරලා තියෙන නිසා අගයක් නැති වුණොත් error එකක් එන්නේ නැහැ
+    // item එකේ දත්ත තියෙනවද කියලා check කරලා සර්ච් කරනවා
     return (
-      (req.qrId?.toLowerCase().includes(search)) || 
-      (req.cuProduct?.toLowerCase().includes(search)) ||
-      (req.cuName?.toLowerCase().includes(search))
+      (item.qrId?.toLowerCase().includes(search)) || 
+      (item.category?.toLowerCase().includes(search)) ||
+      (item.customerName?.toLowerCase().includes(search))
     );
   }).length > 0 ? (
-    mySpecificCollected
-      .filter(req => {
+    recentCollected
+      .filter(item => {
         if (!searchTerm) return true;
         const search = searchTerm.toLowerCase();
         return (
-          (req.qrId?.toLowerCase().includes(search)) || 
-          (req.cuProduct?.toLowerCase().includes(search)) ||
-          (req.cuName?.toLowerCase().includes(search))
+          (item.qrId?.toLowerCase().includes(search)) || 
+          (item.category?.toLowerCase().includes(search))
         );
       })
-      .map((req, idx) => (
+      .map((item, idx) => (
         <tr key={idx} style={{ borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
-          <td style={{ padding: '15px' }}>{req.qrId}</td>
+          <td style={{ padding: '15px' }}>{item.qrId}</td>
           <td style={{ padding: '15px' }}>
-            <div style={{ fontWeight: 'bold', color: '#fff' }}>{req.cuProduct || 'N/A'}</div>
-            <div style={{ fontSize: '12px', color: '#2ecc71' }}>{req.cuBrand || 'N/A'}</div>
+            <div style={{ fontWeight: 'bold', color: '#fff' }}>{item.category || 'N/A'}</div>
           </td>
           <td style={{ padding: '15px' }}>
-            <div style={{ fontWeight: '500' }}>{req.cuName || 'N/A'}</div>
-            <div style={{ fontSize: '12px', color: '#aaa' }}>{req.cuPhone || ''}</div>
+            <div style={{ fontWeight: '500' }}>{item.collectedBy || 'N/A'}</div>
           </td>
           <td style={{ padding: '15px' }}>
             <span style={{
@@ -853,12 +850,9 @@ return (
               color: '#2ecc71',
               padding: '6px 12px',
               borderRadius: '8px',
-              fontSize: '13px',
-              fontWeight: '600',
-              border: '1px solid rgba(46, 204, 113, 0.2)',
-              display: 'inline-block'
+              fontSize: '13px'
             }}>
-              {formatCollectedTime(req.collectedAt)}
+              {item.collectedAt ? new Date(item.collectedAt).toLocaleDateString() : 'N/A'}
             </span>
           </td>
         </tr>
@@ -866,11 +860,11 @@ return (
   ) : (
     <tr>
       <td colSpan="4" style={{ textAlign: 'center', padding: '40px', color: '#888' }}>
-        {searchTerm ? "No matching items found." : "You haven't collected any items yet."}
+        No matching collections found.
       </td>
     </tr>
   )}
-</tbody>
+</tbody>    
 </table>
 </div> )}
     </div>
