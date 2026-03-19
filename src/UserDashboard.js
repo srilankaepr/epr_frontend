@@ -83,7 +83,7 @@ const UserDashboard = () => {
         }
     };
 
-    fetchUserData(); // Function එක call කරනවා
+    fetchUserData(); 
 
      return () => {
             document.head.removeChild(styleSheet);
@@ -99,12 +99,12 @@ const UserDashboard = () => {
     };
 
     const categories = [
-        { name: "Electronic and Electrical", img: elecImg, path: "/electronic-order", desc: "Environmentally friendly disposal and recycling of all discarded electronic devices and electrical household appliances." },
-        { name: "Plastic", img: plasticImg, path: "/plastic-order", desc: "Comprehensive plastic waste management focusing on sorting and processing polymers to reduce pollution." },
-        { name: "Solar", img: solarImg, path: "/solar-order", desc: "Specialized recycling for end-of-life photovoltaic panels, ensuring hazardous materials are handled safely." },
-        { name: "Agro", img: agroImg, path: "/agro-order", desc: "Efficient transformation of agricultural organic waste into high-quality resources for a circular economy." },
-        { name: "Battery", img: batteryImg, path: "/battery-order", desc: "Safe extraction and recycling of lead-acid and lithium-ion batteries using advanced technologies." },
-        { name: "Oil", img: oilImg, path: "/oil-order", desc: "Professional collection and re-refining of used automotive and industrial oils to prevent contamination." }
+        { name: "Electronic and Electrical EPR", img: elecImg, path: "/electronic-order", desc: "Environmentally friendly disposal and recycling of all discarded electronic devices and electrical household appliances." },
+        { name: "Plastic EPR", img: plasticImg, path: "/plastic-order", desc: "Comprehensive plastic waste management focusing on sorting and processing polymers to reduce pollution." },
+        { name: "Solar EPR", img: solarImg, path: "/solar-order", desc: "Specialized recycling for end-of-life photovoltaic panels, ensuring hazardous materials are handled safely." },
+        { name: "Agro EPR", img: agroImg, path: "/agro-order", desc: "Efficient transformation of agricultural organic waste into high-quality resources for a circular economy." },
+        { name: "Battery EPR", img: batteryImg, path: "/battery-order", desc: "Safe extraction and recycling of lead-acid and lithium-ion batteries using advanced technologies." },
+        { name: "Oil EPR", img: oilImg, path: "/oil-order", desc: "Professional collection and re-refining of used automotive and industrial oils to prevent contamination." }
     ];
 
     return (
@@ -118,7 +118,7 @@ const UserDashboard = () => {
             <aside style={styles.sidebar}>
                 <div style={styles.logoWrapper}>
                     <img src={logo} alt="Logo" style={styles.glowingLogo} />
-                    <p style={styles.ecoMotto}>Recycle for a Green Future</p>
+                    <p style={styles.ecoMotto}>Circular Economy Platform</p>
                 </div>
 
                 
@@ -331,7 +331,7 @@ const UserDashboard = () => {
         <input 
             name={field.name}
             type="text" 
-            value={formData[field.name] || ''} // null වුණොත් හිස්ව තියන්න
+            value={formData[field.name] || ''} 
             onChange={handleInputChange}
             disabled={field.isEmail ? true : !isEditing}
             style={{
@@ -364,7 +364,6 @@ const UserDashboard = () => {
 
                 if (response.ok) {
                     alert("✅ Profile Updated in Database Successfully!");
-                    // localStorage එකේ තියෙන පරණ දත්තත් අලුත් කරමු (Refresh කරද්දී පේන්න)
                     localStorage.setItem('user', JSON.stringify(formData));
                 } else {
                     alert(`❌ Update Failed: ${data.error}`);
@@ -374,7 +373,6 @@ const UserDashboard = () => {
                 alert("⚠️ Connection Error! Make sure your server is running.");
             }
         }
-        // Save කළාට පස්සේ හෝ Edit බටන් එක එබුවම Editing mode එක මාරු කරනවා
         setIsEditing(!isEditing);
     }}
 >
@@ -451,19 +449,13 @@ mainContentAnimation: {
     },
     logoWrapper: { textAlign: 'center', marginBottom: '30px' },
  glowingLogo: {
-    width: '140px',          // ප්‍රමාණය පොඩ්ඩක් වැඩි කළා පින්තූරෙ විදිහටම
+    width: '140px',          
     height: '140px',
     borderRadius: '50%',     
-    objectFit: 'contain',    // පින්තූරය කැපෙන්නේ නැති වෙන්න (No cropping)
-    backgroundColor: '#fff', // පින්තූරය ඇතුළෙ තියෙන සුදු පාටට ගැලපෙන්න
-    padding: '5px',          // බෝඩර් එකයි පින්තූරෙයි අතර පොඩි ඉඩක්
-    
-    // ඝනකම් කහ පාට බෝඩර් එක
+    objectFit: 'contain',    
+    backgroundColor: '#fff', 
+    padding: '5px',          
     border: '5px solid #00ff11', 
-    
-    // මේකෙන් තමයි අර පින්තූරෙ තියෙන ලොකු Glow එක එන්නේ
-   
-    
     marginBottom: '30px',
     display: 'block',
     marginLeft: 'auto',
@@ -478,21 +470,21 @@ navLink: {
     display: 'flex',
     alignItems: 'center',
     gap: '15px',
-    borderRadius: '15px',      // බටන් එකක් වගේ රවුම් කළා
+    borderRadius: '15px',      
     transition: 'all 0.3s ease',
     fontWeight: '500',
     color: '#ccc',
-    background: 'rgba(255, 255, 255, 0.03)', // ලාවට පේන බටන් එකක්
-    border: '1px solid rgba(255, 255, 255, 0.05)', // Border එක
-    boxShadow: '0 4px 15px rgba(0, 0, 0, 0.2)',    // පොඩි Shadow එකක්
+    background: 'rgba(255, 255, 255, 0.03)',
+    border: '1px solid rgba(255, 255, 255, 0.05)', 
+    boxShadow: '0 4px 15px rgba(0, 0, 0, 0.2)',
 },
 
 // මේකෙන් තමයි Active බටන් එක කැපිලා පේන්නේ
 activeNavLink: {
-    background: 'rgba(46, 204, 113, 0.15)', // ලාවට කොළ පාටක්
+    background: 'rgba(46, 204, 113, 0.15)', 
     color: '#2ecc71',
     border: '1px solid rgba(46, 204, 113, 0.4)',
-    boxShadow: '0 0 15px rgba(46, 204, 113, 0.2)', // කොළ පාට Glow එකක්
+    boxShadow: '0 0 15px rgba(46, 204, 113, 0.2)', 
 },
     logoutBtn: {
         padding: '12px 20px', color: '#ff4d4d', cursor: 'pointer',
@@ -516,7 +508,7 @@ activeNavLink: {
     overflow: 'hidden',
     border: '1px solid #333',
     cursor: 'pointer',
-    transition: 'all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)', // පට්ට Smooth bounce එකක් එනවා
+    transition: 'all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)', 
     position: 'relative'
 },
     cardImg: { width: '100%', height: '220px', objectFit: 'cover' },
