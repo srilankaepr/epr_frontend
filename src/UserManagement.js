@@ -383,6 +383,22 @@ const styles = {
         textAlign: 'center',
         transition: '0.3s'
     },
+
+    approveBtn: {
+    background: 'rgba(46, 204, 113, 0.15)', // ලස්සන transparent කොළ පාටක්
+    color: '#2ecc71', // Text එක කොළ පාටින්
+    border: '1px solid rgba(46, 204, 113, 0.4)', // සිහින් border එකක්
+    padding: '8px 16px',
+    borderRadius: '8px',
+    cursor: 'pointer',
+    fontSize: '13px',
+    fontWeight: '600',
+    marginRight: '8px',
+    transition: 'all 0.3s ease',
+    backdropFilter: 'blur(5px)', // Glass effect එක
+    textTransform: 'uppercase',
+    letterSpacing: '0.5px'
+},
     statLabel: {
         fontSize: '12px',
         color: '#2ecc71',
