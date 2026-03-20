@@ -8,6 +8,15 @@ import autoTable from 'jspdf-autotable';
 const UserManagement = () => {
     const [data, setData] = useState({ admins: [], customers: [] });
     const [stats, setStats] = useState({ total: 0, pending: 0, approved: 0 });
+    const fetchStats = async () => {
+        try {
+            const res = await axios.get('https://eprbackend-production.up.railway.app/api/admin/customer-stats');
+            setStats(res.data);
+        } catch (err) {
+            console.error("Error fetching stats", err);
+        }
+    };
+
     const navigate = useNavigate();
 
     const fetchUsers = async () => {
