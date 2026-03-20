@@ -179,7 +179,6 @@ const UserManagement = () => {
                     </div>
 
                     <h3 style={{...styles.sectionTitle, marginTop: '50px'}}>REGISTERED CUSTOMERS</h3>
-                    <div className="glass-table-wrapper" style={styles.tableWrapper}>
 
        <div style={styles.statsGrid}>
     <div style={styles.statCard}>
@@ -196,7 +195,7 @@ const UserManagement = () => {
     </div>
 </div>
 
-
+                    <div className="glass-table-wrapper" style={styles.tableWrapper}>
                         <table style={{...styles.table, minWidth: '1800px'}}>
                             <thead>
                                 <tr style={styles.headerRow}>
