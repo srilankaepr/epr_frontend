@@ -152,20 +152,7 @@ const UserManagement = () => {
                 </header>
 
                 <div style={styles.statsGrid}>
-    <div style={styles.statCard}>
-        <span style={styles.statLabel}>TOTAL CUSTOMERS</span>
-        <h2 style={styles.statValue}>{stats.total}</h2>
-    </div>
-    <div style={{...styles.statCard, borderLeft: '4px solid #f1c40f'}}>
-        <span style={styles.statLabel}>PENDING APPROVALS</span>
-        <h2 style={{...styles.statValue, color: '#f1c40f'}}>{stats.pending}</h2>
-    </div>
-    <div style={{...styles.statCard, borderLeft: '4px solid #2ecc71'}}>
-        <span style={styles.statLabel}>APPROVED CUSTOMERS</span>
-        <h2 style={{...styles.statValue, color: '#2ecc71'}}>{stats.approved}</h2>
-    </div>
-</div>
-
+ 
                 <div style={{animation: 'fadeIn 1.2s ease-in'}}>
                     <h3 style={styles.sectionTitle}>REGISTERED ADMINISTRATORS</h3>
                     <div className="glass-table-wrapper" style={styles.tableWrapper}>
@@ -195,6 +182,23 @@ const UserManagement = () => {
 
                     <h3 style={{...styles.sectionTitle, marginTop: '50px'}}>REGISTERED CUSTOMERS</h3>
                     <div className="glass-table-wrapper" style={styles.tableWrapper}>
+
+   <div style={styles.statCard}>
+        <span style={styles.statLabel}>TOTAL CUSTOMERS</span>
+        <h2 style={styles.statValue}>{stats.total}</h2>
+    </div>
+    <div style={{...styles.statCard, borderLeft: '4px solid #f1c40f'}}>
+        <span style={styles.statLabel}>PENDING APPROVALS</span>
+        <h2 style={{...styles.statValue, color: '#f1c40f'}}>{stats.pending}</h2>
+    </div>
+    <div style={{...styles.statCard, borderLeft: '4px solid #2ecc71'}}>
+        <span style={styles.statLabel}>APPROVED CUSTOMERS</span>
+        <h2 style={{...styles.statValue, color: '#2ecc71'}}>{stats.approved}</h2>
+    </div>
+</div>
+
+
+
                         <table style={{...styles.table, minWidth: '1800px'}}>
                             <thead>
                                 <tr style={styles.headerRow}>
