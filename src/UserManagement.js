@@ -151,8 +151,6 @@ const UserManagement = () => {
                     <button onClick={downloadPDF} style={styles.savePdfBtn}>Export PDF Report</button>
                 </header>
 
-                <div style={styles.statsGrid}>
- 
                 <div style={{animation: 'fadeIn 1.2s ease-in'}}>
                     <h3 style={styles.sectionTitle}>REGISTERED ADMINISTRATORS</h3>
                     <div className="glass-table-wrapper" style={styles.tableWrapper}>
@@ -183,7 +181,8 @@ const UserManagement = () => {
                     <h3 style={{...styles.sectionTitle, marginTop: '50px'}}>REGISTERED CUSTOMERS</h3>
                     <div className="glass-table-wrapper" style={styles.tableWrapper}>
 
-   <div style={styles.statCard}>
+       <div style={styles.statsGrid}>
+    <div style={styles.statCard}>
         <span style={styles.statLabel}>TOTAL CUSTOMERS</span>
         <h2 style={styles.statValue}>{stats.total}</h2>
     </div>
@@ -196,7 +195,6 @@ const UserManagement = () => {
         <h2 style={{...styles.statValue, color: '#2ecc71'}}>{stats.approved}</h2>
     </div>
 </div>
-
 
 
                         <table style={{...styles.table, minWidth: '1800px'}}>
