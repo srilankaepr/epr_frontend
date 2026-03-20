@@ -8,6 +8,7 @@ import autoTable from 'jspdf-autotable';
 const UserManagement = () => {
     const [data, setData] = useState({ admins: [], customers: [] });
     const [stats, setStats] = useState({ total: 0, pending: 0, approved: 0 });
+    const [filterStatus, setFilterStatus] = useState('All');
     const fetchStats = async () => {
         try {
             const res = await axios.get('https://eprbackend-production.up.railway.app/api/admin/customer-stats');
@@ -180,16 +181,50 @@ const UserManagement = () => {
 
                     <h3 style={{...styles.sectionTitle, marginTop: '50px'}}>REGISTERED CUSTOMERS</h3>
 
-       <div style={styles.statsGrid}>
-    <div style={styles.statCard}>
+      <div style={styles.statsGrid}>
+    {/* 1. Total Customers Card */}
+    <div 
+        style={{
+            ...styles.statCard, 
+            cursor: 'pointer', 
+            border: filterStatus === 'All' ? '2px solid #fff' : '1px solid rgba(255,255,255,0.1)',
+            transform: filterStatus === 'All' ? 'scale(1.05)' : 'scale(1)',
+            transition: '0.3s'
+        }} 
+        onClick={() => setFilterStatus('All')}
+    >
         <span style={styles.statLabel}>TOTAL CUSTOMERS</span>
         <h2 style={styles.statValue}>{stats.total}</h2>
     </div>
-    <div style={{...styles.statCard, borderLeft: '4px solid #f1c40f'}}>
+
+    {/* 2. Pending Approvals Card */}
+    <div 
+        style={{
+            ...styles.statCard, 
+            cursor: 'pointer', 
+            borderLeft: '4px solid #f1c40f',
+            border: filterStatus === 'Pending' ? '2px solid #f1c40f' : '1px solid rgba(255,255,255,0.1)',
+            transform: filterStatus === 'Pending' ? 'scale(1.05)' : 'scale(1)',
+            transition: '0.3s'
+        }} 
+        onClick={() => setFilterStatus('Pending')}
+    >
         <span style={styles.statLabel}>PENDING APPROVALS</span>
         <h2 style={{...styles.statValue, color: '#f1c40f'}}>{stats.pending}</h2>
     </div>
-    <div style={{...styles.statCard, borderLeft: '4px solid #2ecc71'}}>
+
+    {/* 3. Approved Customers Card */}
+    <div 
+        style={{
+            ...styles.statCard, 
+            cursor: 'pointer', 
+            borderLeft: '4px solid #2ecc71',
+            border: filterStatus === 'Approved' ? '2px solid #2ecc71' : '1px solid rgba(255,255,255,0.1)',
+            transform: filterStatus === 'Approved' ? 'scale(1.05)' : 'scale(1)',
+            transition: '0.3s'
+        }} 
+        onClick={() => setFilterStatus('Approved')}
+    >
         <span style={styles.statLabel}>APPROVED CUSTOMERS</span>
         <h2 style={{...styles.statValue, color: '#2ecc71'}}>{stats.approved}</h2>
     </div>
@@ -215,7 +250,9 @@ const UserManagement = () => {
                                 </tr>
                             </thead>
                             <tbody>
-                                {data.customers.map((c, i) => (
+                                {data.customers
+                                       .filter(c => filterStatus === 'All' ? true : (c.status === filterStatus))
+                                       .map((c, i) => (
                                     <tr key={i} className="table-row" style={styles.row}>
                                         <td style={styles.tdFirst}>{i + 1}</td>
                                         <td style={styles.td}>{c.companyName}</td>
@@ -230,11 +267,20 @@ const UserManagement = () => {
                                         <td style={styles.td}>{`${c.address1}, ${c.address2}`}</td>
                                         <td style={styles.td}>{c.country}</td>
                                         <td style={styles.tdLast}>
-                                            <button onClick={() => deleteUser(c._id, 'Customer')} style={styles.deleteBtn}>Delete</button>
-                                        </td>
-                                    </tr>
-                                ))}
-                            </tbody>
+                                            {/* Approve Button එක පෙන්වන්නේ Status එක Pending නම් විතරයි */}
+                    {c.status === 'Pending' && (
+                        <button 
+                            onClick={() => approveCustomer(c._id)} 
+                            style={styles.approveBtn}
+                        >
+                            Approve
+                        </button>
+                    )}
+                    <button onClick={() => deleteUser(c._id, 'Customer')} style={styles.deleteBtn}>Delete</button>
+                                       </td>
+                                   </tr>
+                                  ))}
+                           </tbody>
                         </table>
                     </div>
                 </div>
