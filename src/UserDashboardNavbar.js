@@ -6,13 +6,13 @@ const UserDashboardNavbar = () => {
     const location = useLocation();
 
     const navItems = [
-        { name: "Dashboard", path: "/user-dashboard", color: "#00f2fe", icon: "🏠" },
-        { name: "Electronic", path: "/electronic-order", color: "#4facfe", icon: "🔌" },
-        { name: "Plastic", path: "/plastic-order", color: "#00f2fe", icon: "♻️" },
-        { name: "Solar", path: "/solar-order", color: "#f9d423", icon: "☀️" },
-        { name: "Agro", path: "/agro-order", color: "#43e97b", icon: "🌱" },
-        { name: "Battery", path: "/battery-order", color: "#fa709a", icon: "🔋" },
-        { name: "Oil", path: "/oil-order", color: "#84fab0", icon: "🛢️" }
+        { name: "Dashboard EPR", path: "/user-dashboard", color: "#00f2fe", icon: "🏠" },
+        { name: "Electronic EPR", path: "/electronic-order", color: "#4facfe", icon: "🔌" },
+        { name: "Plastic EPR", path: "/plastic-order", color: "#00f2fe", icon: "♻️" },
+        { name: "Solar EPR", path: "/solar-order", color: "#f9d423", icon: "☀️" },
+        { name: "Agro EPR", path: "/agro-order", color: "#43e97b", icon: "🌱" },
+        { name: "Battery EPR", path: "/battery-order", color: "#fa709a", icon: "🔋" },
+        { name: "Oil EPR", path: "/oil-order", color: "#84fab0", icon: "🛢️" }
     ];
 
     return (

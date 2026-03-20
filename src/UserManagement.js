@@ -7,9 +7,9 @@ import autoTable from 'jspdf-autotable';
 
 const UserManagement = () => {
     const [data, setData] = useState({ admins: [], customers: [] });
+    const [stats, setStats] = useState({ total: 0, pending: 0, approved: 0 });
     const navigate = useNavigate();
 
-    // --- FETCH DATA LOGIC ---
     const fetchUsers = async () => {
         try {
             const res = await axios.get('https://eprbackend-production.up.railway.app/api/users/all');
@@ -21,6 +21,7 @@ const UserManagement = () => {
 
     useEffect(() => {
         fetchUsers();
+        fetchStats();
     }, []);
 
     // --- DELETE LOGIC ---
@@ -141,6 +142,21 @@ const UserManagement = () => {
                     <button onClick={downloadPDF} style={styles.savePdfBtn}>Export PDF Report</button>
                 </header>
 
+                <div style={styles.statsGrid}>
+    <div style={styles.statCard}>
+        <span style={styles.statLabel}>TOTAL CUSTOMERS</span>
+        <h2 style={styles.statValue}>{stats.total}</h2>
+    </div>
+    <div style={{...styles.statCard, borderLeft: '4px solid #f1c40f'}}>
+        <span style={styles.statLabel}>PENDING APPROVALS</span>
+        <h2 style={{...styles.statValue, color: '#f1c40f'}}>{stats.pending}</h2>
+    </div>
+    <div style={{...styles.statCard, borderLeft: '4px solid #2ecc71'}}>
+        <span style={styles.statLabel}>APPROVED CUSTOMERS</span>
+        <h2 style={{...styles.statValue, color: '#2ecc71'}}>{stats.approved}</h2>
+    </div>
+</div>
+
                 <div style={{animation: 'fadeIn 1.2s ease-in'}}>
                     <h3 style={styles.sectionTitle}>REGISTERED ADMINISTRATORS</h3>
                     <div className="glass-table-wrapper" style={styles.tableWrapper}>
@@ -236,7 +252,7 @@ const styles = {
     display: 'flex',
     flexDirection: 'column',
     padding: '50px 25px',
-    zIndex: 100 // 👈 අනිත් දේවල් වලට වඩා උඩින් තියෙන්න
+    zIndex: 100 
 },
 
     logoCircle: { 
@@ -281,6 +297,34 @@ const styles = {
     td: { padding: '15px', fontSize: '14px', color: '#ddd', borderRight: '1px solid rgba(255, 255, 255, 0.1)' },
     tdFirst: { padding: '15px', fontSize: '14px', color: '#ddd', borderRight: '1px solid rgba(255, 255, 255, 0.1)', textAlign: 'center' },
     tdLast: { padding: '15px', fontSize: '14px', color: '#ddd' },
+    statsGrid: {
+        display: 'grid',
+        gridTemplateColumns: 'repeat(3, 1fr)',
+        gap: '20px',
+        marginBottom: '40px'
+    },
+    statCard: {
+        background: 'rgba(255, 255, 255, 0.05)',
+        padding: '25px',
+        borderRadius: '15px',
+        backdropFilter: 'blur(10px)',
+        border: '1px solid rgba(255, 255, 255, 0.1)',
+        textAlign: 'center',
+        transition: '0.3s'
+    },
+    statLabel: {
+        fontSize: '12px',
+        color: '#2ecc71',
+        letterSpacing: '1px',
+        fontWeight: 'bold',
+        textTransform: 'uppercase'
+    },
+    statValue: {
+        fontSize: '35px',
+        margin: '10px 0 0',
+        fontWeight: '900',
+        color: '#fff'
+    },
     deleteBtn: { background: 'rgba(231, 76, 60, 0.1)', color: '#e74c3c', border: '1px solid #e74c3c', padding: '6px 12px', borderRadius: '8px', cursor: 'pointer', fontSize: '12px', fontWeight: 'bold' }
 };
 
