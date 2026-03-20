@@ -28,7 +28,22 @@ const UserManagement = () => {
             console.error("Error fetching data", err);
         }
     };
+const approveCustomer = async (id) => {
+        if (!window.confirm("Are you sure you want to approve this customer?")) return;
 
+        try {
+            const response = await axios.put(`https://eprbackend-production.up.railway.app/api/admin/approve-customer/${id}`);
+            
+            if (response.status === 200) {
+                alert("✅ Customer Approved Successfully!");
+                fetchUsers(); // Table එක refresh කරනවා
+                fetchStats(); // Stats කාඩ්ස් ටික refresh කරනවා
+            }
+        } catch (err) {
+            console.error("Error approving customer:", err);
+            alert("❌ Failed to approve customer.");
+        }
+    };
     useEffect(() => {
         fetchUsers();
         fetchStats();
