@@ -292,12 +292,12 @@ const approveCustomer = async (id) => {
                                 <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
                                     {c.verificationDocs.map((doc, index) => (
                                         <a 
-                                            key={index}
-                                            href={`https://eprbackend-production.up.railway.app/documents/${doc}`} 
-                                            target="_blank" 
-                                            rel="noopener noreferrer"
-                                            style={styles.docLink}
-                                            title="Click to view document"
+                                           key={index}
+href={`https://eprbackend-production.up.railway.app/documents/${doc.split('/').pop()}`} 
+target="_blank" 
+rel="noopener noreferrer"
+style={styles.docLink}
+title="Click to view document"
                                         >
                                             <span role="img" aria-label="doc">📄</span> View {index + 1}
                                         </a>
