@@ -265,6 +265,7 @@ const approveCustomer = async (id) => {
                                     <th style={styles.th}>CP Mobile</th>
                                     <th style={styles.th}>Address</th>
                                     <th style={styles.th}>Country</th>
+                                    <th style={styles.th}>Documents</th>
                                     <th style={styles.thLast}>Action</th>
                                 </tr>
                             </thead>
@@ -286,6 +287,26 @@ const approveCustomer = async (id) => {
                                         <td style={styles.td}>{c.contactPersonMobile}</td>
                                         <td style={styles.td}>{`${c.address1}, ${c.address2}`}</td>
                                         <td style={styles.td}>{c.country}</td>
+                                        <td style={styles.td}>
+                            {c.verificationDocs && c.verificationDocs.length > 0 ? (
+                                <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                                    {c.verificationDocs.map((doc, index) => (
+                                        <a 
+                                            key={index}
+                                            href={`https://eprbackend-production.up.railway.app/documents/${doc}`} 
+                                            target="_blank" 
+                                            rel="noopener noreferrer"
+                                            style={styles.docLink}
+                                            title="Click to view document"
+                                        >
+                                            <span role="img" aria-label="doc">📄</span> View {index + 1}
+                                        </a>
+                                    ))}
+                                </div>
+                            ) : (
+                                <span style={{ color: 'rgba(255,255,255,0.3)', fontSize: '12px' }}>No Docs</span>
+                            )}
+                        </td>
                                         <td style={styles.tdLast}>
                                             {/* Approve Button එක පෙන්වන්නේ Status එක Pending නම් විතරයි */}
                     {c.status === 'Pending' && (
@@ -417,7 +438,21 @@ const styles = {
         fontWeight: '900',
         color: '#fff'
     },
-    deleteBtn: { background: 'rgba(231, 76, 60, 0.1)', color: '#e74c3c', border: '1px solid #e74c3c', padding: '6px 12px', borderRadius: '8px', cursor: 'pointer', fontSize: '12px', fontWeight: 'bold' }
+    deleteBtn: { background: 'rgba(231, 76, 60, 0.1)', color: '#e74c3c', border: '1px solid #e74c3c', padding: '6px 12px', borderRadius: '8px', cursor: 'pointer', fontSize: '12px', fontWeight: 'bold' },
+    docLink: {
+        background: 'rgba(52, 152, 219, 0.15)', 
+        color: '#3498db',
+        border: '1px solid rgba(52, 152, 219, 0.4)',
+        padding: '5px 10px',
+        borderRadius: '6px',
+        textDecoration: 'none',
+        fontSize: '11px',
+        fontWeight: '600',
+        display: 'inline-flex',
+        alignItems: 'center',
+        gap: '4px',
+        transition: '0.3s'
+    },
 };
 
 export default UserManagement;
