@@ -7,19 +7,9 @@ import autoTable from 'jspdf-autotable';
 
 const UserManagement = () => {
     const [data, setData] = useState({ admins: [], customers: [] });
-    const [stats, setStats] = useState({ total: 0, pending: 0, approved: 0 });
-    const [filterStatus, setFilterStatus] = useState('All');
-    const fetchStats = async () => {
-        try {
-            const res = await axios.get('https://eprbackend-production.up.railway.app/api/admin/customer-stats');
-            setStats(res.data);
-        } catch (err) {
-            console.error("Error fetching stats", err);
-        }
-    };
-
     const navigate = useNavigate();
 
+    // --- FETCH DATA LOGIC ---
     const fetchUsers = async () => {
         try {
             const res = await axios.get('https://eprbackend-production.up.railway.app/api/users/all');
@@ -28,25 +18,9 @@ const UserManagement = () => {
             console.error("Error fetching data", err);
         }
     };
-const approveCustomer = async (id) => {
-        if (!window.confirm("Are you sure you want to approve this customer?")) return;
 
-        try {
-            const response = await axios.put(`https://eprbackend-production.up.railway.app/api/admin/approve-customer/${id}`);
-            
-            if (response.status === 200) {
-                alert("✅ Customer Approved Successfully!");
-                fetchUsers(); // Table එක refresh කරනවා
-                fetchStats(); // Stats කාඩ්ස් ටික refresh කරනවා
-            }
-        } catch (err) {
-            console.error("Error approving customer:", err);
-            alert("❌ Failed to approve customer.");
-        }
-    };
     useEffect(() => {
         fetchUsers();
-        fetchStats();
     }, []);
 
     // --- DELETE LOGIC ---
@@ -195,56 +169,6 @@ const approveCustomer = async (id) => {
                     </div>
 
                     <h3 style={{...styles.sectionTitle, marginTop: '50px'}}>REGISTERED CUSTOMERS</h3>
-
-      <div style={styles.statsGrid}>
-    {/* 1. Total Customers Card */}
-    <div 
-        style={{
-            ...styles.statCard, 
-            cursor: 'pointer', 
-            border: filterStatus === 'All' ? '2px solid #fff' : '1px solid rgba(255,255,255,0.1)',
-            transform: filterStatus === 'All' ? 'scale(1.05)' : 'scale(1)',
-            transition: '0.3s'
-        }} 
-        onClick={() => setFilterStatus('All')}
-    >
-        <span style={styles.statLabel}>TOTAL CUSTOMERS</span>
-        <h2 style={styles.statValue}>{stats.total}</h2>
-    </div>
-
-    {/* 2. Pending Approvals Card */}
-    <div 
-        style={{
-            ...styles.statCard, 
-            cursor: 'pointer', 
-            borderLeft: '4px solid #f1c40f',
-            border: filterStatus === 'Pending' ? '2px solid #f1c40f' : '1px solid rgba(255,255,255,0.1)',
-            transform: filterStatus === 'Pending' ? 'scale(1.05)' : 'scale(1)',
-            transition: '0.3s'
-        }} 
-        onClick={() => setFilterStatus('Pending')}
-    >
-        <span style={styles.statLabel}>PENDING APPROVALS</span>
-        <h2 style={{...styles.statValue, color: '#f1c40f'}}>{stats.pending}</h2>
-    </div>
-
-    {/* 3. Approved Customers Card */}
-    <div 
-        style={{
-            ...styles.statCard, 
-            cursor: 'pointer', 
-            borderLeft: '4px solid #2ecc71',
-            border: filterStatus === 'Approved' ? '2px solid #2ecc71' : '1px solid rgba(255,255,255,0.1)',
-            transform: filterStatus === 'Approved' ? 'scale(1.05)' : 'scale(1)',
-            transition: '0.3s'
-        }} 
-        onClick={() => setFilterStatus('Approved')}
-    >
-        <span style={styles.statLabel}>APPROVED CUSTOMERS</span>
-        <h2 style={{...styles.statValue, color: '#2ecc71'}}>{stats.approved}</h2>
-    </div>
-</div>
-
                     <div className="glass-table-wrapper" style={styles.tableWrapper}>
                         <table style={{...styles.table, minWidth: '1800px'}}>
                             <thead>
@@ -265,9 +189,7 @@ const approveCustomer = async (id) => {
                                 </tr>
                             </thead>
                             <tbody>
-                                {data.customers
-                                       .filter(c => filterStatus === 'All' ? true : (c.status === filterStatus))
-                                       .map((c, i) => (
+                                {data.customers.map((c, i) => (
                                     <tr key={i} className="table-row" style={styles.row}>
                                         <td style={styles.tdFirst}>{i + 1}</td>
                                         <td style={styles.td}>{c.companyName}</td>
@@ -282,20 +204,11 @@ const approveCustomer = async (id) => {
                                         <td style={styles.td}>{`${c.address1}, ${c.address2}`}</td>
                                         <td style={styles.td}>{c.country}</td>
                                         <td style={styles.tdLast}>
-                                            {/* Approve Button එක පෙන්වන්නේ Status එක Pending නම් විතරයි */}
-                    {c.status === 'Pending' && (
-                        <button 
-                            onClick={() => approveCustomer(c._id)} 
-                            style={styles.approveBtn}
-                        >
-                            Approve
-                        </button>
-                    )}
-                    <button onClick={() => deleteUser(c._id, 'Customer')} style={styles.deleteBtn}>Delete</button>
-                                       </td>
-                                   </tr>
-                                  ))}
-                           </tbody>
+                                            <button onClick={() => deleteUser(c._id, 'Customer')} style={styles.deleteBtn}>Delete</button>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
                         </table>
                     </div>
                 </div>
@@ -323,7 +236,7 @@ const styles = {
     display: 'flex',
     flexDirection: 'column',
     padding: '50px 25px',
-    zIndex: 100 
+    zIndex: 100 // 👈 අනිත් දේවල් වලට වඩා උඩින් තියෙන්න
 },
 
     logoCircle: { 
@@ -368,50 +281,6 @@ const styles = {
     td: { padding: '15px', fontSize: '14px', color: '#ddd', borderRight: '1px solid rgba(255, 255, 255, 0.1)' },
     tdFirst: { padding: '15px', fontSize: '14px', color: '#ddd', borderRight: '1px solid rgba(255, 255, 255, 0.1)', textAlign: 'center' },
     tdLast: { padding: '15px', fontSize: '14px', color: '#ddd' },
-    statsGrid: {
-        display: 'grid',
-        gridTemplateColumns: 'repeat(3, 1fr)',
-        gap: '20px',
-        marginBottom: '40px'
-    },
-    statCard: {
-        background: 'rgba(255, 255, 255, 0.05)',
-        padding: '25px',
-        borderRadius: '15px',
-        backdropFilter: 'blur(10px)',
-        border: '1px solid rgba(255, 255, 255, 0.1)',
-        textAlign: 'center',
-        transition: '0.3s'
-    },
-
-    approveBtn: {
-    background: 'rgba(46, 204, 113, 0.15)', // ලස්සන transparent කොළ පාටක්
-    color: '#2ecc71', // Text එක කොළ පාටින්
-    border: '1px solid rgba(46, 204, 113, 0.4)', // සිහින් border එකක්
-    padding: '8px 16px',
-    borderRadius: '8px',
-    cursor: 'pointer',
-    fontSize: '13px',
-    fontWeight: '600',
-    marginRight: '8px',
-    transition: 'all 0.3s ease',
-    backdropFilter: 'blur(5px)', // Glass effect එක
-    textTransform: 'uppercase',
-    letterSpacing: '0.5px'
-},
-    statLabel: {
-        fontSize: '12px',
-        color: '#2ecc71',
-        letterSpacing: '1px',
-        fontWeight: 'bold',
-        textTransform: 'uppercase'
-    },
-    statValue: {
-        fontSize: '35px',
-        margin: '10px 0 0',
-        fontWeight: '900',
-        color: '#fff'
-    },
     deleteBtn: { background: 'rgba(231, 76, 60, 0.1)', color: '#e74c3c', border: '1px solid #e74c3c', padding: '6px 12px', borderRadius: '8px', cursor: 'pointer', fontSize: '12px', fontWeight: 'bold' }
 };
 
