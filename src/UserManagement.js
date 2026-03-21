@@ -246,10 +246,11 @@ const approveCustomer = async (id) => {
 </div>
 
                     <div className="glass-table-wrapper" style={styles.tableWrapper}>
-                        <table style={{...styles.table, minWidth: '1800px'}}>
+                        <table style={{...styles.table, minWidth: '2000px'}}>
                             <thead>
                                 <tr style={styles.headerRow}>
                                     <th style={styles.thFirst}>#</th>
+                                    <th style={styles.th}>Reg Number</th>
                                     <th style={styles.th}>Company Name</th>
                                     <th style={styles.th}>Role</th>
                                     <th style={styles.th}>Website</th>
@@ -270,6 +271,7 @@ const approveCustomer = async (id) => {
                                        .map((c, i) => (
                                     <tr key={i} className="table-row" style={styles.row}>
                                         <td style={styles.tdFirst}>{i + 1}</td>
+                                        <td style={{...styles.td, fontWeight: 'bold', color: '#2ecc71'}}> {c.regNumber || 'N/A'}</td>
                                         <td style={styles.td}>{c.companyName}</td>
                                         <td style={styles.td}>{c.orgRole}</td>
                                         <td style={styles.td}>{c.companyWebsite || '-'}</td>
