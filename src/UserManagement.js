@@ -92,19 +92,22 @@ const approveCustomer = async (id) => {
 
         let finalY = doc.lastAutoTable.finalY;
         const customerRows = data.customers.map((c, i) => [
-            i + 1, c.companyName, c.orgRole, c.companyWebsite || '-', c.officialEmail, 
+            i + 1,c.regNumber || '-', c.companyName, c.orgRole, c.companyWebsite || '-', c.officialEmail, 
             c.phone, c.whatsapp || '-', c.dob || '-', c.contactPersonName, 
             c.contactPersonMobile, `${c.address1}, ${c.address2}`, c.country
         ]);
 
         autoTable(doc, {
             startY: finalY + 50,
-            head: [['#', 'Company', 'Role', 'Website', 'Email', 'Phone', 'WhatsApp', 'DOB', 'Contact Person', 'CP Mobile', 'Address', 'Country']],
+            head: [['#', 'Reg Number','Company', 'Role', 'Website', 'Email', 'Phone', 'WhatsApp', 'DOB', 'Contact Person', 'CP Mobile', 'Address', 'Country']],
             body: customerRows,
             theme: 'striped',
             headStyles: { fillColor: [52, 152, 219] },
             styles: { fontSize: 7, cellPadding: 2, overflow: 'linebreak' },
-            columnStyles: { 0: { cellWidth: 20 }, 10: { cellWidth: 100 } }
+            columnStyles: { 
+            0: { cellWidth: 20 }, 
+            1: { cellWidth: 80 }, 
+            11: { cellWidth: 100 }  }
         });
 
         doc.save("Full_User_Management_Report.pdf");
