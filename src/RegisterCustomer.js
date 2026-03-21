@@ -21,48 +21,76 @@ const RegisterCustomer = () => {
         password: '', confirmPassword: ''
     });
 
+ const [selectedFiles, setSelectedFiles] = useState([]);   
+
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
+
+    const handleFileChange = (e) => { 
+    setSelectedFiles(e.target.files);
+};
 
     const validatePhone = (number) => {
         const regex = /^[0-9]{10}$/; 
         return regex.test(number);
     };
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
+   const handleSubmit = async (e) => {
+    e.preventDefault();
 
-        if (formData.password !== formData.confirmPassword) {
-            alert("❌ Passwords do not match!");
-            return;
-        }
+    // 1. කලින් තිබුණ Validation ටික එහෙම්මම තියෙනවා
+    if (formData.password !== formData.confirmPassword) {
+        alert("❌ Passwords do not match!");
+        return;
+    }
 
-        if (!validatePhone(formData.phone)) {
-            alert("❌ Please enter a valid 10-digit Phone Number.");
-            return;
-        }
-        if (formData.whatsapp && !validatePhone(formData.whatsapp)) {
-            alert("❌ Please enter a valid 10-digit WhatsApp Number.");
-            return;
-        }
-        if (!validatePhone(formData.contactPersonMobile)) {
-            alert("❌ Please enter a valid 10-digit Mobile Number for the Contact Person.");
-            return;
-        }
+    if (!validatePhone(formData.phone)) {
+        alert("❌ Please enter a valid 10-digit Phone Number.");
+        return;
+    }
+    if (formData.whatsapp && !validatePhone(formData.whatsapp)) {
+        alert("❌ Please enter a valid 10-digit WhatsApp Number.");
+        return;
+    }
+    if (!validatePhone(formData.contactPersonMobile)) {
+        alert("❌ Please enter a valid 10-digit Mobile Number for the Contact Person.");
+        return;
+    }
 
-        try {
-            const response = await axios.post('https://eprbackend-production.up.railway.app/api/customers/register', formData);
-            if (response.status === 201) {
-                alert("✅ Customer Registration Successful!");
-                navigate('/'); 
+    // --- මෙතන ඉඳන් තමයි අලුත් වෙනස්කම් ටික ---
+
+    // 2. FormData එකක් හදාගන්නවා (Files යවන්න ඕනේ නිසා)
+    const data = new FormData();
+
+    // 3. formData එකේ තියෙන ඔක්කොම විස්තර FormData එකට දානවා
+    Object.keys(formData).forEach(key => {
+        data.append(key, formData[key]);
+    });
+
+    // 4. selectedFiles වල තියෙන documents ටිකත් FormData එකට දානවා
+    for (let i = 0; i < selectedFiles.length; i++) {
+        data.append('documents', selectedFiles[i]);
+    }
+
+    try {
+        // 5. POST Request එක (මෙතන දැන් formData වෙනුවට 'data' කියන එක යවන්න)
+        const response = await axios.post('https://eprbackend-production.up.railway.app/api/customers/register', data, {
+            headers: {
+                'Content-Type': 'multipart/form-data' // File upload වලදී මේක අනිවාර්යයි
             }
-        } catch (error) {
-            console.error("Registration Error:", error);
-            const errorMessage = error.response?.data?.error || "Registration failed. Please try again.";
-            alert("❌ Error: " + errorMessage);
+        });
+
+        if (response.status === 201) {
+            alert("✅ Customer Registration Successful!");
+            navigate('/'); 
         }
-    };
+    } catch (error) {
+        console.error("Registration Error:", error);
+        const errorMessage = error.response?.data?.error || "Registration failed. Please try again.";
+        alert("❌ Error: " + errorMessage);
+    }
+};
 
     return (
         <div style={styles.container}>
@@ -243,6 +271,26 @@ const RegisterCustomer = () => {
                             <label style={styles.label}>CONFIRM</label>
                             <input name="confirmPassword" type="password" placeholder="••••••••" style={styles.input} onChange={handleChange} required />
                         </div>
+                    </div>
+
+                    <div style={{ marginBottom: '18px' }}>
+                        <label style={styles.label}>
+                            UPLOAD BUSINESS DOCUMENTS (BR / TAX / VAT)
+                            <span style={{ color: '#aaa', fontSize: '13px', marginLeft: '10px' }}> (Multiple files allowed)</span>
+                        </label>
+                        <input 
+                            type="file" 
+                            name="documents"
+                            multiple                      
+                            onChange={handleFileChange}   
+                            style={styles.input}
+                            accept=".pdf,.jpg,.jpeg,.png"
+                        />
+                        {selectedFiles.length > 0 && (
+                            <p style={{ color: '#2ecc71', fontSize: '14px', marginTop: '5px', fontWeight: 'bold' }}>
+                                ✅ {selectedFiles.length} file(s) selected
+                            </p>
+                        )}
                     </div>
 
                     <button type="submit" style={styles.registerBtn}>AUTHORIZE & REGISTER</button>
