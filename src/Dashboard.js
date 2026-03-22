@@ -11,6 +11,15 @@ const Dashboard = () => {
         email: localStorage.getItem('adminEmail') || "admin@system.com",
         profilePic: localStorage.getItem('adminPhoto') || null 
     });
+    const [counts, setCounts] = useState({
+        pibo: 0,
+        producer: 0,
+        importer: 0,
+        brandOwner: 0,
+        recyclers: 0,
+        pending: 0,
+        active: 0
+    });
 
     useEffect(() => {
         const handleClickOutside = (event) => {
@@ -39,11 +48,23 @@ const Dashboard = () => {
                         setAdminInfo(prev => ({ ...prev, profilePic: currentAdmin.profilePic }));
                         localStorage.setItem('adminPhoto', currentAdmin.profilePic);
                     }
-                }
-            } catch (error) {
-                console.error("Error updating profile pic:", error);
+                    const allCustomers = data.customers || [];
+
+                setCounts({
+                    pibo: allCustomers.filter(c => c.orgRole !== 'Recycler').length,
+                    producer: allCustomers.filter(c => c.orgRole === 'Producer').length,
+                    importer: allCustomers.filter(c => c.orgRole === 'Importer').length,
+                    brandOwner: allCustomers.filter(c => c.orgRole === 'Brand Owner').length,
+                    
+                    recyclers: allCustomers.filter(c => c.orgRole === 'Recycler').length,
+                    pending: allCustomers.filter(c => !c.isApproved).length,
+                    active: 5 
+                });
             }
-        };
+        } catch (error) {
+            console.error("Error updating dashboard data:", error);
+        }
+    };
         fetchAdminData();
     }, [adminInfo.email]);
 
@@ -390,7 +411,7 @@ mainContent: {
         padding: '10px'
     },
     menuItem: { padding: '14px 18px', cursor: 'pointer', fontSize: '14px', color: '#ccc', borderRadius: '12px', transition: '0.2s' },
-    placeholderGrid: { display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '35px' },
+    placeholderGrid: { display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '35px' },
     miniCard: { 
         background: 'rgba(255, 255, 255, 0.03)', 
         padding: '50px 30px', 
