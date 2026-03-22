@@ -34,9 +34,10 @@ const handleSubmit = useCallback(async (e) => {
         });
 
         const data = await response.json();
-        console.log("Logged in User Role:", data.user.adminRole);
 
         if (response.ok) {
+                    console.log("Logged in User Role:", data.user.adminRole);
+
             login(data.user, data.role, data.token, data.user.adminRole); 
 
             const routes = {
@@ -122,8 +123,8 @@ const handleSubmit = useCallback(async (e) => {
     type="submit" 
     style={{
         ...styles.loginBtn, 
-        opacity: loading ? 0.7 : 1,                 // 👈 මෙතනට දැම්මම හරි
-        cursor: loading ? 'not-allowed' : 'pointer'  // 👈 මෙතනට දැම්මම හරි
+        opacity: loading ? 0.7 : 1,                 
+        cursor: loading ? 'not-allowed' : 'pointer'  
     }} 
     disabled={loading}
 >
