@@ -228,40 +228,33 @@ const Dashboard = () => {
                 <div style={{...styles.contentArea, animation: 'fadeInUp 1s ease-out'}}>
                     <div style={styles.placeholderGrid}>
     {/* --- කාඩ් 1: Total PIBO (With Breakdown) --- */}
-    <div style={{...styles.miniCard, minWidth: '300px'}}>
-        <div style={{...styles.cardIcon, color: '#3498db'}}>👤</div>
-        <h3 style={styles.cardVal}>{counts.pibo}</h3>
-        <p style={{...styles.cardLab, marginBottom: '15px'}}>Total PIBO</p>
-        
-        {/* පීබෝලා ඇතුළේ ඉන්න 3 දෙනාගේ count එක මෙන්න මෙතන */}
-        <div style={{ 
-            display: 'flex', 
-            justifyContent: 'space-around', 
-            borderTop: '1px solid rgba(255,255,255,0.1)', 
-            paddingTop: '15px',
-            fontSize: '12px'
-        }}>
-            <div>
-                <span style={{color: '#ccc'}}>Producers</span>
-                <div style={{fontWeight: 'bold', color: '#3498db'}}>{counts.producer}</div>
-            </div>
-            <div>
-                <span style={{color: '#ccc'}}>Importers</span>
-                <div style={{fontWeight: 'bold', color: '#3498db'}}>{counts.importer}</div>
-            </div>
-            <div>
-                <span style={{color: '#ccc'}}>Brands</span>
-                <div style={{fontWeight: 'bold', color: '#3498db'}}>{counts.brandOwner}</div>
-            </div>
+   <div style={{...styles.miniCard, minWidth: '300px'}}>
+    <div style={{...styles.cardIcon, color: '#3498db'}}>👤</div>
+    <h3 style={styles.cardVal}>{counts.pibo}</h3>
+    <p style={styles.cardLab}>Total PIBO</p>
+    
+    <div style={styles.breakdownContainer}>
+        <div style={styles.breakdownItem}>
+            <span style={styles.breakdownLabel}>Producers</span>
+            <div style={styles.breakdownValue}>{counts.producer}</div>
+        </div>
+        <div style={styles.breakdownItem}>
+            <span style={styles.breakdownLabel}>Importers</span>
+            <div style={styles.breakdownValue}>{counts.importer}</div>
+        </div>
+        <div style={styles.breakdownItem}>
+            <span style={styles.breakdownLabel}>Brands</span>
+            <div style={styles.breakdownValue}>{counts.brandOwner}</div>
         </div>
     </div>
+</div>
 
     {/* --- කාඩ් 2: Total Recyclers --- */}
-    <div style={styles.miniCard}>
-        <div style={{...styles.cardIcon, color: '#f39c12'}}>🚚</div>
-        <h3 style={styles.cardVal}>{counts.recyclers}</h3>
-        <p style={styles.cardLab}>Total Recyclers</p>
-    </div>
+   <div style={styles.miniCard}>
+    <div style={{...styles.cardIcon, color: '#f39c12'}}>🚚</div>
+    <h3 style={styles.cardVal}>{counts.recyclers}</h3>
+    <p style={styles.cardLab}>Total Recyclers</p>
+</div>
     
     {/* අනිත් Pending සහ Active කාඩ් දෙකත් මෙතනින් පල්ලෙහාට තිබ්බම හරි */}
 </div>
@@ -411,18 +404,22 @@ mainContent: {
         padding: '10px'
     },
     menuItem: { padding: '14px 18px', cursor: 'pointer', fontSize: '14px', color: '#ccc', borderRadius: '12px', transition: '0.2s' },
-    placeholderGrid: { display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '35px' },
-    miniCard: { 
-        background: 'rgba(255, 255, 255, 0.03)', 
-        padding: '50px 30px', 
-        borderRadius: '35px', 
-        border: '1px solid rgba(255,255,255,0.08)', 
-        display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '15px', 
-        transition: 'all 0.5s ease',
-        backdropFilter: 'blur(5px)',
-        position: 'relative',
-        zIndex: 1 // Lower priority compared to dropdown
-    },
+    placeholderGrid: { display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '25px', alignItems: 'start' },
+  miniCard: { 
+    background: 'rgba(255, 255, 255, 0.03)', 
+    padding: '30px 20px', 
+    borderRadius: '30px', 
+    border: '1px solid rgba(255, 255, 255, 0.08)', 
+    display: 'flex', 
+    flexDirection: 'column', 
+    alignItems: 'center', 
+    gap: '10px', 
+    transition: 'all 0.5s ease',
+    backdropFilter: 'blur(5px)',
+    position: 'relative',
+    zIndex: 1,
+    minHeight: '220px' // හැම කාඩ් එකක්ම එකම උසකට තියාගන්න
+},
     cardLabel: { color: '#888', fontSize: '14px', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '2px' },
     cardValue: { color: '#2ecc71', fontSize: '42px', fontWeight: '900' }
 };
