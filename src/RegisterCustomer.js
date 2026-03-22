@@ -293,7 +293,7 @@ const RegisterCustomer = () => {
                         )}
                     </div>
 
-                    <button type="submit" style={styles.registerBtn}>AUTHORIZE & REGISTER</button>
+                    <button type="submit" style={styles.registerBtn}>SUBMIT FOR THE APPROVAL</button>
                 </form>
 
                 <div style={styles.footer}>
