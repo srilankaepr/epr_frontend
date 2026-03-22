@@ -288,26 +288,56 @@ const approveCustomer = async (id) => {
                                         <td style={styles.td}>{c.contactPersonMobile}</td>
                                         <td style={styles.td}>{`${c.address1}, ${c.address2}`}</td>
                                         <td style={styles.td}>{c.country}</td>
-                                        <td style={styles.td}>
-                            {c.verificationDocs && c.verificationDocs.length > 0 ? (
-                                <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-                                    {c.verificationDocs.map((doc, index) => (
-                                        <a 
-                                           key={index}
-                                            href={`https://eprbackend-production.up.railway.app/documents/${doc.split('/').pop()}`} 
-                                            target="_blank" 
-                                            rel="noopener noreferrer"
-                                            style={styles.docLink}
-                                            title="Click to view document"
-                                        >
-                                            <span role="img" aria-label="doc">📄</span> View {index + 1}
-                                        </a>
-                                    ))}
-                                </div>
-                            ) : (
-                                <span style={{ color: 'rgba(255,255,255,0.3)', fontSize: '12px' }}>No Docs</span>
-                            )}
-                        </td>
+                                       <td style={styles.td}>
+    <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', flexDirection: 'column' }}>
+        
+        {/* 1. BRC Document එක තිබේ නම් */}
+        {c.brcDocument && (
+            <a 
+                href={`https://eprbackend-production.up.railway.app/documents/${c.brcDocument.split('/').pop()}`} 
+                target="_blank" rel="noopener noreferrer" style={styles.docLink}
+            >
+                <span role="img" aria-label="doc">📄</span> BRC
+            </a>
+        )}
+
+        {/* 2. VAT Document එක තිබේ නම් */}
+        {c.vatDocument && (
+            <a 
+                href={`https://eprbackend-production.up.railway.app/documents/${c.vatDocument.split('/').pop()}`} 
+                target="_blank" rel="noopener noreferrer" style={styles.docLink}
+            >
+                <span role="img" aria-label="doc">📄</span> VAT
+            </a>
+        )}
+
+        {/* 3. Billing Document එක තිබේ නම් */}
+        {c.billingDocument && (
+            <a 
+                href={`https://eprbackend-production.up.railway.app/documents/${c.billingDocument.split('/').pop()}`} 
+                target="_blank" rel="noopener noreferrer" style={styles.docLink}
+            >
+                <span role="img" aria-label="doc">📄</span> Billing
+            </a>
+        )}
+
+        {/* 4. පරණ විදිහට verificationDocs Array එකේ තිබුණොත් ඒවා පෙන්වන්න */}
+        {c.verificationDocs && c.verificationDocs.length > 0 && c.verificationDocs.map((doc, index) => (
+            <a 
+                key={index}
+                href={`https://eprbackend-production.up.railway.app/documents/${doc.split('/').pop()}`} 
+                target="_blank" rel="noopener noreferrer" style={styles.docLink}
+            >
+                <span role="img" aria-label="doc">📄</span> Old Doc {index + 1}
+            </a>
+        ))}
+
+        {/* මොකුත්ම නැත්නම් පමණක් "No Docs" පෙන්වන්න */}
+        {!(c.brcDocument || c.vatDocument || c.billingDocument || (c.verificationDocs && c.verificationDocs.length > 0)) && (
+            <span style={{ color: 'rgba(255,255,255,0.3)', fontSize: '12px' }}>No Docs</span>
+        )}
+    </div>
+</td>
                          <td style={styles.tdLast}>
                           {c.status === 'Pending' && (
                         <button 
