@@ -24,10 +24,10 @@ const [brcFile, setBrcFile] = useState(null);
 const [vatFile, setVatFile] = useState(null);
 const [billingFile, setBillingFile] = useState(null);
 
-
-    const handleFileChange = (e) => { 
-    setSelectedFiles(e.target.files);
+const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
 };
+
 
     const validatePhone = (number) => {
         const regex = /^[0-9]{10}$/; 
