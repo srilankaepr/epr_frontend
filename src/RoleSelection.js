@@ -38,7 +38,8 @@ const roles = [
         <div 
             key={role.name}
             style={styles.roleCard} 
-onClick={() => role.path ? navigate(role.path, { state: { selectedRole: role.roleType } }) : alert(`${role.name} Registration coming soon!`)}
+            onClick={() => role.path ? navigate(role.path, { state: { selectedRole: role.roleType } }) : alert(`${role.name} Registration coming soon!`)}
+//onClick={() => role.path ? navigate(role.path, { state: { selectedRole: role.roleType } }) : alert(`${role.name} Registration coming soon!`)}
             onMouseEnter={(e) => {
                 e.currentTarget.style.transform = 'translateY(-10px)';
                 e.currentTarget.style.background = role.bg;

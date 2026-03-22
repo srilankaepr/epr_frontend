@@ -11,7 +11,7 @@ const RegisterCustomer = () => {
     const initialRole = location.state?.selectedRole || '';
 
     const [formData, setFormData] = useState({
-        orgRole: initialRole === 'RECYCLER' ? 'Recycler' : '',
+        orgRole: initialRole === 'RECYCLER' ? 'Recycler' : 'PIBO',
         companyName: '', 
         companyWebsite: '', 
         phone: '', whatsapp: '', officialEmail: '',
@@ -99,8 +99,12 @@ const handleChange = (e) => {
                     <div style={styles.logoFrame}>
                         <img src={logo} alt="EPR Logo" style={styles.logoImg} />
                     </div>
-                    <h2 style={styles.title}>PIBO REGISTRATION</h2>
-                    <p style={styles.subText}>Producers, Importers & Brand Owners: Join the circular ecosystem</p>
+                    <h2 style={styles.title}>  {initialRole === 'RECYCLER' ? 'RECYCLER REGISTRATION' : 'PIBO REGISTRATION'}  </h2>
+              <p style={styles.subText}>
+        {initialRole === 'RECYCLER' 
+            ? 'COLLECTOR / TRANSPORTER / RECYCLER: Join the circular ecosystem' 
+            : 'Producers, Importers & Brand Owners: Join the circular ecosystem'}
+    </p>
                 </div>
 
                 <form onSubmit={handleSubmit} style={styles.form}>
