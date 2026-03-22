@@ -20,12 +20,10 @@ const RegisterCustomer = () => {
         dob: '', 
         password: '', confirmPassword: ''
     });
+const [brcFile, setBrcFile] = useState(null);
+const [vatFile, setVatFile] = useState(null);
+const [billingFile, setBillingFile] = useState(null);
 
- const [selectedFiles, setSelectedFiles] = useState([]);   
-
-    const handleChange = (e) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
-    };
 
     const handleFileChange = (e) => { 
     setSelectedFiles(e.target.files);
@@ -58,26 +56,22 @@ const RegisterCustomer = () => {
         return;
     }
 
-    // --- මෙතන ඉඳන් තමයි අලුත් වෙනස්කම් ටික ---
+  const data = new FormData();
 
-    // 2. FormData එකක් හදාගන්නවා (Files යවන්න ඕනේ නිසා)
-    const data = new FormData();
-
-    // 3. formData එකේ තියෙන ඔක්කොම විස්තර FormData එකට දානවා
+    // 1. සාමාන්‍ය Form Data ටික ඇඩ් කරනවා
     Object.keys(formData).forEach(key => {
         data.append(key, formData[key]);
     });
 
-    // 4. selectedFiles වල තියෙන documents ටිකත් FormData එකට දානවා
-    for (let i = 0; i < selectedFiles.length; i++) {
-        data.append('documents', selectedFiles[i]);
-    }
-
+    // 2. අලුත් ෆයිල් 3 වෙන වෙනම ඇඩ් කරනවා (අර පරණ loop එක වෙනුවට)
+    if (brcFile) data.append('brc', brcFile);
+    if (vatFile) data.append('vat', vatFile);
+    if (billingFile) data.append('billing', billingFile);
     try {
         // 5. POST Request එක (මෙතන දැන් formData වෙනුවට 'data' කියන එක යවන්න)
         const response = await axios.post('https://eprbackend-production.up.railway.app/api/customers/register', data, {
             headers: {
-                'Content-Type': 'multipart/form-data' // File upload වලදී මේක අනිවාර්යයි
+                'Content-Type': 'multipart/form-data' 
             }
         });
 
@@ -273,25 +267,41 @@ const RegisterCustomer = () => {
                         </div>
                     </div>
 
-                    <div style={{ marginBottom: '18px' }}>
-                        <label style={styles.label}>
-                            UPLOAD BUSINESS DOCUMENTS (BR / TAX / VAT)
-                            <span style={{ color: '#aaa', fontSize: '13px', marginLeft: '10px' }}> (Multiple files allowed)</span>
-                        </label>
-                        <input 
-                            type="file" 
-                            name="documents"
-                            multiple                      
-                            onChange={handleFileChange}   
-                            style={styles.input}
-                            accept=".pdf,.jpg,.jpeg,.png"
-                        />
-                        {selectedFiles.length > 0 && (
-                            <p style={{ color: '#2ecc71', fontSize: '14px', marginTop: '5px', fontWeight: 'bold' }}>
-                                ✅ {selectedFiles.length} file(s) selected
-                            </p>
-                        )}
-                    </div>
+                   {/* --- BRC Upload --- */}
+<div style={{ marginBottom: '18px' }}>
+    <label style={styles.label}>UPLOAD BRC (Business Registration)</label>
+    <input 
+        type="file" 
+        onChange={(e) => setBrcFile(e.target.files[0])} 
+        style={styles.input}
+        accept=".pdf,.jpg,.jpeg,.png"
+    />
+    {brcFile && <p style={{ color: '#2ecc71', fontSize: '14px', marginTop: '5px' }}>✅ {brcFile.name} selected</p>}
+</div>
+
+{/* --- VAT Upload --- */}
+<div style={{ marginBottom: '18px' }}>
+    <label style={styles.label}>UPLOAD VAT DOCUMENT</label>
+    <input 
+        type="file" 
+        onChange={(e) => setVatFile(e.target.files[0])} 
+        style={styles.input}
+        accept=".pdf,.jpg,.jpeg,.png"
+    />
+    {vatFile && <p style={{ color: '#2ecc71', fontSize: '14px', marginTop: '5px' }}>✅ {vatFile.name} selected</p>}
+</div>
+
+{/* --- Billing Proof Upload --- */}
+<div style={{ marginBottom: '18px' }}>
+    <label style={styles.label}>UPLOAD BILLING PROOF (Electricity / Water)</label>
+    <input 
+        type="file" 
+        onChange={(e) => setBillingFile(e.target.files[0])} 
+        style={styles.input}
+        accept=".pdf,.jpg,.jpeg,.png"
+    />
+    {billingFile && <p style={{ color: '#2ecc71', fontSize: '14px', marginTop: '5px' }}>✅ {billingFile.name} selected</p>}
+</div>
 
                     <button type="submit" style={styles.registerBtn}>SUBMIT FOR THE APPROVAL</button>
                 </form>
