@@ -99,8 +99,8 @@ const handleChange = (e) => {
                     <div style={styles.logoFrame}>
                         <img src={logo} alt="EPR Logo" style={styles.logoImg} />
                     </div>
-                    <h2 style={styles.title}>CUSTOMER REGISTRATION</h2>
-                    <p style={styles.subText}>Establish your organization in the circular ecosystem</p>
+                    <h2 style={styles.title}>PIBO REGISTRATION</h2>
+                    <p style={styles.subText}>Producers, Importers & Brand Owners: Join the circular ecosystem</p>
                 </div>
 
                 <form onSubmit={handleSubmit} style={styles.form}>
