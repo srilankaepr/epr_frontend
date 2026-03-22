@@ -205,11 +205,49 @@ const Dashboard = () => {
                 </header>
 
             
+<div style={styles.placeholderGrid}>
+    {/* --- කාඩ් 1: Total PIBO (With Breakdown) --- */}
+    <div style={{...styles.miniCard, minWidth: '300px'}}>
+        <div style={{...styles.cardIcon, color: '#3498db'}}>👤</div>
+        <h3 style={styles.cardVal}>{counts.pibo}</h3>
+        <p style={{...styles.cardLab, marginBottom: '15px'}}>Total PIBO</p>
+        
+        {/* පීබෝලා ඇතුළේ ඉන්න 3 දෙනාගේ count එක මෙන්න මෙතන */}
+        <div style={{ 
+            display: 'flex', 
+            justifyContent: 'space-around', 
+            borderTop: '1px solid rgba(255,255,255,0.1)', 
+            paddingTop: '15px',
+            fontSize: '12px'
+        }}>
+            <div>
+                <span style={{color: '#ccc'}}>Producers</span>
+                <div style={{fontWeight: 'bold', color: '#3498db'}}>{counts.producer}</div>
+            </div>
+            <div>
+                <span style={{color: '#ccc'}}>Importers</span>
+                <div style={{fontWeight: 'bold', color: '#3498db'}}>{counts.importer}</div>
+            </div>
+            <div>
+                <span style={{color: '#ccc'}}>Brands</span>
+                <div style={{fontWeight: 'bold', color: '#3498db'}}>{counts.brandOwner}</div>
+            </div>
+        </div>
+    </div>
+
+    {/* --- කාඩ් 2: Total Recyclers --- */}
+    <div style={styles.miniCard}>
+        <div style={{...styles.cardIcon, color: '#f39c12'}}>🚚</div>
+        <h3 style={styles.cardVal}>{counts.recyclers}</h3>
+        <p style={styles.cardLab}>Total Recyclers</p>
+    </div>
+    
+    {/* අනිත් Pending සහ Active කාඩ් දෙකත් මෙතනින් පල්ලෙහාට තිබ්බම හරි */}
+</div>
 
 
 
 
-            
             </div>
         </div>
     );
