@@ -34,6 +34,7 @@ const handleSubmit = useCallback(async (e) => {
         });
 
         const data = await response.json();
+        console.log("Logged in User Role:", data.user.adminRole);
 
         if (response.ok) {
             login(data.user, data.role, data.token, data.user.adminRole); 

@@ -19,6 +19,7 @@ const UserManagement = () => {
     };
 
     const navigate = useNavigate();
+    console.log("Current Admin Role from LocalStorage:", localStorage.getItem('adminRole'));
 
     const fetchUsers = async () => {
         try {
