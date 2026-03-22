@@ -293,11 +293,11 @@ const approveCustomer = async (id) => {
                                     {c.verificationDocs.map((doc, index) => (
                                         <a 
                                            key={index}
-href={`https://eprbackend-production.up.railway.app/documents/${doc.split('/').pop()}`} 
-target="_blank" 
-rel="noopener noreferrer"
-style={styles.docLink}
-title="Click to view document"
+                                            href={`https://eprbackend-production.up.railway.app/documents/${doc.split('/').pop()}`} 
+                                            target="_blank" 
+                                            rel="noopener noreferrer"
+                                            style={styles.docLink}
+                                            title="Click to view document"
                                         >
                                             <span role="img" aria-label="doc">📄</span> View {index + 1}
                                         </a>
@@ -307,9 +307,8 @@ title="Click to view document"
                                 <span style={{ color: 'rgba(255,255,255,0.3)', fontSize: '12px' }}>No Docs</span>
                             )}
                         </td>
-                                        <td style={styles.tdLast}>
-                                            {/* Approve Button එක පෙන්වන්නේ Status එක Pending නම් විතරයි */}
-                    {c.status === 'Pending' && (
+                         <td style={styles.tdLast}>
+                          {c.status === 'Pending' && (
                         <button 
                             onClick={() => approveCustomer(c._id)} 
                             style={styles.approveBtn}
@@ -317,8 +316,15 @@ title="Click to view document"
                             Approve
                         </button>
                     )}
-                    <button onClick={() => deleteUser(c._id, 'Customer')} style={styles.deleteBtn}>Delete</button>
-                                       </td>
+                    {localStorage.getItem('adminRole') === 'SuperAdmin' && (
+                                 <button 
+                                     onClick={() => deleteUser(c._id, 'Customer')} 
+                                     style={styles.deleteBtn}
+                                                >
+                                              Delete
+                                           </button>
+                                          )}
+                                      </td>
                                    </tr>
                                   ))}
                            </tbody>
