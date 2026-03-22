@@ -204,8 +204,8 @@ const Dashboard = () => {
                     </div>
                 </header>
 
-            
-<div style={styles.placeholderGrid}>
+                <div style={{...styles.contentArea, animation: 'fadeInUp 1s ease-out'}}>
+                    <div style={styles.placeholderGrid}>
     {/* --- කාඩ් 1: Total PIBO (With Breakdown) --- */}
     <div style={{...styles.miniCard, minWidth: '300px'}}>
         <div style={{...styles.cardIcon, color: '#3498db'}}>👤</div>
@@ -244,10 +244,7 @@ const Dashboard = () => {
     
     {/* අනිත් Pending සහ Active කාඩ් දෙකත් මෙතනින් පල්ලෙහාට තිබ්බම හරි */}
 </div>
-
-
-
-
+                </div>
             </div>
         </div>
     );
