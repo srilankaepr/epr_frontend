@@ -325,6 +325,12 @@ const approveCustomer = async (id) => {
                                               Delete
                                            </button>
                                           )}
+
+                                          {c.status !== 'Pending' && localStorage.getItem('adminRole') !== 'SuperAdmin' && (
+        <span style={{ color: '#bdc3c7', fontSize: '12px', fontStyle: 'italic' }}>
+            No Actions
+                                         </span>
+                                            )}
                                       </td>
                                    </tr>
                                   ))}
