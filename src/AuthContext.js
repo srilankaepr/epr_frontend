@@ -29,6 +29,12 @@ export const AuthProvider = ({ children }) => {
         localStorage.setItem('userRole', role);
         localStorage.setItem('userName', userData.fullName || userData.name || '');
         localStorage.setItem('userEmail', userData.email || '');
+
+if (userData.adminRole) {
+        localStorage.setItem('adminRole', userData.adminRole);
+    } else {
+        localStorage.removeItem('adminRole'); 
+    }
         
 if (userData.coPartnerId) {
             localStorage.setItem('coPartnerId', userData.coPartnerId);

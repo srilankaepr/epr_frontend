@@ -36,7 +36,7 @@ const handleSubmit = useCallback(async (e) => {
         const data = await response.json();
 
         if (response.ok) {
-            login(data.user, data.role, data.token); 
+            login(data.user, data.role, data.token, data.user.adminRole); 
 
             const routes = {
                 'ADMIN': '/dashboard',
@@ -55,7 +55,7 @@ const handleSubmit = useCallback(async (e) => {
     } finally {
         setLoading(false); 
     }
-}, [navigate, login]); // ✅ දැන් මේ function එක හැදෙන්නේ navigate හෝ login වෙනස් වුණොත් විතරයි.
+}, [navigate, login]); 
 //......................................................................................................................
     return (
         <div style={styles.container}>
