@@ -285,7 +285,7 @@ const handleChange = (e) => {
 
 {/* --- VAT Upload --- */}
 <div style={{ marginBottom: '18px' }}>
-    <label style={styles.label}>UPLOAD VAT DOCUMENT</label>
+    <label style={styles.label}>UPLOAD VAT DOCUMENT(include TIN)</label>
     <input 
         type="file" 
         onChange={(e) => setVatFile(e.target.files[0])} 
