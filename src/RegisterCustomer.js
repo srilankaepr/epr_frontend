@@ -366,7 +366,7 @@ const styles = {
     },
     logoImg: { width: '80%' },
     title: { fontSize: '26px', fontWeight: '900', letterSpacing: '3px', color: '#fff', margin: '0' },
-    subText: { fontSize: '13px', color: '#3498db', marginTop: '10px', fontWeight: 'bold', letterSpacing: '1px' },
+    subText: { fontSize: '15px', color: '#3498db', marginTop: '10px', fontWeight: 'bold', letterSpacing: '1px' },
     sectionHeader: { 
         color: '#2ecc71', fontSize: '16px', textAlign: 'left', 
         marginTop: '30px', marginBottom: '20px', 
