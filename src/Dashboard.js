@@ -204,22 +204,12 @@ const Dashboard = () => {
                     </div>
                 </header>
 
-                <div style={{...styles.contentArea, animation: 'fadeInUp 1s ease-out'}}>
-                    <div style={styles.placeholderGrid}>
-                        <div className="stat-card" style={styles.miniCard}>
-                            <span style={styles.cardLabel}>Total Orders</span>
-                            <span style={styles.cardValue}>150</span>
-                        </div>
-                        <div className="stat-card" style={styles.miniCard}>
-                            <span style={styles.cardLabel}>Active Users</span>
-                            <span style={styles.cardValue}>45</span>
-                        </div>
-                        <div className="stat-card" style={styles.miniCard}>
-                            <span style={styles.cardLabel}>Pending QR</span>
-                            <span style={styles.cardValue}>12</span>
-                        </div>
-                    </div>
-                </div>
+            
+
+
+
+
+            
             </div>
         </div>
     );
