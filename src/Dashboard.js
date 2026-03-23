@@ -20,7 +20,6 @@ const Dashboard = () => {
         pending: 0,
         active: 0
     });
-const [topCompanies, setTopCompanies] = useState([]);
 
     useEffect(() => {
         const handleClickOutside = (event) => {
@@ -50,7 +49,6 @@ const [topCompanies, setTopCompanies] = useState([]);
                         localStorage.setItem('adminPhoto', currentAdmin.profilePic);
                     }
                     const allCustomers = data.customers || [];
-                    setTopCompanies(allCustomers);
 
                 setCounts({
                     pibo: allCustomers.filter(c => c.orgRole !== 'Recycler').length,
@@ -162,10 +160,6 @@ const [topCompanies, setTopCompanies] = useState([]);
         `;
         document.head.appendChild(styleSheet);
     }, []);
-// top compny qr count
-const topFiveCompanies = (topCompanies || []) 
-    .sort((a, b) => (b.qrCount || 0) - (a.qrCount || 0))
-    .slice(0, 5);
 
     return (
         <div style={styles.container}>
@@ -263,24 +257,14 @@ const topFiveCompanies = (topCompanies || [])
     </div>
 
     {/* කාඩ් 3: Top 5 QR Companies */}
-    <div style={styles.miniCard}>
-        <p style={{...styles.cardLab, marginBottom: '15px'}}>Top 5 QR Leaders</p>
-        <div style={styles.topFiveList}>
-            {topFiveCompanies.length > 0 ? topFiveCompanies.map((company, index) => (
-                <div key={index} style={styles.summaryRow}>
-                    <div>
-                        <span style={styles.companyNameStyle}>{company.companyName}</span>
-                        <span style={styles.roleLabelStyle}>{company.orgRole}</span>
-                    </div>
-                    <div style={styles.qrCountStyle}>
-                        {company.qrCount || 0}
-                    </div>
-                </div>
-            )) : (
-                <p style={{color: '#666', fontSize: '12px', textAlign: 'center'}}>No data yet</p>
-            )}
-        </div>
+<div style={styles.miniCard}>
+    <p style={{...styles.cardLab, marginBottom: '15px'}}>Top 5 QR Leaders</p>
+    <div style={styles.topFiveList}>
+        <p style={{color: '#666', fontSize: '13px', textAlign: 'center', marginTop: '20px'}}>
+            Data currently unavailable
+        </p>
     </div>
+   </div>
 </div> 
 {/*.......................................................................................................................... */}
 
