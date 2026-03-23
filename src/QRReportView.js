@@ -2,7 +2,9 @@ import React, { useState, useEffect } from 'react';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 
-const QRReportView = ({ allData }) => {
+const QRReportView = () => {
+    const [allData, setAllData] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
     const [filters, setFilters] = useState({
         company: 'All',
@@ -10,10 +12,29 @@ const QRReportView = ({ allData }) => {
         brand: 'All'
     });
 
-    // Filtering Logic
+    // 1. බැක්එන්ඩ් එකෙන් දත්ත ගේන ලොජික් එක
+    useEffect(() => {
+        const fetchAllQRs = async () => {
+            try {
+                setIsLoading(true);
+                const response = await fetch('https://eprbackend-production.up.railway.app/api/get-all-generated-qrs');
+                const data = await response.json();
+                if (response.ok) {
+                    setAllData(data);
+                }
+            } catch (err) {
+                console.error("Fetch error:", err);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+        fetchAllQRs();
+    }, []);
+
+    // 2. සර්ච් සහ ෆිල්ටර් ලොජික් එක
     const filteredQRs = allData.filter(qr => {
         const matchesSearch = (qr.qrId || "").toLowerCase().includes(searchTerm.toLowerCase()) || 
-                              (qr.registrationId || "").toLowerCase().includes(searchTerm.toLowerCase());
+                              (qr.serialNumber || "").toLowerCase().includes(searchTerm.toLowerCase());
         const matchesCompany = filters.company === 'All' || qr.company === filters.company;
         const matchesProduct = filters.product === 'All' || qr.product === filters.product;
         const matchesBrand = filters.brand === 'All' || qr.brand === filters.brand;
@@ -21,12 +42,12 @@ const QRReportView = ({ allData }) => {
         return matchesSearch && matchesCompany && matchesProduct && matchesBrand;
     });
 
-    // PDF Export Logic
+    // 3. PDF එක සාදන ලොජික් එක
     const exportPDF = () => {
         const doc = new jsPDF();
         doc.text("EPR System - Master QR Audit Report", 14, 15);
         doc.setFontSize(10);
-        doc.text(`Generated on: ${new Date().toLocaleString()}`, 14, 22);
+        doc.text(`Generated on: ${new Date().toLocaleString()} | Total Records: ${filteredQRs.length}`, 14, 22);
 
         const tableColumn = ["QR ID", "Company", "Product", "Brand", "MFD"];
         const tableRows = filteredQRs.map(qr => [
@@ -42,23 +63,27 @@ const QRReportView = ({ allData }) => {
             body: tableRows,
             startY: 30,
             theme: 'grid',
-            headStyles: { fillStyle: '#2ecc71' }
+            headStyles: { fillColor: [46, 204, 113] } // පද්ධතියේ කොළ පාට
         });
 
-        doc.save(`QR_Report_${new Date().getTime()}.pdf`);
+        doc.save(`Master_QR_Report_${new Date().getTime()}.pdf`);
     };
+
+    if (isLoading) {
+        return <div style={{ color: '#2ecc71', textAlign: 'center', padding: '50px' }}>Loading Master QR Records...</div>;
+    }
 
     return (
         <div style={reportStyles.container}>
             <div style={reportStyles.header}>
-                <h3 style={{ color: '#2ecc71', margin: 0 }}>Master QR Audit Log</h3>
-                <button onClick={exportPDF} style={reportStyles.pdfBtn}>Export PDF Report</button>
+                <h3 style={{ color: '#2ecc71', margin: 0 }}>Master QR Audit Log ({allData.length})</h3>
+                <button onClick={exportPDF} style={reportStyles.pdfBtn}>📥 Export PDF Report</button>
             </div>
 
-            {/* Filters Section */}
+            {/* ෆිල්ටර් කොටස */}
             <div style={reportStyles.filterGrid}>
                 <input 
-                    placeholder="🔍 Search ID or Reg Num..." 
+                    placeholder="🔍 Search ID or Serial..." 
                     style={reportStyles.input} 
                     onChange={(e) => setSearchTerm(e.target.value)} 
                 />
@@ -76,24 +101,23 @@ const QRReportView = ({ allData }) => {
                 </select>
             </div>
 
-            {/* Table Section */}
+            {/* ටේබල් කොටස */}
             <div style={reportStyles.tableWrapper}>
                 <table style={reportStyles.table}>
                     <thead>
                         <tr style={reportStyles.tableHead}>
                             <th style={reportStyles.th}>QR ID</th>
-                            <th style={reportStyles.th}>Entity Details</th>
-                            <th style={reportStyles.th}>Asset Info</th>
+                            <th style={reportStyles.th}>Company Details</th>
+                            <th style={reportStyles.th}>Product & Brand</th>
                             <th style={reportStyles.th}>MFD Date</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {filteredQRs.slice(0, 100).map((qr, idx) => ( // Performance එකට මුල් 100 පෙන්වමු
+                        {filteredQRs.slice(0, 100).map((qr, idx) => ( 
                             <tr key={idx} style={reportStyles.tr}>
                                 <td style={{ ...reportStyles.td, color: '#2ecc71', fontWeight: 'bold' }}>{qr.qrId}</td>
                                 <td style={reportStyles.td}>
                                     <div style={{ color: '#fff' }}>{qr.company}</div>
-                                    <div style={{ fontSize: '11px', color: '#666' }}>{qr.registrationId || 'N/A'}</div>
                                 </td>
                                 <td style={reportStyles.td}>
                                     <div style={{ color: '#ccc' }}>{qr.product}</div>
@@ -117,7 +141,7 @@ const QRReportView = ({ allData }) => {
 const reportStyles = {
     container: { animation: 'fadeIn 0.5s' },
     header: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '25px' },
-    pdfBtn: { background: '#5fed4c', color: '#fff', border: 'none', padding: '10px 20px', borderRadius: '10px', cursor: 'pointer', fontWeight: 'bold' },
+    pdfBtn: { background: '#e67e22', color: '#fff', border: 'none', padding: '10px 20px', borderRadius: '10px', cursor: 'pointer', fontWeight: 'bold' },
     filterGrid: { display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '15px', marginBottom: '25px' },
     input: { padding: '12px', borderRadius: '10px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: '#fff' },
     tableWrapper: { background: 'rgba(0,0,0,0.2)', borderRadius: '15px', overflow: 'hidden' },
