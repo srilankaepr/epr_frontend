@@ -152,11 +152,26 @@ const exportPDF = () => {
                 Filtered Results: <span style={{ color: '#2ecc71', fontWeight: 'bold' }}>{filteredQRs.length}</span>
             </div>
         </div>
-
+{/* PDF Export Section - දැන් මෙතන තමයි Date Selection එක තියෙන්නේ */}
+    <div style={{ display: 'flex', gap: '15px', alignItems: 'center' }}>
+        <div style={reportStyles.pdfDateWrapper}>
+            <span style={{ fontSize: '11px', color: '#888', marginRight: '5px' }}>Export Period:</span>
+            <input 
+                type="date" 
+                style={reportStyles.pdfDateInput}
+                onChange={(e) => setDateRange({ ...dateRange, start: e.target.value })} 
+            />
+            <span style={{ color: '#444' }}>-</span>
+            <input 
+                type="date" 
+                style={reportStyles.pdfDateInput}
+                onChange={(e) => setDateRange({ ...dateRange, end: e.target.value })} 
+            />
+        </div>
         {/* PDF Export බටන් එක */}
         <button onClick={exportPDF} style={reportStyles.pdfBtn}>Export PDF Report</button>
     </div>
-
+ </div>
             {/* ෆිල්ටර් කොටස */}
           <div style={reportStyles.filterGrid}>
     <input 
