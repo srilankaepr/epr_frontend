@@ -227,37 +227,8 @@ const Dashboard = () => {
 
                 <div style={{...styles.contentArea, animation: 'fadeInUp 1s ease-out'}}>
                     <div style={styles.placeholderGrid}>
-    {/* --- කාඩ් 1: Total PIBO (With Breakdown) --- */}
-   <div style={{...styles.miniCard, minWidth: '300px'}}>
-    <div style={{...styles.cardIcon, color: '#3498db'}}>👤</div>
-    <h3 style={styles.cardVal}>{counts.pibo}</h3>
-    <p style={styles.cardLab}>Total PIBO</p>
-    
-    <div style={styles.breakdownContainer}>
-        <div style={styles.breakdownItem}>
-            <span style={styles.breakdownLabel}>Producers</span>
-            <div style={styles.breakdownValue}>{counts.producer}</div>
-        </div>
-        <div style={styles.breakdownItem}>
-            <span style={styles.breakdownLabel}>Importers</span>
-            <div style={styles.breakdownValue}>{counts.importer}</div>
-        </div>
-        <div style={styles.breakdownItem}>
-            <span style={styles.breakdownLabel}>Brands</span>
-            <div style={styles.breakdownValue}>{counts.brandOwner}</div>
-        </div>
-    </div>
-</div>
-
-    {/* --- කාඩ් 2: Total Recyclers --- */}
-   <div style={styles.miniCard}>
-    <div style={{...styles.cardIcon, color: '#f39c12'}}>🚚</div>
-    <h3 style={styles.cardVal}>{counts.recyclers}</h3>
-    <p style={styles.cardLab}>Total Recyclers</p>
-</div>
-    
-    {/* අනිත් Pending සහ Active කාඩ් දෙකත් මෙතනින් පල්ලෙහාට තිබ්බම හරි */}
-</div>
+ 
+                    </div>
                 </div>
             </div>
         </div>
@@ -279,7 +250,7 @@ const styles = {
     },
     sidebar: { 
     width: '320px', 
-    position: 'fixed', // 👈 මේක තමයි ප්‍රධානම දේ
+    position: 'fixed',
     top: 0,
     left: 0,
     bottom: 0,
@@ -289,7 +260,7 @@ const styles = {
     display: 'flex',
     flexDirection: 'column',
     padding: '50px 25px',
-    zIndex: 100 // 👈 අනිත් දේවල් වලට වඩා උඩින් තියෙන්න
+    zIndex: 100 
 },
 
     logoCircle: { 
@@ -354,16 +325,16 @@ mainContent: {
     flex: 1, 
     padding: '60px', 
     overflowY: 'auto',
-    marginLeft: '320px', // 👈 Sidebar එකේ පළලට සමාන ඉඩක් වමෙන් තබන්න
-    width: 'calc(100% - 320px)', // 👈 ඉතිරි පළල නිවැරදිව ගණනය කිරීමට
+    marginLeft: '320px', 
+    width: 'calc(100% - 320px)', 
     minHeight: '100vh'
 },    header: { 
         display: 'flex', 
         justifyContent: 'space-between', 
         alignItems: 'center', 
         marginBottom: '80px',
-        position: 'relative', // Added to ensure header layering
-        zIndex: 10000        // Ensure header is above main content
+        position: 'relative', 
+        zIndex: 10000      
     },
     adminTitle: { fontSize: '38px', fontWeight: '900', letterSpacing: '-1.5px' },
     divider: { height: '5px', width: '70px', background: '#2ecc71', marginTop: '12px', borderRadius: '10px' },
@@ -399,29 +370,16 @@ mainContent: {
         border: '1px solid rgba(255,255,255,0.1)', 
         borderRadius: '20px', 
         width: '200px', 
-        zIndex: 10005, // Fixed: High priority z-index to stay above cards
+        zIndex: 10005, 
         boxShadow: '0 25px 50px rgba(0,0,0,0.8)', 
         padding: '10px'
     },
-    menuItem: { padding: '14px 18px', cursor: 'pointer', fontSize: '14px', color: '#ccc', borderRadius: '12px', transition: '0.2s' },
-    placeholderGrid: { display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '25px', alignItems: 'start' },
-  miniCard: { 
-    background: 'rgba(255, 255, 255, 0.03)', 
-    padding: '30px 20px', 
-    borderRadius: '30px', 
-    border: '1px solid rgba(255, 255, 255, 0.08)', 
-    display: 'flex', 
-    flexDirection: 'column', 
-    alignItems: 'center', 
-    gap: '10px', 
-    transition: 'all 0.5s ease',
-    backdropFilter: 'blur(5px)',
-    position: 'relative',
-    zIndex: 1,
-    minHeight: '220px' // හැම කාඩ් එකක්ම එකම උසකට තියාගන්න
-},
-    cardLabel: { color: '#888', fontSize: '14px', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '2px' },
-    cardValue: { color: '#2ecc71', fontSize: '42px', fontWeight: '900' }
+    menuItem: { padding: '14px 18px', 
+                cursor: 'pointer', 
+                fontSize: '14px', 
+                color: '#ccc', 
+                borderRadius: '12px', 
+                transition: '0.2s' },
 };
 
 export default Dashboard;
