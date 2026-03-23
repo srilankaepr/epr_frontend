@@ -20,7 +20,7 @@ const Dashboard = () => {
         pending: 0,
         active: 0
     });
-const [customers, setCustomers] = useState([]);
+const [topCompanies, setTopCompanies] = useState([]);
 
     useEffect(() => {
         const handleClickOutside = (event) => {
@@ -50,6 +50,7 @@ const [customers, setCustomers] = useState([]);
                         localStorage.setItem('adminPhoto', currentAdmin.profilePic);
                     }
                     const allCustomers = data.customers || [];
+                    setTopCompanies(allCustomers);
 
                 setCounts({
                     pibo: allCustomers.filter(c => c.orgRole !== 'Recycler').length,
@@ -161,9 +162,8 @@ const [customers, setCustomers] = useState([]);
         `;
         document.head.appendChild(styleSheet);
     }, []);
-
 // top compny qr count
-const topFiveCompanies = (customers || [])
+const topFiveCompanies = (topCompanies || []) 
     .sort((a, b) => (b.qrCount || 0) - (a.qrCount || 0))
     .slice(0, 5);
 
@@ -232,7 +232,7 @@ const topFiveCompanies = (customers || [])
                 </header>
 
                 <div style={{...styles.contentArea, animation: 'fadeInUp 1s ease-out'}}>
-                    
+{/*.......................................................................................................................... */}
 <div style={styles.placeholderGrid}>
     {/* කාඩ් 1: Total PIBO */}
     <div style={styles.miniCard}>
@@ -281,7 +281,9 @@ const topFiveCompanies = (customers || [])
             )}
         </div>
     </div>
-</div>
+</div> 
+{/*.......................................................................................................................... */}
+
                 </div>
             </div>
         </div>
