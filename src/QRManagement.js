@@ -385,6 +385,9 @@ const fetchDashboardCounts = async () => {
         const finalQty = parseInt(qty);
         const MAX_PER_ZIP = 1000; 
 
+        const selectedCompany = companiesList.find(c => c.name === comp);
+    const regIdForBatch = selectedCompany ? selectedCompany.registrationId : "REG-N/A";
+
         if (!comp || !brand || !prod || isNaN(finalQty) || finalQty <= 0) {
             alert("Please select Company, Product, Brand and a valid Quantity!");
             return;
@@ -461,7 +464,7 @@ const fetchDashboardCounts = async () => {
                 // පින්තූරේ සේව් වුණේ නැතත් ලූප් එක නතර කරන්න එපා
             }
                 currentBatch.push({
-                    qrId: fullID, company: comp, brand: brand,
+                    qrId: fullID, company: comp,registrationId: regIdForBatch, brand: brand,
                     product: prod, serialNumber: fullID, mfd: displayMFD,
                     tempImageData: finalImageRaw
                 });
