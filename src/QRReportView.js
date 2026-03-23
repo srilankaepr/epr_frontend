@@ -77,29 +77,50 @@ const QRReportView = () => {
         <div style={reportStyles.container}>
             <div style={reportStyles.header}>
                 <h3 style={{ color: '#2ecc71', margin: 0 }}>Master QR Audit Log ({allData.length})</h3>
-                <button onClick={exportPDF} style={reportStyles.pdfBtn}>📥 Export PDF Report</button>
+                <button onClick={exportPDF} style={reportStyles.pdfBtn}>Export PDF Report</button>
             </div>
 
             {/* ෆිල්ටර් කොටස */}
-            <div style={reportStyles.filterGrid}>
-                <input 
-                    placeholder="🔍 Search ID or Serial..." 
-                    style={reportStyles.input} 
-                    onChange={(e) => setSearchTerm(e.target.value)} 
-                />
-                <select style={reportStyles.input} onChange={(e) => setFilters({...filters, company: e.target.value})}>
-                    <option value="All">All Companies</option>
-                    {[...new Set(allData.map(q => q.company))].map(c => <option key={c} value={c}>{c}</option>)}
-                </select>
-                <select style={reportStyles.input} onChange={(e) => setFilters({...filters, product: e.target.value})}>
-                    <option value="All">All Products</option>
-                    {[...new Set(allData.map(q => q.product))].map(p => <option key={p} value={p}>{p}</option>)}
-                </select>
-                <select style={reportStyles.input} onChange={(e) => setFilters({...filters, brand: e.target.value})}>
-                    <option value="All">All Brands</option>
-                    {[...new Set(allData.map(q => q.brand))].map(b => <option key={b} value={b}>{b}</option>)}
-                </select>
-            </div>
+          <div style={reportStyles.filterGrid}>
+    <input 
+        placeholder="🔍 Search ID or Serial..." 
+        style={reportStyles.input} 
+        onChange={(e) => setSearchTerm(e.target.value)} 
+    />
+    
+    {/* Company Filter */}
+    <select 
+        style={{ ...reportStyles.input, backgroundColor: '#1a1a1a', color: '#fff' }} 
+        onChange={(e) => setFilters({...filters, company: e.target.value})}
+    >
+        <option value="All" style={{ background: '#1a1a1a', color: '#fff' }}>All Companies</option>
+        {[...new Set(allData.map(q => q.company))].map(c => (
+            <option key={c} value={c} style={{ background: '#1a1a1a', color: '#fff' }}>{c}</option>
+        ))}
+    </select>
+
+    {/* Product Filter */}
+    <select 
+        style={{ ...reportStyles.input, backgroundColor: '#1a1a1a', color: '#fff' }} 
+        onChange={(e) => setFilters({...filters, product: e.target.value})}
+    >
+        <option value="All" style={{ background: '#1a1a1a', color: '#fff' }}>All Products</option>
+        {[...new Set(allData.map(q => q.product))].map(p => (
+            <option key={p} value={p} style={{ background: '#1a1a1a', color: '#fff' }}>{p}</option>
+        ))}
+    </select>
+
+    {/* Brand Filter */}
+    <select 
+        style={{ ...reportStyles.input, backgroundColor: '#1a1a1a', color: '#fff' }} 
+        onChange={(e) => setFilters({...filters, brand: e.target.value})}
+    >
+        <option value="All" style={{ background: '#1a1a1a', color: '#fff' }}>All Brands</option>
+        {[...new Set(allData.map(q => q.brand))].map(b => (
+            <option key={b} value={b} style={{ background: '#1a1a1a', color: '#fff' }}>{b}</option>
+        ))}
+    </select>
+</div>
 
             {/* ටේබල් කොටස */}
             <div style={reportStyles.tableWrapper}>
@@ -141,7 +162,7 @@ const QRReportView = () => {
 const reportStyles = {
     container: { animation: 'fadeIn 0.5s' },
     header: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '25px' },
-    pdfBtn: { background: '#e67e22', color: '#fff', border: 'none', padding: '10px 20px', borderRadius: '10px', cursor: 'pointer', fontWeight: 'bold' },
+    pdfBtn: { background: '#3de467', color: '#fff', border: 'none', padding: '10px 20px', borderRadius: '10px', cursor: 'pointer', fontWeight: 'bold' },
     filterGrid: { display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '15px', marginBottom: '25px' },
     input: { padding: '12px', borderRadius: '10px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: '#fff' },
     tableWrapper: { background: 'rgba(0,0,0,0.2)', borderRadius: '15px', overflow: 'hidden' },
