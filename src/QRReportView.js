@@ -164,30 +164,6 @@ const exportPDF = () => {
         style={reportStyles.input} 
         onChange={(e) => setSearchTerm(e.target.value)} 
     />
-    {/* 2. අලුතින් එකතු කළ Date Selection UI එක */}
-    <div style={{ 
-        display: 'flex', 
-        gap: '8px', 
-        alignItems: 'center', 
-        background: 'rgba(255,255,255,0.03)', 
-        padding: '5px 10px', 
-        borderRadius: '10px', 
-        border: '1px solid rgba(255,255,255,0.1)' 
-    }}>
-        <input 
-            type="date" 
-            title="Start Date"
-            style={{ background: 'transparent', border: 'none', color: '#fff', fontSize: '11px', outline: 'none', cursor: 'pointer' }} 
-            onChange={(e) => setDateRange({ ...dateRange, start: e.target.value })} 
-        />
-        <span style={{ color: '#444' }}>|</span>
-        <input 
-            type="date" 
-            title="End Date"
-            style={{ background: 'transparent', border: 'none', color: '#fff', fontSize: '11px', outline: 'none', cursor: 'pointer' }} 
-            onChange={(e) => setDateRange({ ...dateRange, end: e.target.value })} 
-        />
-    </div>
     
     {/* Company Filter */}
     <select 
