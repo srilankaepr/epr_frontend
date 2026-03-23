@@ -234,13 +234,11 @@ const topFiveCompanies = (customers || [])
                 <div style={{...styles.contentArea, animation: 'fadeInUp 1s ease-out'}}>
                     
 <div style={styles.placeholderGrid}>
-    {/* --- කාඩ් 1: Total PIBO (With Breakdown) --- */}
-    <div style={{...styles.miniCard, minWidth: '350px'}}>
-        <div style={{...styles.cardIcon, color: '#3498db', filter: 'drop-shadow(0 0 10px rgba(52, 152, 219, 0.5))'}}>👤</div>
+    {/* කාඩ් 1: Total PIBO */}
+    <div style={styles.miniCard}>
+        <div style={{...styles.cardIcon, color: '#3498db'}}>👤</div>
         <h3 style={styles.cardVal}>{counts.pibo}</h3>
         <p style={styles.cardLab}>Total PIBO</p>
-        
-        {/* PIBO ඇතුළේ ඉන්න 3 දෙනාගේ Breakdown එක */}
         <div style={styles.breakdownContainer}>
             <div style={styles.breakdownItem}>
                 <span style={styles.breakdownLabel}>Producers</span>
@@ -257,32 +255,32 @@ const topFiveCompanies = (customers || [])
         </div>
     </div>
 
-    {/* --- කාඩ් 2: Total Recyclers --- */}
+    {/* කාඩ් 2: Total Recyclers */}
     <div style={styles.miniCard}>
-<div style={{...styles.cardIcon, color: '#f39c12', filter: 'drop-shadow(0 0 10px rgba(243, 156, 18, 0.5))'}}>🚚</div>
+        <div style={{...styles.cardIcon, color: '#f39c12'}}>🚚</div>
         <h3 style={styles.cardVal}>{counts.recyclers}</h3>
         <p style={styles.cardLab}>Total Recyclers</p>
     </div>
-</div>
 
-<div style={styles.topFiveWrapper}>
-    <h3 style={{...styles.cardLab, marginBottom: '10px', marginLeft: '10px'}}>
-        Top 5 Companies by QR
-    </h3>
-
-    {topFiveCompanies.map((company, index) => (
-        <div key={index} style={styles.summaryRow}>
-            <div>
-                <span style={styles.companyNameStyle}>{company.companyName}</span>
-                <span style={styles.roleLabelStyle}>{company.orgRole}</span>
-            </div>
-            
-            <div style={styles.qrCountStyle}>
-                {company.qrCount || 0} 
-                <span style={{fontSize: '10px', marginLeft: '5px', color: '#888'}}>QR</span>
-            </div>
+    {/* කාඩ් 3: Top 5 QR Companies */}
+    <div style={styles.miniCard}>
+        <p style={{...styles.cardLab, marginBottom: '15px'}}>Top 5 QR Leaders</p>
+        <div style={styles.topFiveList}>
+            {topFiveCompanies.length > 0 ? topFiveCompanies.map((company, index) => (
+                <div key={index} style={styles.summaryRow}>
+                    <div>
+                        <span style={styles.companyNameStyle}>{company.companyName}</span>
+                        <span style={styles.roleLabelStyle}>{company.orgRole}</span>
+                    </div>
+                    <div style={styles.qrCountStyle}>
+                        {company.qrCount || 0}
+                    </div>
+                </div>
+            )) : (
+                <p style={{color: '#666', fontSize: '12px', textAlign: 'center'}}>No data yet</p>
+            )}
         </div>
-    ))}
+    </div>
 </div>
                 </div>
             </div>
@@ -436,109 +434,121 @@ mainContent: {
                 borderRadius: '12px', 
                 transition: '0.2s' },
 
-    // --- මෙන්න කාඩ් 2 සඳහා Styles ටික ---
+    // --- Grid එක කාඩ් 3ටම හරියන්න ---
     placeholderGrid: { 
         display: 'grid', 
-        gridTemplateColumns: 'repeat(2, 400px)', 
-        gap: '30px', 
-        alignItems: 'stretch' 
+        gridTemplateColumns: 'repeat(3, 1fr)', 
+        gap: '20px', 
+        alignItems: 'stretch',
+        width: '100%',
+        maxWidth: '1250px' 
     },
+
+    // --- පොදු කාඩ් Style එක (කාඩ් 3ටම) ---
     miniCard: { 
-        background: 'rgba(255, 255, 255, 0.03)', 
-        padding: '40px 30px', 
+        background: 'rgba(255, 255, 255, 0.05)', 
+        padding: '30px 20px', 
         borderRadius: '35px', 
-        border: '1px solid rgba(255, 255, 255, 0.08)', 
+        border: '1px solid rgba(255, 255, 255, 0.12)', 
         display: 'flex', 
         flexDirection: 'column', 
         alignItems: 'center', 
-        justifyContent: 'space-between',
-        gap: '12px', 
+        justifyContent: 'center',
+        gap: '15px', 
         transition: 'all 0.5s ease',
-        backdropFilter: 'blur(5px)',
-        position: 'relative',
-        zIndex: 1,
-        minHeight: '240px'
+        backdropFilter: 'blur(10px)',
+        minHeight: '260px' // කාඩ් 3ම එකම උසින් තියෙන්න
     },
+
     cardVal: { 
         color: '#2ecc71', 
-        fontSize: '48px', // අගය ලොකුවට පේන්න ටිකක් වැඩි කළා
+        fontSize: '52px', // අගය තවත් ලොකු කළා
         fontWeight: '900',
-        margin: '0'
+        margin: '0',
+        textShadow: '0 0 20px rgba(46, 204, 113, 0.3)' // පේන ගතිය වැඩි කරන්න
     },
+
     cardLab: { 
-        color: '#888', 
-        fontSize: '14px', 
-        fontWeight: '600', 
+        color: '#FFFFFF', // අකුරු තද සුදු කළා (Brighter White)
+        fontSize: '15px', 
+        fontWeight: '700', 
         textTransform: 'uppercase', 
-        letterSpacing: '2px' 
+        letterSpacing: '2px',
+        opacity: '1' // අඳුරු ගතිය අයින් කළා
     },
+
     cardIcon: {
-        fontSize: '36px',
+        fontSize: '42px',
         marginBottom: '5px'
     },
-    // PIBO Breakdown Styles
+
+    // --- PIBO Breakdown Styles ---
     breakdownContainer: {
         display: 'flex', 
         justifyContent: 'space-around', 
         width: '100%',
-        borderTop: '1px solid rgba(255,255,255,0.1)', 
+        borderTop: '1px solid rgba(255,255,255,0.15)', 
         paddingTop: '20px',
         marginTop: '10px'
     },
+
     breakdownItem: {
         textAlign: 'center'
     },
+
     breakdownLabel: {
-        fontSize: '11px', 
-        color: '#aaa', 
+        fontSize: '10px', 
+        color: '#BBBBBB', 
         display: 'block',
         marginBottom: '4px',
+        fontWeight: '600',
         textTransform: 'uppercase'
     },
+
     breakdownValue: {
-        fontSize: '18px', 
-        fontWeight: 'bold', 
+        fontSize: '20px', 
+        fontWeight: '800', 
         color: '#3498db'
     },
-    topFiveWrapper: {
-        marginTop: '30px',
+
+    // --- Top 5 Section (දැන් මේකත් කාඩ් එකක් ඇතුළේ) ---
+    topFiveList: {
+        width: '100%',
         display: 'flex',
         flexDirection: 'column',
-        gap: '15px',
-        width: '100%',
-        maxWidth: '830px'
+        gap: '10px',
+        marginTop: '5px'
     },
+
     summaryRow: {
-        background: 'rgba(255, 255, 255, 0.03)', 
-        padding: '20px 30px', 
-        borderRadius: '25px', 
-        border: '1px solid rgba(255, 255, 255, 0.08)', 
         display: 'flex', 
-        alignItems: 'center', 
         justifyContent: 'space-between',
-        transition: 'all 0.3s ease',
-        backdropFilter: 'blur(5px)',
+        alignItems: 'center',
+        padding: '10px 15px', 
+        background: 'rgba(255, 255, 255, 0.03)', 
+        borderRadius: '15px',
+        width: '100%'
     },
+
     companyNameStyle: { 
-        color: '#eee', 
-        fontSize: '16px', 
-        fontWeight: '600', 
-        letterSpacing: '1px' 
+        color: '#FFFFFF', 
+        fontSize: '14px', 
+        fontWeight: '600',
+        display: 'block'
     },
+
     roleLabelStyle: {
-        fontSize: '11px', 
-        color: '#888', 
+        fontSize: '9px', 
+        color: '#AAAAAA', 
         textTransform: 'uppercase',
-        marginLeft: '15px'
+        fontWeight: '500'
     },
+
     qrCountStyle: {
-        fontSize: '20px', 
-        fontWeight: 'bold', 
+        fontSize: '16px', 
+        fontWeight: '800', 
         color: '#2ecc71',
-        background: 'rgba(46, 204, 113, 0.1)',
-        padding: '5px 15px',
-        borderRadius: '12px'
-    }            
-};
+    }
+};         
 
 export default Dashboard;
