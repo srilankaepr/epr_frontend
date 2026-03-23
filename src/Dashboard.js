@@ -20,6 +20,7 @@ const Dashboard = () => {
         pending: 0,
         active: 0
     });
+const [customers, setCustomers] = useState([]);
 
     useEffect(() => {
         const handleClickOutside = (event) => {
