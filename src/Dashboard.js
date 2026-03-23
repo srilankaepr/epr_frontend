@@ -60,20 +60,19 @@ const Dashboard = () => {
                     pending: allCustomers.filter(c => !c.isApproved).length,
                     active: 5 
                 });
-                try {
-                const topRes = await fetch(`https://eprbackend-production.up.railway.app/api/dashboard/top-companies`);
-                const topData = await topRes.json();
-                if (topRes.ok) {
-                    setTopCompanies(topData); // අර අපි හදාගත්ත useState එකට දත්ත දානවා
-              }
-            } catch (err) {
-                console.error("Top companies fetch error:", err);
-            }
-        }  
-            
+            }  
         } catch (error) {
             console.error("Error updating dashboard data:", error);
         }
+        try {
+        const topRes = await fetch(`https://eprbackend-production.up.railway.app/api/dashboard/top-companies`);
+        if (topRes.ok) {
+            const topData = await topRes.json();
+            setTopCompanies(topData); 
+        }
+    } catch (err) {
+        console.error("Top companies fetch error:", err);
+    }
     };
 
 
@@ -272,9 +271,23 @@ const Dashboard = () => {
 <div style={styles.miniCard}>
     <p style={{...styles.cardLab, marginBottom: '15px'}}>Top 5 QR Leaders</p>
     <div style={styles.topFiveList}>
-        <p style={{color: '#666', fontSize: '13px', textAlign: 'center', marginTop: '20px'}}>
-            Data currently unavailable
+       <div style={styles.topFiveList}>
+    {topCompanies.length > 0 ? topCompanies.map((company, index) => (
+        <div key={index} style={styles.summaryRow}>
+            <div style={{display: 'flex', flexDirection: 'column'}}>
+                <span style={styles.companyNameStyle}>{company.name}</span>
+                <span style={styles.roleLabelStyle}>Registered Company</span>
+            </div>
+            <div style={styles.qrCountStyle}>
+                {company.qrCount || 0}
+            </div>
+        </div>
+    )) : (
+        <p style={{color: '#666', fontSize: '12px', textAlign: 'center', marginTop: '20px'}}>
+            No QR Data Available
         </p>
+    )}
+</div>
     </div>
    </div>
 </div> 
