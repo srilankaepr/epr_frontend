@@ -6,6 +6,7 @@ const QRReportView = () => {
     const [allData, setAllData] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
+    const [dateRange, setDateRange] = useState({ start: '', end: '' });
     const [filters, setFilters] = useState({
         company: 'All',
         product: 'All',
@@ -101,6 +102,26 @@ const QRReportView = () => {
 }; */
 const exportPDF = () => {
         const doc = new jsPDF();
+        let dataToExport = filteredQRs; 
+
+        if (dateRange.start && dateRange.end) {
+            dataToExport = filteredQRs.filter(qr => {
+                const qrDate = new Date(qr.mfd);
+                const startDate = new Date(dateRange.start);
+                const endDate = new Date(dateRange.end);
+                
+                // එදා දවස ඇතුළේ තියෙන දත්ත ඔක්කොම ගන්න වෙලාව සෙට් කරනවා
+                endDate.setHours(23, 59, 59, 999);
+
+                return qrDate >= startDate && qrDate <= endDate;
+            });
+        }
+
+        // දත්ත නැත්නම් රිපෝට් එක හදන්නේ නැතුව දැනුම් දෙනවා
+        if (dataToExport.length === 0) {
+            alert("No records found for the selected date range!");
+            return;
+        }
         
         // Header විස්තර
         doc.setFontSize(16);
@@ -110,7 +131,11 @@ const exportPDF = () => {
         doc.setFontSize(10);
         doc.setTextColor(100);
         doc.text(`Generated on: ${new Date().toLocaleString()}`, 14, 22);
-        doc.text(`Total Records Found: ${filteredQRs.length}`, 14, 27);
+        if (dateRange.start && dateRange.end) {
+            doc.text(`Period: ${dateRange.start} to ${dateRange.end} | Records: ${dataToExport.length}`, 14, 27);
+        } else {
+            doc.text(`Total Records Found: ${dataToExport.length}`, 14, 27);
+        }
 
         const tableColumn = ["QR ID", "Reg ID", "Company", "Product", "Brand", "MFD"];
         
