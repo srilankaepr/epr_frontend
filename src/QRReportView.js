@@ -32,17 +32,22 @@ const QRReportView = () => {
     }, []);
 
     // 2. සර්ච් සහ ෆිල්ටර් ලොජික් එක
-    const filteredQRs = allData.filter(qr => {
-        const matchesSearch = (qr.qrId || "").toLowerCase().includes(searchTerm.toLowerCase()) || 
-                              (qr.serialNumber || "").toLowerCase().includes(searchTerm.toLowerCase());
-        const matchesCompany = filters.company === 'All' || qr.company === filters.company;
-        const matchesProduct = filters.product === 'All' || qr.product === filters.product;
-        const matchesBrand = filters.brand === 'All' || qr.brand === filters.brand;
-        
-        return matchesSearch && matchesCompany && matchesProduct && matchesBrand;
-    });
+   const filteredQRs = allData.filter(qr => {
+    const term = searchTerm.toLowerCase();
+    
+    const matchesSearch = 
+        (qr.qrId || "").toLowerCase().includes(term) || 
+        (qr.serialNumber || "").toLowerCase().includes(term) ||
+        (qr.registrationId || "").toLowerCase().includes(term) ||
+        (qr.company || "").toLowerCase().includes(term);
 
-    // 3. PDF එක සාදන ලොජික් එක
+    const matchesCompany = filters.company === 'All' || qr.company === filters.company;
+    const matchesProduct = filters.product === 'All' || qr.product === filters.product;
+    const matchesBrand = filters.brand === 'All' || qr.brand === filters.brand;
+    
+    return matchesSearch && matchesCompany && matchesProduct && matchesBrand;
+});
+    // 3. PDF එක සාදන ලොජික් එක...............................................................
     const exportPDF = () => {
         const doc = new jsPDF();
         doc.text("EPR System - Master QR Audit Report", 14, 15);
@@ -74,16 +79,27 @@ const QRReportView = () => {
     }
 
     return (
-        <div style={reportStyles.container}>
-            <div style={reportStyles.header}>
-                <h3 style={{ color: '#2ecc71', margin: 0 }}>Master QR Audit Log ({allData.length})</h3>
-                <button onClick={exportPDF} style={reportStyles.pdfBtn}>Export PDF Report</button>
+       <div style={reportStyles.container}>
+    <div style={reportStyles.header}>
+        <div>
+            {/* ප්‍රධාන මාතෘකාව */}
+            <h3 style={{ color: '#2ecc71', margin: 0 }}>Master QR Audit Log</h3>
+            
+            {/* 📊 මෙන්න මෙතන තමයි අලුත් Count ලොජික් එක තියෙන්නේ */}
+            <div style={{ fontSize: '12px', color: '#888', marginTop: '5px' }}>
+                Total Records: <span style={{ color: '#fff' }}>{allData.length}</span> | 
+                Filtered Results: <span style={{ color: '#2ecc71', fontWeight: 'bold' }}>{filteredQRs.length}</span>
             </div>
+        </div>
+
+        {/* PDF Export බටන් එක */}
+        <button onClick={exportPDF} style={reportStyles.pdfBtn}>Export PDF Report</button>
+    </div>
 
             {/* ෆිල්ටර් කොටස */}
           <div style={reportStyles.filterGrid}>
     <input 
-        placeholder="🔍 Search ID or Serial..." 
+        placeholder="🔍 Search QR ID/Company name or Reg NO" 
         style={reportStyles.input} 
         onChange={(e) => setSearchTerm(e.target.value)} 
     />
@@ -137,9 +153,12 @@ const QRReportView = () => {
                         {filteredQRs.slice(0, 100).map((qr, idx) => ( 
                             <tr key={idx} style={reportStyles.tr}>
                                 <td style={{ ...reportStyles.td, color: '#2ecc71', fontWeight: 'bold' }}>{qr.qrId}</td>
-                                <td style={reportStyles.td}>
-                                    <div style={{ color: '#fff' }}>{qr.company}</div>
-                                </td>
+                               <td style={reportStyles.td}>
+                <div style={{ color: '#fff', fontWeight: '600' }}>{qr.company}</div>
+                <div style={{ fontSize: '11px', color: '#2ecc71', opacity: 0.8, marginTop: '4px' }}>
+                    {qr.registrationId || 'REG-N/A'}
+                           </div>
+                             </td>
                                 <td style={reportStyles.td}>
                                     <div style={{ color: '#ccc' }}>{qr.product}</div>
                                     <div style={{ fontSize: '12px', color: '#2ecc71' }}>{qr.brand}</div>
