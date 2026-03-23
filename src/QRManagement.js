@@ -4,6 +4,7 @@ import JSZip from 'jszip';
 import { saveAs } from 'file-saver';
 import QRCode from 'qrcode';
 import logo from './logo.png';
+import QRReportView from './QRReportView';
 
 function QRManagement() {
     const [counts, setCounts] = useState({
@@ -548,11 +549,6 @@ const fetchDashboardCounts = async () => {
 
 
 
-
-
-
-
-
 {/* --- Admin Notification Bell (Final Corrected Version) ---..................................................................... */}
 
 <div style={{ position: 'absolute', right: '40px', top: '25px', cursor: 'pointer', display: 'flex', alignItems: 'center', zIndex: 10000 }}>
@@ -628,12 +624,6 @@ const fetchDashboardCounts = async () => {
   )}
 </div>
 {/* --- Admin Notification Bell (Final Corrected Version) ---..................................................................... */}
-
-
-
-
-
-
 
 <p style={styles.subTitle}>Configure entities and generate secure batch QR identification</p>
 
@@ -815,11 +805,15 @@ const fetchDashboardCounts = async () => {
   >
     Registered QR ({counts.registeredQRs})
   </button> 
-                                    <button onClick={() => setActiveSubTab('qr_customers')} style={activeSubTab === 'qr_customers' ? styles.activeSubNavBtn : styles.subNavBtn}>QR Registered Customers (Empty)</button>
-                                </div>
 
-                                <div style={{ marginTop: '30px' }}>
-
+  <button 
+    onClick={() => setActiveSubTab('qr_customers')} 
+    style={activeSubTab === 'qr_customers' ? styles.activeSubNavBtn : styles.subNavBtn}
+>
+    QR Master Audit Log
+</button>
+      </div>
+           <div style={{ marginTop: '30px' }}>
 
 
  {/*....................... Created Companies Tab.......................................................................... */}
@@ -1263,7 +1257,7 @@ const fetchDashboardCounts = async () => {
                 No recycle requests found at the moment.
             </td>
         </tr>
-    )}
+               )}
                 </tbody>
             </table>
         </div>
@@ -1415,14 +1409,25 @@ const fetchDashboardCounts = async () => {
                         fontSize: '16px', 
                         cursor: 'pointer',
                         boxShadow: '0 10px 20px rgba(46,204,113,0.2)'
-                    }}
-                >
-                    CLOSE RECORD
-                </button> </div>
-                </div>)}
-    </div>)}
-</div></div> )}
-</div>  </div>  </div>  </div>
+                    }} >  CLOSE RECORD
+                    </button> 
+               </div>
+           </div>
+         )}
+    </div>
+)}
+          {activeSubTab === 'qr_customers' && (
+             <div style={{ marginTop: '20px', animation: 'fadeIn 0.5s ease-in' }}>
+                <QRReportView allData={qrBatches} />
+           </div>
+          )}
+               </div>
+            </div> 
+           )}
+             </div>  
+        </div>  
+    </div>  
+</div>
     );
 }
 
