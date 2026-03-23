@@ -139,6 +139,18 @@ const exportPDF = () => {
                 fontSize: 8,
                 cellPadding: 3 
             },
+            didDrawPage: (data) => {
+                const pageCount = doc.internal.getNumberOfPages();
+                doc.setFontSize(9);
+                doc.setTextColor(150);
+                
+                // පිටුවේ පල්ලෙහා දකුණු කෙළවරේ පිටු අංකය පෙන්වීම
+                const pageSize = doc.internal.pageSize;
+                const pageHeight = pageSize.height ? pageSize.height : pageSize.getHeight();
+                const pageWidth = pageSize.width ? pageSize.width : pageSize.getWidth();
+                
+                doc.text(`Page ${pageCount}`, pageWidth - 25, pageHeight - 10);
+            },
             columnStyles: {
                 0: { cellWidth: 40 }, 
                 1: { fontStyle: 'bold' } 
