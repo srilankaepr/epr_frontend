@@ -161,6 +161,11 @@ const Dashboard = () => {
         document.head.appendChild(styleSheet);
     }, []);
 
+// top compny qr count
+const topFiveCompanies = (customers || [])
+    .sort((a, b) => (b.qrCount || 0) - (a.qrCount || 0))
+    .slice(0, 5);
+
     return (
         <div style={styles.container}>
             <div style={{...styles.sidebar, animation: 'slideInLeft 0.8s ease-out'}}>
@@ -259,6 +264,25 @@ const Dashboard = () => {
     </div>
 </div>
 
+<div style={styles.topFiveWrapper}>
+    <h3 style={{...styles.cardLab, marginBottom: '10px', marginLeft: '10px'}}>
+        Top 5 Companies by QR
+    </h3>
+
+    {topFiveCompanies.map((company, index) => (
+        <div key={index} style={styles.summaryRow}>
+            <div>
+                <span style={styles.companyNameStyle}>{company.companyName}</span>
+                <span style={styles.roleLabelStyle}>{company.orgRole}</span>
+            </div>
+            
+            <div style={styles.qrCountStyle}>
+                {company.qrCount || 0} 
+                <span style={{fontSize: '10px', marginLeft: '5px', color: '#888'}}>QR</span>
+            </div>
+        </div>
+    ))}
+</div>
                 </div>
             </div>
         </div>
@@ -474,6 +498,45 @@ mainContent: {
         fontSize: '18px', 
         fontWeight: 'bold', 
         color: '#3498db'
+    },
+    topFiveWrapper: {
+        marginTop: '30px',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '15px',
+        width: '100%',
+        maxWidth: '830px'
+    },
+    summaryRow: {
+        background: 'rgba(255, 255, 255, 0.03)', 
+        padding: '20px 30px', 
+        borderRadius: '25px', 
+        border: '1px solid rgba(255, 255, 255, 0.08)', 
+        display: 'flex', 
+        alignItems: 'center', 
+        justifyContent: 'space-between',
+        transition: 'all 0.3s ease',
+        backdropFilter: 'blur(5px)',
+    },
+    companyNameStyle: { 
+        color: '#eee', 
+        fontSize: '16px', 
+        fontWeight: '600', 
+        letterSpacing: '1px' 
+    },
+    roleLabelStyle: {
+        fontSize: '11px', 
+        color: '#888', 
+        textTransform: 'uppercase',
+        marginLeft: '15px'
+    },
+    qrCountStyle: {
+        fontSize: '20px', 
+        fontWeight: 'bold', 
+        color: '#2ecc71',
+        background: 'rgba(46, 204, 113, 0.1)',
+        padding: '5px 15px',
+        borderRadius: '12px'
     }            
 };
 
