@@ -226,9 +226,39 @@ const Dashboard = () => {
                 </header>
 
                 <div style={{...styles.contentArea, animation: 'fadeInUp 1s ease-out'}}>
-                    <div style={styles.placeholderGrid}>
- 
-                    </div>
+                    
+<div style={styles.placeholderGrid}>
+    {/* --- කාඩ් 1: Total PIBO (With Breakdown) --- */}
+    <div style={{...styles.miniCard, minWidth: '350px'}}>
+        <div style={{...styles.cardIcon, color: '#3498db'}}>👤</div>
+        <h3 style={styles.cardVal}>{counts.pibo}</h3>
+        <p style={styles.cardLab}>Total PIBO</p>
+        
+        {/* PIBO ඇතුළේ ඉන්න 3 දෙනාගේ Breakdown එක */}
+        <div style={styles.breakdownContainer}>
+            <div style={styles.breakdownItem}>
+                <span style={styles.breakdownLabel}>Producers</span>
+                <div style={styles.breakdownValue}>{counts.producer}</div>
+            </div>
+            <div style={styles.breakdownItem}>
+                <span style={styles.breakdownLabel}>Importers</span>
+                <div style={styles.breakdownValue}>{counts.importer}</div>
+            </div>
+            <div style={styles.breakdownItem}>
+                <span style={styles.breakdownLabel}>Brands</span>
+                <div style={styles.breakdownValue}>{counts.brandOwner}</div>
+            </div>
+        </div>
+    </div>
+
+    {/* --- කාඩ් 2: Total Recyclers --- */}
+    <div style={styles.miniCard}>
+        <div style={{...styles.cardIcon, color: '#f39c12'}}>🚚</div>
+        <h3 style={styles.cardVal}>{counts.recyclers}</h3>
+        <p style={styles.cardLab}>Total Recyclers</p>
+    </div>
+</div>
+
                 </div>
             </div>
         </div>
@@ -380,6 +410,70 @@ mainContent: {
                 color: '#ccc', 
                 borderRadius: '12px', 
                 transition: '0.2s' },
+
+    // --- මෙන්න කාඩ් 2 සඳහා Styles ටික ---
+    placeholderGrid: { 
+        display: 'grid', 
+        gridTemplateColumns: 'repeat(2, 400px)', // කාඩ් දෙකක් නිසා fixed width එකක් දුන්නා ලස්සනට පේන්න
+        gap: '30px', 
+        alignItems: 'start' 
+    },
+    miniCard: { 
+        background: 'rgba(255, 255, 255, 0.03)', 
+        padding: '40px 30px', 
+        borderRadius: '35px', 
+        border: '1px solid rgba(255, 255, 255, 0.08)', 
+        display: 'flex', 
+        flexDirection: 'column', 
+        alignItems: 'center', 
+        gap: '12px', 
+        transition: 'all 0.5s ease',
+        backdropFilter: 'blur(5px)',
+        position: 'relative',
+        zIndex: 1,
+        minHeight: '240px'
+    },
+    cardVal: { 
+        color: '#2ecc71', 
+        fontSize: '48px', // අගය ලොකුවට පේන්න ටිකක් වැඩි කළා
+        fontWeight: '900',
+        margin: '0'
+    },
+    cardLab: { 
+        color: '#888', 
+        fontSize: '14px', 
+        fontWeight: '600', 
+        textTransform: 'uppercase', 
+        letterSpacing: '2px' 
+    },
+    cardIcon: {
+        fontSize: '32px',
+        marginBottom: '5px'
+    },
+    // PIBO Breakdown Styles
+    breakdownContainer: {
+        display: 'flex', 
+        justifyContent: 'space-around', 
+        width: '100%',
+        borderTop: '1px solid rgba(255,255,255,0.1)', 
+        paddingTop: '20px',
+        marginTop: '10px'
+    },
+    breakdownItem: {
+        textAlign: 'center'
+    },
+    breakdownLabel: {
+        fontSize: '11px', 
+        color: '#aaa', 
+        display: 'block',
+        marginBottom: '4px',
+        textTransform: 'uppercase'
+    },
+    breakdownValue: {
+        fontSize: '18px', 
+        fontWeight: 'bold', 
+        color: '#3498db'
+    }            
 };
 
 export default Dashboard;
