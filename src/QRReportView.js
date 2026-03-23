@@ -48,58 +48,8 @@ const QRReportView = () => {
     
     return matchesSearch && matchesCompany && matchesProduct && matchesBrand;
 });
+
     // 3. PDF එක සාදන ලොජික් එක...............................................................
-   /* const exportPDF = () => {
-    const doc = new jsPDF();
-    
-    // PDF එකේ ප්‍රධාන මාතෘකාව
-    doc.setFontSize(16);
-    doc.setTextColor(46, 204, 113); // කොළ පාට
-    doc.text("EPR System - Master QR Audit Report", 14, 15);
-    
-    // විස්තර (දිනය සහ වාර්තා ගණන)
-    doc.setFontSize(10);
-    doc.setTextColor(100);
-    doc.text(`Generated on: ${new Date().toLocaleString()}`, 14, 22);
-    doc.text(`Total Records Found: ${filteredQRs.length}`, 14, 27);
-
-    // ටේබල් එකේ තීරු (Columns) - Reg ID එකත් එකතු කළා
-    const tableColumn = ["QR ID", "Reg ID", "Company", "Product", "Brand", "MFD"];
-    
-    // 📊 වැදගත්ම තැන: .slice(0, 100) කරන්නේ නැතුව සර්ච් එකේ තියෙන ඔක්කොම (filteredQRs) ගන්නවා
-    const tableRows = filteredQRs.map(qr => [
-        qr.qrId,
-        qr.registrationId || 'N/A',
-        qr.company,
-        qr.product,
-        qr.brand,
-        qr.mfd
-    ]);
-
-    // ටේබල් එක PDF එකට ඇතුළත් කිරීම
-    doc.autoTable({
-        head: [tableColumn],
-        body: tableRows,
-        startY: 35,
-        theme: 'grid',
-        headStyles: { 
-            fillColor: [46, 204, 113], 
-            fontSize: 10,
-            halign: 'center'
-        },
-        styles: { 
-            fontSize: 8,
-            cellPadding: 3 
-        },
-        columnStyles: {
-            0: { cellWidth: 40 }, 
-            1: { fontStyle: 'bold' } 
-        }
-    });
-
-    // PDF එක සේව් කිරීම
-    doc.save(`Master_QR_Report_${new Date().getTime()}.pdf`);
-}; */
 const exportPDF = () => {
         const doc = new jsPDF();
         let dataToExport = filteredQRs; 
@@ -210,10 +160,34 @@ const exportPDF = () => {
             {/* ෆිල්ටර් කොටස */}
           <div style={reportStyles.filterGrid}>
     <input 
-        placeholder="🔍 Search QR ID/Company name or Reg NO" 
+        placeholder="🔍 Search QR ID, Company or Reg No..."
         style={reportStyles.input} 
         onChange={(e) => setSearchTerm(e.target.value)} 
     />
+    {/* 2. අලුතින් එකතු කළ Date Selection UI එක */}
+    <div style={{ 
+        display: 'flex', 
+        gap: '8px', 
+        alignItems: 'center', 
+        background: 'rgba(255,255,255,0.03)', 
+        padding: '5px 10px', 
+        borderRadius: '10px', 
+        border: '1px solid rgba(255,255,255,0.1)' 
+    }}>
+        <input 
+            type="date" 
+            title="Start Date"
+            style={{ background: 'transparent', border: 'none', color: '#fff', fontSize: '11px', outline: 'none', cursor: 'pointer' }} 
+            onChange={(e) => setDateRange({ ...dateRange, start: e.target.value })} 
+        />
+        <span style={{ color: '#444' }}>|</span>
+        <input 
+            type="date" 
+            title="End Date"
+            style={{ background: 'transparent', border: 'none', color: '#fff', fontSize: '11px', outline: 'none', cursor: 'pointer' }} 
+            onChange={(e) => setDateRange({ ...dateRange, end: e.target.value })} 
+        />
+    </div>
     
     {/* Company Filter */}
     <select 
