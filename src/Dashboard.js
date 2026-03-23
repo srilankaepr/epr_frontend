@@ -20,6 +20,7 @@ const Dashboard = () => {
         pending: 0,
         active: 0
     });
+    const [topCompanies, setTopCompanies] = useState([]); 
 
     useEffect(() => {
         const handleClickOutside = (event) => {
@@ -75,7 +76,7 @@ const Dashboard = () => {
         }
     };
 
-    
+
         fetchAdminData();
     }, [adminInfo.email]);
 
