@@ -230,7 +230,7 @@ const Dashboard = () => {
 <div style={styles.placeholderGrid}>
     {/* --- කාඩ් 1: Total PIBO (With Breakdown) --- */}
     <div style={{...styles.miniCard, minWidth: '350px'}}>
-        <div style={{...styles.cardIcon, color: '#3498db'}}>👤</div>
+        <div style={{...styles.cardIcon, color: '#3498db', filter: 'drop-shadow(0 0 10px rgba(52, 152, 219, 0.5))'}}>👤</div>
         <h3 style={styles.cardVal}>{counts.pibo}</h3>
         <p style={styles.cardLab}>Total PIBO</p>
         
@@ -253,7 +253,7 @@ const Dashboard = () => {
 
     {/* --- කාඩ් 2: Total Recyclers --- */}
     <div style={styles.miniCard}>
-        <div style={{...styles.cardIcon, color: '#f39c12'}}>🚚</div>
+<div style={{...styles.cardIcon, color: '#f39c12', filter: 'drop-shadow(0 0 10px rgba(243, 156, 18, 0.5))'}}>🚚</div>
         <h3 style={styles.cardVal}>{counts.recyclers}</h3>
         <p style={styles.cardLab}>Total Recyclers</p>
     </div>
@@ -448,7 +448,7 @@ mainContent: {
         letterSpacing: '2px' 
     },
     cardIcon: {
-        fontSize: '32px',
+        fontSize: '36px',
         marginBottom: '5px'
     },
     // PIBO Breakdown Styles
