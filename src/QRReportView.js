@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import jsPDF from 'jspdf';
-import 'jspdf-autotable';
+import { jsPDF } from 'jspdf'; 
+import autoTable from 'jspdf-autotable'; 
 
 const QRReportView = () => {
     const [allData, setAllData] = useState([]);
@@ -48,7 +48,7 @@ const QRReportView = () => {
     return matchesSearch && matchesCompany && matchesProduct && matchesBrand;
 });
     // 3. PDF එක සාදන ලොජික් එක...............................................................
-    const exportPDF = () => {
+   /* const exportPDF = () => {
     const doc = new jsPDF();
     
     // PDF එකේ ප්‍රධාන මාතෘකාව
@@ -91,14 +91,66 @@ const QRReportView = () => {
             cellPadding: 3 
         },
         columnStyles: {
-            0: { cellWidth: 40 }, // QR ID එකට ඉඩ ටිකක් වැඩි කළා
-            1: { fontStyle: 'bold' } // Reg ID එක තද අකුරෙන්
+            0: { cellWidth: 40 }, 
+            1: { fontStyle: 'bold' } 
         }
     });
 
     // PDF එක සේව් කිරීම
     doc.save(`Master_QR_Report_${new Date().getTime()}.pdf`);
-};
+}; */
+const exportPDF = () => {
+        const doc = new jsPDF();
+        
+        // Header විස්තර
+        doc.setFontSize(16);
+        doc.setTextColor(46, 204, 113);
+        doc.text("EPR System - Master QR Audit Report", 14, 15);
+        
+        doc.setFontSize(10);
+        doc.setTextColor(100);
+        doc.text(`Generated on: ${new Date().toLocaleString()}`, 14, 22);
+        doc.text(`Total Records Found: ${filteredQRs.length}`, 14, 27);
+
+        const tableColumn = ["QR ID", "Reg ID", "Company", "Product", "Brand", "MFD"];
+        
+        // PDF එකට සර්ච් වුණු ඔක්කොම දත්ත (slice කරන්නේ නැතුව) ගන්නවා
+        const tableRows = filteredQRs.map(qr => [
+            qr.qrId,
+            qr.registrationId || 'N/A',
+            qr.company,
+            qr.product,
+            qr.brand,
+            qr.mfd
+        ]);
+
+        // autoTable(doc, ...) ලෙස පාවිච්චි කිරීමෙන් TypeError එක නැති වේ
+        autoTable(doc, {
+            head: [tableColumn],
+            body: tableRows,
+            startY: 35,
+            theme: 'grid',
+            headStyles: { 
+                fillColor: [46, 204, 113], 
+                fontSize: 10,
+                halign: 'center'
+            },
+            styles: { 
+                fontSize: 8,
+                cellPadding: 3 
+            },
+            columnStyles: {
+                0: { cellWidth: 40 }, 
+                1: { fontStyle: 'bold' } 
+            }
+        });
+
+        doc.save(`Master_QR_Report_${new Date().getTime()}.pdf`);
+    };
+
+    if (isLoading) {
+        return <div style={{ color: '#2ecc71', textAlign: 'center', padding: '50px' }}>Loading Master QR Records...</div>;
+    }
 
     return (
        <div style={reportStyles.container}>
