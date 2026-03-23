@@ -414,9 +414,9 @@ mainContent: {
     // --- මෙන්න කාඩ් 2 සඳහා Styles ටික ---
     placeholderGrid: { 
         display: 'grid', 
-        gridTemplateColumns: 'repeat(2, 400px)', // කාඩ් දෙකක් නිසා fixed width එකක් දුන්නා ලස්සනට පේන්න
+        gridTemplateColumns: 'repeat(2, 400px)', 
         gap: '30px', 
-        alignItems: 'start' 
+        alignItems: 'stretch' 
     },
     miniCard: { 
         background: 'rgba(255, 255, 255, 0.03)', 
@@ -426,6 +426,7 @@ mainContent: {
         display: 'flex', 
         flexDirection: 'column', 
         alignItems: 'center', 
+        justifyContent: 'space-between',
         gap: '12px', 
         transition: 'all 0.5s ease',
         backdropFilter: 'blur(5px)',
