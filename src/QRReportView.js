@@ -20,6 +20,7 @@ const QRReportView = () => {
                 setIsLoading(true);
                 const response = await fetch('https://eprbackend-production.up.railway.app/api/get-all-generated-qrs');
                 const data = await response.json();
+                console.log("Full Data from Backend:", data);
                 if (response.ok) {
                     setAllData(data);
                 }
