@@ -55,16 +55,27 @@ const Dashboard = () => {
                     producer: allCustomers.filter(c => c.orgRole === 'Producer').length,
                     importer: allCustomers.filter(c => c.orgRole === 'Importer').length,
                     brandOwner: allCustomers.filter(c => c.orgRole === 'Brand Owner').length,
-                    
                     recyclers: allCustomers.filter(c => c.orgRole === 'Recycler').length,
                     pending: allCustomers.filter(c => !c.isApproved).length,
                     active: 5 
                 });
+                try {
+                const topRes = await fetch(`https://eprbackend-production.up.railway.app/api/dashboard/top-companies`);
+                const topData = await topRes.json();
+                if (topRes.ok) {
+                    setTopCompanies(topData); // අර අපි හදාගත්ත useState එකට දත්ත දානවා
+              }
+            } catch (err) {
+                console.error("Top companies fetch error:", err);
             }
+        }  
+            
         } catch (error) {
             console.error("Error updating dashboard data:", error);
         }
     };
+
+    
         fetchAdminData();
     }, [adminInfo.email]);
 
