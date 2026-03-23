@@ -52,7 +52,7 @@ const QRReportView = ({ allData }) => {
         <div style={reportStyles.container}>
             <div style={reportStyles.header}>
                 <h3 style={{ color: '#2ecc71', margin: 0 }}>Master QR Audit Log</h3>
-                <button onClick={exportPDF} style={reportStyles.pdfBtn}>📥 Export PDF Report</button>
+                <button onClick={exportPDF} style={reportStyles.pdfBtn}>Export PDF Report</button>
             </div>
 
             {/* Filters Section */}
@@ -117,7 +117,7 @@ const QRReportView = ({ allData }) => {
 const reportStyles = {
     container: { animation: 'fadeIn 0.5s' },
     header: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '25px' },
-    pdfBtn: { background: '#e67e22', color: '#fff', border: 'none', padding: '10px 20px', borderRadius: '10px', cursor: 'pointer', fontWeight: 'bold' },
+    pdfBtn: { background: '#5fed4c', color: '#fff', border: 'none', padding: '10px 20px', borderRadius: '10px', cursor: 'pointer', fontWeight: 'bold' },
     filterGrid: { display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '15px', marginBottom: '25px' },
     input: { padding: '12px', borderRadius: '10px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: '#fff' },
     tableWrapper: { background: 'rgba(0,0,0,0.2)', borderRadius: '15px', overflow: 'hidden' },
