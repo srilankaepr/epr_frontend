@@ -49,34 +49,56 @@ const QRReportView = () => {
 });
     // 3. PDF එක සාදන ලොජික් එක...............................................................
     const exportPDF = () => {
-        const doc = new jsPDF();
-        doc.text("EPR System - Master QR Audit Report", 14, 15);
-        doc.setFontSize(10);
-        doc.text(`Generated on: ${new Date().toLocaleString()} | Total Records: ${filteredQRs.length}`, 14, 22);
+    const doc = new jsPDF();
+    
+    // PDF එකේ ප්‍රධාන මාතෘකාව
+    doc.setFontSize(16);
+    doc.setTextColor(46, 204, 113); // කොළ පාට
+    doc.text("EPR System - Master QR Audit Report", 14, 15);
+    
+    // විස්තර (දිනය සහ වාර්තා ගණන)
+    doc.setFontSize(10);
+    doc.setTextColor(100);
+    doc.text(`Generated on: ${new Date().toLocaleString()}`, 14, 22);
+    doc.text(`Total Records Found: ${filteredQRs.length}`, 14, 27);
 
-        const tableColumn = ["QR ID", "Company", "Product", "Brand", "MFD"];
-        const tableRows = filteredQRs.map(qr => [
-            qr.qrId,
-            qr.company,
-            qr.product,
-            qr.brand,
-            qr.mfd
-        ]);
+    // ටේබල් එකේ තීරු (Columns) - Reg ID එකත් එකතු කළා
+    const tableColumn = ["QR ID", "Reg ID", "Company", "Product", "Brand", "MFD"];
+    
+    // 📊 වැදගත්ම තැන: .slice(0, 100) කරන්නේ නැතුව සර්ච් එකේ තියෙන ඔක්කොම (filteredQRs) ගන්නවා
+    const tableRows = filteredQRs.map(qr => [
+        qr.qrId,
+        qr.registrationId || 'N/A',
+        qr.company,
+        qr.product,
+        qr.brand,
+        qr.mfd
+    ]);
 
-        doc.autoTable({
-            head: [tableColumn],
-            body: tableRows,
-            startY: 30,
-            theme: 'grid',
-            headStyles: { fillColor: [46, 204, 113] } // පද්ධතියේ කොළ පාට
-        });
+    // ටේබල් එක PDF එකට ඇතුළත් කිරීම
+    doc.autoTable({
+        head: [tableColumn],
+        body: tableRows,
+        startY: 35,
+        theme: 'grid',
+        headStyles: { 
+            fillColor: [46, 204, 113], 
+            fontSize: 10,
+            halign: 'center'
+        },
+        styles: { 
+            fontSize: 8,
+            cellPadding: 3 
+        },
+        columnStyles: {
+            0: { cellWidth: 40 }, // QR ID එකට ඉඩ ටිකක් වැඩි කළා
+            1: { fontStyle: 'bold' } // Reg ID එක තද අකුරෙන්
+        }
+    });
 
-        doc.save(`Master_QR_Report_${new Date().getTime()}.pdf`);
-    };
-
-    if (isLoading) {
-        return <div style={{ color: '#2ecc71', textAlign: 'center', padding: '50px' }}>Loading Master QR Records...</div>;
-    }
+    // PDF එක සේව් කිරීම
+    doc.save(`Master_QR_Report_${new Date().getTime()}.pdf`);
+};
 
     return (
        <div style={reportStyles.container}>
