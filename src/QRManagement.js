@@ -833,6 +833,7 @@ const fetchDashboardCounts = async () => {
             <thead>
                 <tr style={styles.tableHead}>
                     <th style={{ padding: '15px', color: '#2ecc71', textAlign: 'left', width: '60px' }}>ID</th>
+                    <th style={{ padding: '15px', color: '#2ecc71', textAlign: 'left', width: '130px' }}>Reg ID</th>
                     <th style={{ padding: '15px', color: '#2ecc71', textAlign: 'left' }}>Company Name</th>
                     <th style={{ padding: '15px', color: '#2ecc71', textAlign: 'left' }}>Email</th>
                     <th style={{ padding: '15px', color: '#2ecc71', textAlign: 'left' }}>Action</th>
@@ -854,6 +855,7 @@ const fetchDashboardCounts = async () => {
                         return filtered.map((comp, index) => (
                             <tr key={comp._id || comp.id} style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
                                 <td style={{ padding: '15px', color: '#666', fontWeight: 'bold' }}>{String(index + 1).padStart(2, '0')}</td>
+                                <td style={{ padding: '15px', color: '#2ecc71', fontSize: '13px', fontWeight: '600' }}> {comp.registrationId || "N/A"}</td>
                                 <td style={{ padding: '15px', color: '#ccc' }}>{comp.name}</td>
                                 <td style={{ padding: '15px', color: '#ccc' }}>{comp.email}</td>
                                 <td style={{ padding: '15px' }}>
