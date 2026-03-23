@@ -64,16 +64,40 @@ const handleRegisterCompany = async () => {
         alert("This company name is already registered!");
         return;
     }
+    // --- 📍 Sequential ID Logic (4 Digits) ---
+    const now = new Date();
+    const year = now.getFullYear();
+    let nextNumber = 1;
+
+    if (companiesList && companiesList.length > 0) {
+        // දැනට තියෙන ලැයිස්තුවෙන් වැඩිම අංකය සොයා ගැනීම
+        const lastNumbers = companiesList
+            .map(c => {
+                const regId = c.registrationId || "";
+                const parts = regId.split('-');
+                // REG-2026-0001 එකෙන් 0001 කොටස අරන් අංකයක් බවට පත් කරයි
+                return parts.length === 3 ? parseInt(parts[2]) : 0;
+            })
+            .filter(num => !isNaN(num));
+
+        if (lastNumbers.length > 0) {
+            nextNumber = Math.max(...lastNumbers) + 1;
+        }
+    }
+
+    // අංකය ඉලක්කම් 4ක් වන සේ (0001) සැකසීම
+    const formattedNumber = String(nextNumber).padStart(4, '0');
+    const registrationID = `REG-${year}-${formattedNumber}`;
 
     try {
         const response = await fetch('https://eprbackend-production.up.railway.app/api/add-company', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ name: nameUpper, email: emailLower })
+            body: JSON.stringify({ name: nameUpper, email: emailLower,registrationId: registrationID })
         });
 
         if (response.ok) {
-            alert("Company Registered Successfully!");
+            alert(`Company Registered Successfully!\nAssigned ID: ${registrationID}`);
             setQrCompanyName('');
             setQrCompanyEmail('');
             fetchCompanies();  // List refresh කරන්න
