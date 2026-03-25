@@ -58,7 +58,7 @@ function App() {
         {/* 3. Co-partner පේජ් (PARTNER ට පමණි) */}
         <Route path="/partner-dashboard" element={<ProtectedRoute allowedRole="PARTNER"><PartnerDashboard /></ProtectedRoute>} />
         <Route path="/co-partner/scan" element={<ProtectedRoute allowedRole="PARTNER"><CoPartnerScan /></ProtectedRoute>} />
-
+         
       </Routes>
     </Router>
     </AuthProvider>
