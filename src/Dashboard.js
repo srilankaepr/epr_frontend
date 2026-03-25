@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import logo from './logo.png'; 
+import FeedbackPage from './FeedbackPage'; // 👈 මේක අනිවාර්යයෙන්ම දාන්න
 
 const Dashboard = () => {
     const navigate = useNavigate();
@@ -37,6 +38,8 @@ const Dashboard = () => {
             document.removeEventListener('mousedown', handleClickOutside);
         };
     }, [showMenu]);
+
+    const [activeTab, setActiveTab] = useState('dashboard'); // 👈 Default එක dashboard විදිහට තියන්න
 
     useEffect(() => {
         const fetchAdminData = async () => {
@@ -196,7 +199,18 @@ const Dashboard = () => {
                             }}
                         >{item}</button>
                     ))}
+
+                    <button 
+        className="nav-item"
+        style={activeTab === 'feedback' ? styles.navBtnActive : styles.navBtn}
+        onClick={() => setActiveTab('feedback')}
+    >
+        User Feedback
+    </button>
                 </nav>
+
+
+
                 <button 
                     onClick={handleLogout} 
                     className="logout-glow"
