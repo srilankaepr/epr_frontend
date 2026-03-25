@@ -39,7 +39,6 @@ const Dashboard = () => {
         };
     }, [showMenu]);
 
-    const [activeTab, setActiveTab] = useState('dashboard'); // 👈 Default එක dashboard විදිහට තියන්න
 
     useEffect(() => {
         const fetchAdminData = async () => {
@@ -186,7 +185,7 @@ const Dashboard = () => {
                 <h2 style={styles.logoTitle}>EPR SYSTEM</h2>
                 <nav style={styles.nav}>
                     <button style={styles.navBtnActive}>Summary</button>
-                    {['User Management', 'Co-Partner', 'Orders', 'QR Management'].map((item) => (
+                    {['User Management', 'Co-Partner', 'Orders', 'QR Management','Feedback'].map((item) => (
                         <button 
                             key={item} 
                             className="nav-item"
