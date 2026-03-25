@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import logo from './logo.png'; 
-import FeedbackPage from './FeedbackPage'; // 👈 මේක අනිවාර්යයෙන්ම දාන්න
+import FeedbackPage from './FeedbackPage';
 
 const Dashboard = () => {
     const navigate = useNavigate();
@@ -251,6 +251,22 @@ const Dashboard = () => {
                 </header>
 
                 <div style={{...styles.contentArea, animation: 'fadeInUp 1s ease-out'}}>
+
+                    <div style={{...styles.contentArea, animation: 'fadeInUp 1s ease-out'}}>
+
+    {/* 1. Feedback Page එක පෙන්වන කොටස 👇 */}
+    {activeTab === 'feedback' && (
+        <FeedbackPage currentUser={{ contactPersonName: adminInfo.name, officialEmail: adminInfo.email }} />
+    )}
+
+    {/* 2. Dashboard Summary එක පෙන්වන කොටස 👇 */}
+    {activeTab === 'dashboard' && (
+        <div style={styles.placeholderGrid}>
+            {/* ⚠️ දැනට තිබ්බ StatsGrid එක සහ පරණ Cards ඔක්කොම මේ ඇතුළේ තියෙන්න ඕනේ */}
+        </div>
+    )}
+
+</div>
 {/*.......................................................................................................................... */}
 <div style={styles.placeholderGrid}>
     {/* කාඩ් 1: Total PIBO */}
