@@ -146,7 +146,14 @@ const FeedbackPage = ({ currentUser }) => {
 };
 
 const styles = {
-    feedbackContainer: { maxWidth: '100%', margin: '0 auto', padding: '20px' },
+    // 👇 මම මෙතනට Sidebar එකේ ඉඩ (280px) margin එකක් විදිහට දැම්මා
+    feedbackContainer: { 
+        maxWidth: '1000px', 
+        marginLeft: '300px', // Sidebar එකට අහු නොවී ඉන්න මෙතනින් තමයි තල්ලු කරන්නේ
+        marginRight: 'auto',
+        padding: '40px 20px',
+        boxSizing: 'border-box'
+    },
     mainTitle: { fontSize: '28px', textAlign: 'center', color: '#fff', marginBottom: '30px', letterSpacing: '2px' },
     feedbackForm: { background: 'rgba(255,255,255,0.05)', padding: '25px', borderRadius: '15px', border: '1px solid #333', marginBottom: '40px' },
     starRow: { fontSize: '32px', marginBottom: '15px', display: 'flex', gap: '8px' },
