@@ -12,8 +12,8 @@ import oilImg from './assets/oil.jpg';
 const UserDashboard = () => {
     const navigate = useNavigate();
     const [activeTab, setActiveTab] = useState('ORDER NOW');
-    const [rating, setRating] = useState(0);
-    const [hover, setHover] = useState(0);
+    //const [rating, setRating] = useState(0);   ooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
+    //const [hover, setHover] = useState(0);   ooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
 
 
     const [isEditing, setIsEditing] = useState(false);
@@ -237,52 +237,9 @@ const UserDashboard = () => {
         </div>
     </div>
 )}
-
-                {activeTab === 'feedback' && (
-                    <div style={styles.feedbackContainer}>
-                        <h1 style={styles.mainTitle}>USER FEEDBACK</h1>
-                        <p style={styles.subTitle}>We value your thoughts on our recycling service</p>
+              
                         
-                        {/* New Feedback Form */}
-                        <div style={styles.feedbackForm}>
-                            <h3>Share Your Experience</h3>
-                            <div style={styles.starRow}>
-                                {[1, 2, 3, 4, 5].map((star) => (
-                                    <span 
-                                        key={star} 
-                                        style={{...styles.star, color: (hover || rating) >= star ? '#2ecc71' : '#555'}}
-                                        onClick={() => setRating(star)}
-                                        onMouseEnter={() => setHover(star)}
-                                        onMouseLeave={() => setHover(0)}
-                                    >★</span>
-                                ))}
-                            </div>
-                            <textarea placeholder="Write your feedback here..." style={styles.textArea}></textarea>
-                            <button style={styles.submitBtn}>Submit Feedback</button>
-                        </div>
-
-                        {/* Recent Comments Section */}
-                        <div style={styles.commentsSection}>
-                            <h3>Recent Community Reviews</h3>
-                            <div style={styles.commentItem}>
-                                <div style={styles.commentHeader}>
-                                    <strong>Nuwan Perera</strong> <span style={{color: '#2ecc71'}}>⭐⭐⭐⭐⭐</span>
-                                </div>
-                                <p>"The Electronic waste collection process was very smooth. Highly recommended!"</p>
-                                <button style={styles.replyBtn}>Reply</button>
-                            </div>
-
-                            <div style={styles.commentItem}>
-                                <div style={styles.commentHeader}>
-                                    <strong>Admin</strong> <span style={styles.replyTag}>REPLY</span>
-                                </div>
-                                <p style={{borderLeft: '2px solid #2ecc71', paddingLeft: '10px', color: '#aaa'}}>
-                                    "Thank you Nuwan! We are glad we could help you with your recycling."
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                )}
+              
 
              {/* --- MY PROFILE SECTION --- */}
 {activeTab === 'profile' && (
