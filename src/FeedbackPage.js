@@ -129,3 +129,5 @@ const styles = {
     replyBox: { marginTop: '15px', paddingLeft: '15px', borderLeft: '2px solid #2ecc71', background: 'rgba(46, 204, 113, 0.05)', padding: '10px' },
     replyTag: { background: '#2ecc71', color: '#000', fontSize: '10px', padding: '2px 5px', borderRadius: '4px', fontWeight: 'bold', marginLeft: '5px' }
 };
+
+export default FeedbackPage;
