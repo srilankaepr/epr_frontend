@@ -149,7 +149,7 @@ const styles = {
     // 👇 මම මෙතනට Sidebar එකේ ඉඩ (280px) margin එකක් විදිහට දැම්මා
     feedbackContainer: { 
         maxWidth: '1000px', 
-        marginLeft: '300px', // Sidebar එකට අහු නොවී ඉන්න මෙතනින් තමයි තල්ලු කරන්නේ
+        marginLeft: '200px', // Sidebar එකට අහු නොවී ඉන්න මෙතනින් තමයි තල්ලු කරන්නේ
         marginRight: 'auto',
         padding: '40px 20px',
         boxSizing: 'border-box'
