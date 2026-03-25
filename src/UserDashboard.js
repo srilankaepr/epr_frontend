@@ -241,6 +241,11 @@ const UserDashboard = () => {
                         
               
 
+
+
+
+
+
              {/* --- MY PROFILE SECTION --- */}
 {activeTab === 'profile' && (
     <div style={{ ...styles.contentPadding, animation: 'fadeInUp 0.6s ease-out' }}>
@@ -473,47 +478,18 @@ activeNavLink: {
     cardTitle: { color: '#2ecc71', margin: '0 0 12px 0', fontSize: '20px' },
     cardDesc: { fontSize: '14px', color: '#bbb', lineHeight: '1.6' },
 
-    // Feedback Styles
-    feedbackContainer: { maxWidth: '900px', margin: '0 auto', padding: '50px' },
-    feedbackForm: {
-        background: 'rgba(255,255,255,0.05)', padding: '30px', borderRadius: '25px',
-        border: '1px solid #444', marginBottom: '40px'
-    },
-    starRow: { fontSize: '30px', marginBottom: '20px', cursor: 'pointer' },
-    textArea: {
-        width: '100%', height: '120px', background: 'rgba(0,0,0,0.3)',
-        border: '1px solid #444', color: '#fff', borderRadius: '15px',
-        padding: '15px', outline: 'none', marginBottom: '20px'
-    },
-    submitBtn: {
-        background: '#2ecc71', color: '#000', border: 'none',
-        padding: '12px 30px', borderRadius: '10px', fontWeight: 'bold', cursor: 'pointer'
-    },
 
 ecoMotto: { 
         fontSize: '23px', 
         fontStyle: 'italic', 
-        color: '#2ecc71', // ලස්සන කොළ පාටක්
-        marginTop: '-10px', // ලෝගෝ එකට ලං වෙන්න
+        color: '#2ecc71', 
+        marginTop: '-10px',
         marginBottom: '30px', 
         textAlign: 'center',
         fontWeight: '500',
         letterSpacing: '0.5px',
-        textShadow: '0 0 10px rgba(46, 204, 113, 0.3)' // ලාවට Glow වෙනවා
+        textShadow: '0 0 10px rgba(46, 204, 113, 0.3)' 
     },
-
-
-    commentsSection: { marginTop: '50px' },
-    commentItem: {
-        background: 'rgba(255,255,255,0.02)', padding: '20px', borderRadius: '15px',
-        marginBottom: '15px', border: '1px solid #222'
-    },
-    commentHeader: { display: 'flex', justifyContent: 'space-between', marginBottom: '10px' },
-    replyBtn: {
-        background: 'transparent', border: '1px solid #444', color: '#888',
-        padding: '5px 12px', borderRadius: '5px', cursor: 'pointer', fontSize: '12px'
-    },
-    replyTag: { fontSize: '10px', background: '#2ecc71', color: '#000', padding: '2px 8px', borderRadius: '4px' },
     centeredPage: { display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '80vh' }
 };
 
