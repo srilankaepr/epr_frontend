@@ -239,7 +239,12 @@ const UserDashboard = () => {
 )}
               
                         
-              
+         <button 
+    style={activeTab === 'feedback' ? styles.activeNavLink : styles.navLink} 
+    onClick={() => navigate('/feedback')} // 👈 මෙතනින් තමයි අලුත් පේජ් එකට යන්නේ
+>
+    Feedback
+</button>     
 
 
 
