@@ -196,17 +196,10 @@ const Dashboard = () => {
                                else if (item === 'Co-Partner') navigate('/co-partner');
                                 else if (item === 'Orders') navigate('/admin-orders');
                                 else if (item === 'QR Management') navigate('/qr-management');
+                                else if (item === 'User Feedback') setActiveTab('feedback');
                             }}
                         >{item}</button>
                     ))}
-
-                    <button 
-        className="nav-item"
-        style={activeTab === 'feedback' ? styles.navBtnActive : styles.navBtn}
-        onClick={() => setActiveTab('feedback')}
-    >
-        User Feedback
-    </button>
                 </nav>
 
 
