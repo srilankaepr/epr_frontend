@@ -9,6 +9,7 @@ import agroImg from './assets/agro.jpg';
 import batteryImg from './assets/battery.jpg';
 import oilImg from './assets/oil.jpg';
 import FeedbackPage from './FeedbackPage';
+import ProductRegistration from './ProductRegistration';
 
 const UserDashboard = () => {
     const navigate = useNavigate();
@@ -201,6 +202,15 @@ const UserDashboard = () => {
 
 {/* MAIN AREA */}
 <main style={styles.mainArea}>
+
+{/* --- PRODUCT REGISTRATION SECTION --- */}
+{activeTab === 'REGISTER PRODUCT' && (
+    <div style={{ ...styles.contentPadding, animation: 'fadeInUp 0.6s ease-out forwards' }}>
+        <ProductRegistration />
+    </div>
+)}
+
+
     {activeTab === 'ORDER NOW' && (
         /* මෙන්න මෙතනටයි animation එකයි contentPadding එකයි දෙන්නම දාන්න ඕනේ */
         <div style={{ 
