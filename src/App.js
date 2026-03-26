@@ -21,6 +21,7 @@ import CoPartnerScan from './CoPartnerScan';
 import ForgotPassword from './ForgotPassword';
 import { AuthProvider } from './AuthContext';
 import ProtectedRoute from './ProtectedRoute'; 
+import FeedbackPage from './FeedbackPage'; 
 
 function App() {
   return (
