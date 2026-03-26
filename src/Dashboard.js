@@ -6,6 +6,7 @@ import FeedbackPage from './FeedbackPage';
 const Dashboard = () => {
     const navigate = useNavigate();
     const [showMenu, setShowMenu] = useState(false);
+    const [activeTab, setActiveTab] = useState('summary'); 
 
     const [adminInfo, setAdminInfo] = useState({
         name: localStorage.getItem('adminName') || "Admin", 
@@ -39,7 +40,7 @@ const Dashboard = () => {
         };
     }, [showMenu]);
 
-    const [activeTab, setActiveTab] = useState('dashboard');
+
 
     useEffect(() => {
         const fetchAdminData = async () => {
@@ -200,24 +201,16 @@ const Dashboard = () => {
                         >{item}</button>
                     ))}
 
-                    <div style={{ marginTop: 'auto', paddingTop: '20px' }}> 
-            <button 
-                className="nav-item"
-                style={{
-                    ...styles.navBtn,
-                    border: '1px border-box #2ecc71',
-                    color: '#2ecc71',
-                    marginTop: '20px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '10px'
-                }}
-                onClick={() => navigate('/admin-feedback')}
-            >
-                <span>📩</span> User Feedback
-            </button>
-        </div>
-                </nav>
+{/* --- අලුත් Feedback Button එක (Logout එකට හොඳට උඩින්) --- */}
+<div style={{ marginTop: 'auto', paddingTop: '60px', marginBottom: '15px' }}> 
+    <button 
+        style={activeTab === 'feedback' ? styles.navBtnActive : { ...styles.navBtn, color: '#2ecc71', border: '1px solid rgba(46,204,113,0.2)' }}
+        onClick={() => setActiveTab('feedback')}
+    >
+        <span style={{ marginRight: '10px' }}></span> User Feedback
+    </button>
+</div>                    
+      </nav>
                 <button 
                     onClick={handleLogout} 
                     className="logout-glow"
@@ -259,8 +252,23 @@ const Dashboard = () => {
 
                 <div style={{...styles.contentArea, animation: 'fadeInUp 1s ease-out'}}>
 
-                    <div style={{...styles.contentArea, animation: 'fadeInUp 1s ease-out'}}>
-                           </div>
+                   <div style={{...styles.contentArea, animation: 'fadeInUp 1s ease-out'}}>
+    
+    {activeTab === 'summary' ? (
+        <>
+            {/* 👈 මෙතන තමයි ඔයාගේ පරණ Summary Cards (pibo, producer counts) ඔක්කොම තියෙන්න ඕනේ */}
+            <div style={styles.placeholderGrid}>
+                {/* පරණ cards ටික මෙතන තියෙන්න දෙන්න */}
+            </div>
+        </>
+    ) : (
+        /* 👈 Feedback බටන් එක එබුවම මේ කොටස විතරක් පේනවා */
+        <div style={{ width: '100%', animation: 'fadeIn 0.5s ease' }}>
+            <FeedbackPage currentUser={{ contactPersonName: adminInfo.name, officialEmail: adminInfo.email }} />
+        </div>
+    )}
+
+</div>
 
 {/*.......................................................................................................................... */}
 <div style={styles.placeholderGrid}>
