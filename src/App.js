@@ -22,6 +22,7 @@ import ForgotPassword from './ForgotPassword';
 import { AuthProvider } from './AuthContext';
 import ProtectedRoute from './ProtectedRoute'; 
 import FeedbackPage from './FeedbackPage'; 
+import ProductRegistration from './ProductRegistration';
 
 function App() {
   return (
@@ -56,6 +57,8 @@ function App() {
         <Route path="/agro-order" element={<ProtectedRoute allowedRole="CUSTOMER"><AgroOrder /></ProtectedRoute>} />
         <Route path="/battery-order" element={<ProtectedRoute allowedRole="CUSTOMER"><BatteryOrder /></ProtectedRoute>} />
         <Route path="/oil-order" element={<ProtectedRoute allowedRole="CUSTOMER"><OilOrder /></ProtectedRoute>} />
+        <Route path="/user-dashboard" element={<ProtectedRoute allowedRole="CUSTOMER"><UserDashboard /></ProtectedRoute>} />
+        <Route path="/product-registration" element={<ProtectedRoute allowedRole="CUSTOMER"><ProductRegistration /></ProtectedRoute>} />
 
         {/* 3. Co-partner පේජ් (PARTNER ට පමණි) */}
         <Route path="/partner-dashboard" element={<ProtectedRoute allowedRole="PARTNER"><PartnerDashboard /></ProtectedRoute>} />
