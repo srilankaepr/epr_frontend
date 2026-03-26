@@ -263,7 +263,7 @@ const Dashboard = () => {
                         }}
                     >
                         <div style={{...styles.cardIcon, color: '#2ecc71'}}>📦</div>
-                        <h5 style={styles.cardVal}>PRODUCT REGISTRY</h5>
+                        <h3 style={{ ...styles.cardVal, fontSize: '18px' }}>PRODUCT REGISTRY</h3>
                         <p style={styles.cardLab}>View & Manage Registered Products</p>
                     </div>
 
