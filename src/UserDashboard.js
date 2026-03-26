@@ -126,6 +126,7 @@ const UserDashboard = () => {
                 
               <nav style={styles.navMenu}>
     {[
+        { id: 'REGISTER PRODUCT', label: 'REGISTER YOUR PRODUCT' },
         { id: 'ORDER NOW', label: 'ORDER NOW' },
         { id: 'about', label: 'ABOUT US'},
         { id: 'profile', label: 'MY PROFILE' },
@@ -154,7 +155,7 @@ const UserDashboard = () => {
                     if (!isActive) {
                         e.currentTarget.style.background = 'rgba(255, 255, 255, 0.08)';
                         e.currentTarget.style.border = '1px solid rgba(255, 255, 255, 0.2)';
-                        e.currentTarget.style.transform = 'translateY(-2px)'; // පොඩ්ඩක් ඉස්සෙනවා
+                        e.currentTarget.style.transform = 'translateY(-2px)'; 
                     }
                 }}
                 onMouseLeave={(e) => {
