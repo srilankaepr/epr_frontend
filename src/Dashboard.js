@@ -194,9 +194,9 @@ const Dashboard = () => {
                             onClick={() => { 
                                 if (item === 'User Management') navigate('/user-management');
                                else if (item === 'Co-Partner') navigate('/co-partner');
-                                else if (item === 'Orders') navigate('/admin-orders');
-                                else if (item === 'QR Management') navigate('/qr-management');
-                                else if (item === 'User Feedback') setActiveTab('feedback');
+                               else if (item === 'Orders') navigate('/admin-orders');
+                               else if (item === 'QR Management') navigate('/qr-management');
+                               else if (item === 'User Feedback') setActiveTab('feedback');
                             }}
                         >{item}</button>
                     ))}
