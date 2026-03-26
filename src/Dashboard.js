@@ -201,8 +201,6 @@ const Dashboard = () => {
                     ))}
                 </nav>
 
-
-
                 <button 
                     onClick={handleLogout} 
                     className="logout-glow"
@@ -245,8 +243,8 @@ const Dashboard = () => {
                 <div style={{...styles.contentArea, animation: 'fadeInUp 1s ease-out'}}>
 
                     <div style={{...styles.contentArea, animation: 'fadeInUp 1s ease-out'}}>
+                           </div>
 
-</div>
 {/*.......................................................................................................................... */}
 <div style={styles.placeholderGrid}>
     {/* කාඩ් 1: Total PIBO */}
@@ -297,12 +295,10 @@ const Dashboard = () => {
             No QR Data Available
         </p>
     )}
-</div>
-    </div>
-   </div>
-</div> 
-{/*.......................................................................................................................... */}
-
+                               </div>
+                           </div>
+                       </div>
+                    </div> 
                 </div>
             </div>
         </div>
