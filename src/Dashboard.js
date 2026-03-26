@@ -186,7 +186,7 @@ const Dashboard = () => {
                 <h2 style={styles.logoTitle}>EPR SYSTEM</h2>
                 <nav style={styles.nav}>
                     <button style={styles.navBtnActive}>Summary</button>
-                    {['User Management', 'Co-Partner', 'Orders', 'QR Management','Feedback'].map((item) => (
+                    {['User Management', 'Co-Partner', 'Orders', 'QR Management'].map((item) => (
                         <button 
                             key={item} 
                             className="nav-item"
@@ -196,7 +196,6 @@ const Dashboard = () => {
                                else if (item === 'Co-Partner') navigate('/co-partner');
                                else if (item === 'Orders') navigate('/admin-orders');
                                else if (item === 'QR Management') navigate('/qr-management');
-                               else if (item === 'User Feedback') setActiveTab('feedback');
                             }}
                         >{item}</button>
                     ))}
@@ -246,18 +245,6 @@ const Dashboard = () => {
                 <div style={{...styles.contentArea, animation: 'fadeInUp 1s ease-out'}}>
 
                     <div style={{...styles.contentArea, animation: 'fadeInUp 1s ease-out'}}>
-
-    {/* 1. Feedback Page එක පෙන්වන කොටස 👇 */}
-    {activeTab === 'feedback' && (
-        <FeedbackPage currentUser={{ contactPersonName: adminInfo.name, officialEmail: adminInfo.email }} />
-    )}
-
-    {/* 2. Dashboard Summary එක පෙන්වන කොටස 👇 */}
-    {activeTab === 'dashboard' && (
-        <div style={styles.placeholderGrid}>
-            {/* ⚠️ දැනට තිබ්බ StatsGrid එක සහ පරණ Cards ඔක්කොම මේ ඇතුළේ තියෙන්න ඕනේ */}
-        </div>
-    )}
 
 </div>
 {/*.......................................................................................................................... */}
