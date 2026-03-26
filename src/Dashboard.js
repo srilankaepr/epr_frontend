@@ -6,7 +6,6 @@ import FeedbackPage from './FeedbackPage';
 const Dashboard = () => {
     const navigate = useNavigate();
     const [showMenu, setShowMenu] = useState(false);
-    const [activeTab, setActiveTab] = useState('summary'); 
 
     const [adminInfo, setAdminInfo] = useState({
         name: localStorage.getItem('adminName') || "Admin", 
@@ -40,7 +39,7 @@ const Dashboard = () => {
         };
     }, [showMenu]);
 
-
+    const [activeTab, setActiveTab] = useState('dashboard');
 
     useEffect(() => {
         const fetchAdminData = async () => {
@@ -176,9 +175,8 @@ const Dashboard = () => {
         document.head.appendChild(styleSheet);
     }, []);
 
-return (
+    return (
         <div style={styles.container}>
-            {/* --- SIDEBAR --- */}
             <div style={{...styles.sidebar, animation: 'slideInLeft 0.8s ease-out'}}>
                 <div style={styles.logoWrapper}>
                     <div style={styles.logoCircle}>
@@ -186,56 +184,36 @@ return (
                     </div>
                 </div>
                 <h2 style={styles.logoTitle}>EPR SYSTEM</h2>
-                
                 <nav style={styles.nav}>
-                    {/* ✅ Summary Button - මේක එබුවම අනිවාර්යයෙන්ම Dashboard එකට එනවා */}
-                    <button 
-                        style={activeTab === 'dashboard' ? styles.navBtnActive : styles.navBtn}
-                        onClick={() => {
-                            setActiveTab('dashboard');
-                            navigate('/admin-dashboard');
-                        }}
-                    >
-                        Summary
-                    </button>
-
-                    {['User Management', 'Co-Partner', 'Orders', 'QR Management'].map((item) => (
+                    <button style={styles.navBtnActive}>Summary</button>
+                    {['User Management', 'Co-Partner', 'Orders', 'QR Management','Feedback'].map((item) => (
                         <button 
                             key={item} 
                             className="nav-item"
                             style={styles.navBtn}
                             onClick={() => { 
                                 if (item === 'User Management') navigate('/user-management');
-                                else if (item === 'Co-Partner') navigate('/co-partner');
-                                else if (item === 'Orders') navigate('/admin-orders');
-                                else if (item === 'QR Management') navigate('/qr-management');
+                               else if (item === 'Co-Partner') navigate('/co-partner');
+                               else if (item === 'Orders') navigate('/admin-orders');
+                               else if (item === 'QR Management') navigate('/qr-management');
                             }}
                         >{item}</button>
                     ))}
-
-                    {/* ✅ User Feedback Button */}
-                    <div style={{ marginTop: 'auto', paddingTop: '60px', marginBottom: '15px' }}> 
-                        <button 
-                            style={activeTab === 'feedback' ? styles.navBtnActive : { ...styles.navBtn, color: '#2ecc71', border: '1px solid rgba(46,204,113,0.2)' }}
-                            onClick={() => setActiveTab('feedback')}
-                        >
-                            <span style={{ marginRight: '10px' }}>📩</span> User Feedback
-                        </button>
-                    </div>                    
                 </nav>
 
-                <button onClick={handleLogout} className="logout-glow" style={styles.logoutBtn}>
-                    Logout System
-                </button>
+
+
+                <button 
+                    onClick={handleLogout} 
+                    className="logout-glow"
+                    style={styles.logoutBtn}
+                >Logout System</button>
             </div>
 
-            {/* --- MAIN CONTENT --- */}
             <div style={styles.mainContent}>
                 <header style={{...styles.header, animation: 'fadeInDown 0.8s ease-out'}}>
                     <div style={styles.headerText}>
-                        <h1 style={styles.adminTitle}>
-                            {activeTab === 'dashboard' ? 'ADMINISTRATIVE OVERVIEW' : 'USER FEEDBACK HUB'}
-                        </h1>
+                        <h1 style={styles.adminTitle}>ADMINISTRATIVE OVERVIEW</h1>
                         <div style={styles.divider}></div>
                     </div>
 
@@ -252,74 +230,84 @@ return (
                                     <div style={styles.profilePlaceholder}>{adminInfo.name.charAt(0).toUpperCase()}</div>
                                 )}
                             </div>
+                            {showMenu && adminInfo.profilePic && (
+                                <div style={styles.dropdownMenu}>
+                                    <div style={styles.menuItem} onClick={(e) => { e.stopPropagation(); window.open(adminInfo.profilePic, '_blank'); setShowMenu(false); }}>👁️ View Profile</div>
+                                    <div style={styles.menuItem} onClick={(e) => { e.stopPropagation(); document.getElementById('photoInput').click(); setShowMenu(false); }}>🔄 Update Photo</div>
+                                    <div style={{...styles.menuItem, color: '#e74c3c', border: 'none'}} onClick={(e) => { e.stopPropagation(); if(window.confirm("Delete?")) handleDeletePhoto(); setShowMenu(false); }}>🗑️ Remove</div>
+                                </div>
+                            )}
                         </div>
+                        <input type="file" id="photoInput" style={{ display: 'none' }} accept="image/*" onChange={handlePhotoUpload} />
                     </div>
                 </header>
 
-                {/* --- CONTENT AREA --- */}
                 <div style={{...styles.contentArea, animation: 'fadeInUp 1s ease-out'}}>
 
-                    {/* ✅ මේ Condition එක තමයි වැදගත්ම දේ */}
-                    {activeTab === 'dashboard' ? (
-                        <div style={styles.placeholderGrid}>
-                            {/* Card 1: Total PIBO */}
-                            <div style={styles.miniCard}>
-                                <div style={{...styles.cardIcon, color: '#3498db'}}>👤</div>
-                                <h3 style={styles.cardVal}>{counts.pibo}</h3>
-                                <p style={styles.cardLab}>Total PIBO</p>
-                                <div style={styles.breakdownContainer}>
-                                    <div style={styles.breakdownItem}>
-                                        <span style={styles.breakdownLabel}>Producers</span>
-                                        <div style={styles.breakdownValue}>{counts.producer}</div>
-                                    </div>
-                                    <div style={styles.breakdownItem}>
-                                        <span style={styles.breakdownLabel}>Importers</span>
-                                        <div style={styles.breakdownValue}>{counts.importer}</div>
-                                    </div>
-                                    <div style={styles.breakdownItem}>
-                                        <span style={styles.breakdownLabel}>Brands</span>
-                                        <div style={styles.breakdownValue}>{counts.brandOwner}</div>
-                                    </div>
-                                </div>
-                            </div>
+                    <div style={{...styles.contentArea, animation: 'fadeInUp 1s ease-out'}}>
 
-                            {/* Card 2: Total Recyclers */}
-                            <div style={styles.miniCard}>
-                                <div style={{...styles.cardIcon, color: '#f39c12'}}>🚚</div>
-                                <h3 style={styles.cardVal}>{counts.recyclers}</h3>
-                                <p style={styles.cardLab}>Total Recyclers</p>
-                            </div>
+</div>
+{/*.......................................................................................................................... */}
+<div style={styles.placeholderGrid}>
+    {/* කාඩ් 1: Total PIBO */}
+    <div style={styles.miniCard}>
+        <div style={{...styles.cardIcon, color: '#3498db'}}>👤</div>
+        <h3 style={styles.cardVal}>{counts.pibo}</h3>
+        <p style={styles.cardLab}>Total PIBO</p>
+        <div style={styles.breakdownContainer}>
+            <div style={styles.breakdownItem}>
+                <span style={styles.breakdownLabel}>Producers</span>
+                <div style={styles.breakdownValue}>{counts.producer}</div>
+            </div>
+            <div style={styles.breakdownItem}>
+                <span style={styles.breakdownLabel}>Importers</span>
+                <div style={styles.breakdownValue}>{counts.importer}</div>
+            </div>
+            <div style={styles.breakdownItem}>
+                <span style={styles.breakdownLabel}>Brands</span>
+                <div style={styles.breakdownValue}>{counts.brandOwner}</div>
+            </div>
+        </div>
+    </div>
 
-                            {/* Card 3: Top 5 QR Leaders */}
-                            <div style={styles.miniCard}>
-                                <p style={{...styles.cardLab, marginBottom: '15px'}}>Top 5 QR Leaders</p>
-                                <div style={styles.topFiveList}>
-                                    {topCompanies.length > 0 ? topCompanies.map((company, index) => (
-                                        <div key={index} style={styles.summaryRow}>
-                                            <div style={{display: 'flex', flexDirection: 'column'}}>
-                                                <span style={styles.companyNameStyle}>{company.name}</span>
-                                                <span style={styles.roleLabelStyle}>Registered Company</span>
-                                            </div>
-                                            <div style={styles.qrCountStyle}>{company.qrCount || 0}</div>
-                                        </div>
-                                    )) : (
-                                        <p style={{color: '#666', fontSize: '12px', textAlign: 'center', marginTop: '20px'}}>No QR Data Available</p>
-                                    )}
-                                </div>
-                            </div>
-                        </div>
-                    ) : (
-                        /* ✅ Feedback Page */
-                        <div style={{ width: '100%', animation: 'fadeIn 0.5s ease' }}>
-                            <FeedbackPage currentUser={{ contactPersonName: adminInfo.name, officialEmail: adminInfo.email }} />
-                        </div>
-                    )}
+    {/* කාඩ් 2: Total Recyclers */}
+    <div style={styles.miniCard}>
+        <div style={{...styles.cardIcon, color: '#f39c12'}}>🚚</div>
+        <h3 style={styles.cardVal}>{counts.recyclers}</h3>
+        <p style={styles.cardLab}>Total Recyclers</p>
+    </div>
+
+    {/* කාඩ් 3: Top 5 QR Companies */}
+<div style={styles.miniCard}>
+    <p style={{...styles.cardLab, marginBottom: '15px'}}>Top 5 QR Leaders</p>
+    <div style={styles.topFiveList}>
+       <div style={styles.topFiveList}>
+    {topCompanies.length > 0 ? topCompanies.map((company, index) => (
+        <div key={index} style={styles.summaryRow}>
+            <div style={{display: 'flex', flexDirection: 'column'}}>
+                <span style={styles.companyNameStyle}>{company.name}</span>
+                <span style={styles.roleLabelStyle}>Registered Company</span>
+            </div>
+            <div style={styles.qrCountStyle}>
+                {company.qrCount || 0}
+            </div>
+        </div>
+    )) : (
+        <p style={{color: '#666', fontSize: '12px', textAlign: 'center', marginTop: '20px'}}>
+            No QR Data Available
+        </p>
+    )}
+</div>
+    </div>
+   </div>
+</div> 
+{/*.......................................................................................................................... */}
+
                 </div>
             </div>
         </div>
     );
 };
-
 
 const styles = {
     container: { 
