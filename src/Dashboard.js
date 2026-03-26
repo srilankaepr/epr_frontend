@@ -186,7 +186,7 @@ const Dashboard = () => {
                 <h2 style={styles.logoTitle}>EPR SYSTEM</h2>
                 <nav style={styles.nav}>
                     <button style={styles.navBtnActive}>Summary</button>
-                    {['User Management', 'Co-Partner', 'Orders', 'QR Management','Feedback'].map((item) => (
+                    {['User Management', 'Co-Partner', 'Orders', 'QR Management'].map((item) => (
                         <button 
                             key={item} 
                             className="nav-item"
@@ -300,8 +300,7 @@ const Dashboard = () => {
 </div>
     </div>
    </div>
-</div> 
-{/*.......................................................................................................................... */}
+          </div> 
 
                 </div>
             </div>
