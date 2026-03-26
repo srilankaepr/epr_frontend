@@ -248,6 +248,25 @@ const Dashboard = () => {
 
             <div style={{...styles.contentArea, animation: 'fadeInUp 1s ease-out'}}>
                 <div style={styles.placeholderGrid}>
+
+
+                      <div 
+                        style={{...styles.miniCard, cursor: 'pointer', transition: '0.3s'}} 
+                        onClick={() => navigate('/admin-products')}
+                        onMouseEnter={(e) => {
+                            e.currentTarget.style.background = 'rgba(46, 204, 113, 0.1)';
+                            e.currentTarget.style.transform = 'translateY(-5px)';
+                        }}
+                        onMouseLeave={(e) => {
+                            e.currentTarget.style.background = 'rgba(255, 255, 255, 0.03)';
+                            e.currentTarget.style.transform = 'translateY(0)';
+                        }}
+                    >
+                        <div style={{...styles.cardIcon, color: '#2ecc71'}}>📦</div>
+                        <h3 style={styles.cardVal}>PRODUCT REGISTRY</h3>
+                        <p style={styles.cardLab}>View & Manage Registered Products</p>
+                    </div>
+
                     {/* කාඩ් 1: Total PIBO */}
                     <div style={styles.miniCard}>
                         <div style={{...styles.cardIcon, color: '#3498db'}}>👤</div>
@@ -267,24 +286,6 @@ const Dashboard = () => {
                                 <div style={styles.breakdownValue}>{counts.brandOwner}</div>
                             </div>
                         </div>
-                    </div>
-
-
-                    <div 
-                        style={{...styles.miniCard, cursor: 'pointer', transition: '0.3s'}} 
-                        onClick={() => navigate('/admin-products')}
-                        onMouseEnter={(e) => {
-                            e.currentTarget.style.background = 'rgba(46, 204, 113, 0.1)';
-                            e.currentTarget.style.transform = 'translateY(-5px)';
-                        }}
-                        onMouseLeave={(e) => {
-                            e.currentTarget.style.background = 'rgba(255, 255, 255, 0.03)';
-                            e.currentTarget.style.transform = 'translateY(0)';
-                        }}
-                    >
-                        <div style={{...styles.cardIcon, color: '#2ecc71'}}>📦</div>
-                        <h3 style={styles.cardVal}>PRODUCT REGISTRY</h3>
-                        <p style={styles.cardLab}>View & Manage Registered Products</p>
                     </div>
 
                     {/* කාඩ් 2: Total Recyclers */}
