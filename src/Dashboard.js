@@ -199,8 +199,25 @@ const Dashboard = () => {
                             }}
                         >{item}</button>
                     ))}
-                </nav>
 
+                    <div style={{ marginTop: 'auto', paddingTop: '20px' }}> 
+            <button 
+                className="nav-item"
+                style={{
+                    ...styles.navBtn,
+                    border: '1px border-box #2ecc71',
+                    color: '#2ecc71',
+                    marginTop: '20px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '10px'
+                }}
+                onClick={() => navigate('/admin-feedback')}
+            >
+                <span>📩</span> User Feedback
+            </button>
+        </div>
+                </nav>
                 <button 
                     onClick={handleLogout} 
                     className="logout-glow"
