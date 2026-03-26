@@ -269,6 +269,24 @@ const Dashboard = () => {
                         </div>
                     </div>
 
+
+                    <div 
+                        style={{...styles.miniCard, cursor: 'pointer', transition: '0.3s'}} 
+                        onClick={() => navigate('/admin-products')}
+                        onMouseEnter={(e) => {
+                            e.currentTarget.style.background = 'rgba(46, 204, 113, 0.1)';
+                            e.currentTarget.style.transform = 'translateY(-5px)';
+                        }}
+                        onMouseLeave={(e) => {
+                            e.currentTarget.style.background = 'rgba(255, 255, 255, 0.03)';
+                            e.currentTarget.style.transform = 'translateY(0)';
+                        }}
+                    >
+                        <div style={{...styles.cardIcon, color: '#2ecc71'}}>📦</div>
+                        <h3 style={styles.cardVal}>PRODUCT REGISTRY</h3>
+                        <p style={styles.cardLab}>View & Manage Registered Products</p>
+                    </div>
+
                     {/* කාඩ් 2: Total Recyclers */}
                     <div style={styles.miniCard}>
                         <div style={{...styles.cardIcon, color: '#f39c12'}}>🚚</div>
@@ -287,6 +305,7 @@ const Dashboard = () => {
                                         <span style={styles.roleLabelStyle}>Registered Company</span>
                                     </div>
                                     <div style={styles.qrCountStyle}>
+
                                         {company.qrCount || 0}
                                     </div>
                                 </div>
