@@ -176,7 +176,7 @@ const Dashboard = () => {
         document.head.appendChild(styleSheet);
     }, []);
 
-   return (
+ return (
         <div style={styles.container}>
             {/* --- SIDEBAR SECTION --- */}
             <div style={{...styles.sidebar, animation: 'slideInLeft 0.8s ease-out'}}>
@@ -187,10 +187,13 @@ const Dashboard = () => {
                 </div>
                 <h2 style={styles.logoTitle}>EPR SYSTEM</h2>
                 <nav style={styles.nav}>
-                    {/* Summary Button */}
+                    {/* 1. Summary Button - මම මේකට activeTab එක dashboard කරන ලොජික් එක දැම්මා */}
                     <button 
                         style={activeTab === 'dashboard' ? styles.navBtnActive : styles.navBtn}
-                        onClick={() => setActiveTab('dashboard')}
+                        onClick={() => {
+                            setActiveTab('dashboard');
+                            navigate('/admin-dashboard');
+                        }}
                     >
                         Summary
                     </button>
@@ -209,7 +212,7 @@ const Dashboard = () => {
                         >{item}</button>
                     ))}
 
-                    {/* --- Feedback Button (Logout එකට උඩින්) --- */}
+                    {/* 2. Feedback Button - මේක Logout එකට උඩින් ලස්සනට හිටිනවා */}
                     <div style={{ marginTop: 'auto', paddingTop: '60px', marginBottom: '15px' }}> 
                         <button 
                             style={activeTab === 'feedback' ? styles.navBtnActive : { ...styles.navBtn, color: '#2ecc71', border: '1px solid rgba(46,204,113,0.2)' }}
@@ -261,11 +264,12 @@ const Dashboard = () => {
                     </div>
                 </header>
 
+                {/* --- CONTENT AREA (මෙතන තමයි මැජික් එක වෙන්නේ) --- */}
                 <div style={{...styles.contentArea, animation: 'fadeInUp 1s ease-out'}}>
                     
                     {activeTab === 'dashboard' ? (
                         <>
-                            {/* --- මෙතන තමයි ඔයාගේ සම්පූර්ණ Summary Design එක තියෙන්නේ --- */}
+                            {/* --- 3. මේ කොටස ඇතුළේ ඔයාගේ පරණ Summary Cards සියල්ලම තියෙනවා --- */}
                             <div style={styles.placeholderGrid}>
                                 {/* කාඩ් 1: Total PIBO */}
                                 <div style={styles.miniCard}>
@@ -319,7 +323,7 @@ const Dashboard = () => {
                             </div>
                         </>
                     ) : (
-                        /* --- Feedback පෙන්වන කොටස --- */
+                        /* --- 4. Feedback Button එක එබුවම පේන කොටස --- */
                         <div style={{ width: '100%', animation: 'fadeIn 0.5s ease' }}>
                             <FeedbackPage currentUser={{ contactPersonName: adminInfo.name, officialEmail: adminInfo.email }} />
                         </div>
