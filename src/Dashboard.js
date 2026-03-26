@@ -39,6 +39,7 @@ const Dashboard = () => {
         };
     }, [showMenu]);
 
+    const [activeTab, setActiveTab] = useState('dashboard');
 
     useEffect(() => {
         const fetchAdminData = async () => {

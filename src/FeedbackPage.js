@@ -146,19 +146,18 @@ const FeedbackPage = ({ currentUser }) => {
 };
 
 const styles = {
-    // 👇 මම මෙතනට Sidebar එකේ ඉඩ (280px) margin එකක් විදිහට දැම්මා
-    feedbackContainer: { 
-        maxWidth: '1000px', 
-        marginLeft: '200px', // Sidebar එකට අහු නොවී ඉන්න මෙතනින් තමයි තල්ලු කරන්නේ
-        marginRight: 'auto',
-        padding: '40px 20px',
-        boxSizing: 'border-box'
-    },
+ feedbackContainer: { 
+    maxWidth: '700px',     
+    margin: '0 auto',       
+    padding: '40px 20px',
+    boxSizing: 'border-box',
+    width: '100%'           
+},
     mainTitle: { fontSize: '28px', textAlign: 'center', color: '#fff', marginBottom: '30px', letterSpacing: '2px' },
     feedbackForm: { background: 'rgba(255,255,255,0.05)', padding: '25px', borderRadius: '15px', border: '1px solid #333', marginBottom: '40px' },
     starRow: { fontSize: '32px', marginBottom: '15px', display: 'flex', gap: '8px' },
     star: { cursor: 'pointer', transition: '0.2s' },
-    textArea: { width: '100%', height: '120px', background: '#000', border: '1px solid #444', color: '#fff', borderRadius: '10px', padding: '15px', marginBottom: '15px', outline: 'none' },
+    textArea: { width: '100%', height: '120px', background: '#000', border: '1px solid #444', color: '#fff', borderRadius: '10px', padding: '15px', marginBottom: '15px', outline: 'none',boxSizing: 'border-box',display: 'block'},
     submitBtn: { background: '#2ecc71', color: '#000', border: 'none', padding: '12px 25px', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer', transition: '0.3s' },
     cancelBtn: { background: '#444', color: '#fff', border: 'none', padding: '12px 25px', borderRadius: '8px', cursor: 'pointer' },
     commentItem: { background: '#111', padding: '20px', borderRadius: '15px', border: '1px solid #222', marginBottom: '20px' },
