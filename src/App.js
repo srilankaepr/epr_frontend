@@ -23,6 +23,7 @@ import { AuthProvider } from './AuthContext';
 import ProtectedRoute from './ProtectedRoute'; 
 import FeedbackPage from './FeedbackPage'; 
 import ProductRegistration from './ProductRegistration';
+import AdminProductView from './AdminProductView'; 
 
 function App() {
   return (
@@ -35,8 +36,6 @@ function App() {
         <Route path="/register-admin" element={<RegisterAdmin />} />
         <Route path="/register-customer" element={<RegisterCustomer />} />
         <Route path="/verify-product" element={<CustomerVerify />} />
-
-        {/* --- අලුත් Forgot Password පේජ් එකේ පාර (Path) මෙතනට දාන්න --- */}
         <Route path="/forgot-password" element={<ForgotPassword />} />
 
         {/* --- PROTECTED ROUTES (Role-based Protection) --- */}
@@ -48,6 +47,7 @@ function App() {
         <Route path="/qr-management" element={<ProtectedRoute allowedRole="ADMIN"><QRManagement /></ProtectedRoute>} />
         <Route path="/co-partner" element={<ProtectedRoute allowedRole="ADMIN"><CoPartner /></ProtectedRoute>} />
         <Route path="/admin-feedback" element={<ProtectedRoute allowedRole="ADMIN"><FeedbackPage /></ProtectedRoute>} />
+        <Route path="/admin-products" element={<ProtectedRoute allowedRole="ADMIN"><AdminProductView /></ProtectedRoute>} />
 
         {/* 2. Customer පේජ් (CUSTOMER ට පමණි) */}
         <Route path="/user-dashboard" element={<ProtectedRoute allowedRole="CUSTOMER"><UserDashboard /></ProtectedRoute>} />
