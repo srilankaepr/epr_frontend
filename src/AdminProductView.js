@@ -9,8 +9,7 @@ const AdminProductView = () => {
     const [products, setProducts] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedProduct, setSelectedProduct] = useState(null);
-    
-    // --- 1. Multi-Category Filtering States ---
+    const [filterBrand, setFilterBrand] = useState('All');
     const [filterCategory, setFilterCategory] = useState('All');
     const [filterType, setFilterType] = useState('All');
 
@@ -29,32 +28,37 @@ const AdminProductView = () => {
     }, []);
 
     // --- 1. Advanced Filter Logic (Brand, Model, Type, Category, Origin, Packaging Material) ---
-    const filteredProducts = products.filter(p => {
-        const searchLower = searchTerm.toLowerCase();
-        const matchesSearch = 
-            p.brandName.toLowerCase().includes(searchLower) ||
-            p.productModel.toLowerCase().includes(searchLower) ||
-            p.productType.toLowerCase().includes(searchLower) ||
-            p.originCountry.toLowerCase().includes(searchLower) ||
-            p.packagingMaterial.toLowerCase().includes(searchLower);
-        
-        const matchesCategory = filterCategory === 'All' || p.packagingCategory === filterCategory;
-        const matchesType = filterType === 'All' || p.productType.toLowerCase() === filterType.toLowerCase();
-        
-        return matchesSearch && matchesCategory && matchesType;
-    });
+   const filteredProducts = products.filter(p => {
+    const searchLower = searchTerm.toLowerCase();
+
+    // 1. Search Box එකෙන් ඕනෑම field එකක් සර්ච් කිරීම (Brand, Model, Type, Origin, Material)
+    const matchesSearch = 
+        p.brandName.toLowerCase().includes(searchLower) ||
+        p.productModel.toLowerCase().includes(searchLower) ||
+        p.productType.toLowerCase().includes(searchLower) ||
+        p.originCountry.toLowerCase().includes(searchLower) ||
+        p.packagingMaterial.toLowerCase().includes(searchLower);
+    
+    // 2. Dropdown වලින් තෝරන Filters (Category, Type, සහ අලුතින් එක් කළ Brand)
+    const matchesCategory = filterCategory === 'All' || p.packagingCategory === filterCategory;
+    const matchesType = filterType === 'All' || p.productType.toLowerCase() === filterType.toLowerCase();
+    const matchesBrand = filterBrand === 'All' || p.brandName === filterBrand; // 👈 මේක අලුතින් දැම්මා
+
+    // මේ හතරම හරියනවා නම් විතරක් product එක පෙන්වනවා
+    return matchesSearch && matchesCategory && matchesType && matchesBrand;
+});
 
     // --- 2. Full Data PDF Export Logic (Including Materials) ---
     const exportPDF = () => {
         try {
-            const doc = new jsPDF('l', 'mm', 'a3'); // A3 Landscape for maximum columns
+            const doc = new jsPDF('l', 'mm', 'a3'); 
             doc.setFontSize(22);
             doc.setTextColor(46, 204, 113);
             doc.text("EPR SYSTEM - COMPREHENSIVE PRODUCT REGISTRY REPORT", 14, 20);
             
             doc.setFontSize(11);
             doc.setTextColor(100);
-            doc.text(`Generated: ${new Date().toLocaleString()} | Category: ${filterCategory}`, 14, 28);
+            doc.text(`Generated: ${new Date().toLocaleString()} | Brand: ${filterBrand} | Type: ${filterType} | Category: ${filterCategory}`, 14, 28);
 
             // සියලුම දත්ත Column වලට ඇතුළත් කිරීම
             const tableColumn = [
@@ -125,6 +129,31 @@ const AdminProductView = () => {
                             <option value="secondary">Secondary</option>
                             <option value="tertiary">Tertiary</option>
                         </select>
+
+                        {/* Brand Filter */}
+<select 
+    style={styles.selectInput} 
+    value={filterBrand}
+    onChange={(e) => setFilterBrand(e.target.value)}
+>
+    <option value="All">All Brands</option>
+    {/* Database එකේ තියෙන Brands ටික unique විදිහට පෙන්වීම */}
+    {[...new Set(products.map(p => p.brandName))].map(brand => (
+        <option key={brand} value={brand}>{brand.toUpperCase()}</option>
+    ))}
+</select>
+
+{/* Product Type Filter */}
+<select 
+    style={styles.selectInput} 
+    value={filterType}
+    onChange={(e) => setFilterType(e.target.value)}
+>
+    <option value="All">All Types</option>
+    {[...new Set(products.map(p => p.productType))].map(type => (
+        <option key={type} value={type}>{type.toUpperCase()}</option>
+    ))}
+</select>
 
                         <input 
                             type="text" 
@@ -225,7 +254,8 @@ const styles = {
     divider: { height: '4px', width: '60px', background: '#2ecc71', marginTop: '8px', borderRadius: '10px' },
     controls: { display: 'flex', gap: '15px', alignItems: 'center' },
     filterGroup: { display: 'flex', background: 'rgba(255,255,255,0.08)', borderRadius: '15px', padding: '5px', border: '1px solid rgba(255,255,255,0.1)' },
-    selectInput: { background: 'transparent', color: '#fff', border: 'none', padding: '12px', outline: 'none', cursor: 'pointer', borderRight: '1px solid rgba(255,255,255,0.1)' },
+    selectInput: { background: '#1a1a1a', color: '#fff', border: 'none', padding: '12px', outline: 'none', cursor: 'pointer', borderRight: '1px solid rgba(255,255,255,0.1)' },
+  
     searchInput: { background: 'transparent', color: '#fff', border: 'none', padding: '12px 20px', outline: 'none', width: '280px' },
     exportBtn: { background: '#2ecc71', color: '#fff', border: 'none', padding: '14px 25px', borderRadius: '15px', fontWeight: 'bold', cursor: 'pointer', boxShadow: '0 8px 20px rgba(46, 204, 113, 0.3)' },
     backBtn: { background: 'rgba(255,255,255,0.05)', color: '#fff', border: '1px solid rgba(255,255,255,0.1)', padding: '14px 25px', borderRadius: '15px', cursor: 'pointer' },
