@@ -138,6 +138,8 @@ const handleSubmit = async () => {
 
     const tabs = ["ORDER QR", "ORDER PRODUCTS", "VIEW ORDER DETAILS"];
 
+    console.log("Current User Photo Path:", user.profilePic);
+
     return (
         <div style={styles.container}>
             <UserDashboardNavbar />
