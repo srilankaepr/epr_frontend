@@ -71,7 +71,7 @@ const ElectronicOrder = () => {
                         setUser({
                             fullName: localStorage.getItem('userName') || "User",
                             email: userEmail,
-                            profilePic: localStorage.getItem('userPhoto'),
+                            profilePic: localStorage.getItem('userPhoto') || profileResponse.data.profilePic,
                             role: profileResponse.data.orgRole || "Not Assigned",
                             companyName: profileResponse.data.companyName || "N/A"
                         });
@@ -380,7 +380,7 @@ const styles = {
     userName: { fontWeight: 'bold', fontSize: '14px' },
     userEmail: { fontSize: '11px', color: '#ccc' },
     profileCircle: { width: '45px', height: '45px', background: '#222', borderRadius: '50%', border: '2px solid #2ecc71', display: 'flex', justifyContent: 'center', alignItems: 'center', overflow: 'hidden' },
-    profileImg: { width: '100%', height: '100%', objectFit: 'cover' },
+    profileImg: { width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%' },
     profileLetter: { color: '#2ecc71', fontSize: '20px', fontWeight: 'bold' },
     divider: { border: '0', borderTop: '1px solid rgba(255, 255, 255, 0.1)', margin: '20px 0' },
     tabGrid: { display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '20px', marginBottom: '30px' },
