@@ -54,38 +54,51 @@ const ElectronicOrder = () => {
     doc.save(`Electronic_Order_Report_${user.companyName}.pdf`);
 };
 
- useEffect(() => {
-        const fetchUserData = async () => {
-            try {
-                let userEmail = localStorage.getItem('userEmail');
-                if (userEmail) {
-                    userEmail = userEmail.trim().toLowerCase();
+// ElectronicOrder.js ඇතුළත
+useEffect(() => {
+    const fetchUserData = async () => {
+        try {
+            let userEmail = localStorage.getItem('userEmail');
+            if (userEmail) {
+                userEmail = userEmail.trim().toLowerCase();
 
-                    // API Calls දෙකම එකවර සිදු කරයි
-                    const [profileResponse, ordersResponse] = await Promise.all([
-                        axios.get(`https://eprbackend-production.up.railway.app/api/users/profile/${userEmail}`),
-                        axios.get(`https://eprbackend-production.up.railway.app/api/orders/user/${userEmail}/Electronic-User`)
-                    ]);
+                // API Calls දෙකම එකවර සිදු කරයි
+                const [profileResponse, ordersResponse] = await Promise.all([
+                    axios.get(`https://eprbackend-production.up.railway.app/api/users/profile/${userEmail}`),
+                    axios.get(`https://eprbackend-production.up.railway.app/api/orders/user/${userEmail}/Electronic-User`)
+                ]);
 
-                    if (profileResponse.data) {
-                        setUser({
-                            fullName: localStorage.getItem('userName') || "User",
-                            email: userEmail,
-                            profilePic: profileResponse.data.profilePic || localStorage.getItem('userPhoto'),
-                            role: profileResponse.data.orgRole || "Not Assigned",
-                            companyName: profileResponse.data.companyName || "N/A"
-                        });
+                // 1. Profile Data සහ Photo එක ලබා ගැනීම
+                if (profileResponse.data) {
+                    const dbPhoto = profileResponse.data.profilePic; // Database එකෙන් එන පින්තූරය
+                    const localPhoto = localStorage.getItem('userPhoto'); // LocalStorage එකේ තියෙන පින්තූරය
+
+                    setUser({
+                        fullName: localStorage.getItem('userName') || "User",
+                        email: userEmail,
+                        // මුලින්ම DB එකේ එක බලනවා, ඒක නැත්නම් විතරක් Local එක බලනවා
+                        profilePic: dbPhoto || localPhoto || null,
+                        role: profileResponse.data.orgRole || "Not Assigned",
+                        companyName: profileResponse.data.companyName || "N/A"
+                    });
+
+                    // පින්තූරය තිබේ නම් LocalStorage එක Update කරනවා
+                    if (dbPhoto) {
+                        localStorage.setItem('userPhoto', dbPhoto);
                     }
-                  if (profileResponse.data.profilePic) {
-        localStorage.setItem('userPhoto', profileResponse.data.profilePic);
-    }
-}
-            } catch (error) {
-                console.error("Fetch error:", error);
+                }
+
+                // 2. Order History එක ලබා ගැනීම
+                if (ordersResponse.data) {
+                    setOrders(ordersResponse.data);
+                }
             }
-        };
-        fetchUserData();
-    }, []);
+        } catch (error) {
+            console.error("Fetch error:", error);
+        }
+    };
+    fetchUserData();
+}, []);
 
     // 3. Invoice Upload කරන සහ අයින් කරන Functions
     const handleInvoiceUpload = (e) => {
