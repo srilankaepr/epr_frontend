@@ -7,14 +7,12 @@ export const AuthProvider = ({ children }) => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        // 🔄 පේජ් එක Refresh කරද්දී LocalStorage එකෙන් දත්ත නැවත ලබා ගැනීම
         const role = localStorage.getItem('userRole');
         const name = localStorage.getItem('userName');
         const email = localStorage.getItem('userEmail');
-        const token = localStorage.getItem('accessToken'); // 👈 අලුතින් එක් කළා (Security Token එක)
+        const token = localStorage.getItem('accessToken'); 
 
         if (token && role) {
-            // ටෝකන් එක සහ රෝල් එක දෙකම තියෙනවා නම් විතරක් යූසර්ව ලොග් කරනවා
             setUser({ role, name, email, token });
         }
         setLoading(false);
@@ -54,7 +52,7 @@ if (userData.coPartnerId) {
     
     const logout = () => {
         setUser(null);
-        localStorage.clear(); // සියලුම දත්ත මකා දමයි (Token එක ඇතුළුව)
+        localStorage.clear(); 
         window.location.href = '/'; 
     };
 
