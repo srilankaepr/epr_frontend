@@ -68,18 +68,16 @@ const ElectronicOrder = () => {
                     ]);
 
                     if (profileResponse.data) {
-                        const dbPhoto = profileResponse.data.profilePic;
-                        const localPhoto = localStorage.getItem('userPhoto') || localStorage.getItem('adminPhoto');
                         setUser({
                             fullName: localStorage.getItem('userName') || "User",
                             email: userEmail,
-                            profilePic: dbPhoto || localPhoto || null,
+                            profilePic: profileResponse.data.profilePic || localStorage.getItem('userPhoto'),
                             role: profileResponse.data.orgRole || "Not Assigned",
                             companyName: profileResponse.data.companyName || "N/A"
                         });
                     }
-                if (dbPhoto) {
-        localStorage.setItem('userPhoto', dbPhoto);
+                  if (profileResponse.data.profilePic) {
+        localStorage.setItem('userPhoto', profileResponse.data.profilePic);
     }
 }
             } catch (error) {
