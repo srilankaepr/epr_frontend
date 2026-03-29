@@ -40,14 +40,64 @@ const UserDashboard = () => {
     const handleInputChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
+    const uploadProfilePicture = async (file) => {
+    const formDataObj = new FormData();
+    formDataObj.append('image', file);
+    formDataObj.append('email', formData.officialEmail); // ලොග් වෙලා ඉන්න Customer ගේ Email එක
+    formDataObj.append('role', 'customer'); // Customer කෙනෙක් නිසා
 
-    const handleImageChange = (e) => {
-        if (e.target.files && e.target.files[0]) {
-            const reader = new FileReader();
-            reader.onload = (event) => setProfileImage(event.target.result);
-            reader.readAsDataURL(e.target.files[0]);
+    try {
+        const response = await fetch('https://eprbackend-production.up.railway.app/api/upload-photo', {
+            method: 'POST',
+            body: formDataObj,
+        });
+        const data = await response.json();
+        if (data.imageUrl) {
+            setProfileImage(data.imageUrl); 
+            setFormData(prev => ({ ...prev, profilePic: data.imageUrl }));
+            localStorage.setItem('userPhoto', data.imageUrl); 
         }
-    };
+    } catch (error) {
+        console.error("Upload failed:", error);
+    }
+};
+
+   // UserDashboard.js ඇතුළත
+
+const handleImageChange = async (e) => {
+    if (e.target.files && e.target.files[0]) {
+        const file = e.target.files[0];
+
+        // 1. පින්තූරය පෙන්වන්න (Preview) - දැනට තියෙන කොටස
+        const reader = new FileReader();
+        reader.onload = (event) => setProfileImage(event.target.result);
+        reader.readAsDataURL(file);
+
+        // 2. පින්තූරය Backend එකට යවන කොටස (මෙන්න මේකයි අලුතින් ඕනේ)
+        const formDataObj = new FormData();
+        formDataObj.append('image', file);
+        formDataObj.append('email', formData.officialEmail); // ලොග් වෙලා ඉන්න යූසර්ගේ Email එක
+        formDataObj.append('role', 'customer'); // Customer කෙනෙක් නිසා
+
+        try {
+            const response = await fetch('https://eprbackend-production.up.railway.app/api/upload-photo', {
+                method: 'POST',
+                body: formDataObj,
+            });
+            const data = await response.json();
+            
+            if (data.imageUrl) {
+                // Backend එකෙන් ලැබෙන Live Link එක state එකට දානවා
+                setProfileImage(data.imageUrl); 
+                setFormData(prev => ({ ...prev, profilePic: data.imageUrl }));
+                alert("✅ Profile Photo Uploaded Successfully!");
+            }
+        } catch (error) {
+            console.error("Upload failed:", error);
+            alert("❌ Photo upload failed!");
+        }
+    }
+};
 
     useEffect(() => {
     // --- 1. Animation Styles එකතු කිරීම (දැනට තියෙන කොටස) ---
