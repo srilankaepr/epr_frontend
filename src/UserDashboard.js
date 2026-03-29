@@ -87,9 +87,9 @@ const handleImageChange = async (e) => {
             const data = await response.json();
             
             if (data.imageUrl) {
-                // Backend එකෙන් ලැබෙන Live Link එක state එකට දානවා
                 setProfileImage(data.imageUrl); 
                 setFormData(prev => ({ ...prev, profilePic: data.imageUrl }));
+                localStorage.setItem('userPhoto', data.imageUrl);
                 alert("✅ Profile Photo Uploaded Successfully!");
             }
         } catch (error) {

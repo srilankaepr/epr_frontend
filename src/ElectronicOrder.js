@@ -62,33 +62,29 @@ useEffect(() => {
             if (userEmail) {
                 userEmail = userEmail.trim().toLowerCase();
 
-                // API Calls දෙකම එකවර සිදු කරයි
                 const [profileResponse, ordersResponse] = await Promise.all([
                     axios.get(`https://eprbackend-production.up.railway.app/api/users/profile/${userEmail}`),
                     axios.get(`https://eprbackend-production.up.railway.app/api/orders/user/${userEmail}/Electronic-User`)
                 ]);
 
-                // 1. Profile Data සහ Photo එක ලබා ගැනීම
                 if (profileResponse.data) {
-                    const dbPhoto = profileResponse.data.profilePic; // Database එකෙන් එන පින්තූරය
-                    const localPhoto = localStorage.getItem('userPhoto'); // LocalStorage එකේ තියෙන පින්තූරය
+                    // ✅ මුලින්ම Backend එකෙන් එන පින්තූරය බලනවා, ඒක නැත්නම් LocalStorage එක බලනවා
+                    const photoToShow = profileResponse.data.profilePic || localStorage.getItem('userPhoto');
 
                     setUser({
                         fullName: localStorage.getItem('userName') || "User",
                         email: userEmail,
-                        // මුලින්ම DB එකේ එක බලනවා, ඒක නැත්නම් විතරක් Local එක බලනවා
-                        profilePic: dbPhoto || localPhoto || null,
+                        profilePic: photoToShow, // 👈 මෙතනින් තමයි Navbar එකට පින්තූරේ යන්නේ
                         role: profileResponse.data.orgRole || "Not Assigned",
                         companyName: profileResponse.data.companyName || "N/A"
                     });
 
-                    // පින්තූරය තිබේ නම් LocalStorage එක Update කරනවා
-                    if (dbPhoto) {
-                        localStorage.setItem('userPhoto', dbPhoto);
+                    // 🔄 LocalStorage එකත් අලුත් පින්තූරය එක්ක sync කරනවා
+                    if (profileResponse.data.profilePic) {
+                        localStorage.setItem('userPhoto', profileResponse.data.profilePic);
                     }
                 }
 
-                // 2. Order History එක ලබා ගැනීම
                 if (ordersResponse.data) {
                     setOrders(ordersResponse.data);
                 }
