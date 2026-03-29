@@ -76,10 +76,10 @@ const ElectronicOrder = () => {
                             companyName: profileResponse.data.companyName || "N/A"
                         });
                     }
-                    if (ordersResponse.data) {
-                        setOrders(ordersResponse.data);
-                    }
-                }
+                  if (profileResponse.data.profilePic) {
+        localStorage.setItem('userPhoto', profileResponse.data.profilePic);
+    }
+}
             } catch (error) {
                 console.error("Fetch error:", error);
             }
