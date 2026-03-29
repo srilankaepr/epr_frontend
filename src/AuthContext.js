@@ -21,7 +21,7 @@ export const AuthProvider = ({ children }) => {
     }, []);
 
 
-const login = (userData, role, token) => {
+    const login = (userData, role, token, adminRole) => {
     setUser({ 
         ...userData, 
         role, 
