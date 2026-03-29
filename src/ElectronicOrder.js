@@ -71,7 +71,7 @@ const ElectronicOrder = () => {
                         setUser({
                             fullName: localStorage.getItem('userName') || "User",
                             email: userEmail,
-                            profilePic: localStorage.getItem('userPhoto') || profileResponse.data.profilePic,
+                            profilePic: profileResponse.data.profilePic || localStorage.getItem('userPhoto'),
                             role: profileResponse.data.orgRole || "Not Assigned",
                             companyName: profileResponse.data.companyName || "N/A"
                         });
