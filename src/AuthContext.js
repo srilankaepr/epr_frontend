@@ -21,14 +21,22 @@ export const AuthProvider = ({ children }) => {
     }, []);
 
 
-    const login = (userData, role, token) => {
-        setUser({ ...userData, role, token }); 
+const login = (userData, role, token) => {
+    setUser({ 
+        ...userData, 
+        role, 
+        token,
+        name: userData.fullName || userData.name || '',
+        email: userData.email || userData.officialEmail || ''
+    });
         
-        // 🛡️ LocalStorage එකට දත්ත දැමීම
         localStorage.setItem('accessToken', token); 
         localStorage.setItem('userRole', role);
         localStorage.setItem('userName', userData.fullName || userData.name || '');
-        localStorage.setItem('userEmail', userData.email || '');
+        localStorage.setItem('userEmail', userData.email || userData.officialEmail || '');
+        localStorage.setItem('adminName', userData.fullName || userData.name || '');
+        localStorage.setItem('adminEmail', userData.email || userData.officialEmail || '');
+        localStorage.setItem('adminPhoto', userData.profilePic || '');
 
 if (userData.adminRole) {
         localStorage.setItem('adminRole', userData.adminRole);

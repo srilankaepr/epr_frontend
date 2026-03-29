@@ -38,7 +38,8 @@ const handleSubmit = useCallback(async (e) => {
         if (response.ok) {
                     console.log("Logged in User Role:", data.user.adminRole);
 
-            login(data.user, data.role, data.token, data.user.adminRole); 
+            // login(data.user, data.role, data.token, data.user.adminRole); 
+            login(data.user, data.role, data.token); 
 
             const routes = {
                 'ADMIN': '/dashboard',
