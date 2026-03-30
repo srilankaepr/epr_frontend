@@ -13,11 +13,11 @@ const ElectronicOrder = () => {
     const [activeTab, setActiveTab] = useState('ORDER QR'); 
     const [invoice, setInvoice] = useState(null);
     const [orders, setOrders] = useState([]);
+    const API_BASE = "https://eprbackend-production.up.railway.app/api";
 
  const generateReport = () => {
     const doc = new jsPDF();
     
-    // Header text ටික
     doc.setFontSize(18);
     doc.text("Electronic Order History Report", 14, 20);
     doc.setFontSize(11);
@@ -54,7 +54,7 @@ const ElectronicOrder = () => {
     doc.save(`Electronic_Order_Report_${user.companyName}.pdf`);
 };
 
-// ElectronicOrder.js ඇතුළත
+// ElectronicOrder.js user data fetching with useEffect
 useEffect(() => {
     const fetchUserData = async () => {
         try {
@@ -63,23 +63,21 @@ useEffect(() => {
                 userEmail = userEmail.trim().toLowerCase();
 
                 const [profileResponse, ordersResponse] = await Promise.all([
-                    axios.get(`https://eprbackend-production.up.railway.app/api/users/profile/${userEmail}`),
-                    axios.get(`https://eprbackend-production.up.railway.app/api/orders/user/${userEmail}/Electronic-User`)
+                    axios.get(`${API_BASE}/users/profile/${userEmail}`),
+                    axios.get(`${API_BASE}/orders/user/${userEmail}/Electronic-User`)
                 ]);
 
                 if (profileResponse.data) {
-                    // ✅ මුලින්ම Backend එකෙන් එන පින්තූරය බලනවා, ඒක නැත්නම් LocalStorage එක බලනවා
                     const photoToShow = profileResponse.data.profilePic || localStorage.getItem('userPhoto');
 
                     setUser({
                         fullName: localStorage.getItem('userName') || "User",
                         email: userEmail,
-                        profilePic: photoToShow, // 👈 මෙතනින් තමයි Navbar එකට පින්තූරේ යන්නේ
+                        profilePic: photoToShow, 
                         role: profileResponse.data.orgRole || "Not Assigned",
                         companyName: profileResponse.data.companyName || "N/A"
                     });
 
-                    // 🔄 LocalStorage එකත් අලුත් පින්තූරය එක්ක sync කරනවා
                     if (profileResponse.data.profilePic) {
                         localStorage.setItem('userPhoto', profileResponse.data.profilePic);
                     }
@@ -96,7 +94,7 @@ useEffect(() => {
     fetchUserData();
 }, []);
 
-    // 3. Invoice Upload කරන සහ අයින් කරන Functions
+    // 3. Invoice Upload and remove Functions................................................................................
     const handleInvoiceUpload = (e) => {
         const file = e.target.files[0];
         if (file) { setInvoice(file); }

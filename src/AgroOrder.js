@@ -13,7 +13,6 @@ const AgroOrder = () => {
     const [activeTab, setActiveTab] = useState('ORDER QR'); 
     const [invoice, setInvoice] = useState(null);
     const [orders, setOrders] = useState([]);
-
     const API_BASE = "https://eprbackend-production.up.railway.app/api";
 
     // 📄 PDF Report Generator (Same as other files)
@@ -46,34 +45,47 @@ const AgroOrder = () => {
         doc.save(`Agro_Order_History_${user.companyName}.pdf`);
     };
 
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                let userEmail = localStorage.getItem('userEmail');
-                if (userEmail) {
-                    userEmail = userEmail.trim().toLowerCase();
-                    const [profileRes, ordersRes] = await Promise.all([
-                        axios.get(`${API_BASE}/users/profile/${userEmail}`),
-                        axios.get(`${API_BASE}/orders/user/${userEmail}/Agro-User`)
-                    ]);
+    
+    // AgroOrder.js user data fetching with useEffect
+useEffect(() => {
+    const fetchUserData = async () => {
+        try {
+            let userEmail = localStorage.getItem('userEmail');
+            if (userEmail) {
+                userEmail = userEmail.trim().toLowerCase();
 
-                    if (profileRes.data) {
-                        setUser({
-                            fullName: localStorage.getItem('userName') || "User",
-                            email: userEmail,
-                            profilePic: localStorage.getItem('userPhoto'),
-                            role: profileRes.data.orgRole || "Not Assigned",
-                            companyName: profileRes.data.companyName || "N/A"
-                        });
+                const [profileResponse, ordersResponse] = await Promise.all([
+                    axios.get(`${API_BASE}/users/profile/${userEmail}`),
+                    axios.get(`${API_BASE}/orders/user/${userEmail}/Agro-User`)
+                ]);
+
+                if (profileResponse.data) {
+                    const photoToShow = profileResponse.data.profilePic || localStorage.getItem('userPhoto');
+
+                    setUser({
+                        fullName: localStorage.getItem('userName') || "User",
+                        email: userEmail,
+                        profilePic: photoToShow, 
+                        role: profileResponse.data.orgRole || "Not Assigned",
+                        companyName: profileResponse.data.companyName || "N/A"
+                    });
+
+                    if (profileResponse.data.profilePic) {
+                        localStorage.setItem('userPhoto', profileResponse.data.profilePic);
                     }
-                    if (ordersRes.data) setOrders(ordersRes.data);
                 }
-            } catch (err) {
-                console.error("Fetch error:", err);
+
+                if (ordersResponse.data) {
+                    setOrders(ordersResponse.data);
+                }
             }
-        };
-        fetchData();
-    }, []);
+        } catch (error) {
+            console.error("Fetch error:", error);
+        }
+    };
+    fetchUserData();
+}, []);
+      
 
     const handleInvoiceUpload = (e) => {
         const file = e.target.files[0];
