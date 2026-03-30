@@ -294,7 +294,8 @@ const approveCustomer = async (id) => {
         {/* 1. BRC Document එක තිබේ නම් */}
         {c.brcDocument && (
             <a 
-                href={`https://eprbackend-production.up.railway.app/documents/${c.brcDocument.split('/').pop()}`} 
+              //  href={`https://eprbackend-production.up.railway.app/documents/${c.brcDocument.split('/').pop()}`} 
+                href={c.brcDocument.startsWith('http') ? c.brcDocument : `https://eprbackend-production.up.railway.app/documents/${c.brcDocument.split('/').pop()}`}
                 target="_blank" rel="noopener noreferrer" style={styles.docLink}
             >
                 <span role="img" aria-label="doc">📄</span> BRC
@@ -304,7 +305,8 @@ const approveCustomer = async (id) => {
         {/* 2. VAT Document එක තිබේ නම් */}
         {c.vatDocument && (
             <a 
-                href={`https://eprbackend-production.up.railway.app/documents/${c.vatDocument.split('/').pop()}`} 
+               // href={`https://eprbackend-production.up.railway.app/documents/${c.vatDocument.split('/').pop()}`} 
+               href={c.vatDocument.startsWith('http') ? c.vatDocument : `https://eprbackend-production.up.railway.app/documents/${c.vatDocument.split('/').pop()}`}
                 target="_blank" rel="noopener noreferrer" style={styles.docLink}
             >
                 <span role="img" aria-label="doc">📄</span> VAT
@@ -314,7 +316,8 @@ const approveCustomer = async (id) => {
         {/* 3. Billing Document එක තිබේ නම් */}
         {c.billingDocument && (
             <a 
-                href={`https://eprbackend-production.up.railway.app/documents/${c.billingDocument.split('/').pop()}`} 
+              //  href={`https://eprbackend-production.up.railway.app/documents/${c.billingDocument.split('/').pop()}`} 
+              href={c.billingDocument.startsWith('http') ? c.billingDocument : `https://eprbackend-production.up.railway.app/documents/${c.billingDocument.split('/').pop()}`}
                 target="_blank" rel="noopener noreferrer" style={styles.docLink}
             >
                 <span role="img" aria-label="doc">📄</span> Billing
@@ -325,7 +328,8 @@ const approveCustomer = async (id) => {
         {c.verificationDocs && c.verificationDocs.length > 0 && c.verificationDocs.map((doc, index) => (
             <a 
                 key={index}
-                href={`https://eprbackend-production.up.railway.app/documents/${doc.split('/').pop()}`} 
+               // href={`https://eprbackend-production.up.railway.app/documents/${doc.split('/').pop()}`} 
+                href={doc.startsWith('http') ? doc : `https://eprbackend-production.up.railway.app/documents/${doc.split('/').pop()}`}
                 target="_blank" rel="noopener noreferrer" style={styles.docLink}
             >
                 <span role="img" aria-label="doc">📄</span> Old Doc {index + 1}
