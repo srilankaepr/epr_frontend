@@ -39,8 +39,11 @@ const handleSubmit = useCallback(async (e) => {
                     console.log("Logged in User Role:", data.user.adminRole);
 
              login(data.user, data.role, data.token, data.user.adminRole); 
-          //  login(data.user, data.role, data.token); 
-
+            if (data.user && data.user.profilePic) {
+        localStorage.setItem('userPhoto', data.user.profilePic);
+    } else {
+        localStorage.removeItem('userPhoto'); 
+    }
             const routes = {
                 'ADMIN': '/dashboard',
                 'CUSTOMER': '/user-dashboard',
