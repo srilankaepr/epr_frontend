@@ -39,8 +39,9 @@ const handleSubmit = useCallback(async (e) => {
                     console.log("Logged in User Role:", data.user.adminRole);
 
              login(data.user, data.role, data.token, data.user.adminRole); 
-            if (data.user && data.user.profilePic) {
-        localStorage.setItem('userPhoto', data.user.profilePic);
+          if (data.user && (data.user.profilePic || data.user.profilePicture)) {
+        const photoPath = data.user.profilePic || data.user.profilePicture;
+        localStorage.setItem('userPhoto', photoPath);
     } else {
         localStorage.removeItem('userPhoto'); 
     }
