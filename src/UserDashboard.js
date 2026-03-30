@@ -314,7 +314,11 @@ const handleImageChange = async (e) => {
             {/* Profile Picture Header */}
             <div style={styles.profileHeader}>
                 <div style={styles.avatarWrapper}>
-                    <img src={profileImage} alt="Profile" style={styles.profileImg} />
+<img 
+    src={`${profileImage}?t=${new Date().getTime()}`} 
+    alt="Profile" 
+    style={styles.profileImg} 
+/>
                     {isEditing && (
                         <label style={styles.uploadIcon}>
                             📷 <input type="file" accept="image/*" onChange={handleImageChange} style={{ display: 'none' }} />
