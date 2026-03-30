@@ -14,7 +14,7 @@ export const AuthProvider = ({ children }) => {
         const profilePic = localStorage.getItem('userPhoto'); 
 
         if (token && role) {
-            setUser({ role, name, email, token,profilePic });
+            setUser({ role, name, email, token, profilePic });
         }
         setLoading(false);
     }, []);
@@ -26,13 +26,15 @@ export const AuthProvider = ({ children }) => {
         role, 
         token,
         name: userData.fullName || userData.name || '',
-        email: userData.email || userData.officialEmail || ''
+        email: userData.email || userData.officialEmail || '',
+        profilePic: userData.profilePic || ''
     });
         
         localStorage.setItem('accessToken', token); 
         localStorage.setItem('userRole', role);
         localStorage.setItem('userName', userData.fullName || userData.name || '');
         localStorage.setItem('userEmail', userData.email || userData.officialEmail || '');
+        localStorage.setItem('userPhoto', userData.profilePic || '');
         localStorage.setItem('adminName', userData.fullName || userData.name || '');
         localStorage.setItem('adminEmail', userData.email || userData.officialEmail || '');
         localStorage.setItem('adminPhoto', userData.profilePic || '');

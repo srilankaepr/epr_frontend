@@ -36,12 +36,11 @@ const handleSubmit = useCallback(async (e) => {
         const data = await response.json();
 
         if (response.ok) {
-                    console.log("Logged in User Role:", data.user.adminRole);
+    console.log("Logged in User Role:", data.user.adminRole);
+    login(data.user, data.role, data.token, data.user.adminRole); 
 
-             login(data.user, data.role, data.token, data.user.adminRole); 
-          if (data.user && (data.user.profilePic || data.user.profilePicture)) {
-        const photoPath = data.user.profilePic || data.user.profilePicture;
-        localStorage.setItem('userPhoto', photoPath);
+    if (data.user && data.user.profilePic) {
+        localStorage.setItem('userPhoto', data.user.profilePic);
     } else {
         localStorage.removeItem('userPhoto'); 
     }
