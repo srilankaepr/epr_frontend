@@ -49,6 +49,7 @@ function App() {
         <Route path="/admin-feedback" element={<ProtectedRoute allowedRole="ADMIN"><FeedbackPage /></ProtectedRoute>} />
         <Route path="/admin-products" element={<ProtectedRoute allowedRole="ADMIN"><AdminProductView /></ProtectedRoute>} />
 
+
         {/* 2. Customer පේජ් (CUSTOMER ට පමණි) */}
         <Route path="/user-dashboard" element={<ProtectedRoute allowedRole="CUSTOMER"><UserDashboard /></ProtectedRoute>} />
         <Route path="/electronic-order" element={<ProtectedRoute allowedRole="CUSTOMER"><ElectronicOrder /></ProtectedRoute>} />
