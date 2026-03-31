@@ -293,19 +293,16 @@ const approveCustomer = async (id) => {
     <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', flexDirection: 'column' }}>
         
         {(() => {
-            // ✅ අර පරණ වැරදි ඔක්කොම අයින් කරපු සරලම සහ සාර්ථකම විසඳුම
-            const handleDownload = (url) => {
-                if (!url) return;
-                
-                // 1. Cloudinary URL එකක් නම් 'fl_attachment' කෑල්ල එකතු කරනවා
-                let downloadUrl = url;
-                if (url.includes('res.cloudinary.com')) {
-                    downloadUrl = url.replace('/upload/', '/upload/fl_attachment/');
-                }
-                
-                // 2. අලුත් ටැබ් එකක ඕපන් කරනවා - එතකොට බ්‍රවුසරයෙන්ම "Open/Save" මෙනු එක පෙන්වනවා
-                window.open(downloadUrl, '_blank');
-            };
+         const handleDownload = (url) => {
+    if (!url) return;
+
+    // 1. URL එක පිරිසිදු කරගන්නවා (fl_attachment වැනි දේවල් අයින් කරනවා)
+    // එවිට PDF එක කෙලින්ම බ්‍රවුසරයේ ලස්සනට පේනවා.
+    const cleanUrl = url.replace('/fl_attachment/', '/');
+
+    // 2. අලුත් ටැබ් එකක PDF එක ඕපන් කරනවා.
+    window.open(cleanUrl, '_blank');
+};
             return (
                 <>
                     {/* BRC Document */}
