@@ -293,88 +293,65 @@ const approveCustomer = async (id) => {
     <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', flexDirection: 'column' }}>
         
         {(() => {
-            // ✅ පරණ වැරදි ඔක්කොම අයින් කරලා පිරිසිදු URL එක හදන Function එක
-      const formatDocUrl = (url) => {
-    if (!url) return "#";
-    
-    if (url.includes('res.cloudinary.com')) {
-        // 1. පරණ ලින්ක් එක කොහොම තිබුණත් ඒක '/upload/' කෑල්ලෙන් වෙන් කරනවා
-        const parts = url.split('/upload/');
-        
-        // 2. අන්තිම කෑල්ල විතරක් ගන්නවා (v177.../folder/file.pdf කොටස)
-        const fileContent = parts.pop(); 
-        
-        // 3. දැන් අතින්ම නිවැරදි Cloudinary URL එක හදනවා. 
-        // මැදට '/' ලකුණු හරියටම වැටෙන නිසා Error 400 එන්නේ නැහැ.
-        return `https://res.cloudinary.com/de2uxpvdz/upload/fl_attachment/${fileContent}`;
-    }
-    
-    // Cloudinary නොවන පරණ Local Server path එකක් නම්
-    return `https://eprbackend-production.up.railway.app/documents/${url.split('/').pop()}`;
-};
+            // ✅ බ්‍රවුසරයේ Security බ්ලොක් එක මගහරින සැබෑ විසඳුම
+            const downloadFile = async (url, fileName) => {
+                try {
+                    // 1. පරණ වැරදි URL එක මුලින්ම පිරිසිදු කරගන්නවා
+                    let cleanUrl = url.replace('/fl_attachment/', '/').replace('/image/upload/', '/upload/').replace('/raw/upload/', '/upload/');
+                    
+                    // 2. JavaScript හරහා ෆයිල් එකේ දත්ත (Blob) ලබා ගන්නවා
+                    const response = await fetch(cleanUrl);
+                    const blob = await response.blob();
+                    
+                    // 3. බ්‍රවුසරය ඇතුළේ තාවකාලික ලින්ක් එකක් හදලා ඩවුන්ලෝඩ් එක පටන් ගන්නවා
+                    const blobUrl = window.URL.createObjectURL(blob);
+                    const link = document.createElement('a');
+                    link.href = blobUrl;
+                    link.download = fileName || 'document.pdf';
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    window.URL.revokeObjectURL(blobUrl);
+                } catch (error) {
+                    // Fetch එක බ්ලොක් වුණොත් පමණක් අලුත් ටැබ් එකක ඕපන් කරනවා
+                    window.open(url, '_blank');
+                }
+            };
 
             return (
                 <>
                     {/* BRC Document */}
                     {c.brcDocument && (
-                        <a 
-                            href={formatDocUrl(c.brcDocument)} 
-                            target="_blank"           // 🔥 Chrome Security Error එක මගහරින්න අලුත් ටැබ් එකක දානවා
-                            rel="noopener noreferrer" // 🔥 ආරක්ෂාව සඳහා අනිවාර්යයි
-                            style={styles.docLink}
-                            download={`BRC_${c.regNumber || 'Doc'}.pdf`}
+                        <button 
+                            onClick={() => downloadFile(c.brcDocument, `BRC_${c.regNumber}.pdf`)}
+                            style={{...styles.docLink, background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left', color: '#3498db'}}
                         >
-                            <span role="img" aria-label="doc">📄</span> BRC
-                        </a>
+                            📄 BRC
+                        </button>
                     )}
 
                     {/* VAT Document */}
                     {c.vatDocument && (
-                        <a 
-                            href={formatDocUrl(c.vatDocument)} 
-                            target="_blank" 
-                            rel="noopener noreferrer" 
-                            style={styles.docLink}
-                            download={`VAT_${c.regNumber || 'Doc'}.pdf`}
+                        <button 
+                            onClick={() => downloadFile(c.vatDocument, `VAT_${c.regNumber}.pdf`)}
+                            style={{...styles.docLink, background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left', color: '#3498db'}}
                         >
-                            <span role="img" aria-label="doc">📄</span> VAT
-                        </a>
+                            📄 VAT
+                        </button>
                     )}
 
                     {/* Billing Document */}
                     {c.billingDocument && (
-                        <a 
-                            href={formatDocUrl(c.billingDocument)} 
-                            target="_blank" 
-                            rel="noopener noreferrer" 
-                            style={styles.docLink}
-                            download={`Billing_${c.regNumber || 'Doc'}.pdf`}
+                        <button 
+                            onClick={() => downloadFile(c.billingDocument, `Billing_${c.regNumber}.pdf`)}
+                            style={{...styles.docLink, background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left', color: '#3498db'}}
                         >
-                            <span role="img" aria-label="doc">📄</span> Billing
-                        </a>
+                            📄 Billing
+                        </button>
                     )}
-
-                    {/* Verification Docs Array */}
-                    {c.verificationDocs && c.verificationDocs.length > 0 && c.verificationDocs.map((doc, index) => (
-                        <a 
-                            key={index} 
-                            href={formatDocUrl(doc)} 
-                            target="_blank" 
-                            rel="noopener noreferrer" 
-                            style={styles.docLink}
-                            download={`OldDoc_${index + 1}.pdf`}
-                        >
-                            <span role="img" aria-label="doc">📄</span> Old Doc {index + 1}
-                        </a>
-                    ))}
                 </>
             );
         })()}
-
-        {/* ලේඛන කිසිවක් නැතිනම් පෙන්වන පණිවිඩය */}
-        {!(c.brcDocument || c.vatDocument || c.billingDocument || (c.verificationDocs && c.verificationDocs.length > 0)) && (
-            <span style={{ color: 'rgba(255,255,255,0.3)', fontSize: '12px' }}>No Docs</span>
-        )}
     </div>
 </td>
 
