@@ -298,13 +298,15 @@ const approveCustomer = async (id) => {
     if (!url) return "#";
     
     if (url.includes('res.cloudinary.com')) {
-        // 1. පරණ ලින්ක් එකේ මොන අවුල තිබුණත් ඒක කෑලි වලට කඩලා ෆයිල් එකේ නම සහ ෆෝල්ඩර් එක විතරක් ගන්නවා
+        // 1. පරණ ලින්ක් එක කොහොම තිබුණත් ඒක '/upload/' කෑල්ලෙන් වෙන් කරනවා
         const parts = url.split('/upload/');
-        const fileData = parts.pop(); // v1774947817/customer_documents/DOC-xxx.pdf කොටස ගනී
         
-        // 2. අලුතින්ම සම්පූර්ණ URL එක නිවැරදි Slash (/) ලකුණු සහිතව හදනවා
-        // මෙතන 'de2uxpvdz' යනු ඔයාගේ cloud name එකයි
-        return `https://res.cloudinary.com/de2uxpvdz/upload/fl_attachment/${fileData}`;
+        // 2. අන්තිම කෑල්ල විතරක් ගන්නවා (v177.../folder/file.pdf කොටස)
+        const fileContent = parts.pop(); 
+        
+        // 3. දැන් අතින්ම නිවැරදි Cloudinary URL එක හදනවා. 
+        // මැදට '/' ලකුණු හරියටම වැටෙන නිසා Error 400 එන්නේ නැහැ.
+        return `https://res.cloudinary.com/de2uxpvdz/upload/fl_attachment/${fileContent}`;
     }
     
     // Cloudinary නොවන පරණ Local Server path එකක් නම්
