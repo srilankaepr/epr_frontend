@@ -291,67 +291,76 @@ const approveCustomer = async (id) => {
     <td style={styles.td}>
     <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', flexDirection: 'column' }}>
         
-        {(() => {
-  // UserManagement.js ඇතුළේ
-const formatDocUrl = (url) => {
-    if (!url) return "#";
-    if (!url.startsWith('http')) {
-        return `https://eprbackend-production.up.railway.app/documents/${url.split('/').pop()}`;
-    }
-    
-    if (url.toLowerCase().endsWith('.pdf')) {
-        // 🔥 පරණ /image/upload/ තිබුණොත් ඒක /raw/upload/fl_attachment/ වලට මාරු කරනවා
-        return url.replace('/image/upload/', '/raw/upload/fl_attachment/').replace('/upload/', '/upload/fl_attachment/');
-    }
-    return url; 
-};
+{(() => {
+    const formatDocUrl = (url) => {
+        if (!url) return "#";
+        if (url.includes('cloudinary.com')) {
+            if (url.toLowerCase().endsWith('.pdf')) {
+                return url.replace('/upload/', '/upload/fl_attachment/');
+            }
+            return url; // JPG/PNG සඳහා normal URL එකම
+        }
+        // Local fallback
+        if (!url.startsWith('http')) {
+            return `https://eprbackend-production.up.railway.app/documents/${url.split('/').pop()}`;
+        }
+        return url;
+    };
 
+    return (
+        <>
+            {c.brcDocument && (
+                <a 
+                    href={formatDocUrl(c.brcDocument)} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    style={styles.docLink}
+                    download   // ← මේකත් එකතු කරන්න
+                >
+                    📄 BRC
+                </a>
+            )}
 
-            return (
-                <>
-                    {/* BRC Document */}
-                    {c.brcDocument && (
-                        <a 
-                            href={formatDocUrl(c.brcDocument)} 
-                            target="_blank" rel="noopener noreferrer" style={styles.docLink}
-                            download={`BRC_${c.regNumber || 'Doc'}.pdf`}
-                        >
-                            <span role="img" aria-label="doc">📄</span> BRC
-                        </a>
-                    )}
+            {c.vatDocument && (
+                <a 
+                    href={formatDocUrl(c.vatDocument)} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    style={styles.docLink}
+                    download
+                >
+                    📄 VAT
+                </a>
+            )}
 
-                    {/* VAT Document */}
-                    {c.vatDocument && (
-                        <a 
-                            href={formatDocUrl(c.vatDocument)} 
-                            target="_blank" rel="noopener noreferrer" style={styles.docLink}
-                            download={`VAT_${c.regNumber || 'Doc'}.pdf`}
-                        >
-                            <span role="img" aria-label="doc">📄</span> VAT
-                        </a>
-                    )}
+            {c.billingDocument && (
+                <a 
+                    href={formatDocUrl(c.billingDocument)} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    style={styles.docLink}
+                    download
+                >
+                    📄 Billing
+                </a>
+            )}
 
-                    {/* Billing Document */}
-                    {c.billingDocument && (
-                        <a 
-                            href={formatDocUrl(c.billingDocument)} 
-                            target="_blank" rel="noopener noreferrer" style={styles.docLink}
-                            download={`Billing_${c.regNumber || 'Doc'}.pdf`}
-                        >
-                            <span role="img" aria-label="doc">📄</span> Billing
-                        </a>
-                    )}
-
-                    {/* Verification Docs Array */}
-                    {c.verificationDocs && c.verificationDocs.length > 0 && c.verificationDocs.map((doc, index) => (
-                        <a key={index} href={formatDocUrl(doc)} target="_blank" rel="noopener noreferrer" style={styles.docLink}
-                           download={`OldDoc_${index + 1}.pdf`}>
-                            <span role="img" aria-label="doc">📄</span> Old Doc {index + 1}
-                        </a>
-                    ))}
-                </>
-            );
-        })()}
+            {/* Verification Docs */}
+            {c.verificationDocs && c.verificationDocs.map((doc, index) => (
+                <a 
+                    key={index} 
+                    href={formatDocUrl(doc)} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    style={styles.docLink}
+                    download={`Doc_${index + 1}`}
+                >
+                    📄 Old Doc {index + 1}
+                </a>
+            ))}
+        </>
+    );
+})()}
 
         {!(c.brcDocument || c.vatDocument || c.billingDocument || (c.verificationDocs && c.verificationDocs.length > 0)) && (
             <span style={{ color: 'rgba(255,255,255,0.3)', fontSize: '12px' }}>No Docs</span>
