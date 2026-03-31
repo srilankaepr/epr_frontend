@@ -288,30 +288,32 @@ const approveCustomer = async (id) => {
                                         <td style={styles.td}>{c.contactPersonMobile}</td>
                                         <td style={styles.td}>{`${c.address1}, ${c.address2}`}</td>
                                         <td style={styles.td}>{c.country}</td>
-    <td style={styles.td}>
+   
+<td style={styles.td}>
     <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', flexDirection: 'column' }}>
         
         {(() => {
-  // UserManagement.js ඇතුළේ
-// UserManagement.js (Frontend)
-const formatDocUrl = (url) => {
-    if (!url) return "#";
-    
-    // Cloudinary URL එකක් නම්
-    if (url.includes('res.cloudinary.com')) {
-        // 1. පරණ වැරදි path (raw/image) ඔක්කොම අයින් කරලා පිරිසිදු ලින්ක් එක ගන්නවා
-        let cleanUrl = url.replace('/raw/upload/', '/upload/')
-                          .replace('/image/upload/', '/upload/')
-                          .replace('/upload/fl_attachment/', '/upload/');
+            // ✅ Chrome Security Error එක මගහරින නිවැරදි URL format එක
+            const formatDocUrl = (url) => {
+                if (!url) return "#";
+                
+                // Cloudinary URL එකක් නම්
+                if (url.includes('res.cloudinary.com')) {
+                    // 1. පරණ පියවර නිසා වැරදිලා සේව් වුණු '/raw/' හෝ '/image/' ඇත්නම් ඒවා ඉවත් කරයි
+                    let cleanUrl = url.replace('/raw/upload/', '/upload/')
+                                      .replace('/image/upload/', '/upload/')
+                                      .replace('/upload/fl_attachment/', '/upload/');
 
-        // 2. දැන් අලුත් පිරිසිදු ලින්ක් එකට fl_attachment එකතු කරනවා
-        return cleanUrl.replace('/upload/', '/upload/fl_attachment/');
-    }
-    
-    // පරණ local path එකක් නම් (Railway)
-    return `https://eprbackend-production.up.railway.app/documents/${url.split('/').pop()}`;
-};
-
+                    // 2. PDF එකක් නම් පමණක් කෙලින්ම Download වීමට fl_attachment එක් කරයි
+                    if (cleanUrl.toLowerCase().endsWith('.pdf')) {
+                        return cleanUrl.replace('/upload/', '/upload/fl_attachment/');
+                    }
+                    return cleanUrl; // පින්තූරයක් නම් සාමාන්‍ය පරිදි පෙන්වයි
+                }
+                
+                // Cloudinary නොවන පරණ Local Server (Railway) path එකක් නම්
+                return `https://eprbackend-production.up.railway.app/documents/${url.split('/').pop()}`;
+            };
 
             return (
                 <>
@@ -319,8 +321,9 @@ const formatDocUrl = (url) => {
                     {c.brcDocument && (
                         <a 
                             href={formatDocUrl(c.brcDocument)} 
-                            target="_blank" rel="noopener noreferrer" style={styles.docLink}
-                            download={`BRC_${c.regNumber || 'Doc'}.pdf`}
+                            target="_blank"           // 🔥 අලුත් ටැබ් එකක ඕපන් කිරීම (Security Error එක මගහරී)
+                            rel="noopener noreferrer" // 🔥 ආරක්ෂාව සඳහා අනිවාර්යයි
+                            style={styles.docLink}
                         >
                             <span role="img" aria-label="doc">📄</span> BRC
                         </a>
@@ -330,8 +333,9 @@ const formatDocUrl = (url) => {
                     {c.vatDocument && (
                         <a 
                             href={formatDocUrl(c.vatDocument)} 
-                            target="_blank" rel="noopener noreferrer" style={styles.docLink}
-                            download={`VAT_${c.regNumber || 'Doc'}.pdf`}
+                            target="_blank" 
+                            rel="noopener noreferrer" 
+                            style={styles.docLink}
                         >
                             <span role="img" aria-label="doc">📄</span> VAT
                         </a>
@@ -341,17 +345,23 @@ const formatDocUrl = (url) => {
                     {c.billingDocument && (
                         <a 
                             href={formatDocUrl(c.billingDocument)} 
-                            target="_blank" rel="noopener noreferrer" style={styles.docLink}
-                            download={`Billing_${c.regNumber || 'Doc'}.pdf`}
+                            target="_blank" 
+                            rel="noopener noreferrer" 
+                            style={styles.docLink}
                         >
                             <span role="img" aria-label="doc">📄</span> Billing
                         </a>
                     )}
 
-                    {/* Verification Docs Array */}
+                    {/* Verification Docs Array (අනෙකුත් ෆයිල්ස් ඇත්නම්) */}
                     {c.verificationDocs && c.verificationDocs.length > 0 && c.verificationDocs.map((doc, index) => (
-                        <a key={index} href={formatDocUrl(doc)} target="_blank" rel="noopener noreferrer" style={styles.docLink}
-                           download={`OldDoc_${index + 1}.pdf`}>
+                        <a 
+                            key={index} 
+                            href={formatDocUrl(doc)} 
+                            target="_blank" 
+                            rel="noopener noreferrer" 
+                            style={styles.docLink}
+                        >
                             <span role="img" aria-label="doc">📄</span> Old Doc {index + 1}
                         </a>
                     ))}
@@ -364,6 +374,7 @@ const formatDocUrl = (url) => {
         )}
     </div>
 </td>
+
                          <td style={styles.tdLast}>
                           {c.status === 'Pending' && (
                         <button 
