@@ -292,55 +292,61 @@ const approveCustomer = async (id) => {
     <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', flexDirection: 'column' }}>
         
         {/* 1. BRC Document එක තිබේ නම් */}
-        {c.brcDocument && (
-            <a 
-              //  href={`https://eprbackend-production.up.railway.app/documents/${c.brcDocument.split('/').pop()}`} 
-                href={c.brcDocument.startsWith('http') ? c.brcDocument : `https://eprbackend-production.up.railway.app/documents/${c.brcDocument.split('/').pop()}`}
-                target="_blank" rel="noopener noreferrer" style={styles.docLink}
-            >
-                <span role="img" aria-label="doc">📄</span> BRC
-            </a>
-        )}
+        {/* 1. BRC Document */}
+    {c.brcDocument && (
+        <a 
+            href={c.brcDocument.startsWith('http') 
+                ? c.brcDocument.replace('/image/upload/', '/raw/upload/') 
+                : `https://eprbackend-production.up.railway.app/documents/${c.brcDocument.split('/').pop()}`}
+            target="_blank" rel="noopener noreferrer" style={styles.docLink}
+        >
+            <span role="img" aria-label="doc">📄</span> BRC
+        </a>
+    )}
 
-        {/* 2. VAT Document එක තිබේ නම් */}
-        {c.vatDocument && (
-            <a 
-               // href={`https://eprbackend-production.up.railway.app/documents/${c.vatDocument.split('/').pop()}`} 
-               href={c.vatDocument.startsWith('http') ? c.vatDocument : `https://eprbackend-production.up.railway.app/documents/${c.vatDocument.split('/').pop()}`}
-                target="_blank" rel="noopener noreferrer" style={styles.docLink}
-            >
-                <span role="img" aria-label="doc">📄</span> VAT
-            </a>
-        )}
+    {/* 2. VAT Document */}
+    {c.vatDocument && (
+        <a 
+            href={c.vatDocument.startsWith('http') 
+                ? c.vatDocument.replace('/image/upload/', '/raw/upload/') 
+                : `https://eprbackend-production.up.railway.app/documents/${c.vatDocument.split('/').pop()}`}
+            target="_blank" rel="noopener noreferrer" style={styles.docLink}
+        >
+            <span role="img" aria-label="doc">📄</span> VAT
+        </a>
+    )}
 
-        {/* 3. Billing Document එක තිබේ නම් */}
-        {c.billingDocument && (
-            <a 
-              //  href={`https://eprbackend-production.up.railway.app/documents/${c.billingDocument.split('/').pop()}`} 
-              href={c.billingDocument.startsWith('http') ? c.billingDocument : `https://eprbackend-production.up.railway.app/documents/${c.billingDocument.split('/').pop()}`}
-                target="_blank" rel="noopener noreferrer" style={styles.docLink}
-            >
-                <span role="img" aria-label="doc">📄</span> Billing
-            </a>
-        )}
+    {/* 3. Billing Document */}
+    {c.billingDocument && (
+        <a 
+            href={c.billingDocument.startsWith('http') 
+                ? c.billingDocument.replace('/image/upload/', '/raw/upload/') 
+                : `https://eprbackend-production.up.railway.app/documents/${c.billingDocument.split('/').pop()}`}
+            target="_blank" rel="noopener noreferrer" style={styles.docLink}
+        >
+            <span role="img" aria-label="doc">📄</span> Billing
+        </a>
+    )}
 
-        {/* 4. පරණ විදිහට verificationDocs Array එකේ තිබුණොත් ඒවා පෙන්වන්න */}
-        {c.verificationDocs && c.verificationDocs.length > 0 && c.verificationDocs.map((doc, index) => (
-            <a 
-                key={index}
-               // href={`https://eprbackend-production.up.railway.app/documents/${doc.split('/').pop()}`} 
-                href={doc.startsWith('http') ? doc : `https://eprbackend-production.up.railway.app/documents/${doc.split('/').pop()}`}
-                target="_blank" rel="noopener noreferrer" style={styles.docLink}
-            >
-                <span role="img" aria-label="doc">📄</span> Old Doc {index + 1}
-            </a>
-        ))}
+    {/* 4. පරණ verificationDocs Array එක */}
+    {c.verificationDocs && c.verificationDocs.length > 0 && c.verificationDocs.map((doc, index) => (
+        <a 
+            key={index}
+            href={doc.startsWith('http') 
+                ? doc.replace('/image/upload/', '/raw/upload/') 
+                : `https://eprbackend-production.up.railway.app/documents/${doc.split('/').pop()}`}
+            target="_blank" rel="noopener noreferrer" style={styles.docLink}
+        >
+            <span role="img" aria-label="doc">📄</span> Old Doc {index + 1}
+        </a>
+    ))}
 
-        {/* මොකුත්ම නැත්නම් පමණක් "No Docs" පෙන්වන්න */}
-        {!(c.brcDocument || c.vatDocument || c.billingDocument || (c.verificationDocs && c.verificationDocs.length > 0)) && (
-            <span style={{ color: 'rgba(255,255,255,0.3)', fontSize: '12px' }}>No Docs</span>
-        )}
-    </div>
+    {/* No Docs state */}
+    {!(c.brcDocument || c.vatDocument || c.billingDocument || (c.verificationDocs && c.verificationDocs.length > 0)) && (
+        <span style={{ color: 'rgba(255,255,255,0.3)', fontSize: '12px' }}>No Docs</span>
+    )}
+</div>
+    
 </td>
                          <td style={styles.tdLast}>
                           {c.status === 'Pending' && (
