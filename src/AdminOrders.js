@@ -90,13 +90,27 @@ const statusMatch = filterStatus === 'ALL' || order.status === filterStatus;
         window.open(`https://eprbackend-production.up.railway.app/invoices/${fileName}`, '_blank');
     };   */
 
-const downloadInvoice = (fileUrl) => {
+const downloadInvoice = (fileUrl, invNum) => {
     if (!fileUrl) {
-        alert("No invoice file!");
+        alert("No invoice file uploaded!");
         return;
     }
 
-    window.open(fileUrl, '_blank'); 
+    // 💡 1. Cloudinary ලින්ක් එකක් නම් (http වලින් පටන් ගන්නවා නම්) 
+    // අපි කෙලින්ම යන්නේ නැතුව අපේ Backend එක හරහා ෆයිල් එක ඉල්ලනවා.
+    if (fileUrl.startsWith('http')) {
+        const backendBase = "https://eprbackend-production.up.railway.app";
+        
+        // 🚨 මෙන්න මෙතනදී අපි 'url' සහ 'fileName' කියන දෙකම Backend එකට යවනවා.
+        const downloadUrl = `${backendBase}/api/orders/download-invoice?url=${encodeURIComponent(fileUrl)}&fileName=Invoice_${invNum}`;
+        
+        // මේකෙන් බ්‍රවුසරය හරහා නිවැරදි නම (.pdf) සහිතව ෆයිල් එක ඩවුන්ලෝඩ් වෙන්න පටන් ගන්නවා.
+        window.location.href = downloadUrl;
+    } 
+    // 💡 2. පරණ ලෝකල් ෆයිල් එකක් නම් පරණ විදිහටම ඕපන් කරනවා.
+    else {
+        window.open(`https://eprbackend-production.up.railway.app/invoices/${fileUrl}`, '_blank');
+    }
 };
 
     const handleLogout = () => {
@@ -253,12 +267,10 @@ const downloadInvoice = (fileUrl) => {
                                         <td style={styles.td}>
 <button 
         style={styles.viewBtn} 
-      //  onClick={() => downloadInvoice(order.invoiceUrl || order.invoiceFile)}
-      onClick={() => downloadInvoice(order.invoiceFile)}
+        onClick={() => downloadInvoice(order.invoiceFile, order.invNum)}
     >
-        👁️ View
-    </button>
-                                        </td>
+        👁️ View / Download
+    </button>                          </td>
                                         <td style={styles.td}>
                                             <div style={{display: 'flex', gap: '10px', alignItems: 'center'}}>
                                                 {/* Approve Button (පරණ Apprv බටන් එකේ logic එකමයි) */}
