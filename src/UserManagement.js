@@ -293,51 +293,68 @@ const approveCustomer = async (id) => {
     <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', flexDirection: 'column' }}>
         
         {(() => {
-            // ✅ අවසන් විසඳුම: PDF එක කෙලින්ම පෙන්වන Function එක
+            // ✅ PDF එක කිසිම Error එකක් නැතිව පෙන්වන අවසාන Function එක
             const handleDownload = (url) => {
                 if (!url) return;
 
-                // URL එක පිරිසිදු කරගන්නවා (වැරදිලා හෝ fl_attachment තිබේ නම් ඒවා අයින් කරයි)
+                // 1. URL එකේ fl_attachment තිබේ නම් එය ඉවත් කර පිරිසිදු URL එකක් හදයි.
+                // එවිට PDF එක "හිස් පේජ්" එකක් නොවී ලස්සනට බ්‍රවුසරයේ පෙනෙයි.
                 const cleanUrl = url.replace('/fl_attachment/', '/');
 
-                // අලුත් ටැබ් එකක PDF එක ලස්සනට පෙන්වයි
+                // 2. අලුත් ටැබ් එකක PDF එක විවෘත කරයි.
                 window.open(cleanUrl, '_blank');
             };
 
             return (
                 <>
-                    {/* BRC Document */}
+                    {/* BRC ලේඛනය තිබේ නම් */}
                     {c.brcDocument && (
                         <button 
-                            onClick={() => handleDownload(c.brcDocument)} // 🔥 මෙතන නම handleDownload විය යුතුයි
+                            onClick={() => handleDownload(c.brcDocument)}
                             style={{...styles.docLink, background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left', color: '#3498db'}}
                         >
-                            📄 BRC
+                            <span role="img" aria-label="doc">📄</span> BRC
                         </button>
                     )}
 
-                    {/* VAT Document */}
+                    {/* VAT ලේඛනය තිබේ නම් */}
                     {c.vatDocument && (
                         <button 
-                            onClick={() => handleDownload(c.vatDocument)} // 🔥 නම handleDownload ලෙස වෙනස් කළා
+                            onClick={() => handleDownload(c.vatDocument)}
                             style={{...styles.docLink, background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left', color: '#3498db'}}
                         >
-                            📄 VAT
+                            <span role="img" aria-label="doc">📄</span> VAT
                         </button>
                     )}
 
-                    {/* Billing Document */}
+                    {/* Billing ලේඛනය තිබේ නම් */}
                     {c.billingDocument && (
                         <button 
-                            onClick={() => handleDownload(c.billingDocument)} // 🔥 නම handleDownload ලෙස වෙනස් කළා
+                            onClick={() => handleDownload(c.billingDocument)}
                             style={{...styles.docLink, background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left', color: '#3498db'}}
                         >
-                            📄 Billing
+                            <span role="img" aria-label="doc">📄</span> Billing
                         </button>
                     )}
+
+                    {/* වෙනත් අමතර ලේඛන තිබේ නම් (Old Docs) */}
+                    {c.verificationDocs && c.verificationDocs.length > 0 && c.verificationDocs.map((doc, index) => (
+                        <button 
+                            key={index}
+                            onClick={() => handleDownload(doc)}
+                            style={{...styles.docLink, background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left', color: '#3498db'}}
+                        >
+                            <span role="img" aria-label="doc">📄</span> Old Doc {index + 1}
+                        </button>
+                    ))}
                 </>
             );
         })()}
+
+        {/* ලේඛන කිසිවක් නැතිනම් පෙන්වන පණිවිඩය */}
+        {!(c.brcDocument || c.vatDocument || c.billingDocument || (c.verificationDocs && c.verificationDocs.length > 0)) && (
+            <span style={{ color: 'rgba(255,255,255,0.3)', fontSize: '12px' }}>No Docs</span>
+        )}
     </div>
 </td>
 
