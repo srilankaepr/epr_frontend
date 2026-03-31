@@ -293,18 +293,22 @@ const approveCustomer = async (id) => {
         
         {(() => {
             const formatDocUrl = (url) => {
-                if (!url) return "#";
-                if (!url.startsWith('http')) {
-                    // Local server path (Railway)
-                    return `https://eprbackend-production.up.railway.app/documents/${url.split('/').pop()}`;
-                }
-                
-                // 🔥 Cloudinary PDF එකක් නම් Force Download වෙන්න හදනවා
-                if (url.toLowerCase().endsWith('.pdf')) {
-                    return url.replace('/upload/', '/upload/fl_attachment/');
-                }
-                return url; 
-            };
+    if (!url) return "#";
+    
+    // 1. පරණ Local Server (Railway) path එකක් නම්
+    if (!url.startsWith('http')) {
+        return `https://eprbackend-production.up.railway.app/documents/${url.split('/').pop()}`;
+    }
+    
+    // 2. Cloudinary PDF එකක් නම්
+    if (url.toLowerCase().endsWith('.pdf')) {
+        // 🔥 වැදගත්ම දේ: '/image/upload/' වෙනුවට '/raw/upload/fl_attachment/' දාන්න
+        // එතකොට Cloudinary ඒක Image එකක් විදිහට නොවී සාමාන්‍ය ෆයිල් එකක් විදිහට සලකලා කෙලින්ම දෙනවා
+        return url.replace('/image/upload/', '/raw/upload/fl_attachment/');
+    }
+    
+    return url; 
+};
 
             return (
                 <>
