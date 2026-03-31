@@ -293,25 +293,21 @@ const approveCustomer = async (id) => {
     <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', flexDirection: 'column' }}>
         
         {(() => {
-            // ✅ Chrome Security Error එක මගහරින නිවැරදි URL format එක
+            // ✅ පරණ වැරදි ඔක්කොම අයින් කරලා පිරිසිදු URL එක හදන Function එක
             const formatDocUrl = (url) => {
                 if (!url) return "#";
                 
-                // Cloudinary URL එකක් නම්
                 if (url.includes('res.cloudinary.com')) {
-                    // 1. පරණ පියවර නිසා වැරදිලා සේව් වුණු '/raw/' හෝ '/image/' ඇත්නම් ඒවා ඉවත් කරයි
-                    let cleanUrl = url.replace('/raw/upload/', '/upload/')
-                                      .replace('/image/upload/', '/upload/')
-                                      .replace('/upload/fl_attachment/', '/upload/');
-
-                    // 2. PDF එකක් නම් පමණක් කෙලින්ම Download වීමට fl_attachment එක් කරයි
-                    if (cleanUrl.toLowerCase().endsWith('.pdf')) {
-                        return cleanUrl.replace('/upload/', '/upload/fl_attachment/');
-                    }
-                    return cleanUrl; // පින්තූරයක් නම් සාමාන්‍ය පරිදි පෙන්වයි
+                    // 1. URL එක කෑලි වලට කඩලා අන්තිමටම තියෙන ෆයිල් එකේ නම විතරක් ගන්නවා
+                    const urlParts = url.split('/upload/').pop().split('/');
+                    const fileName = urlParts.pop(); 
+                    const folderPath = urlParts.join('/'); // customer_documents වැනි folder එක
+                    
+                    // 2. අලුතින්ම පිරිසිදු ලින්ක් එක හදනවා (fl_attachment සමඟ)
+                    return `https://res.cloudinary.com/de2uxpvdz/upload/fl_attachment/${folderPath}/${fileName}`;
                 }
                 
-                // Cloudinary නොවන පරණ Local Server (Railway) path එකක් නම්
+                // Cloudinary නොවන පරණ Local Server path එකක් නම්
                 return `https://eprbackend-production.up.railway.app/documents/${url.split('/').pop()}`;
             };
 
@@ -321,9 +317,10 @@ const approveCustomer = async (id) => {
                     {c.brcDocument && (
                         <a 
                             href={formatDocUrl(c.brcDocument)} 
-                            target="_blank"           // 🔥 අලුත් ටැබ් එකක ඕපන් කිරීම (Security Error එක මගහරී)
+                            target="_blank"           // 🔥 Chrome Security Error එක මගහරින්න අලුත් ටැබ් එකක දානවා
                             rel="noopener noreferrer" // 🔥 ආරක්ෂාව සඳහා අනිවාර්යයි
                             style={styles.docLink}
+                            download={`BRC_${c.regNumber || 'Doc'}.pdf`}
                         >
                             <span role="img" aria-label="doc">📄</span> BRC
                         </a>
@@ -336,6 +333,7 @@ const approveCustomer = async (id) => {
                             target="_blank" 
                             rel="noopener noreferrer" 
                             style={styles.docLink}
+                            download={`VAT_${c.regNumber || 'Doc'}.pdf`}
                         >
                             <span role="img" aria-label="doc">📄</span> VAT
                         </a>
@@ -348,12 +346,13 @@ const approveCustomer = async (id) => {
                             target="_blank" 
                             rel="noopener noreferrer" 
                             style={styles.docLink}
+                            download={`Billing_${c.regNumber || 'Doc'}.pdf`}
                         >
                             <span role="img" aria-label="doc">📄</span> Billing
                         </a>
                     )}
 
-                    {/* Verification Docs Array (අනෙකුත් ෆයිල්ස් ඇත්නම්) */}
+                    {/* Verification Docs Array */}
                     {c.verificationDocs && c.verificationDocs.length > 0 && c.verificationDocs.map((doc, index) => (
                         <a 
                             key={index} 
@@ -361,6 +360,7 @@ const approveCustomer = async (id) => {
                             target="_blank" 
                             rel="noopener noreferrer" 
                             style={styles.docLink}
+                            download={`OldDoc_${index + 1}.pdf`}
                         >
                             <span role="img" aria-label="doc">📄</span> Old Doc {index + 1}
                         </a>
@@ -369,6 +369,7 @@ const approveCustomer = async (id) => {
             );
         })()}
 
+        {/* ලේඛන කිසිවක් නැතිනම් පෙන්වන පණිවිඩය */}
         {!(c.brcDocument || c.vatDocument || c.billingDocument || (c.verificationDocs && c.verificationDocs.length > 0)) && (
             <span style={{ color: 'rgba(255,255,255,0.3)', fontSize: '12px' }}>No Docs</span>
         )}
