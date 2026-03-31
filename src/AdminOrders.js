@@ -90,19 +90,17 @@ const statusMatch = filterStatus === 'ALL' || order.status === filterStatus;
         window.open(`https://eprbackend-production.up.railway.app/invoices/${fileName}`, '_blank');
     };   */
 
-const downloadInvoice = (fileUrl) => {
+const downloadInvoice = (fileUrl, invNum) => {
     if (!fileUrl) {
-        alert("No invoice file uploaded!");
+        alert("No invoice file!");
         return;
     }
 
     if (fileUrl.startsWith('http')) {
-        const downloadUrl = fileUrl.replace('/image/upload/', '/raw/upload/')
-                                   .replace('/upload/', '/upload/fl_attachment/');
-                                   
-        window.location.href = downloadUrl; // මේකෙන් කෙලින්ම සේව් වෙන්න පටන් ගන්නවා
+        // අපේ Backend එක හරහාම ෆයිල් එක බාගන්නවා
+        const downloadApi = `https://eprbackend-production.up.railway.app/api/orders/download-invoice?url=${encodeURIComponent(fileUrl)}&fileName=Invoice_${invNum}`;
+        window.location.href = downloadApi;
     } else {
-        // පරණ ලෝකල් ෆයිල් එකක් නම්:
         window.open(`https://eprbackend-production.up.railway.app/invoices/${fileUrl}`, '_blank');
     }
 };
