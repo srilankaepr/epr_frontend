@@ -90,14 +90,22 @@ const statusMatch = filterStatus === 'ALL' || order.status === filterStatus;
         window.open(`https://eprbackend-production.up.railway.app/invoices/${fileName}`, '_blank');
     };   */
 
-
-    const downloadInvoice = (fileUrl) => {
+const downloadInvoice = (fileUrl) => {
     if (!fileUrl) {
         alert("No invoice file uploaded!");
         return;
     }
-    window.open(fileUrl, '_blank');
+
+    // 💡 මෙතනදී වැදගත් වෙන්නේ URL එක 'http' වලින් පටන් ගන්නවාද කියලා බලන එකයි.
+    // එහෙමනම් ඒක කෙලින්ම Cloudinary URL එකක්.
+    if (fileUrl.startsWith('http')) {
+        window.open(fileUrl, '_blank');
+    } else {
+        // බැරි වෙලාවත් පරණ විදිහට ෆයිල් නේම් එකක් විතරක් ආවොත් මේක වැඩ කරයි.
+        window.open(`https://eprbackend-production.up.railway.app/invoices/${fileUrl}`, '_blank');
+    }
 };
+
 
     const handleLogout = () => {
         if (window.confirm("Are you sure you want to logout?")) {
@@ -251,7 +259,10 @@ const statusMatch = filterStatus === 'ALL' || order.status === filterStatus;
                                             {order.status}
                                         </td>
                                         <td style={styles.td}>
-                                            <button style={styles.viewBtn} onClick={() => downloadInvoice(order.invoiceUrl || order.invoiceFile)}>
+<button 
+        style={styles.viewBtn} 
+        onClick={() => downloadInvoice(order.invoiceUrl || order.invoiceFile)}
+    >
         👁️ View
     </button>
                                         </td>
