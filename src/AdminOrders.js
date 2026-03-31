@@ -90,26 +90,29 @@ const statusMatch = filterStatus === 'ALL' || order.status === filterStatus;
         window.open(`https://eprbackend-production.up.railway.app/invoices/${fileName}`, '_blank');
     };   */
 
-const downloadInvoice = (fileUrl, invNum) => {
-    if (!fileUrl) {
-        alert("No invoice file uploaded!");
+const downloadInvoice = (base64Data, invNum) => {
+    if (!base64Data) {
+        alert("No invoice file found for this order!");
         return;
     }
 
-    // 💡 1. Cloudinary ලින්ක් එකක් නම් (http වලින් පටන් ගන්නවා නම්) 
-    // අපි කෙලින්ම යන්නේ නැතුව අපේ Backend එක හරහා ෆයිල් එක ඉල්ලනවා.
-    if (fileUrl.startsWith('http')) {
-        const backendBase = "https://eprbackend-production.up.railway.app";
-        
-        // 🚨 මෙන්න මෙතනදී අපි 'url' සහ 'fileName' කියන දෙකම Backend එකට යවනවා.
-        const downloadUrl = `${backendBase}/api/orders/download-invoice?url=${encodeURIComponent(fileUrl)}&fileName=Invoice_${invNum}`;
-        
-        // මේකෙන් බ්‍රවුසරය හරහා නිවැරදි නම (.pdf) සහිතව ෆයිල් එක ඩවුන්ලෝඩ් වෙන්න පටන් ගන්නවා.
-        window.location.href = downloadUrl;
-    } 
-    // 💡 2. පරණ ලෝකල් ෆයිල් එකක් නම් පරණ විදිහටම ඕපන් කරනවා.
-    else {
-        window.open(`https://eprbackend-production.up.railway.app/invoices/${fileUrl}`, '_blank');
+    // 💡 1. පරණ ලෝකල් ෆයිල් එකක් නම් (String එකක් විදිහට සේව් වෙලා ඇති)
+    if (!base64Data.startsWith('data:application/pdf') && !base64Data.startsWith('http')) {
+        window.open(`https://eprbackend-production.up.railway.app/invoices/${base64Data}`, '_blank');
+        return;
+    }
+
+    // 💡 2. අලුත් Base64 පීඩීඑෆ් එකක් නම් කෙලින්ම ඩවුන්ලෝඩ් කරවනවා
+    try {
+        const link = document.createElement('a');
+        link.href = base64Data; // මෙතන තියෙන්නේ මුළු පීඩීඑෆ් එකම අඩංගු String එකයි
+        link.download = `Invoice_${invNum || 'Order'}.pdf`; // නම අපිම ලබා දෙනවා
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    } catch (error) {
+        console.error("Download Error:", error);
+        alert("Could not download the file.");
     }
 };
 
@@ -266,11 +269,11 @@ const downloadInvoice = (fileUrl, invNum) => {
                                         </td>
                                         <td style={styles.td}>
 <button 
-        style={styles.viewBtn} 
-        onClick={() => downloadInvoice(order.invoiceFile, order.invNum)}
-    >
-        👁️ View / Download
-    </button>                          </td>
+    style={styles.viewBtn} 
+    onClick={() => downloadInvoice(order.invoiceFile, order.invNum)}
+>
+    👁️ View / Download
+</button>                         </td>
                                         <td style={styles.td}>
                                             <div style={{display: 'flex', gap: '10px', alignItems: 'center'}}>
                                                 {/* Approve Button (පරණ Apprv බටන් එකේ logic එකමයි) */}

@@ -12,6 +12,7 @@ const ElectronicOrder = () => {
     const [user, setUser] = useState({ fullName: '', email: '', profilePic: '', role: '', companyName: '' });
     const [activeTab, setActiveTab] = useState('ORDER QR'); 
     const [invoice, setInvoice] = useState(null);
+    const [invoiceBase64, setInvoiceBase64] = useState("");
     const [orders, setOrders] = useState([]);
     const API_BASE = "https://eprbackend-production.up.railway.app/api";
 
@@ -95,11 +96,19 @@ useEffect(() => {
 }, []);
 
     // 3. Invoice Upload and remove Functions................................................................................
-    const handleInvoiceUpload = (e) => {
-        const file = e.target.files[0];
-        if (file) { setInvoice(file); }
-    };
-
+  const handleInvoiceUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) { 
+        setInvoice(file); 
+        
+        // 💡 පීඩීඑෆ් එක අකුරු වැලක් (String) කරන මැජික් එක:
+        const reader = new FileReader();
+        reader.onloadend = () => {
+            setInvoiceBase64(reader.result); // ✅ මේක තමයි Backend එකට යන්නේ
+        };
+        reader.readAsDataURL(file);
+    }
+};
     const removeInvoice = (e) => {
         e.preventDefault(); 
         setInvoice(null);
@@ -107,39 +116,35 @@ useEffect(() => {
 
 // --- handleSubmit කොටස ---
 const handleSubmit = async () => {
-    if (!invoice) {
-        alert("Please select an invoice to upload!");
+    if (!invoiceBase64) {
+        alert("Please select an invoice!");
         return;
     }
 
-    const formData = new FormData();
-    formData.append('invNum', 'INV-' + Date.now().toString().slice(-6)); 
-    formData.append('company', user.companyName);
-    formData.append('role', user.role);
-    formData.append('officialEmail', user.email); // Backend Schema එකේ දැන් මේක තියෙන්න ඕනේ
-    formData.append('invoice', invoice); 
-    formData.append('orderType', activeTab);
-    formData.append('division', 'Electronic-User');
+    // ✅ සාමාන්‍ය Object එකක් විදිහට දත්ත ටික හදන්න
+    const orderData = {
+        invNum: 'INV-' + Date.now().toString().slice(-6),
+        company: user.companyName,
+        role: user.role,
+        officialEmail: user.email,
+        invoiceFile: invoiceBase64, // 👈 අර String එක මෙතනට දානවා
+        orderType: activeTab,
+        division: 'Electronic-User'
+    };
 
     try {
-        const response = await axios.post('https://eprbackend-production.up.railway.app/api/orders/create', formData, {
-            headers: { 'Content-Type': 'multipart/form-data' }
-        });
+        // ✅ Headers මොකුත් ඕනේ නැහැ, axios මේක JSON විදිහට අරන් යනවා
+        const response = await axios.post('https://eprbackend-production.up.railway.app/api/orders/create', orderData);
 
         if (response.status === 201) {
             alert("✅ Your Electronic Invoice successfully saved!");
             setInvoice(null);
-            
-            // Order එක දැම්ම ගමන් ආයෙත් ලිස්ට් එක refresh කරනවා
-            const ordersResponse = await axios.get(`https://eprbackend-production.up.railway.app/api/orders/user/${user.email}/Electronic-User`);
-            setOrders(ordersResponse.data);
-            
-            // අවශ්‍ය නම් autoම view details ටැබ් එකට මාරු කරන්න පුළුවන්
-            setActiveTab('VIEW ORDER DETAILS');
+            setInvoiceBase64(""); 
+            // ... refresh කරන කොටස ...
         }
     } catch (error) {
         console.error("Upload Error:", error);
-        alert("❌ Failed to save! Check backend.");
+        alert("❌ Failed to save!");
     }
 };
 
