@@ -292,23 +292,22 @@ const approveCustomer = async (id) => {
     <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', flexDirection: 'column' }}>
         
         {(() => {
-            const formatDocUrl = (url) => {
+  // UserManagement.js ඇතුළේ
+const formatDocUrl = (url) => {
     if (!url) return "#";
     
-    // 1. පරණ Local Server (Railway) path එකක් නම්
-    if (!url.startsWith('http')) {
-        return `https://eprbackend-production.up.railway.app/documents/${url.split('/').pop()}`;
-    }
-    
-    // 2. Cloudinary PDF එකක් නම්
-    if (url.toLowerCase().endsWith('.pdf')) {
-        // 🔥 වැදගත්ම දේ: '/image/upload/' වෙනුවට '/raw/upload/fl_attachment/' දාන්න
-        // එතකොට Cloudinary ඒක Image එකක් විදිහට නොවී සාමාන්‍ය ෆයිල් එකක් විදිහට සලකලා කෙලින්ම දෙනවා
-        return url.replace('/image/upload/', '/raw/upload/fl_attachment/');
+    // Cloudinary URL එකක් නම්
+    if (url.includes('res.cloudinary.com')) {
+        // 1. '/raw/' තිබුණොත් ඒක '/image/' වලට මාරු කරන්න (පරණ වැරදි හැදීමට)
+        let newUrl = url.replace('/raw/upload/', '/image/upload/');
+        
+        // 2. ඩවුන්ලෝඩ් වෙන්න අවශ්‍ය කරන fl_attachment කෑල්ල විතරක් දාන්න
+        return newUrl.replace('/upload/', '/upload/fl_attachment/');
     }
     
     return url; 
 };
+
 
             return (
                 <>
