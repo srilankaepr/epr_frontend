@@ -288,64 +288,63 @@ const approveCustomer = async (id) => {
                                         <td style={styles.td}>{c.contactPersonMobile}</td>
                                         <td style={styles.td}>{`${c.address1}, ${c.address2}`}</td>
                                         <td style={styles.td}>{c.country}</td>
-                                       <td style={styles.td}>
+    <td style={styles.td}>
     <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', flexDirection: 'column' }}>
         
-        {/* 1. BRC Document එක තිබේ නම් */}
-        {/* 1. BRC Document */}
-    {c.brcDocument && (
-        <a 
-            href={c.brcDocument.startsWith('http') 
-                ? c.brcDocument.replace('/image/upload/', '/raw/upload/') 
-                : `https://eprbackend-production.up.railway.app/documents/${c.brcDocument.split('/').pop()}`}
-            target="_blank" rel="noopener noreferrer" style={styles.docLink}
-        >
-            <span role="img" aria-label="doc">📄</span> BRC
-        </a>
-    )}
+        {/* Helper Function එකක් හරහා ලින්ක් එක නිවැරදිව සකස් කිරීම */}
+        {(() => {
+            const formatDocUrl = (url) => {
+                if (!url) return "#";
+                if (!url.startsWith('http')) {
+                    return `https://eprbackend-production.up.railway.app/documents/${url.split('/').pop()}`;
+                }
+                
+                // PDF එකක් නම්, Cloudinary එකෙන් ඒක පෙන්වන්න '/files/' path එක වඩාත් සුදුසුයි
+                if (url.toLowerCase().endsWith('.pdf')) {
+                    // පරණ '/image/' කෑල්ල '/files/' වලට මාරු කරනවා
+                    return url.replace('/image/upload/', '/files/upload/');
+                }
+                return url;
+            };
 
-    {/* 2. VAT Document */}
-    {c.vatDocument && (
-        <a 
-            href={c.vatDocument.startsWith('http') 
-                ? c.vatDocument.replace('/image/upload/', '/raw/upload/') 
-                : `https://eprbackend-production.up.railway.app/documents/${c.vatDocument.split('/').pop()}`}
-            target="_blank" rel="noopener noreferrer" style={styles.docLink}
-        >
-            <span role="img" aria-label="doc">📄</span> VAT
-        </a>
-    )}
+            return (
+                <>
+                    {/* 1. BRC Document */}
+                    {c.brcDocument && (
+                        <a href={formatDocUrl(c.brcDocument)} target="_blank" rel="noopener noreferrer" style={styles.docLink}>
+                            <span role="img" aria-label="doc">📄</span> BRC
+                        </a>
+                    )}
 
-    {/* 3. Billing Document */}
-    {c.billingDocument && (
-        <a 
-            href={c.billingDocument.startsWith('http') 
-                ? c.billingDocument.replace('/image/upload/', '/raw/upload/') 
-                : `https://eprbackend-production.up.railway.app/documents/${c.billingDocument.split('/').pop()}`}
-            target="_blank" rel="noopener noreferrer" style={styles.docLink}
-        >
-            <span role="img" aria-label="doc">📄</span> Billing
-        </a>
-    )}
+                    {/* 2. VAT Document */}
+                    {c.vatDocument && (
+                        <a href={formatDocUrl(c.vatDocument)} target="_blank" rel="noopener noreferrer" style={styles.docLink}>
+                            <span role="img" aria-label="doc">📄</span> VAT
+                        </a>
+                    )}
 
-    {/* 4. පරණ verificationDocs Array එක */}
-    {c.verificationDocs && c.verificationDocs.length > 0 && c.verificationDocs.map((doc, index) => (
-        <a 
-            key={index}
-            href={doc.startsWith('http') 
-                ? doc.replace('/image/upload/', '/raw/upload/') 
-                : `https://eprbackend-production.up.railway.app/documents/${doc.split('/').pop()}`}
-            target="_blank" rel="noopener noreferrer" style={styles.docLink}
-        >
-            <span role="img" aria-label="doc">📄</span> Old Doc {index + 1}
-        </a>
-    ))}
+                    {/* 3. Billing Document */}
+                    {c.billingDocument && (
+                        <a href={formatDocUrl(c.billingDocument)} target="_blank" rel="noopener noreferrer" style={styles.docLink}>
+                            <span role="img" aria-label="doc">📄</span> Billing
+                        </a>
+                    )}
 
-    {/* No Docs state */}
-    {!(c.brcDocument || c.vatDocument || c.billingDocument || (c.verificationDocs && c.verificationDocs.length > 0)) && (
-        <span style={{ color: 'rgba(255,255,255,0.3)', fontSize: '12px' }}>No Docs</span>
-    )}
-</div>
+                    {/* 4. Verification Docs Array */}
+                    {c.verificationDocs && c.verificationDocs.length > 0 && c.verificationDocs.map((doc, index) => (
+                        <a key={index} href={formatDocUrl(doc)} target="_blank" rel="noopener noreferrer" style={styles.docLink}>
+                            <span role="img" aria-label="doc">📄</span> Old Doc {index + 1}
+                        </a>
+                    ))}
+                </>
+            );
+        })()}
+
+        {/* ලේඛන කිසිවක් නැති විට */}
+        {!(c.brcDocument || c.vatDocument || c.billingDocument || (c.verificationDocs && c.verificationDocs.length > 0)) && (
+            <span style={{ color: 'rgba(255,255,255,0.3)', fontSize: '12px' }}>No Docs</span>
+        )}
+    </div>
 </td>
                          <td style={styles.tdLast}>
                           {c.status === 'Pending' && (
