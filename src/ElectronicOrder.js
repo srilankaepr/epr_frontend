@@ -96,26 +96,29 @@ useEffect(() => {
 }, []);
 
     // 3. Invoice Upload and remove Functions................................................................................
-  const handleInvoiceUpload = (e) => {
+const handleInvoiceUpload = (e) => {
     const file = e.target.files[0];
-    if (file) { 
-        setInvoice(file); 
+    if (file) {
+        setInvoice(file);
         
-        // 💡 පීඩීඑෆ් එක අකුරු වැලක් (String) කරන මැජික් එක:
+        // 💡 පීඩීඑෆ් එක String එකක් (Base64) බවට පත් කරන කොටස
         const reader = new FileReader();
         reader.onloadend = () => {
-            setInvoiceBase64(reader.result); // ✅ මේක තමයි Backend එකට යන්නේ
+            setInvoiceBase64(reader.result); 
         };
         reader.readAsDataURL(file);
     }
 };
-    const removeInvoice = (e) => {
-        e.preventDefault(); 
-        setInvoice(null);
-    };
+
+const removeInvoice = (e) => {
+    e.preventDefault(); 
+    setInvoice(null);
+    setInvoiceBase64(""); 
+};
+
 
 // --- handleSubmit කොටස ---
-const handleSubmit = async () => {
+  const handleSubmit = async () => {
     if (!invoiceBase64) {
         alert("Please select an invoice!");
         return;
@@ -126,22 +129,22 @@ const handleSubmit = async () => {
         company: user.companyName,
         role: user.role,
         officialEmail: user.email,
-        invoiceFile: invoiceBase64, // ✅ අර FileReader එකෙන් ගත්ත String එක
+        invoiceFile: invoiceBase64, 
         orderType: activeTab,
-        division: 'Electronic-User'
+        division: 'Electronic-User' 
     };
 
     try {
-        // 🚨 වැදගත්ම දේ: සාමාන්‍ය JSON එකක් විදිහට යවන්න (FormData ඕනේ නෑ)
-        const response = await axios.post('https://eprbackend-production.up.railway.app/api/orders/create', orderData, {
-            headers: { 'Content-Type': 'application/json' } // 👈 මේක අනිවාර්යයෙන්ම තියෙන්න ඕනේ
+        const response = await axios.post(`${API_BASE}/orders/create`, orderData, {
+            headers: { 'Content-Type': 'application/json' }
         });
 
         if (response.status === 201) {
-            alert("✅ Order placed successfully!");
+            alert("✅ Your Electronic Invoice successfully saved!");
             setInvoice(null);
             setInvoiceBase64(""); 
-            // මෙතනින් පස්සේ Order list එක refresh කරන කෝඩ් එක දාන්න
+            
+            // 👈 ප්ලාස්ටික් ඕඩර්ස් රීෆ්‍රෙෂ් කරන්න මෙතනත් 'Electronic-User' දාන්න
             const ordersResponse = await axios.get(`${API_BASE}/orders/user/${user.email}/Electronic-User`);
             setOrders(ordersResponse.data);
             setActiveTab('VIEW ORDER DETAILS');

@@ -12,6 +12,7 @@ const OilOrder = () => {
     const [user, setUser] = useState({ fullName: '', email: '', profilePic: '', role: '', companyName: '' });
     const [activeTab, setActiveTab] = useState('ORDER QR'); 
     const [invoice, setInvoice] = useState(null);
+    const [invoiceBase64, setInvoiceBase64] = useState("");
     const [orders, setOrders] = useState([]);
     const API_BASE = "https://eprbackend-production.up.railway.app/api";
 
@@ -85,48 +86,66 @@ useEffect(() => {
     fetchUserData();
 }, []);
 
+   // 3. Invoice Upload and remove Functions................................................................................
+const handleInvoiceUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+        setInvoice(file);
+        
+        // 💡 පීඩීඑෆ් එක String එකක් (Base64) බවට පත් කරන කොටස
+        const reader = new FileReader();
+        reader.onloadend = () => {
+            setInvoiceBase64(reader.result); 
+        };
+        reader.readAsDataURL(file);
+    }
+};
 
-    const handleInvoiceUpload = (e) => {
-        const file = e.target.files[0];
-        if (file) setInvoice(file);
+const removeInvoice = (e) => {
+    e.preventDefault(); 
+    setInvoice(null);
+    setInvoiceBase64(""); 
+};
+
+
+// --- handleSubmit කොටස ---
+
+     const handleSubmit = async () => {
+    if (!invoiceBase64) {
+        alert("Please select an invoice!");
+        return;
+    }
+
+    const orderData = {
+        invNum: 'INV-' + Date.now().toString().slice(-6),
+        company: user.companyName,
+        role: user.role,
+        officialEmail: user.email,
+        invoiceFile: invoiceBase64, 
+        orderType: activeTab,
+        division: 'Oil-User' 
     };
 
-    const removeInvoice = (e) => {
-        e.preventDefault(); 
-        setInvoice(null);
-    };
+    try {
+        const response = await axios.post(`${API_BASE}/orders/create`, orderData, {
+            headers: { 'Content-Type': 'application/json' }
+        });
 
-    const handleSubmit = async () => {
-        if (!invoice) {
-            alert("Please select an invoice to upload!");
-            return;
+        if (response.status === 201) {
+            alert("✅ Your Oil Invoice successfully saved!");
+            setInvoice(null);
+            setInvoiceBase64(""); 
+            
+            // 👈 ප්ලාස්ටික් ඕඩර්ස් රීෆ්‍රෙෂ් කරන්න මෙතනත් 'Oil-User' දාන්න
+            const ordersResponse = await axios.get(`${API_BASE}/orders/user/${user.email}/Oil-User`);
+            setOrders(ordersResponse.data);
+            setActiveTab('VIEW ORDER DETAILS');
         }
-
-        const formData = new FormData();
-        formData.append('invNum', 'INV-' + Date.now().toString().slice(-6)); 
-        formData.append('company', user.companyName);
-        formData.append('officialEmail', user.email);
-        formData.append('role', user.role);
-        formData.append('invoice', invoice); 
-        formData.append('orderType', activeTab);
-        formData.append('division', 'Oil-User');
-
-        try {
-            const response = await axios.post(`${API_BASE}/orders/create`, formData, {
-                headers: { 'Content-Type': 'multipart/form-data' }
-            });
-
-            if (response.status === 201) {
-                alert("✅ Your Oil Invoice successfully saved!");
-                setInvoice(null);
-                const updatedOrders = await axios.get(`${API_BASE}/orders/user/${user.email}/Oil-User`);
-                setOrders(updatedOrders.data);
-                setActiveTab('VIEW ORDER DETAILS');
-            }
-        } catch (error) {
-            alert("❌ Failed to save! Please check if the Backend is running.");
-        }
-    };
+    } catch (error) {
+        console.error("Upload Error:", error.response?.data || error.message);
+        alert("❌ Failed to save! " + (error.response?.data?.error || ""));
+    }
+};
 
     const tabs = ["ORDER QR", "ORDER PRODUCTS", "VIEW ORDER DETAILS"];
 
