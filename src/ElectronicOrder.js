@@ -121,30 +121,34 @@ const handleSubmit = async () => {
         return;
     }
 
-    // ✅ සාමාන්‍ය Object එකක් විදිහට දත්ත ටික හදන්න
     const orderData = {
         invNum: 'INV-' + Date.now().toString().slice(-6),
         company: user.companyName,
         role: user.role,
         officialEmail: user.email,
-        invoiceFile: invoiceBase64, // 👈 අර String එක මෙතනට දානවා
+        invoiceFile: invoiceBase64, // ✅ අර FileReader එකෙන් ගත්ත String එක
         orderType: activeTab,
         division: 'Electronic-User'
     };
 
     try {
-        // ✅ Headers මොකුත් ඕනේ නැහැ, axios මේක JSON විදිහට අරන් යනවා
-        const response = await axios.post('https://eprbackend-production.up.railway.app/api/orders/create', orderData);
+        // 🚨 වැදගත්ම දේ: සාමාන්‍ය JSON එකක් විදිහට යවන්න (FormData ඕනේ නෑ)
+        const response = await axios.post('https://eprbackend-production.up.railway.app/api/orders/create', orderData, {
+            headers: { 'Content-Type': 'application/json' } // 👈 මේක අනිවාර්යයෙන්ම තියෙන්න ඕනේ
+        });
 
         if (response.status === 201) {
-            alert("✅ Your Electronic Invoice successfully saved!");
+            alert("✅ Order placed successfully!");
             setInvoice(null);
             setInvoiceBase64(""); 
-            // ... refresh කරන කොටස ...
+            // මෙතනින් පස්සේ Order list එක refresh කරන කෝඩ් එක දාන්න
+            const ordersResponse = await axios.get(`${API_BASE}/orders/user/${user.email}/Electronic-User`);
+            setOrders(ordersResponse.data);
+            setActiveTab('VIEW ORDER DETAILS');
         }
     } catch (error) {
-        console.error("Upload Error:", error);
-        alert("❌ Failed to save!");
+        console.error("Upload Error:", error.response?.data || error.message);
+        alert("❌ Failed to save! " + (error.response?.data?.error || ""));
     }
 };
 

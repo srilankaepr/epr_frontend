@@ -273,7 +273,7 @@ const downloadInvoice = (base64Data, invNum) => {
     onClick={() => downloadInvoice(order.invoiceFile, order.invNum)}
 >
     👁️ View / Download
-</button>                         </td>
+</button>                       </td>
                                         <td style={styles.td}>
                                             <div style={{display: 'flex', gap: '10px', alignItems: 'center'}}>
                                                 {/* Approve Button (පරණ Apprv බටන් එකේ logic එකමයි) */}
