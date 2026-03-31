@@ -293,31 +293,19 @@ const approveCustomer = async (id) => {
     <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', flexDirection: 'column' }}>
         
         {(() => {
-            // ✅ බ්‍රවුසරයේ Security බ්ලොක් එක මගහරින සැබෑ විසඳුම
-            const downloadFile = async (url, fileName) => {
-                try {
-                    // 1. පරණ වැරදි URL එක මුලින්ම පිරිසිදු කරගන්නවා
-                    let cleanUrl = url.replace('/fl_attachment/', '/').replace('/image/upload/', '/upload/').replace('/raw/upload/', '/upload/');
-                    
-                    // 2. JavaScript හරහා ෆයිල් එකේ දත්ත (Blob) ලබා ගන්නවා
-                    const response = await fetch(cleanUrl);
-                    const blob = await response.blob();
-                    
-                    // 3. බ්‍රවුසරය ඇතුළේ තාවකාලික ලින්ක් එකක් හදලා ඩවුන්ලෝඩ් එක පටන් ගන්නවා
-                    const blobUrl = window.URL.createObjectURL(blob);
-                    const link = document.createElement('a');
-                    link.href = blobUrl;
-                    link.download = fileName || 'document.pdf';
-                    document.body.appendChild(link);
-                    link.click();
-                    document.body.removeChild(link);
-                    window.URL.revokeObjectURL(blobUrl);
-                } catch (error) {
-                    // Fetch එක බ්ලොක් වුණොත් පමණක් අලුත් ටැබ් එකක ඕපන් කරනවා
-                    window.open(url, '_blank');
+            // ✅ අර පරණ වැරදි ඔක්කොම අයින් කරපු සරලම සහ සාර්ථකම විසඳුම
+            const handleDownload = (url) => {
+                if (!url) return;
+                
+                // 1. Cloudinary URL එකක් නම් 'fl_attachment' කෑල්ල එකතු කරනවා
+                let downloadUrl = url;
+                if (url.includes('res.cloudinary.com')) {
+                    downloadUrl = url.replace('/upload/', '/upload/fl_attachment/');
                 }
+                
+                // 2. අලුත් ටැබ් එකක ඕපන් කරනවා - එතකොට බ්‍රවුසරයෙන්ම "Open/Save" මෙනු එක පෙන්වනවා
+                window.open(downloadUrl, '_blank');
             };
-
             return (
                 <>
                     {/* BRC Document */}
