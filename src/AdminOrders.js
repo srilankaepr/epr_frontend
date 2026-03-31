@@ -96,16 +96,16 @@ const downloadInvoice = (fileUrl) => {
         return;
     }
 
-    // 💡 මෙතනදී වැදගත් වෙන්නේ URL එක 'http' වලින් පටන් ගන්නවාද කියලා බලන එකයි.
-    // එහෙමනම් ඒක කෙලින්ම Cloudinary URL එකක්.
     if (fileUrl.startsWith('http')) {
-        window.open(fileUrl, '_blank');
+        const downloadUrl = fileUrl.replace('/image/upload/', '/raw/upload/')
+                                   .replace('/upload/', '/upload/fl_attachment/');
+                                   
+        window.location.href = downloadUrl; // මේකෙන් කෙලින්ම සේව් වෙන්න පටන් ගන්නවා
     } else {
-        // බැරි වෙලාවත් පරණ විදිහට ෆයිල් නේම් එකක් විතරක් ආවොත් මේක වැඩ කරයි.
+        // පරණ ලෝකල් ෆයිල් එකක් නම්:
         window.open(`https://eprbackend-production.up.railway.app/invoices/${fileUrl}`, '_blank');
     }
 };
-
 
     const handleLogout = () => {
         if (window.confirm("Are you sure you want to logout?")) {
