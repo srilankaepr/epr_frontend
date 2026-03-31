@@ -294,22 +294,22 @@ const approveCustomer = async (id) => {
         
         {(() => {
             // ✅ පරණ වැරදි ඔක්කොම අයින් කරලා පිරිසිදු URL එක හදන Function එක
-            const formatDocUrl = (url) => {
-                if (!url) return "#";
-                
-                if (url.includes('res.cloudinary.com')) {
-                    // 1. URL එක කෑලි වලට කඩලා අන්තිමටම තියෙන ෆයිල් එකේ නම විතරක් ගන්නවා
-                    const urlParts = url.split('/upload/').pop().split('/');
-                    const fileName = urlParts.pop(); 
-                    const folderPath = urlParts.join('/'); // customer_documents වැනි folder එක
-                    
-                    // 2. අලුතින්ම පිරිසිදු ලින්ක් එක හදනවා (fl_attachment සමඟ)
-                    return `https://res.cloudinary.com/de2uxpvdz/upload/fl_attachment/${folderPath}/${fileName}`;
-                }
-                
-                // Cloudinary නොවන පරණ Local Server path එකක් නම්
-                return `https://eprbackend-production.up.railway.app/documents/${url.split('/').pop()}`;
-            };
+      const formatDocUrl = (url) => {
+    if (!url) return "#";
+    
+    if (url.includes('res.cloudinary.com')) {
+        // 1. පරණ ලින්ක් එකේ මොන අවුල තිබුණත් ඒක කෑලි වලට කඩලා ෆයිල් එකේ නම සහ ෆෝල්ඩර් එක විතරක් ගන්නවා
+        const parts = url.split('/upload/');
+        const fileData = parts.pop(); // v1774947817/customer_documents/DOC-xxx.pdf කොටස ගනී
+        
+        // 2. අලුතින්ම සම්පූර්ණ URL එක නිවැරදි Slash (/) ලකුණු සහිතව හදනවා
+        // මෙතන 'de2uxpvdz' යනු ඔයාගේ cloud name එකයි
+        return `https://res.cloudinary.com/de2uxpvdz/upload/fl_attachment/${fileData}`;
+    }
+    
+    // Cloudinary නොවන පරණ Local Server path එකක් නම්
+    return `https://eprbackend-production.up.railway.app/documents/${url.split('/').pop()}`;
+};
 
             return (
                 <>
@@ -375,6 +375,10 @@ const approveCustomer = async (id) => {
         )}
     </div>
 </td>
+
+
+
+
 
                          <td style={styles.tdLast}>
                           {c.status === 'Pending' && (
