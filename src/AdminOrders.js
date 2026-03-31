@@ -90,19 +90,13 @@ const statusMatch = filterStatus === 'ALL' || order.status === filterStatus;
         window.open(`https://eprbackend-production.up.railway.app/invoices/${fileName}`, '_blank');
     };   */
 
-const downloadInvoice = (fileUrl, invNum) => {
+const downloadInvoice = (fileUrl) => {
     if (!fileUrl) {
         alert("No invoice file!");
         return;
     }
 
-    if (fileUrl.startsWith('http')) {
-        // අපේ Backend එක හරහාම ෆයිල් එක බාගන්නවා
-        const downloadApi = `https://eprbackend-production.up.railway.app/api/orders/download-invoice?url=${encodeURIComponent(fileUrl)}&fileName=Invoice_${invNum}`;
-        window.location.href = downloadApi;
-    } else {
-        window.open(`https://eprbackend-production.up.railway.app/invoices/${fileUrl}`, '_blank');
-    }
+    window.open(fileUrl, '_blank'); 
 };
 
     const handleLogout = () => {
@@ -259,7 +253,8 @@ const downloadInvoice = (fileUrl, invNum) => {
                                         <td style={styles.td}>
 <button 
         style={styles.viewBtn} 
-        onClick={() => downloadInvoice(order.invoiceUrl || order.invoiceFile)}
+      //  onClick={() => downloadInvoice(order.invoiceUrl || order.invoiceFile)}
+      onClick={() => downloadInvoice(order.invoiceFile)}
     >
         👁️ View
     </button>
