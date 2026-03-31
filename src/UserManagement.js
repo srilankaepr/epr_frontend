@@ -291,45 +291,71 @@ const approveCustomer = async (id) => {
     <td style={styles.td}>
     <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', flexDirection: 'column' }}>
         
-        {/* Helper Function එකක් හරහා ලින්ක් එක නිවැරදිව සකස් කිරීම */}
         {(() => {
-         const formatDocUrl = (url) => {
-    if (!url) return "#";
-    if (!url.startsWith('http')) {
-        return `https://eprbackend-production.up.railway.app/documents/${url.split('/').pop()}`;
-    }
-    
-    // 🔥 මෙතන කිසිම replace එකක් කරන්න එපා. 
-    // Cloudinary එකෙන් දෙන මුල් URL එකම පාවිච්චි කරන්න.
-    return url; 
-};
+            const formatDocUrl = (url) => {
+                if (!url) return "#";
+                if (!url.startsWith('http')) {
+                    return `https://eprbackend-production.up.railway.app/documents/${url.split('/').pop()}`;
+                }
+                
+                // 🔥 PDF එකක් නම් ලින්ක් එකට 'fl_attachment' එකතු කරනවා කෙලින්ම Download වෙන්න
+                if (url.toLowerCase().endsWith('.pdf')) {
+                    return url.replace('/upload/', '/upload/fl_attachment/');
+                }
+                return url; 
+            };
 
             return (
                 <>
                     {/* 1. BRC Document */}
                     {c.brcDocument && (
-                        <a href={formatDocUrl(c.brcDocument)} target="_blank" rel="noopener noreferrer" style={styles.docLink}>
+                        <a 
+                            href={formatDocUrl(c.brcDocument)} 
+                            target="_blank" 
+                            rel="noopener noreferrer" 
+                            style={styles.docLink}
+                            download={`BRC_${c.regNumber || 'Doc'}.pdf`}
+                        >
                             <span role="img" aria-label="doc">📄</span> BRC
                         </a>
                     )}
 
                     {/* 2. VAT Document */}
                     {c.vatDocument && (
-                        <a href={formatDocUrl(c.vatDocument)} target="_blank" rel="noopener noreferrer" style={styles.docLink}>
+                        <a 
+                            href={formatDocUrl(c.vatDocument)} 
+                            target="_blank" 
+                            rel="noopener noreferrer" 
+                            style={styles.docLink}
+                            download={`VAT_${c.regNumber || 'Doc'}.pdf`}
+                        >
                             <span role="img" aria-label="doc">📄</span> VAT
                         </a>
                     )}
 
                     {/* 3. Billing Document */}
                     {c.billingDocument && (
-                        <a href={formatDocUrl(c.billingDocument)} target="_blank" rel="noopener noreferrer" style={styles.docLink}>
+                        <a 
+                            href={formatDocUrl(c.billingDocument)} 
+                            target="_blank" 
+                            rel="noopener noreferrer" 
+                            style={styles.docLink}
+                            download={`Billing_${c.regNumber || 'Doc'}.pdf`}
+                        >
                             <span role="img" aria-label="doc">📄</span> Billing
                         </a>
                     )}
 
                     {/* 4. Verification Docs Array */}
                     {c.verificationDocs && c.verificationDocs.length > 0 && c.verificationDocs.map((doc, index) => (
-                        <a key={index} href={formatDocUrl(doc)} target="_blank" rel="noopener noreferrer" style={styles.docLink}>
+                        <a 
+                            key={index} 
+                            href={formatDocUrl(doc)} 
+                            target="_blank" 
+                            rel="noopener noreferrer" 
+                            style={styles.docLink}
+                            download={`OldDoc_${index + 1}.pdf`}
+                        >
                             <span role="img" aria-label="doc">📄</span> Old Doc {index + 1}
                         </a>
                     ))}
@@ -337,7 +363,6 @@ const approveCustomer = async (id) => {
             );
         })()}
 
-        {/* ලේඛන කිසිවක් නැති විට */}
         {!(c.brcDocument || c.vatDocument || c.billingDocument || (c.verificationDocs && c.verificationDocs.length > 0)) && (
             <span style={{ color: 'rgba(255,255,255,0.3)', fontSize: '12px' }}>No Docs</span>
         )}
