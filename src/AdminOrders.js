@@ -82,13 +82,22 @@ const statusMatch = filterStatus === 'ALL' || order.status === filterStatus;
         setUploadingId(null);
     }
 };
-    const downloadInvoice = (fileName) => {
+ /*   const downloadInvoice = (fileName) => {
         if (!fileName) {
             alert("No invoice file uploaded!");
             return;
         }
         window.open(`https://eprbackend-production.up.railway.app/invoices/${fileName}`, '_blank');
-    };
+    };   */
+
+
+    const downloadInvoice = (fileUrl) => {
+    if (!fileUrl) {
+        alert("No invoice file uploaded!");
+        return;
+    }
+    window.open(fileUrl, '_blank');
+};
 
     const handleLogout = () => {
         if (window.confirm("Are you sure you want to logout?")) {
@@ -242,7 +251,9 @@ const statusMatch = filterStatus === 'ALL' || order.status === filterStatus;
                                             {order.status}
                                         </td>
                                         <td style={styles.td}>
-                                            <button style={styles.viewBtn} onClick={() => downloadInvoice(order.invoiceFile)}>👁️ View</button>
+                                            <button style={styles.viewBtn} onClick={() => downloadInvoice(order.invoiceUrl || order.invoiceFile)}>
+        👁️ View
+    </button>
                                         </td>
                                         <td style={styles.td}>
                                             <div style={{display: 'flex', gap: '10px', alignItems: 'center'}}>
