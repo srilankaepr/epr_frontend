@@ -293,7 +293,6 @@ const approveCustomer = async (id) => {
         
         {(() => {
   // UserManagement.js ඇතුළේ
-// UserManagement.js ඇතුළේ formatDocUrl එක
 const formatDocUrl = (url) => {
     if (!url) return "#";
     if (!url.startsWith('http')) {
@@ -301,9 +300,8 @@ const formatDocUrl = (url) => {
     }
     
     if (url.toLowerCase().endsWith('.pdf')) {
-        // බොහෝ වෙලාවට /image/upload කියන එක නිසා Permission errors එන්න පුළුවන්
-        // ඒ නිසා අපි කෙලින්ම /upload/fl_attachment/ දාලා බලමු
-        return url.replace('/image/upload/', '/upload/fl_attachment/').replace('/upload/', '/upload/fl_attachment/');
+        // 🔥 පරණ /image/upload/ තිබුණොත් ඒක /raw/upload/fl_attachment/ වලට මාරු කරනවා
+        return url.replace('/image/upload/', '/raw/upload/fl_attachment/').replace('/upload/', '/upload/fl_attachment/');
     }
     return url; 
 };
