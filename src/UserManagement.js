@@ -297,24 +297,19 @@ const approveCustomer = async (id) => {
 const formatDocUrl = (url) => {
     if (!url) return "#";
     
-    // Railway (Local) path එකක් නම්
-    if (!url.startsWith('http')) {
-        return `https://eprbackend-production.up.railway.app/documents/${url.split('/').pop()}`;
-    }
-    
     // Cloudinary URL එකක් නම්
     if (url.includes('res.cloudinary.com')) {
-        // පරණ පියවරවල් නිසා වැරදිලා /raw/upload/ කියලා සේව් වෙලා තිබුණොත් ඒක හදනවා
-        let cleanUrl = url.replace('/raw/upload/', '/image/upload/');
-        
-        // PDF එකක් නම් පමණක් කෙලින්ම ඩවුන්ලෝඩ් වෙන්න fl_attachment දානවා
-        if (cleanUrl.toLowerCase().endsWith('.pdf')) {
-            return cleanUrl.replace('/upload/', '/upload/fl_attachment/');
-        }
-        return cleanUrl;
+        // 1. පරණ වැරදි path (raw/image) ඔක්කොම අයින් කරලා පිරිසිදු ලින්ක් එක ගන්නවා
+        let cleanUrl = url.replace('/raw/upload/', '/upload/')
+                          .replace('/image/upload/', '/upload/')
+                          .replace('/upload/fl_attachment/', '/upload/');
+
+        // 2. දැන් අලුත් පිරිසිදු ලින්ක් එකට fl_attachment එකතු කරනවා
+        return cleanUrl.replace('/upload/', '/upload/fl_attachment/');
     }
     
-    return url; 
+    // පරණ local path එකක් නම් (Railway)
+    return `https://eprbackend-production.up.railway.app/documents/${url.split('/').pop()}`;
 };
 
 
