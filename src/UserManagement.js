@@ -293,18 +293,18 @@ const approveCustomer = async (id) => {
         
         {(() => {
   // UserManagement.js ඇතුළේ
+// UserManagement.js ඇතුළේ formatDocUrl එක
 const formatDocUrl = (url) => {
     if (!url) return "#";
-    
-    // Cloudinary URL එකක් නම්
-    if (url.includes('res.cloudinary.com')) {
-        // 1. '/raw/' තිබුණොත් ඒක '/image/' වලට මාරු කරන්න (පරණ වැරදි හැදීමට)
-        let newUrl = url.replace('/raw/upload/', '/image/upload/');
-        
-        // 2. ඩවුන්ලෝඩ් වෙන්න අවශ්‍ය කරන fl_attachment කෑල්ල විතරක් දාන්න
-        return newUrl.replace('/upload/', '/upload/fl_attachment/');
+    if (!url.startsWith('http')) {
+        return `https://eprbackend-production.up.railway.app/documents/${url.split('/').pop()}`;
     }
     
+    if (url.toLowerCase().endsWith('.pdf')) {
+        // බොහෝ වෙලාවට /image/upload කියන එක නිසා Permission errors එන්න පුළුවන්
+        // ඒ නිසා අපි කෙලින්ම /upload/fl_attachment/ දාලා බලමු
+        return url.replace('/image/upload/', '/upload/fl_attachment/').replace('/upload/', '/upload/fl_attachment/');
+    }
     return url; 
 };
 
