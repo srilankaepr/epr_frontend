@@ -293,22 +293,23 @@ const approveCustomer = async (id) => {
     <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', flexDirection: 'column' }}>
         
         {(() => {
-         const handleDownload = (url) => {
-    if (!url) return;
+            // ✅ අවසන් විසඳුම: PDF එක කෙලින්ම පෙන්වන Function එක
+            const handleDownload = (url) => {
+                if (!url) return;
 
-    // 1. URL එක පිරිසිදු කරගන්නවා (fl_attachment වැනි දේවල් අයින් කරනවා)
-    // එවිට PDF එක කෙලින්ම බ්‍රවුසරයේ ලස්සනට පේනවා.
-    const cleanUrl = url.replace('/fl_attachment/', '/');
+                // URL එක පිරිසිදු කරගන්නවා (වැරදිලා හෝ fl_attachment තිබේ නම් ඒවා අයින් කරයි)
+                const cleanUrl = url.replace('/fl_attachment/', '/');
 
-    // 2. අලුත් ටැබ් එකක PDF එක ඕපන් කරනවා.
-    window.open(cleanUrl, '_blank');
-};
+                // අලුත් ටැබ් එකක PDF එක ලස්සනට පෙන්වයි
+                window.open(cleanUrl, '_blank');
+            };
+
             return (
                 <>
                     {/* BRC Document */}
                     {c.brcDocument && (
                         <button 
-                            onClick={() => downloadFile(c.brcDocument, `BRC_${c.regNumber}.pdf`)}
+                            onClick={() => handleDownload(c.brcDocument)} // 🔥 මෙතන නම handleDownload විය යුතුයි
                             style={{...styles.docLink, background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left', color: '#3498db'}}
                         >
                             📄 BRC
@@ -318,7 +319,7 @@ const approveCustomer = async (id) => {
                     {/* VAT Document */}
                     {c.vatDocument && (
                         <button 
-                            onClick={() => downloadFile(c.vatDocument, `VAT_${c.regNumber}.pdf`)}
+                            onClick={() => handleDownload(c.vatDocument)} // 🔥 නම handleDownload ලෙස වෙනස් කළා
                             style={{...styles.docLink, background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left', color: '#3498db'}}
                         >
                             📄 VAT
@@ -328,7 +329,7 @@ const approveCustomer = async (id) => {
                     {/* Billing Document */}
                     {c.billingDocument && (
                         <button 
-                            onClick={() => downloadFile(c.billingDocument, `Billing_${c.regNumber}.pdf`)}
+                            onClick={() => handleDownload(c.billingDocument)} // 🔥 නම handleDownload ලෙස වෙනස් කළා
                             style={{...styles.docLink, background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left', color: '#3498db'}}
                         >
                             📄 Billing
