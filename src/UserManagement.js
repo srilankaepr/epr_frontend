@@ -293,19 +293,16 @@ const approveCustomer = async (id) => {
         
         {/* Helper Function එකක් හරහා ලින්ක් එක නිවැරදිව සකස් කිරීම */}
         {(() => {
-            const formatDocUrl = (url) => {
-                if (!url) return "#";
-                if (!url.startsWith('http')) {
-                    return `https://eprbackend-production.up.railway.app/documents/${url.split('/').pop()}`;
-                }
-                
-                // PDF එකක් නම්, Cloudinary එකෙන් ඒක පෙන්වන්න '/files/' path එක වඩාත් සුදුසුයි
-                if (url.toLowerCase().endsWith('.pdf')) {
-                    // පරණ '/image/' කෑල්ල '/files/' වලට මාරු කරනවා
-                    return url.replace('/image/upload/', '/files/upload/');
-                }
-                return url;
-            };
+         const formatDocUrl = (url) => {
+    if (!url) return "#";
+    if (!url.startsWith('http')) {
+        return `https://eprbackend-production.up.railway.app/documents/${url.split('/').pop()}`;
+    }
+    
+    // 🔥 මෙතන කිසිම replace එකක් කරන්න එපා. 
+    // Cloudinary එකෙන් දෙන මුල් URL එකම පාවිච්චි කරන්න.
+    return url; 
+};
 
             return (
                 <>
