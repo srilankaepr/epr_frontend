@@ -20,25 +20,15 @@ const RegisterCustomer = () => {
         dob: '', 
         password: '', confirmPassword: ''
     });
-const [brcFile, setBrcFile] = useState(null);
-const [vatFile, setVatFile] = useState(null);
-const [billingFile, setBillingFile] = useState(null);
-//const [fileStrings, setFileStrings] = useState({ brc: "", vat: "", billing: "" });
-/*
+//const [brcFile, setBrcFile] = useState(null);
+//const [vatFile, setVatFile] = useState(null);
+//const [billingFile, setBillingFile] = useState(null);
+const [fileStrings, setFileStrings] = useState({ brc: "", vat: "", billing: "" });
+
 const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
 };
-*/
 
-
-// Input එකේ onChange එකට මේ වගේ එකක් දාන්න
-const handleFileChange = (e, type) => {
-    const file = e.target.files[0]; // ෆයිල් එක සිලෙක්ට් කරගන්නවා
-    if (type === 'brc') setBrcFile(file);
-    if (type === 'vat') setVatFile(file);
-    if (type === 'billing') setBillingFile(file);
-};
-//...............................................................................................
 
     const validatePhone = (number) => {
         const regex = /^[0-9]{10}$/; 
@@ -56,7 +46,7 @@ const handleFileBase64 = (e, type) => {
     }
 };
 
-   const handleSubmit = async (e) => {
+   /*const handleSubmit = async (e) => {
     e.preventDefault();
 
     // 1. කලින් තිබුණ Validation ටික එහෙම්මම තියෙනවා
@@ -107,8 +97,8 @@ const handleFileBase64 = (e, type) => {
         alert("❌ Error: " + errorMessage);
     }
 };
+*/
 
-/*
 const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -157,7 +147,7 @@ const handleSubmit = async (e) => {
         const errorMessage = error.response?.data?.error || "Registration failed. Please try again.";
         alert("❌ Error: " + errorMessage);
     }
-}; */
+};
 
     return (
         <div style={styles.container}>
@@ -347,12 +337,12 @@ const handleSubmit = async (e) => {
                    {/* --- BRC Upload --- */}
 <div style={{ marginBottom: '18px' }}>
     <label style={styles.label}>UPLOAD BRC (Business Registration)</label>
-  <input 
-    type="file" 
-    accept=".pdf" 
-    onChange={(e) => handleFileChange(e, 'brc')} 
-    style={styles.input} 
-/>
+    <input 
+        type="file" 
+        onChange={(e) => handleFileBase64(e, 'brc')} 
+        style={styles.input}
+        accept=".pdf,.jpg,.jpeg,.png"
+    />
     {fileStrings.brc && <p style={{ color: '#2ecc71', fontSize: '14px', marginTop: '5px' }}>✅ BRC Document selected</p>}
 </div>
 
@@ -360,23 +350,23 @@ const handleSubmit = async (e) => {
 <div style={{ marginBottom: '18px' }}>
     <label style={styles.label}>UPLOAD VAT DOCUMENT(include TIN)</label>
     <input 
-    type="file" 
-    accept=".pdf" 
-    onChange={(e) => handleFileChange(e, 'vat')} 
-    style={styles.input} 
-/>
+        type="file" 
+        onChange={(e) => handleFileBase64(e, 'vat')}
+        style={styles.input}
+        accept=".pdf,.jpg,.jpeg,.png"
+    />
     {fileStrings.vat && <p style={{ color: '#2ecc71', fontSize: '14px', marginTop: '5px' }}>✅ VAT Document selected</p>}
 </div>
 
 {/* --- Billing Proof Upload --- */}
 <div style={{ marginBottom: '18px' }}>
     <label style={styles.label}>UPLOAD BILLING PROOF (Electricity / Water)</label>
-   <input 
-    type="file" 
-    accept=".pdf" 
-    onChange={(e) => handleFileChange(e, 'billing')} 
-    style={styles.input} 
-/>
+    <input 
+        type="file" 
+        onChange={(e) => handleFileBase64(e, 'billing')}
+        style={styles.input}
+        accept=".pdf,.jpg,.jpeg,.png"
+    />
     {fileStrings.billing && <p style={{ color: '#2ecc71', fontSize: '14px', marginTop: '5px' }}>✅ Billing Proof selected</p>}
 </div>   
 
