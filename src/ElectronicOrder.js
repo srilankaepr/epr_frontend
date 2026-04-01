@@ -314,7 +314,13 @@ const removeInvoice = (e) => {
     </div>
 </td>
 
-<td style={styles.td}>
+<td style={styles.td}>{order.invNum}</td>
+         <td style={styles.td}>
+     <span style={order.orderType === 'ORDER QR' ? styles.typeQR : styles.typeProduct}>
+                 {order.orderType}
+              </span>
+                        </td>
+                     <td style={styles.td}>
     <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
         <span style={{ 
             color: order.status === 'Approved' ? '#2ecc71' : 
@@ -328,10 +334,11 @@ const removeInvoice = (e) => {
             {order.status || 'Pending'}
         </span>
 
-        {/* ✅ වෙනස මෙතනයි: order.qrZipFile වෙනුවට order.qrZipUrl දාන්න */}
-        {order.status === 'QR Sent' && order.qrZipUrl && (
-            <button
-                onClick={() => window.open(order.qrZipUrl, '_blank')}  
+        {/* ✅ මේක තමයි මැජික් එක: Status එක 'QR Sent' නම් සහ qrZipFile එකක් තිබේ නම් බටන් එක පෙන්වයි */}
+        {order.status === 'QR Sent' && order.qrZipFile && (
+            <button 
+            onClick={() => window.open(order.qrZipUrl, '_blank')}  
+            // onClick={() => window.open(`https://eprbackend-production.up.railway.app/${order.qrZipFile.replace(/\\/g, '/')}`, '_blank')}
                 style={{
                     padding: '5px 12px',
                     background: '#3498db',
@@ -348,7 +355,7 @@ const removeInvoice = (e) => {
             </button>
         )}
     </div>
-</td>
+</td>  
  
  </tr>
      ))}
