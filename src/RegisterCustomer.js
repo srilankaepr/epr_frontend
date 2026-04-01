@@ -347,12 +347,12 @@ const handleSubmit = async (e) => {
                    {/* --- BRC Upload --- */}
 <div style={{ marginBottom: '18px' }}>
     <label style={styles.label}>UPLOAD BRC (Business Registration)</label>
-    <input 
-        type="file" 
-        onChange={(e) => handleFileBase64(e, 'brc')} 
-        style={styles.input}
-        accept=".pdf,.jpg,.jpeg,.png"
-    />
+  <input 
+    type="file" 
+    accept=".pdf" 
+    onChange={(e) => handleFileChange(e, 'brc')} 
+    style={styles.input} 
+/>
     {fileStrings.brc && <p style={{ color: '#2ecc71', fontSize: '14px', marginTop: '5px' }}>✅ BRC Document selected</p>}
 </div>
 
@@ -360,23 +360,23 @@ const handleSubmit = async (e) => {
 <div style={{ marginBottom: '18px' }}>
     <label style={styles.label}>UPLOAD VAT DOCUMENT(include TIN)</label>
     <input 
-        type="file" 
-        onChange={(e) => handleFileBase64(e, 'vat')}
-        style={styles.input}
-        accept=".pdf,.jpg,.jpeg,.png"
-    />
+    type="file" 
+    accept=".pdf" 
+    onChange={(e) => handleFileChange(e, 'vat')} 
+    style={styles.input} 
+/>
     {fileStrings.vat && <p style={{ color: '#2ecc71', fontSize: '14px', marginTop: '5px' }}>✅ VAT Document selected</p>}
 </div>
 
 {/* --- Billing Proof Upload --- */}
 <div style={{ marginBottom: '18px' }}>
     <label style={styles.label}>UPLOAD BILLING PROOF (Electricity / Water)</label>
-    <input 
-        type="file" 
-        onChange={(e) => handleFileBase64(e, 'billing')}
-        style={styles.input}
-        accept=".pdf,.jpg,.jpeg,.png"
-    />
+   <input 
+    type="file" 
+    accept=".pdf" 
+    onChange={(e) => handleFileChange(e, 'billing')} 
+    style={styles.input} 
+/>
     {fileStrings.billing && <p style={{ color: '#2ecc71', fontSize: '14px', marginTop: '5px' }}>✅ Billing Proof selected</p>}
 </div>   
 
