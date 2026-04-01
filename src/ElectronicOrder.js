@@ -335,7 +335,7 @@ const removeInvoice = (e) => {
         </span>
 
         {/* ✅ මේක තමයි මැජික් එක: Status එක 'QR Sent' නම් සහ qrZipFile එකක් තිබේ නම් බටන් එක පෙන්වයි */}
-        {order.status === 'QR Sent' && order.qrZipFile && (
+        {order.status === 'QR Sent' && order.qrZipUrl && (
             <button 
             onClick={() => window.open(order.qrZipUrl, '_blank')}  
             // onClick={() => window.open(`https://eprbackend-production.up.railway.app/${order.qrZipFile.replace(/\\/g, '/')}`, '_blank')}
