@@ -293,21 +293,26 @@ const approveCustomer = async (id) => {
     <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', flexDirection: 'column' }}>
         
         {(() => {
-            // ✅ PDF එක කිසිම Error එකක් නැතිව පෙන්වන අවසාන Function එක
-            const handleDownload = (url) => {
-                if (!url) return;
+            // ✅ Base64 සහ URL දෙකම හඳුනාගන්නා අලුත් Function එක
+            const handleDownload = (docData) => {
+                if (!docData) return;
 
-                // 1. URL එකේ fl_attachment තිබේ නම් එය ඉවත් කර පිරිසිදු URL එකක් හදයි.
-                // එවිට PDF එක "හිස් පේජ්" එකක් නොවී ලස්සනට බ්‍රවුසරයේ පෙනෙයි.
-                const cleanUrl = url.replace('/fl_attachment/', '/');
-
-                // 2. අලුත් ටැබ් එකක PDF එක විවෘත කරයි.
-                window.open(cleanUrl, '_blank');
+                // 1. මේක අලුත් Base64 String එකක් නම් (PDF හෝ Image)
+                if (docData.startsWith('data:application/pdf') || docData.startsWith('data:image')) {
+                    const newWindow = window.open();
+                    newWindow.document.write(
+                        `<iframe src="${docData}" frameborder="0" style="border:0; top:0px; left:0px; bottom:0px; right:0px; width:100%; height:100%;" allowfullscreen></iframe>`
+                    );
+                } 
+                // 2. මේක පරණ Cloudinary URL එකක් නම්
+                else {
+                    const cleanUrl = docData.replace('/fl_attachment/', '/');
+                    window.open(cleanUrl, '_blank');
+                }
             };
 
             return (
                 <>
-                    {/* BRC ලේඛනය තිබේ නම් */}
                     {c.brcDocument && (
                         <button 
                             onClick={() => handleDownload(c.brcDocument)}
@@ -317,7 +322,6 @@ const approveCustomer = async (id) => {
                         </button>
                     )}
 
-                    {/* VAT ලේඛනය තිබේ නම් */}
                     {c.vatDocument && (
                         <button 
                             onClick={() => handleDownload(c.vatDocument)}
@@ -327,7 +331,6 @@ const approveCustomer = async (id) => {
                         </button>
                     )}
 
-                    {/* Billing ලේඛනය තිබේ නම් */}
                     {c.billingDocument && (
                         <button 
                             onClick={() => handleDownload(c.billingDocument)}
@@ -337,7 +340,7 @@ const approveCustomer = async (id) => {
                         </button>
                     )}
 
-                    {/* වෙනත් අමතර ලේඛන තිබේ නම් (Old Docs) */}
+                    {/* පරණ ලේඛන තිබේ නම් (Verification Docs) */}
                     {c.verificationDocs && c.verificationDocs.length > 0 && c.verificationDocs.map((doc, index) => (
                         <button 
                             key={index}
@@ -351,14 +354,11 @@ const approveCustomer = async (id) => {
             );
         })()}
 
-        {/* ලේඛන කිසිවක් නැතිනම් පෙන්වන පණිවිඩය */}
         {!(c.brcDocument || c.vatDocument || c.billingDocument || (c.verificationDocs && c.verificationDocs.length > 0)) && (
             <span style={{ color: 'rgba(255,255,255,0.3)', fontSize: '12px' }}>No Docs</span>
         )}
     </div>
 </td>
-
-
 
 
 

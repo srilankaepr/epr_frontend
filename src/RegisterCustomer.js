@@ -20,9 +20,10 @@ const RegisterCustomer = () => {
         dob: '', 
         password: '', confirmPassword: ''
     });
-const [brcFile, setBrcFile] = useState(null);
-const [vatFile, setVatFile] = useState(null);
-const [billingFile, setBillingFile] = useState(null);
+//const [brcFile, setBrcFile] = useState(null);
+//const [vatFile, setVatFile] = useState(null);
+//const [billingFile, setBillingFile] = useState(null);
+const [fileStrings, setFileStrings] = useState({ brc: "", vat: "", billing: "" });
 
 const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -34,7 +35,18 @@ const handleChange = (e) => {
         return regex.test(number);
     };
 
-   const handleSubmit = async (e) => {
+const handleFileBase64 = (e, type) => {
+    const file = e.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+            setFileStrings(prev => ({ ...prev, [type]: reader.result }));
+        };
+        reader.readAsDataURL(file);
+    }
+};
+
+   /*const handleSubmit = async (e) => {
     e.preventDefault();
 
     // 1. කලින් තිබුණ Validation ටික එහෙම්මම තියෙනවා
@@ -72,6 +84,57 @@ const handleChange = (e) => {
         const response = await axios.post('https://eprbackend-production.up.railway.app/api/customers/register', data, {
             headers: {
                 'Content-Type': 'multipart/form-data' 
+            }
+        });
+
+        if (response.status === 201) {
+            alert("✅ Customer Registration Successful!");
+            navigate('/'); 
+        }
+    } catch (error) {
+        console.error("Registration Error:", error);
+        const errorMessage = error.response?.data?.error || "Registration failed. Please try again.";
+        alert("❌ Error: " + errorMessage);
+    }
+};
+*/
+
+const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    // 1. කලින් තිබුණ Validation ටික එහෙම්මම තියෙනවා (මුකුත් වෙනස් කළේ නැහැ)
+    if (formData.password !== formData.confirmPassword) {
+        alert("❌ Passwords do not match!");
+        return;
+    }
+
+    if (!validatePhone(formData.phone)) {
+        alert("❌ Please enter a valid 10-digit Phone Number.");
+        return;
+    }
+    if (formData.whatsapp && !validatePhone(formData.whatsapp)) {
+        alert("❌ Please enter a valid 10-digit WhatsApp Number.");
+        return;
+    }
+    if (!validatePhone(formData.contactPersonMobile)) {
+        alert("❌ Please enter a valid 10-digit Mobile Number for the Contact Person.");
+        return;
+    }
+
+    // 🚀 මෙතනින් පල්ලෙහා තමයි අලුත් ක්‍රමය (Base64 JSON)
+    // 'fileStrings' කියන එකේ තමයි අපි අර FileReader එකෙන් ගත්තු Base64 ටික තියෙන්නේ
+    const finalPayload = {
+        ...formData,
+        brcFile: fileStrings.brc, 
+        vatFile: fileStrings.vat,
+        billingFile: fileStrings.billing
+    };
+
+    try {
+        // 5. POST Request එක (දැන් FormData වෙනුවට 'finalPayload' කියන JSON එක යවන්නේ)
+        const response = await axios.post('https://eprbackend-production.up.railway.app/api/customers/register', finalPayload, {
+            headers: {
+                'Content-Type': 'application/json' // 👈 මේක අනිවාර්යයෙන්ම වෙනස් වෙන්න ඕනේ
             }
         });
 
@@ -276,7 +339,7 @@ const handleChange = (e) => {
     <label style={styles.label}>UPLOAD BRC (Business Registration)</label>
     <input 
         type="file" 
-        onChange={(e) => setBrcFile(e.target.files[0])} 
+        onChange={(e) => handleFileBase64(e, 'brc')} 
         style={styles.input}
         accept=".pdf,.jpg,.jpeg,.png"
     />
@@ -288,7 +351,7 @@ const handleChange = (e) => {
     <label style={styles.label}>UPLOAD VAT DOCUMENT(include TIN)</label>
     <input 
         type="file" 
-        onChange={(e) => setVatFile(e.target.files[0])} 
+        onChange={(e) => handleFileBase64(e, 'vat')}
         style={styles.input}
         accept=".pdf,.jpg,.jpeg,.png"
     />
@@ -300,12 +363,12 @@ const handleChange = (e) => {
     <label style={styles.label}>UPLOAD BILLING PROOF (Electricity / Water)</label>
     <input 
         type="file" 
-        onChange={(e) => setBillingFile(e.target.files[0])} 
+        onChange={(e) => handleFileBase64(e, 'billing')}
         style={styles.input}
         accept=".pdf,.jpg,.jpeg,.png"
     />
     {billingFile && <p style={{ color: '#2ecc71', fontSize: '14px', marginTop: '5px' }}>✅ {billingFile.name} selected</p>}
-</div>
+</div>   
 
                     <button type="submit" style={styles.registerBtn}>SUBMIT FOR THE APPROVAL</button>
                 </form>
