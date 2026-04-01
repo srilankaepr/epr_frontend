@@ -1303,7 +1303,7 @@ const fetchDashboardCounts = async () => {
 
                 <img 
                     //src={`https://eprbackend-production.up.railway.app/qr-images/${selectedRequest.qrId}.png`} 
-                    src={selectedRequest.qrImage}
+                    src={selectedRequest.qrImage || 'https://cdn-icons-png.flaticon.com/512/7141/7141731.png'}
                     alt="QR Code" 
                     style={{ 
                         width: '220px', 
@@ -1317,7 +1317,8 @@ const fetchDashboardCounts = async () => {
                     }}
                     onError={(e) => {
                         e.target.onerror = null; 
-                        e.target.src = 'https://cdn-icons-png.flaticon.com/512/7141/7141731.png';
+                       // e.target.src = 'https://cdn-icons-png.flaticon.com/512/7141/7141731.png';
+                       e.target.src = 'https://cdn-icons-png.flaticon.com/512/7141/7141731.png';
                     }}
                 />
 
