@@ -20,15 +20,25 @@ const RegisterCustomer = () => {
         dob: '', 
         password: '', confirmPassword: ''
     });
-//const [brcFile, setBrcFile] = useState(null);
-//const [vatFile, setVatFile] = useState(null);
-//const [billingFile, setBillingFile] = useState(null);
-const [fileStrings, setFileStrings] = useState({ brc: "", vat: "", billing: "" });
-
+const [brcFile, setBrcFile] = useState(null);
+const [vatFile, setVatFile] = useState(null);
+const [billingFile, setBillingFile] = useState(null);
+//const [fileStrings, setFileStrings] = useState({ brc: "", vat: "", billing: "" });
+/*
 const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
 };
+*/
 
+
+// Input එකේ onChange එකට මේ වගේ එකක් දාන්න
+const handleFileChange = (e, type) => {
+    const file = e.target.files[0]; // ෆයිල් එක සිලෙක්ට් කරගන්නවා
+    if (type === 'brc') setBrcFile(file);
+    if (type === 'vat') setVatFile(file);
+    if (type === 'billing') setBillingFile(file);
+};
+//...............................................................................................
 
     const validatePhone = (number) => {
         const regex = /^[0-9]{10}$/; 
@@ -46,7 +56,7 @@ const handleFileBase64 = (e, type) => {
     }
 };
 
-   /*const handleSubmit = async (e) => {
+   const handleSubmit = async (e) => {
     e.preventDefault();
 
     // 1. කලින් තිබුණ Validation ටික එහෙම්මම තියෙනවා
@@ -97,8 +107,8 @@ const handleFileBase64 = (e, type) => {
         alert("❌ Error: " + errorMessage);
     }
 };
-*/
 
+/*
 const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -147,7 +157,7 @@ const handleSubmit = async (e) => {
         const errorMessage = error.response?.data?.error || "Registration failed. Please try again.";
         alert("❌ Error: " + errorMessage);
     }
-};
+}; */
 
     return (
         <div style={styles.container}>
