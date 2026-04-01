@@ -1300,7 +1300,8 @@ const fetchDashboardCounts = async () => {
                 </div>
 
                 <img 
-                    src={`https://eprbackend-production.up.railway.app/qr-images/${selectedRequest.qrId}.png`} 
+                    //src={`https://eprbackend-production.up.railway.app/qr-images/${selectedRequest.qrId}.png`} 
+                    src={selectedRequest.qrImage}
                     alt="QR Code" 
                     style={{ 
                         width: '220px', 
