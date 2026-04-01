@@ -328,20 +328,20 @@ const removeInvoice = (e) => {
             {order.status || 'Pending'}
         </span>
 
-        {/* ✅ වෙනස මෙතනයි: 'qrZipFile' වෙනුවට 'qrZipUrl' ලෙස වෙනස් කළා */}
+        {/* ✅ වෙනස මෙතනයි: order.qrZipFile වෙනුවට order.qrZipUrl දාන්න */}
         {order.status === 'QR Sent' && order.qrZipUrl && (
-            <button 
+            <button
                 onClick={() => window.open(order.qrZipUrl, '_blank')}  
                 style={{
-                    padding: '6px 14px',
+                    padding: '5px 12px',
                     background: '#3498db',
                     color: 'white',
                     border: 'none',
-                    borderRadius: '8px',
+                    borderRadius: '6px',
                     fontSize: '11px',
                     fontWeight: 'bold',
                     cursor: 'pointer',
-                    boxShadow: '0 4px 10px rgba(52, 152, 219, 0.3)'
+                    boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
                 }}
             >
                 Download QR
