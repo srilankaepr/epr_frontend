@@ -314,14 +314,7 @@ const removeInvoice = (e) => {
     </div>
 </td>
 
-
-<td style={styles.td}>{order.invNum}</td>
-         <td style={styles.td}>
-     <span style={order.orderType === 'ORDER QR' ? styles.typeQR : styles.typeProduct}>
-                 {order.orderType}
-              </span>
-                        </td>
-                     <td style={styles.td}>
+<td style={styles.td}>
     <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
         <span style={{ 
             color: order.status === 'Approved' ? '#2ecc71' : 
@@ -335,21 +328,20 @@ const removeInvoice = (e) => {
             {order.status || 'Pending'}
         </span>
 
-        {/* ✅ මේක තමයි මැජික් එක: Status එක 'QR Sent' නම් සහ qrZipFile එකක් තිබේ නම් බටන් එක පෙන්වයි */}
-        {order.status === 'QR Sent' && order.qrZipFile && (
+        {/* ✅ වෙනස මෙතනයි: 'qrZipFile' වෙනුවට 'qrZipUrl' ලෙස වෙනස් කළා */}
+        {order.status === 'QR Sent' && order.qrZipUrl && (
             <button 
-            onClick={() => window.open(order.qrZipUrl, '_blank')}  
-            // onClick={() => window.open(`https://eprbackend-production.up.railway.app/${order.qrZipFile.replace(/\\/g, '/')}`, '_blank')}
+                onClick={() => window.open(order.qrZipUrl, '_blank')}  
                 style={{
-                    padding: '5px 12px',
+                    padding: '6px 14px',
                     background: '#3498db',
                     color: 'white',
                     border: 'none',
-                    borderRadius: '6px',
+                    borderRadius: '8px',
                     fontSize: '11px',
                     fontWeight: 'bold',
                     cursor: 'pointer',
-                    boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
+                    boxShadow: '0 4px 10px rgba(52, 152, 219, 0.3)'
                 }}
             >
                 Download QR
@@ -357,6 +349,7 @@ const removeInvoice = (e) => {
         )}
     </div>
 </td>
+ 
  </tr>
      ))}
       </tbody>
