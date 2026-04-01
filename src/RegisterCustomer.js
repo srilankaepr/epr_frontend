@@ -343,7 +343,7 @@ const handleSubmit = async (e) => {
         style={styles.input}
         accept=".pdf,.jpg,.jpeg,.png"
     />
-    {fileStrings.brc && <p style={{ color: '#2ecc71', fontSize: '14px', marginTop: '5px' }}>✅ {fileStrings.brc} selected</p>}
+    {fileStrings.brc && <p style={{ color: '#2ecc71', fontSize: '14px', marginTop: '5px' }}>✅ BRC Document selected</p>}
 </div>
 
 {/* --- VAT Upload --- */}
