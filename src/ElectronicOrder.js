@@ -248,7 +248,7 @@ const removeInvoice = (e) => {
                                     <span style={{fontSize: '30px'}}>📂</span>
                                     <span style={{marginTop: '10px', fontSize: '14px'}}>
                                         {invoice ? invoice.name : `Select ${activeTab.toLowerCase()} invoice`}
-  </span>
+                                      </span>
                                     {invoice && (
                                         <div onClick={removeInvoice} style={{ marginTop: '10px', color: '#e74c3c', fontSize: '12px', cursor: 'pointer', fontWeight: 'bold', textDecoration: 'underline' }}>
                                             Remove Invoice
@@ -323,7 +323,6 @@ const removeInvoice = (e) => {
                         </td>
                      <td style={styles.td}>
     <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-        {/* Status එක පෙන්වන කොටස */}
         <span style={{ 
             color: order.status === 'Approved' ? '#2ecc71' : 
                    order.status === 'QR Sent' ? '#3498db' : '#f1c40f', 
@@ -339,7 +338,8 @@ const removeInvoice = (e) => {
         {/* ✅ මේක තමයි මැජික් එක: Status එක 'QR Sent' නම් සහ qrZipFile එකක් තිබේ නම් බටන් එක පෙන්වයි */}
         {order.status === 'QR Sent' && order.qrZipFile && (
             <button 
-                onClick={() => window.open(`https://eprbackend-production.up.railway.app/${order.qrZipFile.replace(/\\/g, '/')}`, '_blank')}
+            onClick={() => window.open(order.qrZipUrl, '_blank')}  
+            // onClick={() => window.open(`https://eprbackend-production.up.railway.app/${order.qrZipFile.replace(/\\/g, '/')}`, '_blank')}
                 style={{
                     padding: '5px 12px',
                     background: '#3498db',
