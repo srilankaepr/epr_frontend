@@ -343,7 +343,7 @@ const handleSubmit = async (e) => {
         style={styles.input}
         accept=".pdf,.jpg,.jpeg,.png"
     />
-    {brcFile && <p style={{ color: '#2ecc71', fontSize: '14px', marginTop: '5px' }}>✅ {brcFile.name} selected</p>}
+    {fileStrings.brc && <p style={{ color: '#2ecc71', fontSize: '14px', marginTop: '5px' }}>✅ {fileStrings.brc} selected</p>}
 </div>
 
 {/* --- VAT Upload --- */}
@@ -355,7 +355,7 @@ const handleSubmit = async (e) => {
         style={styles.input}
         accept=".pdf,.jpg,.jpeg,.png"
     />
-    {vatFile && <p style={{ color: '#2ecc71', fontSize: '14px', marginTop: '5px' }}>✅ {vatFile.name} selected</p>}
+    {fileStrings.vat && <p style={{ color: '#2ecc71', fontSize: '14px', marginTop: '5px' }}>✅ VAT Document selected</p>}
 </div>
 
 {/* --- Billing Proof Upload --- */}
@@ -367,7 +367,7 @@ const handleSubmit = async (e) => {
         style={styles.input}
         accept=".pdf,.jpg,.jpeg,.png"
     />
-    {billingFile && <p style={{ color: '#2ecc71', fontSize: '14px', marginTop: '5px' }}>✅ {billingFile.name} selected</p>}
+    {fileStrings.billing && <p style={{ color: '#2ecc71', fontSize: '14px', marginTop: '5px' }}>✅ Billing Proof selected</p>}
 </div>   
 
                     <button type="submit" style={styles.registerBtn}>SUBMIT FOR THE APPROVAL</button>
