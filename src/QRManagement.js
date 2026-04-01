@@ -400,8 +400,8 @@ const fetchDashboardCounts = async () => {
 
         const canvas = document.createElement('canvas');
         const ctx = canvas.getContext('2d');
-        canvas.width = 164;
-        canvas.height = 164;
+        canvas.width = 1000;
+        canvas.height = 1100;
         const qrImage = new Image();
 
         try {
@@ -442,11 +442,9 @@ const fetchDashboardCounts = async () => {
                 ctx.fillStyle = "#444";
                 ctx.fillText(`MFD: ${displayMFD}`, canvas.width / 2, 1000);
 
-// 1. මේක තමයි අපිට ඕන පින්තූරය
             const finalImageBase64 = canvas.toDataURL("image/png");
             const finalImageRaw = finalImageBase64.split(',')[1];
 
-            // 2. [අලුත් කොටස] - Backend එකේ qr-images folder එකට මේ පින්තූරය යවනවා
             // මෙතනදී අපි එකින් එක යවනවා (දැනට තියෙන loop එක ඇතුළේ)
             try {
                 await fetch('https://eprbackend-production.up.railway.app/api/save-qr', {
