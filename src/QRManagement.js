@@ -469,7 +469,11 @@ const fetchDashboardCounts = async () => {
 
                 if (currentBatch.length === 100 || i === finalQty) {
                     try {
-                        const dbData = currentBatch.map(({ tempImageData, ...rest }) => rest);
+                       // const dbData = currentBatch.map(({ tempImageData, ...rest }) => rest);
+                       const dbData = currentBatch.map(({ tempImageData, ...rest }) => ({
+    ...rest,
+    qrImage: "" // 👈 දැනට හිස්ව යවන්න, මොකද save-qr එකෙන් ඒක වෙනම අප්ඩේට් වෙන නිසා
+}));
 
                         const dbResponse = await fetch('https://eprbackend-production.up.railway.app/api/save-qr-batch', {
                             method: 'POST',
