@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import API from './api';
 import logo from './logo.png';
 import earthVideo from './assets/earth.mp4';
 
@@ -16,11 +17,12 @@ const ForgotPassword = () => {
     const handleSendOTP = async (e) => {
         e.preventDefault();
         try {
-            const res = await axios.post('https://eprbackend-production.up.railway.app/api/customers/forgot-password', { email });
+            const res = await API.post('/auth/customers/forgot-password', { email });
             alert(res.data.message);
             setStep(2);
         } catch (err) {
-            alert(err.response?.data?.error || "User not found!");
+            const errorMsg = err.response?.data?.error || "User not found!";
+            alert(`❌ ${errorMsg}`);
         }
     };
 
@@ -28,11 +30,12 @@ const ForgotPassword = () => {
     const handleVerifyOTP = async (e) => {
         e.preventDefault();
         try {
-            const res = await axios.post('https://eprbackend-production.up.railway.app/api/customers/verify-otp', { email, otp });
+            const res = await API.post('/auth/customers/verify-otp', { email, otp });
             alert(res.data.message);
             setStep(3);
         } catch (err) {
-            alert(err.response?.data?.error || "Invalid OTP!");
+            const errorMsg = err.response?.data?.error || "Invalid OTP!";
+            alert(`❌ ${errorMsg}`);
         }
     };
 
@@ -41,11 +44,12 @@ const ForgotPassword = () => {
         e.preventDefault();
         if (newPassword !== confirmPassword) return alert("Passwords don't match!");
         try {
-            const res = await axios.post('https://eprbackend-production.up.railway.app/api/customers/reset-password', { email, newPassword });
+            const res = await API.post('/auth/customers/reset-password', { email, newPassword });
             alert(res.data.message);
-            navigate('/'); // Login එකට යවනවා
+            navigate('/'); 
         } catch (err) {
-            alert("Failed to reset password.");
+            const errorMsg = err.response?.data?.error || "Failed to reset password!";
+            alert(`❌ ${errorMsg}`);
         }
     };
 
