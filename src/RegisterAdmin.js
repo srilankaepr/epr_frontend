@@ -29,7 +29,7 @@ const AdminRegister = () => {
         }
 
         try {
-            const response = await API.post('/auth/register', {
+            const response = await API.post('/auth/admin/register', {
                 fullName: formData.fullName,
                 email: formData.email,
                 adminSecretCode: formData.adminSecretCode,
@@ -47,6 +47,7 @@ const AdminRegister = () => {
         alert(`❌ ${errorMsg}`);
     }
 };
+
     return (
         <div style={styles.container}>
             {/* Background Video */}
