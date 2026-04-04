@@ -46,7 +46,7 @@ const Dashboard = () => {
         const fetchAdminData = async () => {
             try {
                 const response = await API.get(`/admin/users/all`);
-                const data = await response.json();
+                const data = response.data;
                 if (response.ok) {
                     const currentAdmin = data.admins.find(a => a.email === adminInfo.email);
                     if (currentAdmin && currentAdmin.profilePic) {
@@ -71,7 +71,7 @@ const Dashboard = () => {
         try {
             const topRes = await API.get(`/qr/dashboard/top-companies`);
         if (topRes.ok) {
-            const topData = await topRes.json();
+            const topData = topRes.data;
             setTopCompanies(topData); 
         }
     } catch (err) {
