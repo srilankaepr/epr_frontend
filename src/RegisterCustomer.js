@@ -76,7 +76,7 @@ const handleSubmit = async (e) => {
     };
 
     try {
-        const response = await API.post('/customers/register', finalPayload);
+        const response = await API.post('/auth/customers/register', finalPayload);
 
         if (response.status === 201) {
             alert("✅ Customer Registration Successful!");
