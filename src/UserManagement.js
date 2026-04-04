@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import API from './api';
 import { useNavigate } from 'react-router-dom';
 import logo from './logo.png'; 
 import jsPDF from 'jspdf';
@@ -11,7 +11,7 @@ const UserManagement = () => {
     const [filterStatus, setFilterStatus] = useState('All');
     const fetchStats = async () => {
         try {
-            const res = await axios.get('https://eprbackend-production.up.railway.app/api/admin/customer-stats');
+            const res = await API.get('/admin/customer-stats');
             setStats(res.data);
         } catch (err) {
             console.error("Error fetching stats", err);
@@ -23,7 +23,7 @@ const UserManagement = () => {
 
     const fetchUsers = async () => {
         try {
-            const res = await axios.get('https://eprbackend-production.up.railway.app/api/users/all');
+            const res = await API.get('/admin/users/all');
             setData(res.data);
         } catch (err) {
             console.error("Error fetching data", err);
@@ -33,16 +33,17 @@ const approveCustomer = async (id) => {
         if (!window.confirm("Are you sure you want to approve this customer?")) return;
 
         try {
-            const response = await axios.put(`https://eprbackend-production.up.railway.app/api/admin/approve-customer/${id}`);
+            const response = await API.put(`/admin/approve-customer/${id}`);
             
             if (response.status === 200) {
                 alert("✅ Customer Approved Successfully!");
-                fetchUsers(); // Table එක refresh කරනවා
-                fetchStats(); // Stats කාඩ්ස් ටික refresh කරනවා
+                fetchUsers(); 
+                fetchStats(); 
             }
         } catch (err) {
             console.error("Error approving customer:", err);
-            alert("❌ Failed to approve customer.");
+            const errorMsg = err.response?.data?.error || "Failed to approve customer.";
+            alert(`❌ ${errorMsg}`);
         }
     };
     useEffect(() => {
@@ -54,18 +55,24 @@ const approveCustomer = async (id) => {
     const deleteUser = async (id, type) => {
         if (window.confirm(`Are you sure you want to delete this ${type}?`)) {
             try {
-                const url = type === 'Admin' 
-                    ? `https://eprbackend-production.up.railway.app/api/admin/${id}` 
-                    : `https://eprbackend-production.up.railway.app/api/customer/${id}`;
-                
-                await axios.delete(url);
-                alert(`${type} deleted successfully!`);
-                fetchUsers();
-            } catch (err) {
-                alert("Error deleting user");
+            const endpoint = type === 'Admin' 
+                ? `/admin/${id}` 
+                : `/admin/customer/${id}`;
+            
+            const response = await API.delete(endpoint);
+            
+            if (response.status === 200) {
+                alert(`✅ ${type} deleted successfully!`);
+                fetchUsers(); 
+                fetchStats(); 
             }
+        } catch (err) {
+            console.error("Delete Error:", err);
+            const errorMsg = err.response?.data?.error || `Error deleting ${type}`;
+            alert(`❌ ${errorMsg}`);
         }
-    };
+    }
+};
 
     // --- LOGOUT LOGIC (EXACTLY LIKE DASHBOARD) ---
     const handleLogout = () => {
