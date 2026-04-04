@@ -1,3 +1,4 @@
+import API from './api';
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import logo from './logo.png'; 
@@ -44,7 +45,7 @@ const Dashboard = () => {
     useEffect(() => {
         const fetchAdminData = async () => {
             try {
-                const response = await fetch(`https://eprbackend-production.up.railway.app/api/admin/users/all`);
+                const response = await API.get(`/admin/users/all`);
                 const data = await response.json();
                 if (response.ok) {
                     const currentAdmin = data.admins.find(a => a.email === adminInfo.email);
@@ -68,7 +69,7 @@ const Dashboard = () => {
             console.error("Error updating dashboard data:", error);
         }
         try {
-            const topRes = await fetch(`https://eprbackend-production.up.railway.app/api/qr/dashboard/top-companies`);
+            const topRes = await API.get(`/qr/dashboard/top-companies`);
         if (topRes.ok) {
             const topData = await topRes.json();
             setTopCompanies(topData); 
