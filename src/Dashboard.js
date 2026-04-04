@@ -91,26 +91,24 @@ if (topRes.status === 200) {
         formData.append('role', 'admin'); 
 
         try {
-            const response = await fetch('https://eprbackend-production.up.railway.app/api/upload-photo', {
-                method: 'POST',
-                body: formData,
-            });
-            const data = await response.json();
+            const response = await API.post('/admin/upload-photo', formData);
+            const data = response.data;
             if (data.imageUrl) {
                 setAdminInfo(prev => ({ ...prev, profilePic: data.imageUrl }));
                 localStorage.setItem('adminPhoto', data.imageUrl);
             }
-        } catch (error) { console.error(error); }
-    };
+            } catch (error) { 
+        console.error("Photo upload failed:", error); 
+    }
+};
 
     const handleDeletePhoto = async () => {
         try {
-            const response = await fetch('https://eprbackend-production.up.railway.app/api/delete-photo', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email: adminInfo.email, role: 'admin' }),
+            const response = await API.post('/admin/delete-photo', {
+                email: adminInfo.email,
+                role: 'admin'
             });
-            if (response.ok) {
+                if (response.status === 200) {
                 setAdminInfo(prev => ({ ...prev, profilePic: null }));
                 localStorage.removeItem('adminPhoto');
             }
