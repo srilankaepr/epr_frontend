@@ -51,11 +51,15 @@ if (response.status === 200) {
         }
     } catch (error) {
         console.error("Login error:", error);
-        alert("⚠️ Connection Error!");
+
+        const errorMsg = error.response?.data?.error || "⚠️ Login Failed! Please check your connection.";
+        
+        alert(`❌ ${errorMsg}`);
     } finally {
         setLoading(false); 
     }
 }, [navigate, login]); 
+
 //......................................................................................................................
     return (
         <div style={styles.container}>
