@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios'; 
 import logo from './logo.png';
 import earthVideo from './assets/earth.mp4'; 
+import API from './api';
 
 const RegisterCustomer = () => {
     const location = useLocation(); 
@@ -20,9 +21,7 @@ const RegisterCustomer = () => {
         dob: '', 
         password: '', confirmPassword: ''
     });
-//const [brcFile, setBrcFile] = useState(null);
-//const [vatFile, setVatFile] = useState(null);
-//const [billingFile, setBillingFile] = useState(null);
+
 const [fileStrings, setFileStrings] = useState({ brc: "", vat: "", billing: "" });
 
 const handleChange = (e) => {
@@ -46,58 +45,6 @@ const handleFileBase64 = (e, type) => {
     }
 };
 
-   /*const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    // 1. කලින් තිබුණ Validation ටික එහෙම්මම තියෙනවා
-    if (formData.password !== formData.confirmPassword) {
-        alert("❌ Passwords do not match!");
-        return;
-    }
-
-    if (!validatePhone(formData.phone)) {
-        alert("❌ Please enter a valid 10-digit Phone Number.");
-        return;
-    }
-    if (formData.whatsapp && !validatePhone(formData.whatsapp)) {
-        alert("❌ Please enter a valid 10-digit WhatsApp Number.");
-        return;
-    }
-    if (!validatePhone(formData.contactPersonMobile)) {
-        alert("❌ Please enter a valid 10-digit Mobile Number for the Contact Person.");
-        return;
-    }
-
-  const data = new FormData();
-
-    // 1. සාමාන්‍ය Form Data ටික ඇඩ් කරනවා
-    Object.keys(formData).forEach(key => {
-        data.append(key, formData[key]);
-    });
-
-    // 2. අලුත් ෆයිල් 3 වෙන වෙනම ඇඩ් කරනවා (අර පරණ loop එක වෙනුවට)
-    if (brcFile) data.append('brc', brcFile);
-    if (vatFile) data.append('vat', vatFile);
-    if (billingFile) data.append('billing', billingFile);
-    try {
-        // 5. POST Request එක (මෙතන දැන් formData වෙනුවට 'data' කියන එක යවන්න)
-        const response = await axios.post('https://eprbackend-production.up.railway.app/api/customers/register', data, {
-            headers: {
-                'Content-Type': 'multipart/form-data' 
-            }
-        });
-
-        if (response.status === 201) {
-            alert("✅ Customer Registration Successful!");
-            navigate('/'); 
-        }
-    } catch (error) {
-        console.error("Registration Error:", error);
-        const errorMessage = error.response?.data?.error || "Registration failed. Please try again.";
-        alert("❌ Error: " + errorMessage);
-    }
-};
-*/
 
 const handleSubmit = async (e) => {
     e.preventDefault();
@@ -121,8 +68,6 @@ const handleSubmit = async (e) => {
         return;
     }
 
-    // 🚀 මෙතනින් පල්ලෙහා තමයි අලුත් ක්‍රමය (Base64 JSON)
-    // 'fileStrings' කියන එකේ තමයි අපි අර FileReader එකෙන් ගත්තු Base64 ටික තියෙන්නේ
     const finalPayload = {
         ...formData,
         brcFile: fileStrings.brc, 
@@ -131,12 +76,7 @@ const handleSubmit = async (e) => {
     };
 
     try {
-        // 5. POST Request එක (දැන් FormData වෙනුවට 'finalPayload' කියන JSON එක යවන්නේ)
-        const response = await axios.post('https://eprbackend-production.up.railway.app/api/customers/register', finalPayload, {
-            headers: {
-                'Content-Type': 'application/json' // 👈 මේක අනිවාර්යයෙන්ම වෙනස් වෙන්න ඕනේ
-            }
-        });
+        const response = await API.post('/customers/register', finalPayload);
 
         if (response.status === 201) {
             alert("✅ Customer Registration Successful!");
