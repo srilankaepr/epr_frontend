@@ -68,7 +68,7 @@ const Dashboard = () => {
             console.error("Error updating dashboard data:", error);
         }
         try {
-            const topRes = await fetch(`https://eprbackend-production.up.railway.app/api/admin/top-companies`);
+            const topRes = await fetch(`https://eprbackend-production.up.railway.app/api/qr/dashboard/top-companies`);
         if (topRes.ok) {
             const topData = await topRes.json();
             setTopCompanies(topData); 
