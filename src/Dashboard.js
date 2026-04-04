@@ -47,7 +47,7 @@ const Dashboard = () => {
             try {
                 const response = await API.get(`/admin/users/all`);
                 const data = response.data;
-                if (response.ok) {
+              if (response.status === 200) {
                     const currentAdmin = data.admins.find(a => a.email === adminInfo.email);
                     if (currentAdmin && currentAdmin.profilePic) {
                         setAdminInfo(prev => ({ ...prev, profilePic: currentAdmin.profilePic }));
@@ -70,7 +70,7 @@ const Dashboard = () => {
         }
         try {
             const topRes = await API.get(`/qr/dashboard/top-companies`);
-        if (topRes.ok) {
+if (topRes.status === 200) {
             const topData = topRes.data;
             setTopCompanies(topData); 
         }
