@@ -3,40 +3,34 @@ import { useNavigate } from 'react-router-dom';
 import logo from './logo.png';
 import earthVideo from './assets/earth.mp4'; 
 import { useAuth } from './AuthContext';
+import API from './api';
 
-const API_BASE_URL = 'https://eprbackend-production.up.railway.app/api';
 const Login = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
-    
-    // AuthContext එකෙන් login function එක මෙතනට ගන්නවා
     const { login } = useAuth(); 
 
 const handleSubmit = useCallback(async (e) => {
     e.preventDefault();
     setLoading(true);
 
-    // ✅ FormData පාවිච්චි කරලා input values ටික කෙලින්ම ගන්නවා
     const formData = new FormData(e.currentTarget);
     const loginEmail = formData.get('email');
     const loginPassword = formData.get('password');
 
     try {
-        const response = await fetch(`${API_BASE_URL}/auth/login`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ 
-                email: loginEmail, 
-                password: loginPassword 
-            }),
+        const response = await API.post('/auth/login', {
+            email: loginEmail,
+            password: loginPassword
         });
+          
 
-        const data = await response.json();
+const data = response.data;
 
-        if (response.ok) {
-    console.log("Logged in User Role:", data.user.adminRole);
+if (response.status === 200) {
+        console.log("Logged in User Role:", data.user.adminRole);
     login(data.user, data.role, data.token, data.user.adminRole); 
 
     if (data.user && data.user.profilePic) {
