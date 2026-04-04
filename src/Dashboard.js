@@ -44,7 +44,7 @@ const Dashboard = () => {
     useEffect(() => {
         const fetchAdminData = async () => {
             try {
-                const response = await fetch(`https://eprbackend-production.up.railway.app/api/users/all`);
+                const response = await fetch(`https://eprbackend-production.up.railway.app/api/admin/users/all`);
                 const data = await response.json();
                 if (response.ok) {
                     const currentAdmin = data.admins.find(a => a.email === adminInfo.email);
@@ -77,7 +77,6 @@ const Dashboard = () => {
         console.error("Top companies fetch error:", err);
     }
     };
-
 
         fetchAdminData();
     }, [adminInfo.email]);
