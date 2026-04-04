@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import API from './api';
 import { useNavigate } from 'react-router-dom';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import logo from './logo.png';
+
 
 const AdminProductView = () => {
     const [products, setProducts] = useState([]);
@@ -18,7 +20,7 @@ const AdminProductView = () => {
     useEffect(() => {
         const fetchProducts = async () => {
             try {
-                const res = await axios.get('https://eprbackend-production.up.railway.app/api/admin/products');
+                const res = await API.get('/admin/products');
                 setProducts(res.data);
             } catch (err) {
                 console.error("Error fetching products:", err);
