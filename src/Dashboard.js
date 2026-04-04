@@ -91,7 +91,7 @@ if (topRes.status === 200) {
         formData.append('role', 'admin'); 
 
         try {
-            const response = await API.post('/admin/upload-photo', formData);
+            const response = await API.post('/customers/upload-photo', formData);
             const data = response.data;
             if (data.imageUrl) {
                 setAdminInfo(prev => ({ ...prev, profilePic: data.imageUrl }));
@@ -104,7 +104,7 @@ if (topRes.status === 200) {
 
     const handleDeletePhoto = async () => {
         try {
-            const response = await API.post('/admin/delete-photo', {
+            const response = await API.post('/customers/delete-photo', {
                 email: adminInfo.email,
                 role: 'admin'
             });
