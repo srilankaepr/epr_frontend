@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import logo from './logo.png';
 import earthVideo from './assets/earth.mp4'; 
+import API from './api';
 
 const AdminRegister = () => {
     const navigate = useNavigate();
@@ -28,33 +29,24 @@ const AdminRegister = () => {
         }
 
         try {
-            const response = await fetch('https://eprbackend-production.up.railway.app/api/admin/register', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    fullName: formData.fullName,
-                    email: formData.email,
-                    adminSecretCode: formData.adminSecretCode,
-                    password: formData.password
-                }),
+            const response = await API.post('/auth/register', {
+                fullName: formData.fullName,
+                email: formData.email,
+                adminSecretCode: formData.adminSecretCode,
+                password: formData.password
             });
 
-            const data = await response.json();
-
-            if (response.ok) {
-                alert("✅ Admin Registered Successfully!");
-                navigate('/'); 
-            } else {
-                alert("❌ " + (data.error || "Registration failed. Email might exist."));
-            }
-        } catch (error) {
-            console.error("Error:", error);
-            alert("⚠️ Connection Error: Please make sure your backend is running");
+       if (response.status === 200 || response.status === 201) {
+            alert("✅ Admin Registered Successfully!");
+            navigate('/'); 
         }
-    };
-
+    } catch (error) {
+        console.error("Registration Error:", error);
+        
+        const errorMsg = error.response?.data?.error || "Registration failed!";
+        alert(`❌ ${errorMsg}`);
+    }
+};
     return (
         <div style={styles.container}>
             {/* Background Video */}
