@@ -3,23 +3,23 @@ import { useNavigate } from 'react-router-dom';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import logo from './logo.png'; 
-import axios from 'axios';
+import API from './api';
 
 const AdminOrders = () => {
     const navigate = useNavigate();
+    const BASE_URL = API.defaults.baseURL;
     const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(true);
     const [filterDivision, setFilterDivision] = useState('ALL');
     const [filterType, setFilterType] = useState('ALL');
-    const [filterStatus, setFilterStatus] = useState('ALL'); // 👈 අලුත් State එක
+    const [filterStatus, setFilterStatus] = useState('ALL'); 
     const [searchTerm, setSearchTerm] = useState(''); 
     const [uploadingId, setUploadingId] = useState(null); 
 
-    const API_BASE = "https://eprbackend-production.up.railway.app/api";
 
     const fetchOrders = async () => {
         try {
-            const response = await axios.get(`${API_BASE}/orders/all`);
+            const response = await API.get('/orders/all');
             setOrders(response.data);
             setLoading(false);
         } catch (error) {
@@ -33,70 +33,84 @@ const AdminOrders = () => {
     }, []);
 
     const filteredOrders = orders.filter(order => {
-        const divisionMatch = filterDivision === 'ALL' || 
-            (order.division && order.division.toLowerCase().includes(filterDivision.toLowerCase()));
-        const typeMatch = filterType === 'ALL' || order.orderType === filterType;
-const statusMatch = filterStatus === 'ALL' || order.status === filterStatus;
-
+    const divisionMatch = filterDivision === 'ALL' ||  (order.division && order.division.toLowerCase().includes(filterDivision.toLowerCase()));
+    const typeMatch = filterType === 'ALL' || order.orderType === filterType;
+    const statusMatch = filterStatus === 'ALL' || order.status === filterStatus;
     const searchMatch = order.invNum.toLowerCase().includes(searchTerm.toLowerCase());
 
-    return divisionMatch && typeMatch && statusMatch && searchMatch; // 👈 statusMatch මෙතනටත් දාන්න
+    return divisionMatch && typeMatch && statusMatch && searchMatch; 
 });
      
 
-    // ✅ පරණ handleStatus එක එහෙම්මම තියෙනවා (අනිත් status සඳහා)
     const handleStatus = async (id, newStatus) => {
         try {
-            await axios.put(`${API_BASE}/orders/update-status/${id}`, {
+            await API.put(`/orders/update-status/${id}`, {
                 status: newStatus
             });
             setOrders(orders.map(order => order._id === id ? { ...order, status: newStatus } : order));
         } catch (error) {
             console.error("Error updating status:", error);
-            alert("Failed to update status!");
+            const errorMsg = error.response?.data?.error || "Failed to update order status.";
+            alert(`❌ ${errorMsg}`);
         }
     };
 
-    // ✅ අලුතින් එකතු කළ ZIP Upload Logic එක
   const handleZipUpload = async (e, orderId) => {
     const file = e.target.files[0];
     if (!file) return;
 
     const formData = new FormData();
-    // 🚨 මෙන්න මෙතන 'qrZip' වෙනුවට 'zipFile' කියලා දාපන් (Backend එකේ තියෙන නම)
     formData.append('zipFile', file); 
 
     setUploadingId(orderId);
     try {
-        // 🚨 URL එකයි Route එකයි (upload-zip) හරියටම තියෙන්න ඕනේ
-        await axios.post(`${API_BASE}/orders/upload-zip/${orderId}`, formData, {
-            headers: { 'Content-Type': 'multipart/form-data' }
-        });
+        await API.post(`/orders/upload-zip/${orderId}`, formData);
         
         alert("✅ QR ZIP Uploaded Successfully!");
         setUploadingId(null);
         fetchOrders(); 
     } catch (error) {
-        console.error(error);
-        alert("❌ ZIP Upload Failed!");
-        setUploadingId(null);
+          console.error("Upload Error:", error);
+            const errorMsg = error.response?.data?.error || "ZIP Upload Failed!";
+            alert(`❌ ${errorMsg}`);
+            setUploadingId(null);
     }
 };
- /*   const downloadInvoice = (fileName) => {
-        if (!fileName) {
-            alert("No invoice file uploaded!");
-            return;
-        }
-        window.open(`https://eprbackend-production.up.railway.app/invoices/${fileName}`, '_blank');
-    };   */
 
 const downloadInvoice = (base64Data, invNum) => {
     if (!base64Data) {
         alert("No invoice file found for this order!");
         return;
     }
+try {
+            // Base64 PDF එකක් නම්
+            if (base64Data.startsWith('data:application/pdf')) {
+                const link = document.createElement('a');
+                link.href = base64Data; 
+                link.download = `Invoice_${invNum || 'Order'}.pdf`; 
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                return;
+            }
 
-    // 💡 1. පරණ ලෝකල් ෆයිල් එකක් නම් (String එකක් විදිහට සේව් වෙලා ඇති)
+            // Cloudinary URL 
+            if (base64Data.startsWith('http')) {
+                const downloadUrl = `${BASE_URL}/orders/download-invoice?url=${encodeURIComponent(base64Data)}&fileName=Invoice_${invNum}`;
+                window.open(downloadUrl, '_blank');
+                return;
+            }
+
+const ROOT_URL = BASE_URL.replace('/api', ''); 
+        window.open(`${ROOT_URL}/invoices/${base64Data}`, '_blank');
+
+        } catch (error) {
+            console.error("Download Error:", error);
+            alert("⚠️ Could not download the file.");
+        }
+    };
+
+    /* 💡 1. පරණ ලෝකල් ෆයිල් එකක් නම් (String එකක් විදිහට සේව් වෙලා ඇති)
     if (!base64Data.startsWith('data:application/pdf') && !base64Data.startsWith('http')) {
         window.open(`https://eprbackend-production.up.railway.app/invoices/${base64Data}`, '_blank');
         return;
@@ -105,8 +119,8 @@ const downloadInvoice = (base64Data, invNum) => {
     // 💡 2. අලුත් Base64 පීඩීඑෆ් එකක් නම් කෙලින්ම ඩවුන්ලෝඩ් කරවනවා
     try {
         const link = document.createElement('a');
-        link.href = base64Data; // මෙතන තියෙන්නේ මුළු පීඩීඑෆ් එකම අඩංගු String එකයි
-        link.download = `Invoice_${invNum || 'Order'}.pdf`; // නම අපිම ලබා දෙනවා
+        link.href = base64Data; 
+        link.download = `Invoice_${invNum || 'Order'}.pdf`; 
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
@@ -115,7 +129,7 @@ const downloadInvoice = (base64Data, invNum) => {
         alert("Could not download the file.");
     }
 };
-
+*/
     const handleLogout = () => {
         if (window.confirm("Are you sure you want to logout?")) {
             localStorage.clear();
