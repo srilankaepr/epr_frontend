@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import API from './api'; // 
+import API from './api'; 
 
 const FeedbackPage = ({ currentUser }) => {
     const [feedbacks, setFeedbacks] = useState([]);
@@ -22,7 +22,7 @@ const FeedbackPage = ({ currentUser }) => {
         fetchFeedbacks(); 
     }, []);
 
-    // 2. Feedback එකක් Submit කිරීම (Create & Update)
+    /* 2. Feedback එකක් Submit කිරීම (Create & Update)
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (rating === 0) return alert("Please select a star rating!");
@@ -46,6 +46,40 @@ const FeedbackPage = ({ currentUser }) => {
             fetchFeedbacks();
         } catch (err) { 
             console.error("Error submitting feedback:", err); 
+        }
+    };*/
+    // 2. Feedback එකක් Submit කිරීම (Create & Update)
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        if (rating === 0) return alert("Please select a star rating!");
+
+        // 🚀 මෙන්න මෙතන තමයි වෙනස කරන්නේ:
+        // localStorage එකේ අපි ලොගින් වෙද්දී 'user' කියන නමින් දත්ත සේව් කළා
+        const storedUser = JSON.parse(localStorage.getItem('user')); 
+
+        const feedbackData = { 
+            // ලොග් වෙලා ඉන්න කෙනාගේ නම මේ keys වලින් එකක තියෙන්න පුළුවන්
+            user: storedUser?.fullName || storedUser?.contactPersonName || storedUser?.name || "Anonymous", 
+            officialEmail: storedUser?.email || storedUser?.officialEmail || "N/A",
+            text, 
+            rating 
+        };
+
+        console.log("Submitting with user:", feedbackData.user); // 👈 මේකෙන් ඔයාට නම හරියට එනවද කියලා බලාගන්න පුළුවන්
+
+        try {
+            if (editingId) {
+                await API.put(`/admin/feedbacks/${editingId}`, { text, rating });
+                setEditingId(null);
+            } else {
+                await API.post('/admin/feedbacks', feedbackData);
+            }
+            setText(""); 
+            setRating(0); 
+            fetchFeedbacks();
+        } catch (err) { 
+            console.error("Error submitting feedback:", err); 
+            alert("❌ Submission failed!");
         }
     };
 
