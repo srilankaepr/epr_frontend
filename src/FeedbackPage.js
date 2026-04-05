@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import API from './api'; // 👈 උඹේ axios instance එක මෙතනට import කරගන්න
+import API from './api'; // 
 
 const FeedbackPage = ({ currentUser }) => {
     const [feedbacks, setFeedbacks] = useState([]);
@@ -11,7 +11,7 @@ const FeedbackPage = ({ currentUser }) => {
     // 1. සියලුම Feedback ලබා ගැනීම
     const fetchFeedbacks = async () => {
         try {
-            const res = await API.get('/feedbacks'); // 👈 Localhost නෙවෙයි, Railway link එකට යනවා
+            const res = await API.get('/admin/feedbacks'); 
             setFeedbacks(res.data);
         } catch (err) { 
             console.error("Error fetching feedbacks:", err); 
@@ -28,18 +28,18 @@ const FeedbackPage = ({ currentUser }) => {
         if (rating === 0) return alert("Please select a star rating!");
 
         const feedbackData = { 
-            user: currentUser?.contactPersonName || "Anonymous", 
-            officialEmail: currentUser?.officialEmail || "N/A",
+            user: currentUser?.fullName || currentUser?.contactPersonName || "Anonymous", 
+            officialEmail: currentUser?.officialEmail || currentUser?.email || "N/A",
             text, 
             rating 
         };
 
         try {
             if (editingId) {
-                await API.put(`/feedbacks/${editingId}`, { text, rating });
+                await API.put(`/admin/feedbacks/${editingId}`, { text, rating });
                 setEditingId(null);
             } else {
-                await API.post('/feedbacks', feedbackData);
+                await API.post('/admin/feedbacks', feedbackData);
             }
             setText(""); 
             setRating(0); 
@@ -53,7 +53,7 @@ const FeedbackPage = ({ currentUser }) => {
     const handleDelete = async (id) => {
         if (window.confirm("Are you sure you want to delete this feedback?")) {
             try {
-                await API.delete(`/feedbacks/${id}`);
+                await API.delete(`/admin/feedbacks/${id}`);
                 fetchFeedbacks();
             } catch (err) {
                 console.error("Error deleting feedback:", err);
