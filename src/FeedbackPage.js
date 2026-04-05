@@ -48,43 +48,44 @@ const FeedbackPage = ({ currentUser }) => {
             console.error("Error submitting feedback:", err); 
         }
     };*/
+
     const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (rating === 0) return alert("Please select a star rating!");
+        e.preventDefault();
+        if (rating === 0) return alert("Please select a star rating!");
 
-    // 1. LocalStorage එකෙන් දත්ත ගන්නවා
-    const rawData = localStorage.getItem('user');
-    const storedUser = rawData ? JSON.parse(rawData) : null;
+        // 1. LocalStorage එකෙන් දත්ත ගන්නවා
+        const rawData = localStorage.getItem('user');
+        const storedUser = rawData ? JSON.parse(rawData) : null;
 
-    // 2. නම හරියටම තෝරාගැනීම (Backend එකේ අලුත් Key එක මුලින්ම බලනවා)
-    const userName = storedUser?.fullName || 
-                     storedUser?.contactPersonName || 
-                     storedUser?.name || 
-                     "Anonymous";
+        // 2. නම හරියටම තෝරාගැනීම (Backend එකේ අලුත් Key එක මුලින්ම බලනවා)
+        const userName = storedUser?.fullName || 
+                         storedUser?.contactPersonName || 
+                         storedUser?.name || 
+                         "Anonymous";
 
-    const feedbackData = { 
-        user: userName, 
-        officialEmail: storedUser?.email || storedUser?.officialEmail || "N/A",
-        text, 
-        rating 
-    };
+        const feedbackData = { 
+            user: userName, 
+            officialEmail: storedUser?.email || storedUser?.officialEmail || "N/A",
+            text, 
+            rating 
+        };
 
-    console.log("Saving feedback for:", feedbackData.user); // 👈 මෙතන දැන් නම වැටෙන්න ඕනේ
+        console.log("Saving feedback for:", feedbackData.user); // 👈 මෙතන දැන් නම වැටෙන්න ඕනේ
 
-    try {
-        if (editingId) {
-            await API.put(`/admin/feedbacks/${editingId}`, { text, rating });
-            setEditingId(null);
-        } else {
-            await API.post('/admin/feedbacks', feedbackData);
+        try {
+            if (editingId) {
+                await API.put(`/admin/feedbacks/${editingId}`, { text, rating });
+                setEditingId(null);
+            } else {
+                await API.post('/admin/feedbacks', feedbackData);
+            }
+            setText(""); 
+            setRating(0); 
+            fetchFeedbacks();
+        } catch (err) { 
+            console.error("Error submitting feedback:", err); 
         }
-        setText(""); 
-        setRating(0); 
-        fetchFeedbacks();
-    } catch (err) { 
-        console.error("Error submitting feedback:", err); 
-    }
-};
+    };
 
     // 3. Feedback එකක් මකා දැමීම (Delete)
     const handleDelete = async (id) => {
@@ -183,13 +184,13 @@ const FeedbackPage = ({ currentUser }) => {
 };
 
 const styles = {
- feedbackContainer: { 
-    maxWidth: '700px',     
-    margin: '0 auto',       
-    padding: '40px 20px',
-    boxSizing: 'border-box',
-    width: '100%'           
-},
+    feedbackContainer: { 
+        maxWidth: '700px',     
+        margin: '0 auto',       
+        padding: '40px 20px',
+        boxSizing: 'border-box',
+        width: '100%'           
+    },
     mainTitle: { fontSize: '28px', textAlign: 'center', color: '#fff', marginBottom: '30px', letterSpacing: '2px' },
     feedbackForm: { background: 'rgba(255,255,255,0.05)', padding: '25px', borderRadius: '15px', border: '1px solid #333', marginBottom: '40px' },
     starRow: { fontSize: '32px', marginBottom: '15px', display: 'flex', gap: '8px' },
