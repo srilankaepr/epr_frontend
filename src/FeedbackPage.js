@@ -48,40 +48,43 @@ const FeedbackPage = ({ currentUser }) => {
             console.error("Error submitting feedback:", err); 
         }
     };*/
-    // 2. Feedback එකක් Submit කිරීම (Create & Update)
     const handleSubmit = async (e) => {
-        e.preventDefault();
-        if (rating === 0) return alert("Please select a star rating!");
+    e.preventDefault();
+    if (rating === 0) return alert("Please select a star rating!");
 
-        // 🚀 මෙන්න මෙතන තමයි වෙනස කරන්නේ:
-        // localStorage එකේ අපි ලොගින් වෙද්දී 'user' කියන නමින් දත්ත සේව් කළා
-        const storedUser = JSON.parse(localStorage.getItem('user')); 
+    // 1. LocalStorage එකෙන් දත්ත ගන්නවා
+    const rawData = localStorage.getItem('user');
+    const storedUser = rawData ? JSON.parse(rawData) : null;
 
-        const feedbackData = { 
-            // ලොග් වෙලා ඉන්න කෙනාගේ නම මේ keys වලින් එකක තියෙන්න පුළුවන්
-            user: storedUser?.fullName || storedUser?.contactPersonName || storedUser?.name || "Anonymous", 
-            officialEmail: storedUser?.email || storedUser?.officialEmail || "N/A",
-            text, 
-            rating 
-        };
+    // 2. නම හරියටම තෝරාගැනීම (Backend එකේ අලුත් Key එක මුලින්ම බලනවා)
+    const userName = storedUser?.fullName || 
+                     storedUser?.contactPersonName || 
+                     storedUser?.name || 
+                     "Anonymous";
 
-        console.log("Submitting with user:", feedbackData.user); // 👈 මේකෙන් ඔයාට නම හරියට එනවද කියලා බලාගන්න පුළුවන්
-
-        try {
-            if (editingId) {
-                await API.put(`/admin/feedbacks/${editingId}`, { text, rating });
-                setEditingId(null);
-            } else {
-                await API.post('/admin/feedbacks', feedbackData);
-            }
-            setText(""); 
-            setRating(0); 
-            fetchFeedbacks();
-        } catch (err) { 
-            console.error("Error submitting feedback:", err); 
-            alert("❌ Submission failed!");
-        }
+    const feedbackData = { 
+        user: userName, 
+        officialEmail: storedUser?.email || storedUser?.officialEmail || "N/A",
+        text, 
+        rating 
     };
+
+    console.log("Saving feedback for:", feedbackData.user); // 👈 මෙතන දැන් නම වැටෙන්න ඕනේ
+
+    try {
+        if (editingId) {
+            await API.put(`/admin/feedbacks/${editingId}`, { text, rating });
+            setEditingId(null);
+        } else {
+            await API.post('/admin/feedbacks', feedbackData);
+        }
+        setText(""); 
+        setRating(0); 
+        fetchFeedbacks();
+    } catch (err) { 
+        console.error("Error submitting feedback:", err); 
+    }
+};
 
     // 3. Feedback එකක් මකා දැමීම (Delete)
     const handleDelete = async (id) => {
