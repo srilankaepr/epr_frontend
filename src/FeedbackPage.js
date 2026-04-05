@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import API from './api'; 
+import API from './api'; // 👈 උඹේ axios instance එක මෙතනට import කරගන්න
 
 const FeedbackPage = ({ currentUser }) => {
     const [feedbacks, setFeedbacks] = useState([]);
@@ -11,8 +11,7 @@ const FeedbackPage = ({ currentUser }) => {
     // 1. සියලුම Feedback ලබා ගැනීම
     const fetchFeedbacks = async () => {
         try {
-            // Backend එකේ index.js එකේ app.use('/api/admin', adminRoutes) කියලා තියෙන නිසා පාර නිවැරදියි
-            const res = await API.get('/admin/feedbacks'); 
+            const res = await API.get('/feedbacks'); // 👈 Localhost නෙවෙයි, Railway link එකට යනවා
             setFeedbacks(res.data);
         } catch (err) { 
             console.error("Error fetching feedbacks:", err); 
@@ -28,28 +27,19 @@ const FeedbackPage = ({ currentUser }) => {
         e.preventDefault();
         if (rating === 0) return alert("Please select a star rating!");
 
-        // 🚀 මෙන්න මෙතන තමයි නම වැටෙන විදිහ මම වෙනස් කළේ. 
-        // Backend එකෙන් දෙන fullName, contactPersonName හෝ name කියන ඕනෑම එකක් මෙතනින් අල්ලගන්නවා
-        const userName = currentUser?.fullName || 
-                         currentUser?.contactPersonName || 
-                         currentUser?.name || 
-                         "Anonymous";
-
         const feedbackData = { 
-            user: userName, 
-            officialEmail: currentUser?.officialEmail || currentUser?.email || "N/A",
+            user: currentUser?.contactPersonName || "Anonymous", 
+            officialEmail: currentUser?.officialEmail || "N/A",
             text, 
             rating 
         };
 
         try {
             if (editingId) {
-                // Update කරද්දීත් පාර නිවැරදි කළා
-                await API.put(`/admin/feedbacks/${editingId}`, { text, rating });
+                await API.put(`/feedbacks/${editingId}`, { text, rating });
                 setEditingId(null);
             } else {
-                // Create කරද්දීත් පාර නිවැරදි කළා
-                await API.post('/admin/feedbacks', feedbackData);
+                await API.post('/feedbacks', feedbackData);
             }
             setText(""); 
             setRating(0); 
@@ -63,7 +53,7 @@ const FeedbackPage = ({ currentUser }) => {
     const handleDelete = async (id) => {
         if (window.confirm("Are you sure you want to delete this feedback?")) {
             try {
-                await API.delete(`/admin/feedbacks/${id}`);
+                await API.delete(`/feedbacks/${id}`);
                 fetchFeedbacks();
             } catch (err) {
                 console.error("Error deleting feedback:", err);
@@ -75,11 +65,13 @@ const FeedbackPage = ({ currentUser }) => {
         <div style={styles.feedbackContainer}>
             <h1 style={styles.mainTitle}>USER FEEDBACK</h1>
             
+            {/* Feedback Form එක */}
             <form onSubmit={handleSubmit} style={styles.feedbackForm}>
                 <h3 style={{marginBottom: '15px', color: '#2ecc71'}}>
                     {editingId ? "Update Your Review" : "Share Your Experience"}
                 </h3>
                 
+                {/* Star Rating Section */}
                 <div style={styles.starRow}>
                     {[1, 2, 3, 4, 5].map((star) => (
                         <span key={star} 
@@ -113,6 +105,7 @@ const FeedbackPage = ({ currentUser }) => {
                 </div>
             </form>
 
+            {/* Feedback List එක */}
             <div style={styles.commentsSection}>
                 <h3 style={{marginBottom: '20px', borderBottom: '1px solid #222', paddingBottom: '10px'}}>
                     Community Reviews ({feedbacks.length})
@@ -130,14 +123,15 @@ const FeedbackPage = ({ currentUser }) => {
                         </div>
                         <p style={styles.commentText}>{f.text}</p>
                         
-                        {/* ලොග් වෙලා ඉන්න යූසර්ගේ ඊමේල් එක හරියටම පරීක්ෂා කරනවා */}
-                        {(f.officialEmail === currentUser?.officialEmail || f.officialEmail === currentUser?.email) && (
+                        {/* තමන්ගේම Feedback එකක් නම් විතරක් Edit/Delete පෙන්නන්න */}
+                        {f.officialEmail === currentUser?.officialEmail && (
                             <div style={styles.actionRow}>
                                 <button onClick={() => {setEditingId(f._id); setText(f.text); setRating(f.rating);}} style={styles.editBtn}>Edit</button>
                                 <button onClick={() => handleDelete(f._id)} style={styles.deleteBtn}>Delete</button>
                             </div>
                         )}
 
+                        {/* Admin Reply කොටස */}
                         {f.reply && (
                             <div style={styles.replyBox}>
                                 <strong>Admin <span style={styles.replyTag}>REPLY</span></strong>
@@ -151,9 +145,14 @@ const FeedbackPage = ({ currentUser }) => {
     );
 };
 
-// Styles (කිසිම වෙනසක් කර නැත)
 const styles = {
-    feedbackContainer: { maxWidth: '700px', margin: '0 auto', padding: '40px 20px', boxSizing: 'border-box', width: '100%' },
+ feedbackContainer: { 
+    maxWidth: '700px',     
+    margin: '0 auto',       
+    padding: '40px 20px',
+    boxSizing: 'border-box',
+    width: '100%'           
+},
     mainTitle: { fontSize: '28px', textAlign: 'center', color: '#fff', marginBottom: '30px', letterSpacing: '2px' },
     feedbackForm: { background: 'rgba(255,255,255,0.05)', padding: '25px', borderRadius: '15px', border: '1px solid #333', marginBottom: '40px' },
     starRow: { fontSize: '32px', marginBottom: '15px', display: 'flex', gap: '8px' },
