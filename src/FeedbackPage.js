@@ -28,8 +28,8 @@ const FeedbackPage = ({ currentUser }) => {
         if (rating === 0) return alert("Please select a star rating!");
 
         const feedbackData = { 
-            user: currentUser?.fullName || currentUser?.contactPersonName || "Anonymous", 
-            officialEmail: currentUser?.officialEmail || currentUser?.email || "N/A",
+            user: currentUser?.fullName || currentUser?.contactPersonName || currentUser?.name || "Anonymous", 
+            officialEmail: currentUser?.email || currentUser?.officialEmail || "N/A",
             text, 
             rating 
         };
