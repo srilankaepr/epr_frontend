@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import API from './api'; // 
+import API from './api'; 
 
 const FeedbackPage = ({ currentUser }) => {
     const [feedbacks, setFeedbacks] = useState([]);
@@ -11,7 +11,8 @@ const FeedbackPage = ({ currentUser }) => {
     // 1. සියලුම Feedback ලබා ගැනීම
     const fetchFeedbacks = async () => {
         try {
-            const res = await API.get('/admin/feedbacks'); 
+            // ✅ Backend එකේ app.use('/api/admin', adminRoutes) නිසා මෙතනට /admin අනිවාර්යයි
+            const res = await API.get('/admin/feedbacks');
             setFeedbacks(res.data);
         } catch (err) { 
             console.error("Error fetching feedbacks:", err); 
@@ -27,18 +28,21 @@ const FeedbackPage = ({ currentUser }) => {
         e.preventDefault();
         if (rating === 0) return alert("Please select a star rating!");
 
+        // ✅ Backend එකේ authRoutes.js එකෙන් එවන්නේ fullName කියන key එකයි
         const feedbackData = { 
             user: currentUser?.fullName || currentUser?.contactPersonName || currentUser?.name || "Anonymous", 
-            officialEmail: currentUser?.email || currentUser?.officialEmail || "N/A",
+            officialEmail: currentUser?.officialEmail || currentUser?.email || "N/A",
             text, 
             rating 
         };
 
         try {
             if (editingId) {
+                // ✅ Update කරද්දී පාවිච්චි වන නිවැරදි පාර
                 await API.put(`/admin/feedbacks/${editingId}`, { text, rating });
                 setEditingId(null);
             } else {
+                // ✅ අලුතින් Post කරද්දී පාවිච්චි වන නිවැරදි පාර
                 await API.post('/admin/feedbacks', feedbackData);
             }
             setText(""); 
@@ -53,6 +57,7 @@ const FeedbackPage = ({ currentUser }) => {
     const handleDelete = async (id) => {
         if (window.confirm("Are you sure you want to delete this feedback?")) {
             try {
+                // ✅ Delete කරද්දී පාවිච්චි වන නිවැරදි පාර
                 await API.delete(`/admin/feedbacks/${id}`);
                 fetchFeedbacks();
             } catch (err) {
@@ -123,8 +128,8 @@ const FeedbackPage = ({ currentUser }) => {
                         </div>
                         <p style={styles.commentText}>{f.text}</p>
                         
-                        {/* තමන්ගේම Feedback එකක් නම් විතරක් Edit/Delete පෙන්නන්න */}
-                        {f.officialEmail === currentUser?.officialEmail && (
+                        {/* ✅ තමන්ගේම ඒවට Edit/Delete පෙන්නන්න නිවැරදි email එක බලනවා */}
+                        {(f.officialEmail === currentUser?.officialEmail || f.officialEmail === currentUser?.email) && (
                             <div style={styles.actionRow}>
                                 <button onClick={() => {setEditingId(f._id); setText(f.text); setRating(f.rating);}} style={styles.editBtn}>Edit</button>
                                 <button onClick={() => handleDelete(f._id)} style={styles.deleteBtn}>Delete</button>
@@ -145,14 +150,15 @@ const FeedbackPage = ({ currentUser }) => {
     );
 };
 
+// Styles (කිසිම වෙනසක් කර නැත)
 const styles = {
- feedbackContainer: { 
-    maxWidth: '700px',     
-    margin: '0 auto',       
-    padding: '40px 20px',
-    boxSizing: 'border-box',
-    width: '100%'           
-},
+    feedbackContainer: { 
+        maxWidth: '700px',     
+        margin: '0 auto',       
+        padding: '40px 20px',
+        boxSizing: 'border-box',
+        width: '100%'           
+    },
     mainTitle: { fontSize: '28px', textAlign: 'center', color: '#fff', marginBottom: '30px', letterSpacing: '2px' },
     feedbackForm: { background: 'rgba(255,255,255,0.05)', padding: '25px', borderRadius: '15px', border: '1px solid #333', marginBottom: '40px' },
     starRow: { fontSize: '32px', marginBottom: '15px', display: 'flex', gap: '8px' },
