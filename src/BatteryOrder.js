@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import logo from './logo.png'; 
 import UserDashboardNavbar from './UserDashboardNavbar';
-import axios from 'axios';
+import API from './api'; 
 import backgroundImage from './assets/customerdashboard.jpg';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
@@ -14,7 +14,6 @@ const BatteryOrder = () => {
     const [invoice, setInvoice] = useState(null);
     const [invoiceBase64, setInvoiceBase64] = useState("");
     const [orders, setOrders] = useState([]);
-    const API_BASE = "https://eprbackend-production.up.railway.app/api";
 
     // 📄 PDF Report Generator (Same features as Electronic/Solar)
     const generateReport = () => {
@@ -55,8 +54,8 @@ useEffect(() => {
                 userEmail = userEmail.trim().toLowerCase();
 
                 const [profileResponse, ordersResponse] = await Promise.all([
-                    axios.get(`${API_BASE}/users/profile/${userEmail}`),
-                    axios.get(`${API_BASE}/orders/user/${userEmail}/Battery-User`)
+                    API.get(`customers/users/profile/${userEmail}`),
+                        API.get(`orders/user/${userEmail}/Battery-User`)
                 ]);
 
                 if (profileResponse.data) {
@@ -127,9 +126,7 @@ const removeInvoice = (e) => {
     };
 
     try {
-        const response = await axios.post(`${API_BASE}/orders/create`, orderData, {
-            headers: { 'Content-Type': 'application/json' }
-        });
+       const response = await API.post(`orders/create`, orderData);
 
         if (response.status === 201) {
             alert("✅ Your Battery Invoice successfully saved!");
@@ -137,7 +134,7 @@ const removeInvoice = (e) => {
             setInvoiceBase64(""); 
             
             // 👈 ප්ලාස්ටික් ඕඩර්ස් රීෆ්‍රෙෂ් කරන්න මෙතනත් 'Battery-User' දාන්න
-            const ordersResponse = await axios.get(`${API_BASE}/orders/user/${user.email}/Battery-User`);
+                const ordersResponse = await API.get(`orders/user/${user.email}/Battery-User`);
             setOrders(ordersResponse.data);
             setActiveTab('VIEW ORDER DETAILS');
         }
@@ -324,7 +321,7 @@ const removeInvoice = (e) => {
         {/* ✅ Admin විසින් QR එක එවා ඇත්නම් පමණක් Download Button එක පෙන්වයි */}
         {order.status === 'QR Sent' && order.qrZipFile && (
             <button 
-                onClick={() => window.open(`https://eprbackend-production.up.railway.app/${order.qrZipFile.replace(/\\/g, '/')}`, '_blank')}
+            onClick={() => window.open(order.qrZipUrl, '_blank')}
                 style={{
                     padding: '5px 12px',
                     background: '#3498db',
