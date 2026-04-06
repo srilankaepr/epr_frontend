@@ -59,7 +59,7 @@ useEffect(() => {
 
                 const [profileResponse, ordersResponse] = await Promise.all([
                     API.get(`admin/users/profile/${userEmail}`),
-                    API.get(`admin/orders/user/${userEmail}/Agro-User`)
+                    API.get(`orders/user/${userEmail}/Agro-User`)
                 ]);
 
                 if (profileResponse.data) {
