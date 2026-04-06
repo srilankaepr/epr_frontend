@@ -55,7 +55,7 @@ useEffect(() => {
                 userEmail = userEmail.trim().toLowerCase();
 
                 const [profileResponse, ordersResponse] = await Promise.all([
-                    API.get(`customers/users/profile/${userEmail}`),
+                    API.get('customers/users/profile/' + userEmail),
                     API.get(`orders/user/${userEmail}/Agro-User`)
                 ]);
 
