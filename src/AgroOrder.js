@@ -58,7 +58,6 @@ useEffect(() => {
                 userEmail = userEmail.trim().toLowerCase();
 
                 
-
 // AgroOrder.js ඇතුළේ මෙලෙස වෙනස් කරන්න
 const [profileResponse, ordersResponse] = await Promise.all([
     API.get(`customers/users/profile/${userEmail}`), // මෙතන 'customers/' කෑල්ල අනිවාර්යයි
@@ -66,22 +65,16 @@ const [profileResponse, ordersResponse] = await Promise.all([
 ]);
 
 
-
-
-
-
-
-                if (profileResponse.data) {
-                    const photoToShow = profileResponse.data.profilePic || localStorage.getItem('userPhoto');
-
-                    setUser({
-                       // fullName: localStorage.getItem('userName') || "User",
-                        fullName: profileResponse.data.fullName || profileResponse.data.contactPersonName || localStorage.getItem('userName') || "User",
-                        email: userEmail,
-                        profilePic: photoToShow, 
-                        role: profileResponse.data.orgRole || "Not Assigned",
-                        companyName: profileResponse.data.companyName || "N/A"
-                    });
+               if (profileResponse.data) {
+    setUser({
+        fullName: profileResponse.data.fullName || localStorage.getItem('userName') || "User",
+        email: userEmail,
+        profilePic: profileResponse.data.profilePic || localStorage.getItem('userPhoto'),
+        
+        // Backend එකෙන් එවන Key එක සහ Frontend එකේ පෙන්වන Key එක ගැලපිය යුතුයි
+        role: profileResponse.data.orgRole || "Not Assigned", 
+        companyName: profileResponse.data.companyName || "N/A"
+    });
 
                     if (profileResponse.data.profilePic) {
                         localStorage.setItem('userPhoto', profileResponse.data.profilePic);
