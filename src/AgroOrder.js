@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import logo from './logo.png'; 
 import UserDashboardNavbar from './UserDashboardNavbar';
-import axios from 'axios';
+import API from './api';
 import backgroundImage from './assets/customerdashboard.jpg';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
@@ -14,7 +14,9 @@ const AgroOrder = () => {
     const [invoice, setInvoice] = useState(null);
     const [invoiceBase64, setInvoiceBase64] = useState("");
     const [orders, setOrders] = useState([]);
-    const API_BASE = "https://eprbackend-production.up.railway.app/api";
+    //const API_BASE = "https://eprbackend-production.up.railway.app/api";
+    const BASE_URL = API.defaults.baseURL; // api.js එකේ ඇති URL එක ගනී
+    const ROOT_URL = BASE_URL.replace('/api', '');
 
     // 📄 PDF Report Generator (Same as other files)
     const generateReport = () => {
@@ -56,15 +58,16 @@ useEffect(() => {
                 userEmail = userEmail.trim().toLowerCase();
 
                 const [profileResponse, ordersResponse] = await Promise.all([
-                    axios.get(`${API_BASE}/users/profile/${userEmail}`),
-                    axios.get(`${API_BASE}/orders/user/${userEmail}/Agro-User`)
+                    API.get(`admin/users/profile/${userEmail}`),
+                    API.get(`admin/orders/user/${userEmail}/Agro-User`)
                 ]);
 
                 if (profileResponse.data) {
                     const photoToShow = profileResponse.data.profilePic || localStorage.getItem('userPhoto');
 
                     setUser({
-                        fullName: localStorage.getItem('userName') || "User",
+                       // fullName: localStorage.getItem('userName') || "User",
+                        fullName: profileResponse.data.fullName || profileResponse.data.contactPersonName || localStorage.getItem('userName') || "User",
                         email: userEmail,
                         profilePic: photoToShow, 
                         role: profileResponse.data.orgRole || "Not Assigned",
@@ -110,7 +113,7 @@ const removeInvoice = (e) => {
 
 
 // --- handleSubmit කොටස ---
-     const handleSubmit = async () => {
+const handleSubmit = async () => {
     if (!invoiceBase64) {
         alert("Please select an invoice!");
         return;
@@ -127,17 +130,15 @@ const removeInvoice = (e) => {
     };
 
     try {
-        const response = await axios.post(`${API_BASE}/orders/create`, orderData, {
-            headers: { 'Content-Type': 'application/json' }
-        });
+        // 🚀 API instance එක පාවිච්චි කිරීම නිසා URL එක කෙටි විය
+        const response = await API.post('/orders/create', orderData);
 
         if (response.status === 201) {
             alert("✅ Your Agro Invoice successfully saved!");
             setInvoice(null);
             setInvoiceBase64(""); 
             
-            // 👈 ප්ලාස්ටික් ඕඩර්ස් රීෆ්‍රෙෂ් කරන්න මෙතනත් 'Agro-User' දාන්න
-            const ordersResponse = await axios.get(`${API_BASE}/orders/user/${user.email}/Agro-User`);
+            const ordersResponse = await API.get(`/orders/user/${user.email}/Agro-User`);
             setOrders(ordersResponse.data);
             setActiveTab('VIEW ORDER DETAILS');
         }
@@ -146,7 +147,6 @@ const removeInvoice = (e) => {
         alert("❌ Failed to save! " + (error.response?.data?.error || ""));
     }
 };
-
 
     const tabs = ["ORDER QR", "ORDER PRODUCTS", "VIEW ORDER DETAILS"];
 
@@ -323,10 +323,13 @@ const removeInvoice = (e) => {
         </span>
 
         {/* ✅ Admin විසින් QR එක එවා ඇත්නම් පමණක් Download Button එක පෙන්වයි */}
-        {order.status === 'QR Sent' && order.qrZipFile && (
-            <button 
-                onClick={() => window.open(`https://eprbackend-production.up.railway.app/${order.qrZipFile.replace(/\\/g, '/')}`, '_blank')}
-                style={{
+        {order.status === 'QR Sent' && (order.qrZipFile || order.qrZipUrl) && (
+    <button 
+        onClick={() => {
+            const downloadPath = order.qrZipUrl || `${ROOT_URL}/${order.qrZipFile.replace(/\\/g, '/')}`; 
+            window.open(downloadPath, '_blank');
+        }}
+               style={{
                     padding: '5px 12px',
                     background: '#3498db',
                     color: 'white',
