@@ -57,10 +57,19 @@ useEffect(() => {
             if (userEmail) {
                 userEmail = userEmail.trim().toLowerCase();
 
-                const [profileResponse, ordersResponse] = await Promise.all([
-                    API.get(`customers/users/profile/${userEmail}`),
-                    API.get(`orders/user/${userEmail}/Agro-User`)
-                ]);
+                
+
+// AgroOrder.js ඇතුළේ මෙලෙස වෙනස් කරන්න
+const [profileResponse, ordersResponse] = await Promise.all([
+    API.get(`customers/users/profile/${userEmail}`), // මෙතන 'customers/' කෑල්ල අනිවාර්යයි
+    API.get(`orders/user/${userEmail}/Agro-User`)
+]);
+
+
+
+
+
+
 
                 if (profileResponse.data) {
                     const photoToShow = profileResponse.data.profilePic || localStorage.getItem('userPhoto');
