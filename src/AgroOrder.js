@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import logo from './logo.png'; 
 import UserDashboardNavbar from './UserDashboardNavbar';
-import API from './api';
+import API from './api'; // ✅ axios වෙනුවට අපේ API instance එක ගත්තා
 import backgroundImage from './assets/customerdashboard.jpg';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
@@ -15,7 +15,7 @@ const AgroOrder = () => {
     const [invoiceBase64, setInvoiceBase64] = useState("");
     const [orders, setOrders] = useState([]);
 
-    // 📄 PDF Report Generator (Same as other files)
+    // 📄 PDF Report Generator
     const generateReport = () => {
         const doc = new jsPDF();
         doc.setFontSize(18);
@@ -45,105 +45,101 @@ const AgroOrder = () => {
         doc.save(`Agro_Order_History_${user.companyName}.pdf`);
     };
 
-    
-    // AgroOrder.js user data fetching with useEffect
-useEffect(() => {
-    const fetchUserData = async () => {
-        try {
-            let userEmail = localStorage.getItem('userEmail');
-            if (userEmail) {
-                userEmail = userEmail.trim().toLowerCase();
+    // 🔄 User Data Fetching Section
+    useEffect(() => {
+        const fetchUserData = async () => {
+            try {
+                let userEmail = localStorage.getItem('userEmail');
+                if (userEmail) {
+                    userEmail = userEmail.trim().toLowerCase();
 
-                const [profileResponse, ordersResponse] = await Promise.all([
-                    API.get('customers/users/profile/' + userEmail),
-                    API.get(`orders/user/${userEmail}/Agro-User`)
-                ]);
+                    // ✅ URL පථ නිවැරදි කර ඇත: 'customers/' සහ 'orders/' ඉස්සරහින් '/' නැතිව
+                    const [profileResponse, ordersResponse] = await Promise.all([
+                        API.get(`customers/users/profile/${userEmail}`),
+                        API.get(`orders/user/${userEmail}/Agro-User`)
+                    ]);
 
-                if (profileResponse.data) {
-                    const photoToShow = profileResponse.data.profilePic || localStorage.getItem('userPhoto');
+                    if (profileResponse.data) {
+                        // Backend එකෙන් ලැබෙන orgRole සහ companyName මෙතනට සම්බන්ධ වේ
+                        setUser({
+                            fullName: localStorage.getItem('userName') || "User",
+                            email: userEmail,
+                            profilePic: profileResponse.data.profilePic || localStorage.getItem('userPhoto'), 
+                            role: profileResponse.data.orgRole || "Not Assigned",
+                            companyName: profileResponse.data.companyName || "N/A"
+                        });
 
-                    setUser({
-                        fullName: localStorage.getItem('userName') || "User",
-                        email: userEmail,
-                        profilePic: photoToShow, 
-                        role: profileResponse.data.orgRole || "Not Assigned",
-                        companyName: profileResponse.data.companyName || "N/A"
-                    });
+                        if (profileResponse.data.profilePic) {
+                            localStorage.setItem('userPhoto', profileResponse.data.profilePic);
+                        }
+                    }
 
-                    if (profileResponse.data.profilePic) {
-                        localStorage.setItem('userPhoto', profileResponse.data.profilePic);
+                    if (ordersResponse.data) {
+                        setOrders(ordersResponse.data);
                     }
                 }
+            } catch (error) {
+                console.error("Fetch error details:", error.response?.data || error.message);
+            }
+        };
+        fetchUserData();
+    }, []);
+      
+    // 📂 Invoice Upload Functions
+    const handleInvoiceUpload = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            setInvoice(file);
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setInvoiceBase64(reader.result); 
+            };
+            reader.readAsDataURL(file);
+        }
+    };
 
-                if (ordersResponse.data) {
-                    setOrders(ordersResponse.data);
-                }
+    const removeInvoice = (e) => {
+        e.preventDefault(); 
+        setInvoice(null);
+        setInvoiceBase64(""); 
+    };
+
+    // 📤 Order Submission
+    const handleSubmit = async () => {
+        if (!invoiceBase64) {
+            alert("Please select an invoice!");
+            return;
+        }
+
+        const orderData = {
+            invNum: 'INV-' + Date.now().toString().slice(-6),
+            company: user.companyName,
+            role: user.role,
+            officialEmail: user.email,
+            invoiceFile: invoiceBase64, 
+            orderType: activeTab,
+            division: 'Agro-User' 
+        };
+
+        try {
+            // ✅ API.post භාවිතා කර ඇති බැවින් Token එක Header එකට ඉබේම ඇතුළත් වේ
+            const response = await API.post(`orders/create`, orderData);
+
+            if (response.status === 201) {
+                alert("✅ Your Agro Invoice successfully saved!");
+                setInvoice(null);
+                setInvoiceBase64(""); 
+                
+                // Refresh orders
+                const ordersResponse = await API.get(`orders/user/${user.email}/Agro-User`);
+                setOrders(ordersResponse.data);
+                setActiveTab('VIEW ORDER DETAILS');
             }
         } catch (error) {
-            console.error("Fetch error details:", error.response?.data || error.message);
+            console.error("Upload Error:", error.response?.data || error.message);
+            alert("❌ Failed to save! " + (error.response?.data?.error || ""));
         }
     };
-    fetchUserData();
-}, []);
-      
-   // 3. Invoice Upload and remove Functions................................................................................
-const handleInvoiceUpload = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-        setInvoice(file);
-        
-        // 💡 පීඩීඑෆ් එක String එකක් (Base64) බවට පත් කරන කොටස
-        const reader = new FileReader();
-        reader.onloadend = () => {
-            setInvoiceBase64(reader.result); 
-        };
-        reader.readAsDataURL(file);
-    }
-};
-
-const removeInvoice = (e) => {
-    e.preventDefault(); 
-    setInvoice(null);
-    setInvoiceBase64(""); 
-};
-
-
-// --- handleSubmit කොටස ---
-     const handleSubmit = async () => {
-    if (!invoiceBase64) {
-        alert("Please select an invoice!");
-        return;
-    }
-
-    const orderData = {
-        invNum: 'INV-' + Date.now().toString().slice(-6),
-        company: user.companyName,
-        role: user.role,
-        officialEmail: user.email,
-        invoiceFile: invoiceBase64, 
-        orderType: activeTab,
-        division: 'Agro-User' 
-    };
-
-  try {
-        const response = await API.post(`orders/create`, orderData);
-
-        if (response.status === 201) {
-            alert("✅ Your Agro Invoice successfully saved!");
-            setInvoice(null);
-            setInvoiceBase64(""); 
-            
-            // ✅ වෙනස 2: Orders refresh කරන URL එකත් API හරහා නිවැරදි කිරීම
-            const ordersResponse = await API.get(`orders/user/${user.email}/Agro-User`);
-            setOrders(ordersResponse.data);
-            setActiveTab('VIEW ORDER DETAILS');
-        }
-    } catch (error) {
-        // 💡 Error එක හරියටම බලාගන්න මේක වැදගත්
-        console.error("Upload Error:", error.response?.data || error.message);
-        alert("❌ Failed to save! " + (error.response?.data?.error || ""));
-    }
-};
 
     const tabs = ["ORDER QR", "ORDER PRODUCTS", "VIEW ORDER DETAILS"];
 
@@ -163,7 +159,7 @@ const removeInvoice = (e) => {
                 `}
             </style>
 
-            {/* 1. Header Section */}
+            {/* Header Section */}
             <div style={styles.topBar} className="top-bar">
                 <div style={styles.logoArea}>
                     <div style={{...styles.logoCircle, border: '3px solid #27ae60'}}>
@@ -192,7 +188,7 @@ const removeInvoice = (e) => {
 
             <hr style={styles.divider} />
 
-            {/* 2. Navigation Cards */}
+            {/* Navigation Cards */}
             <div style={styles.tabGrid} className="tab-grid">
                 {tabs.map((tab) => (
                     <div 
@@ -208,18 +204,14 @@ const removeInvoice = (e) => {
                         <span style={{ fontSize: '24px', marginBottom: '10px' }}>
                             {tab === "ORDER QR" ? "📱" : tab === "ORDER PRODUCTS" ? "🌱" : "📋"}
                         </span>
-                        <span style={{
-                            color: activeTab === tab ? '#27ae60' : '#fff',
-                            fontWeight: 'bold',
-                            fontSize: '13px'
-                        }}>
+                        <span style={{ color: activeTab === tab ? '#27ae60' : '#fff', fontWeight: 'bold', fontSize: '13px' }}>
                             {tab}
                         </span>
                     </div>
                 ))}
             </div>
 
-            {/* 3. Content Area */}
+            {/* Content Area */}
             <div style={styles.content}>
                 {activeTab !== 'VIEW ORDER DETAILS' ? (
                     <>
@@ -278,9 +270,6 @@ const removeInvoice = (e) => {
                                 </button>
                             )}
                         </div>
-                         <div style={styles.countBadge}>
-                            Total Orders: <span style={{color: '#f1c40f'}}>{orders.length}</span>
-                        </div>
                         
                         {orders.length > 0 ? (
                             <div style={{overflowX: 'auto'}}>
@@ -293,7 +282,7 @@ const removeInvoice = (e) => {
                                             <th style={styles.th}>Status</th>
                                         </tr>
                                     </thead>
-                                      <tbody>
+                                    <tbody>
                                         {orders.map((order, index) => (
                                             <tr key={index} style={styles.tableRow}>
                                                 <td style={styles.td}>
@@ -309,42 +298,31 @@ const removeInvoice = (e) => {
                                                     </span>
                                                 </td>
                                                 <td style={styles.td}>
-    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-        {/* Status එක පෙන්වන කොටස (Status එක අනුව පාට වෙනස් වේ) */}
-        <span style={{ 
-            color: order.status === 'Approved' ? '#00f2fe' : 
-                   order.status === 'QR Sent' ? '#3498db' : '#f1c40f', 
-            fontWeight: 'bold' 
-        }}>
-            {order.status || 'Pending'}
-        </span>
+                                                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                                        <span style={{ 
+                                                            color: order.status === 'Approved' ? '#00f2fe' : 
+                                                                   order.status === 'QR Sent' ? '#3498db' : '#f1c40f', 
+                                                            fontWeight: 'bold' 
+                                                        }}>
+                                                            {order.status || 'Pending'}
+                                                        </span>
 
-        {/* ✅ Admin විසින් QR එක එවා ඇත්නම් පමණක් Download Button එක පෙන්වයි */}
-       {order.status === 'QR Sent' && order.qrZipUrl && ( // ✅ qrZipFile වෙනුවට qrZipUrl බලන්න
-    <button 
-        onClick={() => window.open(order.qrZipUrl, '_blank')} // ✅ කෙලින්ම Cloudinary URL එක open කරන්න
-        style={{
-                    padding: '5px 12px',
-                    background: '#3498db',
-                    color: 'white',
-                    border: 'none',
-                    borderRadius: '6px',
-                    fontSize: '11px',
-                    fontWeight: 'bold',
-                    cursor: 'pointer',
-                    boxShadow: '0 2px 5px rgba(0,0,0,0.2)'
-                }}
-            >
-                 Download QR
-            </button>
-        )}
-    </div>
-</td>
- </tr>
-      ))}
-        </tbody>
-           </table>
-                </div>
+                                                        {/* ✅ Cloudinary URL එක හරහා QR එක Download කිරීම */}
+                                                        {order.status === 'QR Sent' && order.qrZipUrl && (
+                                                            <button 
+                                                                onClick={() => window.open(order.qrZipUrl, '_blank')}
+                                                                style={styles.qrDownloadBtn}
+                                                            >
+                                                                Download QR
+                                                            </button>
+                                                        )}
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
                         ) : (
                             <p style={{textAlign: 'center', color: '#777', padding: '20px'}}>No Agro order history found.</p>
                         )}
@@ -361,17 +339,9 @@ const removeInvoice = (e) => {
     );
 };
 
+// Styles remain mostly same, with minor fixes
 const styles = {
-    container: { 
-        padding: window.innerWidth <= 600 ? '20px 15px' : '30px 50px', 
-        minHeight: '100vh', 
-        color: '#fff', 
-        fontFamily: "'Inter', sans-serif",
-        backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.48), rgba(0, 0, 0, 0.48)), url(${backgroundImage})`, 
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundAttachment: 'fixed'
-    },
+    container: { padding: '30px 50px', minHeight: '100vh', color: '#fff', fontFamily: "'Inter', sans-serif", backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.48), rgba(0, 0, 0, 0.48)), url(${backgroundImage})`, backgroundSize: 'cover', backgroundPosition: 'center', backgroundAttachment: 'fixed' },
     topBar: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px' },
     logoArea: { display: 'flex', alignItems: 'center', gap: '20px' },
     logoCircle: { width: '120px', height: '120px', background: '#fff', borderRadius: '50%', display: 'flex', justifyContent: 'center', alignItems: 'center' },
@@ -390,29 +360,26 @@ const styles = {
     tabBtn: { display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '20px', borderRadius: '20px', border: '1px solid rgba(255, 255, 255, 0.1)', cursor: 'pointer', transition: '0.3s ease', backdropFilter: 'blur(5px)' },
     content: { background: 'rgba(20, 20, 20, 0.8)', padding: '30px', borderRadius: '25px', border: '1px solid rgba(255, 255, 255, 0.1)', backdropFilter: 'blur(10px)' },
     qrGrid: { display: 'flex', gap: '25px', flexWrap: 'wrap', justifyContent: 'center' },
-    qrCard: { background: 'rgba(255, 255, 255, 0.03)', padding: '30px', borderRadius: '20px', border: '1px solid rgba(255, 255, 255, 0.1)', width: '400px', textAlign: 'center', backdropFilter: 'blur(5px)' },
+    qrCard: { background: 'rgba(255, 255, 255, 0.03)', padding: '30px', borderRadius: '20px', border: '1px solid rgba(255, 255, 255, 0.1)', width: '400px', textAlign: 'center' },
     cardTitle: { fontSize: '18px', color: '#fff', marginBottom: '20px', borderBottom: '1px solid rgba(255, 255, 255, 0.1)', paddingBottom: '10px' },
     infoRow: { display: 'flex', justifyContent: 'space-between', marginBottom: '15px', fontSize: '15px' },
     infoLabel: { color: '#bbb' },
-      typeQR: { background: 'rgba(139, 230, 145, 0.2)', color: '#27ae60', padding: '3px 8px', borderRadius: '5px', fontSize: '11px' },
-    typeProduct: { background: 'rgba(52, 152, 219, 0.2)', color: '#3498db', padding: '3px 8px', borderRadius: '5px', fontSize: '11px' },
-
-
     infoValue: { fontWeight: 'bold', color: '#fff' },
-    qrPlaceholder: { maxWidth: '400px', margin: '20px auto', padding: '30px', background: 'rgba(0, 0, 0, 0.3)', borderRadius: '20px', border: '1px solid rgba(255, 255, 255, 0.1)' },
+    typeQR: { background: 'rgba(139, 230, 145, 0.2)', color: '#27ae60', padding: '3px 8px', borderRadius: '5px', fontSize: '11px' },
+    typeProduct: { background: 'rgba(52, 152, 219, 0.2)', color: '#3498db', padding: '3px 8px', borderRadius: '5px', fontSize: '11px' },
+    qrPlaceholder: { maxWidth: '400px', margin: '20px auto', padding: '30px', background: 'rgba(0, 0, 0, 0.3)', borderRadius: '20px' },
     qrBox: { fontSize: '32px', fontWeight: 'bold' },
-    uploadArea: { display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', border: '2px dashed rgba(255, 255, 255, 0.2)', borderRadius: '15px', padding: '30px', cursor: 'pointer', transition: '0.3s' },
+    uploadArea: { display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', border: '2px dashed rgba(255, 255, 255, 0.2)', borderRadius: '15px', padding: '30px', cursor: 'pointer' },
     submitBtn: { width: '100%', maxWidth: '400px', padding: '12px', border: 'none', borderRadius: '10px', color: '#fff', fontWeight: 'bold', cursor: 'pointer' },
     footer: { marginTop: '40px', textAlign: 'center' },
     backBtn: { padding: '12px 25px', background: 'transparent', color: '#e74c3c', border: '2px solid #e74c3c', borderRadius: '12px', cursor: 'pointer', fontWeight: 'bold' },
     table: { width: '100%', borderCollapse: 'collapse', marginTop: '10px' },
     tableHeader: { borderBottom: '2px solid #27ae60', textAlign: 'left' },
     th: { padding: '12px', color: '#27ae60', fontSize: '14px' },
-    countBadge: { background: 'rgba(255, 255, 255, 0.05)', padding: '8px 15px', borderRadius: '8px', display: 'inline-block', marginBottom: '15px', fontSize: '14px' },
-
     td: { padding: '12px', borderBottom: '1px solid rgba(255, 255, 255, 0.05)', fontSize: '13px' },
-    tableRow: { transition: '0.3s', cursor: 'default' },
-    reportBtn: { background: '#27ae60', color: '#fff', border: 'none', padding: '10px 20px', borderRadius: '10px', cursor: 'pointer', fontWeight: 'bold' }
+    tableRow: { transition: '0.3s' },
+    reportBtn: { background: '#27ae60', color: '#fff', border: 'none', padding: '10px 20px', borderRadius: '10px', cursor: 'pointer', fontWeight: 'bold' },
+    qrDownloadBtn: { padding: '5px 12px', background: '#3498db', color: 'white', border: 'none', borderRadius: '6px', fontSize: '11px', fontWeight: 'bold', cursor: 'pointer' }
 };
 
 export default AgroOrder;
