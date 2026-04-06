@@ -14,9 +14,6 @@ const AgroOrder = () => {
     const [invoice, setInvoice] = useState(null);
     const [invoiceBase64, setInvoiceBase64] = useState("");
     const [orders, setOrders] = useState([]);
-    //const API_BASE = "https://eprbackend-production.up.railway.app/api";
-    const BASE_URL = API.defaults.baseURL; // api.js එකේ ඇති URL එක ගනී
-    const ROOT_URL = BASE_URL.replace('/api', '');
 
     // 📄 PDF Report Generator (Same as other files)
     const generateReport = () => {
@@ -57,24 +54,21 @@ useEffect(() => {
             if (userEmail) {
                 userEmail = userEmail.trim().toLowerCase();
 
-                
-// AgroOrder.js ඇතුළේ මෙලෙස වෙනස් කරන්න
-const [profileResponse, ordersResponse] = await Promise.all([
-    API.get(`customers/users/profile/${userEmail}`), // මෙතන 'customers/' කෑල්ල අනිවාර්යයි
-    API.get(`orders/user/${userEmail}/Agro-User`)
-]);
+                const [profileResponse, ordersResponse] = await Promise.all([
+                    API.get(`customers/users/profile/${userEmail}`),
+                    API.get(`/orders/user/${userEmail}/Agro-User`)
+                ]);
 
+                if (profileResponse.data) {
+                    const photoToShow = profileResponse.data.profilePic || localStorage.getItem('userPhoto');
 
-               if (profileResponse.data) {
-    setUser({
-        fullName: profileResponse.data.fullName || localStorage.getItem('userName') || "User",
-        email: userEmail,
-        profilePic: profileResponse.data.profilePic || localStorage.getItem('userPhoto'),
-        
-        // Backend එකෙන් එවන Key එක සහ Frontend එකේ පෙන්වන Key එක ගැලපිය යුතුයි
-        role: profileResponse.data.orgRole || "Not Assigned", 
-        companyName: profileResponse.data.companyName || "N/A"
-    });
+                    setUser({
+                        fullName: localStorage.getItem('userName') || "User",
+                        email: userEmail,
+                        profilePic: photoToShow, 
+                        role: profileResponse.data.orgRole || "Not Assigned",
+                        companyName: profileResponse.data.companyName || "N/A"
+                    });
 
                     if (profileResponse.data.profilePic) {
                         localStorage.setItem('userPhoto', profileResponse.data.profilePic);
@@ -86,7 +80,7 @@ const [profileResponse, ordersResponse] = await Promise.all([
                 }
             }
         } catch (error) {
-            console.error("Fetch error:", error);
+            console.error("Fetch error details:", error.response?.data || error.message);
         }
     };
     fetchUserData();
@@ -115,7 +109,7 @@ const removeInvoice = (e) => {
 
 
 // --- handleSubmit කොටස ---
-const handleSubmit = async () => {
+     const handleSubmit = async () => {
     if (!invoiceBase64) {
         alert("Please select an invoice!");
         return;
@@ -131,20 +125,21 @@ const handleSubmit = async () => {
         division: 'Agro-User' 
     };
 
-    try {
-        // 🚀 API instance එක පාවිච්චි කිරීම නිසා URL එක කෙටි විය
-        const response = await API.post('/orders/create', orderData);
+  try {
+        const response = await API.post(`orders/create`, orderData);
 
         if (response.status === 201) {
             alert("✅ Your Agro Invoice successfully saved!");
             setInvoice(null);
             setInvoiceBase64(""); 
             
-            const ordersResponse = await API.get(`/orders/user/${user.email}/Agro-User`);
+            // ✅ වෙනස 2: Orders refresh කරන URL එකත් API හරහා නිවැරදි කිරීම
+            const ordersResponse = await API.get(`orders/user/${user.email}/Agro-User`);
             setOrders(ordersResponse.data);
             setActiveTab('VIEW ORDER DETAILS');
         }
     } catch (error) {
+        // 💡 Error එක හරියටම බලාගන්න මේක වැදගත්
         console.error("Upload Error:", error.response?.data || error.message);
         alert("❌ Failed to save! " + (error.response?.data?.error || ""));
     }
@@ -325,13 +320,10 @@ const handleSubmit = async () => {
         </span>
 
         {/* ✅ Admin විසින් QR එක එවා ඇත්නම් පමණක් Download Button එක පෙන්වයි */}
-        {order.status === 'QR Sent' && (order.qrZipFile || order.qrZipUrl) && (
+       {order.status === 'QR Sent' && order.qrZipUrl && ( // ✅ qrZipFile වෙනුවට qrZipUrl බලන්න
     <button 
-        onClick={() => {
-            const downloadPath = order.qrZipUrl || `${ROOT_URL}/${order.qrZipFile.replace(/\\/g, '/')}`; 
-            window.open(downloadPath, '_blank');
-        }}
-               style={{
+        onClick={() => window.open(order.qrZipUrl, '_blank')} // ✅ කෙලින්ම Cloudinary URL එක open කරන්න
+        style={{
                     padding: '5px 12px',
                     background: '#3498db',
                     color: 'white',
