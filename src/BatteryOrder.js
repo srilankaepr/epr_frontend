@@ -14,10 +14,9 @@ const BatteryOrder = () => {
     const [invoice, setInvoice] = useState(null);
     const [invoiceBase64, setInvoiceBase64] = useState("");
     const [orders, setOrders] = useState([]);
-
-    // 📄 PDF Report Generator (Same features as Electronic/Solar)
     const generateReport = () => {
-        const doc = new jsPDF();
+    const doc = new jsPDF();
+
         doc.setFontSize(18);
         doc.text("Battery Order History Report", 14, 20);
         doc.setFontSize(11);
@@ -45,7 +44,6 @@ const BatteryOrder = () => {
         doc.save(`Battery_Order_History_${user.companyName}.pdf`);
     };
 
- // BatteryOrder.js user data fetching with useEffect
 useEffect(() => {
     const fetchUserData = async () => {
         try {
@@ -85,13 +83,12 @@ useEffect(() => {
     fetchUserData();
 }, []);
 
-      // 3. Invoice Upload and remove Functions................................................................................
+      // 3. Invoice Upload and remove Functions
 const handleInvoiceUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
         setInvoice(file);
         
-        // 💡 පීඩීඑෆ් එක String එකක් (Base64) බවට පත් කරන කොටස
         const reader = new FileReader();
         reader.onloadend = () => {
             setInvoiceBase64(reader.result); 
@@ -107,8 +104,7 @@ const removeInvoice = (e) => {
 };
 
 
-// --- handleSubmit කොටස ---
-
+// handleSubmit
     const handleSubmit = async () => {
     if (!invoiceBase64) {
         alert("Please select an invoice!");
@@ -133,7 +129,6 @@ const removeInvoice = (e) => {
             setInvoice(null);
             setInvoiceBase64(""); 
             
-            // 👈 ප්ලාස්ටික් ඕඩර්ස් රීෆ්‍රෙෂ් කරන්න මෙතනත් 'Battery-User' දාන්න
                 const ordersResponse = await API.get(`orders/user/${user.email}/Battery-User`);
             setOrders(ordersResponse.data);
             setActiveTab('VIEW ORDER DETAILS');
@@ -309,7 +304,6 @@ const removeInvoice = (e) => {
                                                 </td>
                                               <td style={styles.td}>
     <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-        {/* Status එක පෙන්වන කොටස (Status එක අනුව පාට වෙනස් වේ) */}
         <span style={{ 
             color: order.status === 'Approved' ? '#00f2fe' : 
                    order.status === 'QR Sent' ? '#3498db' : '#f1c40f', 
@@ -318,24 +312,13 @@ const removeInvoice = (e) => {
             {order.status || 'Pending'}
         </span>
 
-        {/* ✅ Admin විසින් QR එක එවා ඇත්නම් පමණක් Download Button එක පෙන්වයි */}
         {order.status === 'QR Sent' && order.qrZipFile && (
             <button 
-            onClick={() => window.open(order.qrZipUrl, '_blank')}
-                style={{
-                    padding: '5px 12px',
-                    background: '#3498db',
-                    color: 'white',
-                    border: 'none',
-                    borderRadius: '6px',
-                    fontSize: '11px',
-                    fontWeight: 'bold',
-                    cursor: 'pointer',
-                    boxShadow: '0 2px 5px rgba(0,0,0,0.2)'
-                }}
-            >
-                 Download QR
-            </button>
+                onClick={() => window.open(order.qrZipUrl, '_blank')}
+                 style={styles.qrDownloadBtn}
+             >
+             Download QR
+           </button>
         )}
     </div>
 </td>
@@ -361,16 +344,7 @@ const removeInvoice = (e) => {
 };
 
 const styles = {
-    container: { 
-        padding: window.innerWidth <= 600 ? '20px 15px' : '30px 50px', 
-        minHeight: '100vh', 
-        color: '#fff', 
-        fontFamily: "'Inter', sans-serif",
-        backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.48), rgba(0, 0, 0, 0.48)), url(${backgroundImage})`, 
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundAttachment: 'fixed'
-    },
+    container: {  padding: window.innerWidth <= 600 ? '20px 15px' : '30px 50px',  minHeight: '100vh',  color: '#fff',  fontFamily: "'Inter', sans-serif", backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.48), rgba(0, 0, 0, 0.48)), url(${backgroundImage})`,  backgroundSize: 'cover', backgroundPosition: 'center', backgroundAttachment: 'fixed' },
     topBar: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px' },
     logoArea: { display: 'flex', alignItems: 'center', gap: '20px' },
     logoCircle: { width: '120px', height: '120px', background: '#fff', borderRadius: '50%', display: 'flex', justifyContent: 'center', alignItems: 'center' },
@@ -402,14 +376,15 @@ const styles = {
     backBtn: { padding: '12px 25px', background: 'transparent', color: '#e74c3c', border: '2px solid #e74c3c', borderRadius: '12px', cursor: 'pointer', fontWeight: 'bold' },
     table: { width: '100%', borderCollapse: 'collapse', marginTop: '10px' },
     tableHeader: { borderBottom: '2px solid #e67e22', textAlign: 'left' },
-        countBadge: { background: 'rgba(255, 255, 255, 0.05)', padding: '8px 15px', borderRadius: '8px', display: 'inline-block', marginBottom: '15px', fontSize: '14px' },
-
+    countBadge: { background: 'rgba(255, 255, 255, 0.05)', padding: '8px 15px', borderRadius: '8px', display: 'inline-block', marginBottom: '15px', fontSize: '14px' },
     th: { padding: '12px', color: '#e67e22', fontSize: '14px' },
     td: { padding: '12px', borderBottom: '1px solid rgba(255, 255, 255, 0.05)', fontSize: '13px' },
     tableRow: { transition: '0.3s' },
     reportBtn: { background: '#e67e22', color: '#fff', border: 'none', padding: '10px 20px', borderRadius: '10px', cursor: 'pointer', fontWeight: 'bold' },
     typeQR: { background: 'rgba(241, 196, 15, 0.2)', color: '#f1c40f', padding: '3px 8px', borderRadius: '5px', fontSize: '11px' },
+    qrDownloadBtn: { padding: '5px 12px', background: '#3498db', color: 'white', border: 'none', borderRadius: '6px', fontSize: '11px', fontWeight: 'bold', cursor: 'pointer' },
     typeProduct: { background: 'rgba(52, 152, 219, 0.2)', color: '#3498db', padding: '3px 8px', borderRadius: '5px', fontSize: '11px' }
 };
+
 
 export default BatteryOrder;

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import logo from './logo.png'; 
 import UserDashboardNavbar from './UserDashboardNavbar';
-import API from './api'; // ✅ axios වෙනුවට අපේ API instance එක ගත්තා
+import API from './api'; 
 import backgroundImage from './assets/customerdashboard.jpg';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
@@ -14,10 +14,9 @@ const AgroOrder = () => {
     const [invoice, setInvoice] = useState(null);
     const [invoiceBase64, setInvoiceBase64] = useState("");
     const [orders, setOrders] = useState([]);
-
-    // 📄 PDF Report Generator
     const generateReport = () => {
-        const doc = new jsPDF();
+    const doc = new jsPDF();
+
         doc.setFontSize(18);
         doc.text("Agro Order History Report", 14, 20);
         doc.setFontSize(11);
@@ -45,7 +44,6 @@ const AgroOrder = () => {
         doc.save(`Agro_Order_History_${user.companyName}.pdf`);
     };
 
-    // 🔄 User Data Fetching Section
     useEffect(() => {
         const fetchUserData = async () => {
             try {
@@ -53,14 +51,12 @@ const AgroOrder = () => {
                 if (userEmail) {
                     userEmail = userEmail.trim().toLowerCase();
 
-                    // ✅ URL පථ නිවැරදි කර ඇත: 'customers/' සහ 'orders/' ඉස්සරහින් '/' නැතිව
                     const [profileResponse, ordersResponse] = await Promise.all([
                         API.get(`customers/users/profile/${userEmail}`),
                         API.get(`orders/user/${userEmail}/Agro-User`)
                     ]);
 
                     if (profileResponse.data) {
-                        // Backend එකෙන් ලැබෙන orgRole සහ companyName මෙතනට සම්බන්ධ වේ
                         setUser({
                             fullName: localStorage.getItem('userName') || "User",
                             email: userEmail,
@@ -122,7 +118,6 @@ const AgroOrder = () => {
         };
 
         try {
-            // ✅ API.post භාවිතා කර ඇති බැවින් Token එක Header එකට ඉබේම ඇතුළත් වේ
             const response = await API.post(`orders/create`, orderData);
 
             if (response.status === 201) {
@@ -307,7 +302,6 @@ const AgroOrder = () => {
                                                             {order.status || 'Pending'}
                                                         </span>
 
-                                                        {/* ✅ Cloudinary URL එක හරහා QR එක Download කිරීම */}
                                                         {order.status === 'QR Sent' && order.qrZipUrl && (
                                                             <button 
                                                                 onClick={() => window.open(order.qrZipUrl, '_blank')}
