@@ -110,7 +110,7 @@ const removeInvoice = (e) => {
         alert("Please select an invoice!");
         return;
     }
-
+const today = new Date();
     const orderData = {
         invNum: 'INV-' + Date.now().toString().slice(-6),
         company: user.companyName,
