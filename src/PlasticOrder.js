@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import logo from './logo.png'; 
 import UserDashboardNavbar from './UserDashboardNavbar';
-import axios from 'axios';
+import API from './api'; 
 import backgroundImage from './assets/customerdashboard.jpg';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable'; 
@@ -14,10 +14,8 @@ const PlasticOrder = () => {
     const [invoice, setInvoice] = useState(null);
     const [invoiceBase64, setInvoiceBase64] = useState("");
     const [orders, setOrders] = useState([]);
-    const API_BASE = "https://eprbackend-production.up.railway.app/api";
-
     const generateReport = () => {
-        const doc = new jsPDF();
+    const doc = new jsPDF();
 
         doc.setFontSize(18);
         doc.text("Plastic Order History Report", 14, 20);
@@ -54,9 +52,10 @@ useEffect(() => {
             if (userEmail) {
                 userEmail = userEmail.trim().toLowerCase();
 
-                const [profileResponse, ordersResponse] = await Promise.all([
-                    axios.get(`${API_BASE}/users/profile/${userEmail}`),
-                    axios.get(`${API_BASE}/orders/user/${userEmail}/Plastic-User`)]);
+                 const [profileResponse, ordersResponse] = await Promise.all([
+                        API.get(`customers/users/profile/${userEmail}`),
+                        API.get(`orders/user/${userEmail}/Plastic-User`)
+                    ]);
 
                 if (profileResponse.data) {
                     const photoToShow = profileResponse.data.profilePic || localStorage.getItem('userPhoto');
@@ -86,13 +85,12 @@ useEffect(() => {
 }, []);
 
 
-   // 3. Invoice Upload and remove Functions................................................................................
+   // 3. Invoice Upload and remove Functions
 const handleInvoiceUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
         setInvoice(file);
         
-        // 💡 පීඩීඑෆ් එක String එකක් (Base64) බවට පත් කරන කොටස
         const reader = new FileReader();
         reader.onloadend = () => {
             setInvoiceBase64(reader.result); 
@@ -108,7 +106,7 @@ const removeInvoice = (e) => {
 };
 
 
-// --- handleSubmit කොටස ---
+//handleSubmit
    const handleSubmit = async () => {
     if (!invoiceBase64) {
         alert("Please select an invoice!");
@@ -126,17 +124,14 @@ const removeInvoice = (e) => {
     };
 
     try {
-        const response = await axios.post(`${API_BASE}/orders/create`, orderData, {
-            headers: { 'Content-Type': 'application/json' }
-        });
+        const response = await API.post(`orders/create`, orderData);
 
         if (response.status === 201) {
             alert("✅ Your Plastic Invoice successfully saved!");
             setInvoice(null);
             setInvoiceBase64(""); 
             
-            // 👈 ප්ලාස්ටික් ඕඩර්ස් රීෆ්‍රෙෂ් කරන්න මෙතනත් 'Plastic-User' දාන්න
-            const ordersResponse = await axios.get(`${API_BASE}/orders/user/${user.email}/Plastic-User`);
+            const ordersResponse = await API.get(`orders/user/${user.email}/Plastic-User`);
             setOrders(ordersResponse.data);
             setActiveTab('VIEW ORDER DETAILS');
         }
@@ -309,7 +304,6 @@ const removeInvoice = (e) => {
                                                 </td>
                                                 <td style={styles.td}>
     <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-        {/* Status එක පෙන්වන කොටස (Status එක අනුව පාට වෙනස් වේ) */}
         <span style={{ 
             color: order.status === 'Approved' ? '#00f2fe' : 
                    order.status === 'QR Sent' ? '#3498db' : '#f1c40f', 
@@ -318,24 +312,13 @@ const removeInvoice = (e) => {
             {order.status || 'Pending'}
         </span>
 
-        {/* ✅ Admin විසින් QR එක එවා ඇත්නම් පමණක් Download Button එක පෙන්වයි */}
         {order.status === 'QR Sent' && order.qrZipFile && (
             <button 
-                onClick={() => window.open(`https://eprbackend-production.up.railway.app/${order.qrZipFile.replace(/\\/g, '/')}`, '_blank')}
-                style={{
-                    padding: '5px 12px',
-                    background: '#3498db',
-                    color: 'white',
-                    border: 'none',
-                    borderRadius: '6px',
-                    fontSize: '11px',
-                    fontWeight: 'bold',
-                    cursor: 'pointer',
-                    boxShadow: '0 2px 5px rgba(0,0,0,0.2)'
-                }}
-            >
-                 Download QR
-            </button>
+                onClick={() => window.open(order.qrZipUrl, '_blank')}
+                 style={styles.qrDownloadBtn}
+             >
+             Download QR
+           </button>
         )}
     </div>
 </td>
@@ -361,16 +344,7 @@ const removeInvoice = (e) => {
 };
 
 const styles = {
-    container: { 
-        padding: window.innerWidth <= 600 ? '20px 15px' : '30px 50px', 
-        minHeight: '100vh', 
-        color: '#fff', 
-        fontFamily: "'Inter', sans-serif",
-        backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.48), rgba(0, 0, 0, 0.48)), url(${backgroundImage})`, 
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundAttachment: 'fixed'
-    },
+    container: {  padding: window.innerWidth <= 600 ? '20px 15px' : '30px 50px',  minHeight: '100vh',  color: '#fff',  fontFamily: "'Inter', sans-serif", backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.48), rgba(0, 0, 0, 0.48)), url(${backgroundImage})`,  backgroundSize: 'cover', backgroundPosition: 'center',backgroundAttachment: 'fixed' },
     topBar: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px' },
     logoArea: { display: 'flex', alignItems: 'center', gap: '20px' },
     logoCircle: { width: '120px', height: '120px', background: '#fff', borderRadius: '50%', display: 'flex', justifyContent: 'center', alignItems: 'center', border: '3px solid #00f2fe' },
@@ -407,6 +381,7 @@ const styles = {
     tableRow: { transition: '0.3s', cursor: 'default' },
     countBadge: { background: 'rgba(255, 255, 255, 0.05)', padding: '8px 15px', borderRadius: '8px', display: 'inline-block', marginBottom: '15px', fontSize: '14px' },
     typeQR: { background: 'rgba(46, 204, 113, 0.2)', color: '#00f2fe', padding: '3px 8px', borderRadius: '5px', fontSize: '11px' },
+    qrDownloadBtn: { padding: '5px 12px', background: '#3498db', color: 'white', border: 'none', borderRadius: '6px', fontSize: '11px', fontWeight: 'bold', cursor: 'pointer' },
     typeProduct: { background: 'rgba(52, 152, 219, 0.2)', color: '#3498db', padding: '3px 8px', borderRadius: '5px', fontSize: '11px' },
     reportBtn: { background: '#00f2fe', color: '#fff', border: 'none', padding: '10px 15px', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer', fontSize: '13px' },
 };

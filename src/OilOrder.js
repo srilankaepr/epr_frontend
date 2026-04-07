@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import logo from './logo.png'; 
 import UserDashboardNavbar from './UserDashboardNavbar';
-import axios from 'axios';
+import API from './api'; 
 import backgroundImage from './assets/customerdashboard.jpg'; 
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
@@ -14,11 +14,8 @@ const OilOrder = () => {
     const [invoice, setInvoice] = useState(null);
     const [invoiceBase64, setInvoiceBase64] = useState("");
     const [orders, setOrders] = useState([]);
-    const API_BASE = "https://eprbackend-production.up.railway.app/api";
-
-    // 📄 PDF Report Generator (Same as other files)
     const generateReport = () => {
-        const doc = new jsPDF();
+    const doc = new jsPDF();
         doc.setFontSize(18);
         doc.text("Oil Order History Report", 14, 20);
         doc.setFontSize(11);
@@ -40,7 +37,7 @@ const OilOrder = () => {
             body: tableRows,
             startY: 55,
             theme: 'striped',
-            headStyles: { fillColor: [149, 165, 166] } // Oil Theme Color
+            headStyles: { fillColor: [149, 165, 166] } 
         });
 
         doc.save(`Oil_Order_History_${user.companyName}.pdf`);
@@ -55,9 +52,9 @@ useEffect(() => {
                 userEmail = userEmail.trim().toLowerCase();
 
                 const [profileResponse, ordersResponse] = await Promise.all([
-                    axios.get(`${API_BASE}/users/profile/${userEmail}`),
-                    axios.get(`${API_BASE}/orders/user/${userEmail}/Oil-User`)
-                ]);
+                        API.get(`customers/users/profile/${userEmail}`),
+                        API.get(`orders/user/${userEmail}/Oil-User`)
+                    ]);
 
                 if (profileResponse.data) {
                     const photoToShow = profileResponse.data.profilePic || localStorage.getItem('userPhoto');
@@ -92,7 +89,6 @@ const handleInvoiceUpload = (e) => {
     if (file) {
         setInvoice(file);
         
-        // 💡 පීඩීඑෆ් එක String එකක් (Base64) බවට පත් කරන කොටස
         const reader = new FileReader();
         reader.onloadend = () => {
             setInvoiceBase64(reader.result); 
@@ -108,8 +104,7 @@ const removeInvoice = (e) => {
 };
 
 
-// --- handleSubmit කොටස ---
-
+// handleSubmit 
      const handleSubmit = async () => {
     if (!invoiceBase64) {
         alert("Please select an invoice!");
@@ -127,17 +122,14 @@ const removeInvoice = (e) => {
     };
 
     try {
-        const response = await axios.post(`${API_BASE}/orders/create`, orderData, {
-            headers: { 'Content-Type': 'application/json' }
-        });
+        const response = await API.post(`orders/create`, orderData);
 
         if (response.status === 201) {
             alert("✅ Your Oil Invoice successfully saved!");
             setInvoice(null);
             setInvoiceBase64(""); 
             
-            // 👈 ප්ලාස්ටික් ඕඩර්ස් රීෆ්‍රෙෂ් කරන්න මෙතනත් 'Oil-User' දාන්න
-            const ordersResponse = await axios.get(`${API_BASE}/orders/user/${user.email}/Oil-User`);
+            const ordersResponse = await API.get(`orders/user/${user.email}/Oil-User`);
             setOrders(ordersResponse.data);
             setActiveTab('VIEW ORDER DETAILS');
         }
@@ -311,7 +303,6 @@ const removeInvoice = (e) => {
                                                 </td>
                                                 <td style={styles.td}>
     <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-        {/* Status එක පෙන්වන කොටස (Status එක අනුව පාට වෙනස් වේ) */}
         <span style={{ 
             color: order.status === 'Approved' ? '#00f2fe' : 
                    order.status === 'QR Sent' ? '#3498db' : '#f1c40f', 
@@ -320,24 +311,13 @@ const removeInvoice = (e) => {
             {order.status || 'Pending'}
         </span>
 
-        {/* ✅ Admin විසින් QR එක එවා ඇත්නම් පමණක් Download Button එක පෙන්වයි */}
         {order.status === 'QR Sent' && order.qrZipFile && (
-            <button 
-                onClick={() => window.open(`https://eprbackend-production.up.railway.app/${order.qrZipFile.replace(/\\/g, '/')}`, '_blank')}
-                style={{
-                    padding: '5px 12px',
-                    background: '#3498db',
-                    color: 'white',
-                    border: 'none',
-                    borderRadius: '6px',
-                    fontSize: '11px',
-                    fontWeight: 'bold',
-                    cursor: 'pointer',
-                    boxShadow: '0 2px 5px rgba(0,0,0,0.2)'
-                }}
-            >
-                Download QR
-            </button>
+           <button 
+                onClick={() => window.open(order.qrZipUrl, '_blank')}
+                 style={styles.qrDownloadBtn}
+             >
+             Download QR
+           </button>
         )}
     </div>
 </td>
@@ -363,16 +343,7 @@ const removeInvoice = (e) => {
 };
 
 const styles = {
-    container: { 
-        padding: window.innerWidth <= 600 ? '20px 15px' : '30px 50px', 
-        minHeight: '100vh', 
-        color: '#fff', 
-        fontFamily: "'Inter', sans-serif",
-        backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.48), rgba(0, 0, 0, 0.48)), url(${backgroundImage})`, 
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundAttachment: 'fixed'
-    },
+    container: {   padding: window.innerWidth <= 600 ? '20px 15px' : '30px 50px',  minHeight: '100vh',  color: '#fff',  fontFamily: "'Inter', sans-serif", backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.48), rgba(0, 0, 0, 0.48)), url(${backgroundImage})`,  backgroundSize: 'cover', backgroundPosition: 'center', backgroundAttachment: 'fixed'},
     topBar: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px' },
     logoArea: { display: 'flex', alignItems: 'center', gap: '20px' },
     logoCircle: { width: '120px', height: '120px', background: '#fff', borderRadius: '50%', display: 'flex', justifyContent: 'center', alignItems: 'center' },
@@ -407,8 +378,8 @@ const styles = {
     th: { padding: '12px', color: '#95a5a6', fontSize: '14px' },
     td: { padding: '12px', borderBottom: '1px solid rgba(255, 255, 255, 0.05)', fontSize: '13px' },
     tableRow: { transition: '0.3s' },
-            countBadge: { background: 'rgba(255, 255, 255, 0.05)', padding: '8px 15px', borderRadius: '8px', display: 'inline-block', marginBottom: '15px', fontSize: '14px' },
-
+    countBadge: { background: 'rgba(255, 255, 255, 0.05)', padding: '8px 15px', borderRadius: '8px', display: 'inline-block', marginBottom: '15px', fontSize: '14px' },
+    qrDownloadBtn: { padding: '5px 12px', background: '#3498db', color: 'white', border: 'none', borderRadius: '6px', fontSize: '11px', fontWeight: 'bold', cursor: 'pointer' },
     reportBtn: { background: '#95a5a6', color: '#000', border: 'none', padding: '10px 20px', borderRadius: '10px', cursor: 'pointer', fontWeight: 'bold' },
     typeQR: { background: 'rgba(241, 196, 15, 0.2)', color: '#f1c40f', padding: '3px 8px', borderRadius: '5px', fontSize: '11px' },
     typeProduct: { background: 'rgba(52, 152, 219, 0.2)', color: '#3498db', padding: '3px 8px', borderRadius: '5px', fontSize: '11px' }
