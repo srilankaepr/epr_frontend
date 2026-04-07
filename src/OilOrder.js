@@ -110,7 +110,15 @@ const removeInvoice = (e) => {
         alert("Please select an invoice!");
         return;
     }
-const today = new Date();
+
+    const now = new Date();
+    const lankaDate = now.toLocaleDateString('en-CA'); 
+    const lankaTime = now.toLocaleTimeString('en-US', { 
+        hour: '2-digit', 
+        minute: '2-digit', 
+        hour12: true 
+    });
+    
     const orderData = {
         invNum: 'INV-' + Date.now().toString().slice(-6),
         company: user.companyName,
@@ -118,7 +126,10 @@ const today = new Date();
         officialEmail: user.email,
         invoiceFile: invoiceBase64, 
         orderType: activeTab,
-        division: 'Oil-User' 
+        division: 'Oil-User',
+            date: lankaDate,
+            time: lankaTime
+    
     };
 
     try {
