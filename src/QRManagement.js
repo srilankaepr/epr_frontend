@@ -90,7 +90,7 @@ const handleRegisterCompany = async () => {
     const registrationID = `REG-${year}-${formattedNumber}`;
 
     try {
-        const response = await API.post('/add-company', {
+        const response = await API.post('/qr/add-company', {
             name: nameUpper,
             email: emailLower,
             registrationId: registrationID
@@ -116,7 +116,7 @@ const deleteCompany = async (companyId) => {
   }
 
   try {
-    const response = await API.delete(`/delete-company/${companyId}`);
+    const response = await API.delete(`/qr/delete-company/${companyId}`);
 
     if (response.status === 200) {
       alert("Company deleted successfully!");
