@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import API from './api';
 import logo from './logo.png';
 import earthVideo from './assets/earth.mp4'; 
+import API from './api';
 
 const RegisterCustomer = () => {
     const location = useLocation(); 
@@ -20,9 +20,8 @@ const RegisterCustomer = () => {
         dob: '', 
         password: '', confirmPassword: ''
     });
-const [brcFile, setBrcFile] = useState(null);
-const [vatFile, setVatFile] = useState(null);
-const [billingFile, setBillingFile] = useState(null);
+
+const [fileStrings, setFileStrings] = useState({ brc: "", vat: "", billing: "" });
 
 const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -34,10 +33,21 @@ const handleChange = (e) => {
         return regex.test(number);
     };
 
-   const handleSubmit = async (e) => {
+const handleFileBase64 = (e, type) => {
+    const file = e.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+            setFileStrings(prev => ({ ...prev, [type]: reader.result }));
+        };
+        reader.readAsDataURL(file);
+    }
+};
+
+
+const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // 1. කලින් තිබුණ Validation ටික එහෙම්මම තියෙනවා
     if (formData.password !== formData.confirmPassword) {
         alert("❌ Passwords do not match!");
         return;
@@ -56,24 +66,15 @@ const handleChange = (e) => {
         return;
     }
 
-  const data = new FormData();
+    const finalPayload = {
+        ...formData,
+        brcFile: fileStrings.brc, 
+        vatFile: fileStrings.vat,
+        billingFile: fileStrings.billing
+    };
 
-    // 1. සාමාන්‍ය Form Data ටික ඇඩ් කරනවා
-    Object.keys(formData).forEach(key => {
-        data.append(key, formData[key]);
-    });
-
-    // 2. අලුත් ෆයිල් 3 වෙන වෙනම ඇඩ් කරනවා (අර පරණ loop එක වෙනුවට)
-    if (brcFile) data.append('brc', brcFile);
-    if (vatFile) data.append('vat', vatFile);
-    if (billingFile) data.append('billing', billingFile);
     try {
-        // 5. POST Request එක (මෙතන දැන් formData වෙනුවට 'data' කියන එක යවන්න)
-        const response = await API.post('/customers/register', data, {
-        headers: {
-            'Content-Type': 'multipart/form-data' 
-        }
-    });
+        const response = await API.post('/customers/register', finalPayload);
 
         if (response.status === 201) {
             alert("✅ Customer Registration Successful!");
@@ -126,7 +127,7 @@ const handleChange = (e) => {
             alignItems: 'center',
             justifyContent: 'center',
             gap: '12px',
-            cursor: 'not-allowed' 
+            cursor: 'not-allowed' // මේක වෙනස් කරන්න බෑ කියන්න මවුස් එක වෙනස් කරනවා
         }}>
             <span style={{fontSize: '22px'}}>♻️</span> RECYCLER
         </div>
@@ -276,11 +277,11 @@ const handleChange = (e) => {
     <label style={styles.label}>UPLOAD BRC (Business Registration)</label>
     <input 
         type="file" 
-        onChange={(e) => setBrcFile(e.target.files[0])} 
+        onChange={(e) => handleFileBase64(e, 'brc')} 
         style={styles.input}
         accept=".pdf,.jpg,.jpeg,.png"
     />
-    {brcFile && <p style={{ color: '#2ecc71', fontSize: '14px', marginTop: '5px' }}>✅ {brcFile.name} selected</p>}
+    {fileStrings.brc && <p style={{ color: '#2ecc71', fontSize: '14px', marginTop: '5px' }}>✅ BRC Document selected</p>}
 </div>
 
 {/* --- VAT Upload --- */}
@@ -288,11 +289,11 @@ const handleChange = (e) => {
     <label style={styles.label}>UPLOAD VAT DOCUMENT(include TIN)</label>
     <input 
         type="file" 
-        onChange={(e) => setVatFile(e.target.files[0])} 
+        onChange={(e) => handleFileBase64(e, 'vat')}
         style={styles.input}
         accept=".pdf,.jpg,.jpeg,.png"
     />
-    {vatFile && <p style={{ color: '#2ecc71', fontSize: '14px', marginTop: '5px' }}>✅ {vatFile.name} selected</p>}
+    {fileStrings.vat && <p style={{ color: '#2ecc71', fontSize: '14px', marginTop: '5px' }}>✅ VAT Document selected</p>}
 </div>
 
 {/* --- Billing Proof Upload --- */}
@@ -300,12 +301,12 @@ const handleChange = (e) => {
     <label style={styles.label}>UPLOAD BILLING PROOF (Electricity / Water)</label>
     <input 
         type="file" 
-        onChange={(e) => setBillingFile(e.target.files[0])} 
+        onChange={(e) => handleFileBase64(e, 'billing')}
         style={styles.input}
         accept=".pdf,.jpg,.jpeg,.png"
     />
-    {billingFile && <p style={{ color: '#2ecc71', fontSize: '14px', marginTop: '5px' }}>✅ {billingFile.name} selected</p>}
-</div>
+    {fileStrings.billing && <p style={{ color: '#2ecc71', fontSize: '14px', marginTop: '5px' }}>✅ Billing Proof selected</p>}
+</div>   
 
                     <button type="submit" style={styles.registerBtn}>SUBMIT FOR THE APPROVAL</button>
                 </form>
