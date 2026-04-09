@@ -85,11 +85,12 @@ const handleRegisterCompany = async () => {
         }
     }
 
+    // අංකය ඉලක්කම් 4ක් වන සේ (0001) සැකසීම
     const formattedNumber = String(nextNumber).padStart(4, '0');
     const registrationID = `REG-${year}-${formattedNumber}`;
 
     try {
-        const response = await API.post('/qr/add-company', {
+        const response = await API.post('/add-company', {
             name: nameUpper,
             email: emailLower,
             registrationId: registrationID
@@ -115,11 +116,11 @@ const deleteCompany = async (companyId) => {
   }
 
   try {
-    const response = await API.delete(`/qr/delete-company/${companyId}`);
+    const response = await API.delete(`/delete-company/${companyId}`);
 
     if (response.status === 200) {
       alert("Company deleted successfully!");
-      fetchCompanies();
+      fetchCompanies(); 
     } else {
       const errorData = await response.json();
       alert("Failed to delete company: " + (errorData.message || "Unknown error"));
@@ -139,32 +140,23 @@ const handleSaveProduct = async () => {
   }
 
   try {
-    const response = await fetch('https://eprbackend-production.up.railway.app/api/add-product', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
+    const response = await API.post('/qr/add-product', {
         category: prodCategory.trim().toUpperCase(),
         brand: prodBrand.trim().toUpperCase()
-      })
     });
 
-    if (response.ok) {
-      alert("Product Added Successfully!");
+   if (response.status === 200 || response.status === 201) {
+      alert("✅ Product Added Successfully!");
       setProdCategory('');
       setProdBrand('');
-      fetchProducts(); // Product list refresh කරන්න
-    } else {
-      alert("Failed to add product.");
-    }
+      fetchProducts(); 
+ }
   } catch (err) {
     console.error("Product save error:", err);
-    alert("Connection error with server.");
+    const errorMsg = err.response?.data?.error || "Failed to add product.";
+    alert(`❌ Error: ${errorMsg}`);
   }
 };
-
-
-
-
 
 
     // Logout
@@ -178,56 +170,47 @@ const handleSaveProduct = async () => {
     // Data Fetching
     const fetchCompanies = async () => {
         try {
-            const response = await fetch('https://eprbackend-production.up.railway.app/api/get-companies');
-            const data = await response.json();
-            setCompaniesList(data);
-        } catch (err) {
-            console.error("Error fetching companies:", err);
-        }
-    };
+          const response = await API.get('/qr/get-companies');
+        setCompaniesList(response.data); 
+    } catch (err) {
+        console.error("Error fetching companies:", err);
+    }
+};
 
     const fetchProducts = async () => {
         try {
-            const response = await fetch('https://eprbackend-production.up.railway.app/api/get-products');
-            const data = await response.json();
-            setProductList(data);
-        } catch (err) {
-            console.error("Error fetching products:", err);
+            const response = await API.get('/qr/get-products');
+        setProductList(response.data);
+    } catch (err) {
+        console.error("Error fetching products:", err);
         }
     };
 
     const fetchRegisteredQRs = async () => {
         try {
-            const response = await fetch('https://eprbackend-production.up.railway.app/api/qr-registrations/all');
-            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-            const data = await response.json();
-            console.log("Registered QRs:", data);
-            setRegisteredQRs(data);
-        } catch (err) {
-            console.error("Error fetching registered QRs:", err);
-        }
-    };
-
+          const response = await API.get('/qr/qr-registrations/all');
+        if (response.status !== 200) throw new Error(`HTTP error! status: ${response.status}`);
+        setRegisteredQRs(response.data);
+    } catch (err) {
+        console.error("Error fetching registered QRs:", err);
+    }
+};
    const fetchRecycleRequests = async () => {
         try {
-            const response = await fetch('https://eprbackend-production.up.railway.app/api/recycle-requests/all');
-            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-            const data = await response.json();
+            const response = await API.get('/qr/recycle-requests/all');
+        if (response.status !== 200) throw new Error(`HTTP error! status: ${response.status}`);
+        
+        const data = response.data;
             
             console.log("Recycle Requests:", data);
             setRecycleRequests(data);
 
-            // ✅ මේක තමයි අලුතින් එකතු කරන්න ඕනේ පියවර 2 ලොජික් එක
-            
-            // 1. Pending (තවමත් කලෙක්ට් කර නැති) ඒවා විතරක් පෙරලා ගන්නවා
-            const pendingRequests = data.filter(req => req.status === 'Pending');
+                        const pendingRequests = data.filter(req => req.status === 'Pending');
 
-            // 2. අලුත් ඒවා විතරක් Notification List එකට එකතු කරනවා
             pendingRequests.forEach(req => {
                 const isAlreadyInList = notifications.some(n => n.requestId === req._id);
                 if (!isAlreadyInList) {
                     setNotifications(prev => {
-                        // වැරදිලා හරි කලින් තිබුණොත් ආයේ දාන්නේ නැහැ (Duplicate වැළැක්වීමට)
                         if (prev.some(p => p.requestId === req._id)) return prev;
 
                         return [{
@@ -246,7 +229,6 @@ const handleSaveProduct = async () => {
                 }
             });
 
-            // 3. 🧹 පිරිසිදු කිරීම: කො-පාර්ට්නර් කලෙක්ට් කරපු ගමන් ලිස්ට් එකෙන් අයින් කරනවා
             setNotifications(prev => prev.filter(n => 
                 pendingRequests.some(r => r._id === n.requestId)
             ));
@@ -257,51 +239,40 @@ const handleSaveProduct = async () => {
     };
 
 const deleteProduct = async (productId) => {
-        if (!window.confirm("මේ product එක delete කරන්නද? මේක undo කරන්න බැහැ!")) {
+        if (!window.confirm("Are you sure you want to delete this product? This action cannot be undone.")) {
             return;
         }
 
         try {
-            const response = await fetch(`https://eprbackend-production.up.railway.app/api/delete-product/${productId}`, {
-                method: 'DELETE',
-                headers: {
-                    'Content-Type': 'application/json',
-                    // ඔයාගේ admin token එක තියෙනවා නම් මෙතන දාන්න
-                    // 'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
-                }
-            });
-
-            const data = await response.json();
-
-            if (response.ok) {
-                alert("Product එක delete වුණා!");
-                // Product list එකෙන් ඉවත් කරන්න (state update)
-                setProductList(productList.filter(p => p._id !== productId));
-            } else {
-                alert("Delete කරන්න බැරි වුණා: " + (data.error || "Unknown error"));
-            }
-        } catch (error) {
-            console.error("Delete error:", error);
-            alert("Error: " + error.message);
+            const response = await API.delete(`/qr/delete-product/${productId}`);
+             if (response.status === 200) {
+            alert("Product deleted successfully!");
+            
+            setProductList(productList.filter(p => p._id !== productId));
+        } else {
+            alert("Failed to delete product.");
         }
-    };
+    } catch (error) {
+        console.error("Delete error:", error);
+        const errorMsg = error.response?.data?.error || "An error occurred during deletion.";
+        alert("Error: " + errorMsg);
+    }
+};
 
 const fetchDashboardCounts = async () => {
   try {
     const [compRes, prodRes, recycleRes, regQRRes] = await Promise.all([
-      fetch('https://eprbackend-production.up.railway.app/api/get-companies'),
-      fetch('https://eprbackend-production.up.railway.app/api/get-products'),
-      fetch('https://eprbackend-production.up.railway.app/api/recycle-requests/all'),
-      fetch('https://eprbackend-production.up.railway.app/api/qr-registrations/all')
+      API.get('/qr/get-companies'),
+      API.get('/qr/get-products'),
+      API.get('/qr/recycle-requests/all'),
+      API.get('/qr/qr-registrations/all')
     ]);
 
-    const [compData, prodData, recycleData, regQRData] = await Promise.all([
-      compRes.json(),
-      prodRes.json(),
-      recycleRes.json(),
-      regQRRes.json()
-    ]);
-
+    const compData = compRes.data;
+    const prodData = prodRes.data;
+    const recycleData = recycleRes.data;
+    const regQRData = regQRRes.data;
+   
     setCounts({
       companies: Array.isArray(compData) ? compData.length : 0,
       products: Array.isArray(prodData) ? prodData.length : 0,
@@ -318,8 +289,8 @@ const fetchDashboardCounts = async () => {
         fetchProducts();
         fetchRegisteredQRs();
         fetchCompanies();
-  fetchDashboardCounts();
-  fetchRecycleRequests();
+        fetchDashboardCounts();
+        fetchRecycleRequests();
 
   //  තත්පර 20න් 20ට බැක්ග්‍රවුන්ඩ් එකේ දත්ත අප්ඩේට් කිරීම
         const interval = setInterval(() => {
@@ -440,19 +411,14 @@ const fetchDashboardCounts = async () => {
             const finalImageBase64 = canvas.toDataURL("image/png");
             const finalImageRaw = finalImageBase64.split(',')[1];
 
-            // මෙතනදී අපි එකින් එක යවනවා (දැනට තියෙන loop එක ඇතුළේ)
-            try {
-                await fetch('https://eprbackend-production.up.railway.app/api/save-qr', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        qrId: fullID, // පින්තූරේ නම විදිහට පාවිච්චි වෙන්නේ fullID එක
-                        qrData: finalImageBase64 // සම්පූර්ණ base64 string එක
-                    })
-                });
+          try {
+    await API.post('/qr/save-qr', {
+        qrId: fullID,
+        qrData: finalImageBase64
+    });  
+
             } catch (saveErr) {
                 console.error(`Backend Save Error for ${fullID}:`, saveErr);
-                // පින්තූරේ සේව් වුණේ නැතත් ලූප් එක නතර කරන්න එපා
             }
                 currentBatch.push({
                     qrId: fullID, company: comp, brand: brand,
@@ -462,20 +428,16 @@ const fetchDashboardCounts = async () => {
 
                 if (currentBatch.length === 100 || i === finalQty) {
                     try {
-                       // const dbData = currentBatch.map(({ tempImageData, ...rest }) => rest);
                        const dbData = currentBatch.map(({ tempImageData, ...rest }) => ({
     ...rest,
-    qrImage: "" // 👈 දැනට හිස්ව යවන්න, මොකද save-qr එකෙන් ඒක වෙනම අප්ඩේට් වෙන නිසා
+    qrImage: "" 
 }));
 
-                        const dbResponse = await fetch('https://eprbackend-production.up.railway.app/api/save-qr-batch', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ batch: dbData })
-                        });
+                        const dbResponse = await API.post('/qr/save-qr-batch', { batch: dbData});
 
-                        if (!dbResponse.ok) throw new Error("Database saving failed!");
-
+if (dbResponse.status !== 200 && dbResponse.status !== 201) {
+            throw new Error("Database saving failed!");
+        }
                         currentBatch.forEach(item => {
                             zip.file(`QR_${item.qrId}.png`, item.tempImageData, { base64: true });
                             processedInCurrentZip++;
