@@ -5,6 +5,7 @@ import { saveAs } from 'file-saver';
 import QRCode from 'qrcode';
 import logo from './logo.png';
 import QRReportView from './QRReportView';
+import API from './api'; 
 
 function QRManagement() {
     const [counts, setCounts] = useState({
@@ -12,7 +13,7 @@ function QRManagement() {
   products: 0,
   recycleRequests: 0,
   registeredQRs: 0,
-  qrCustomers: 0   // QR Registered Customers
+  qrCustomers: 0   
 });
     const [isGenerating, setIsGenerating] = useState(false);
     const [progress, setProgress] = useState(0);
@@ -71,12 +72,10 @@ const handleRegisterCompany = async () => {
     let nextNumber = 1;
 
     if (companiesList && companiesList.length > 0) {
-        // දැනට තියෙන ලැයිස්තුවෙන් වැඩිම අංකය සොයා ගැනීම
         const lastNumbers = companiesList
             .map(c => {
                 const regId = c.registrationId || "";
                 const parts = regId.split('-');
-                // REG-2026-0001 එකෙන් 0001 කොටස අරන් අංකයක් බවට පත් කරයි
                 return parts.length === 3 ? parseInt(parts[2]) : 0;
             })
             .filter(num => !isNaN(num));
@@ -91,25 +90,25 @@ const handleRegisterCompany = async () => {
     const registrationID = `REG-${year}-${formattedNumber}`;
 
     try {
-        const response = await fetch('https://eprbackend-production.up.railway.app/api/add-company', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ name: nameUpper, email: emailLower,registrationId: registrationID })
+        const response = await API.post('/add-company', {
+            name: nameUpper,
+            email: emailLower,
+            registrationId: registrationID
         });
 
-        if (response.ok) {
-            alert(`Company Registered Successfully!\nAssigned ID: ${registrationID}`);
+      if (response.status === 200 || response.status === 201) {
+            alert(`✅ Company Registered Successfully!\nAssigned ID: ${registrationID}`);
             setQrCompanyName('');
             setQrCompanyEmail('');
-            fetchCompanies();  // List refresh කරන්න
-        } else {
-            alert("Failed to register company.");
+            fetchCompanies(); 
         }
     } catch (err) {
         console.error("Company registration failed:", err);
-        alert("Connection error with server.");
+        const errorMsg = err.response?.data?.error || "Failed to register company.";
+        alert(`❌ Error: ${errorMsg}`);
     }
 };
+
 
 const deleteCompany = async (companyId) => {
   if (!window.confirm("Are you sure you want to delete this company? This action cannot be undone.")) {
@@ -117,14 +116,11 @@ const deleteCompany = async (companyId) => {
   }
 
   try {
-    const response = await fetch(`https://eprbackend-production.up.railway.app/api/delete-company/${companyId}`, {
-      method: 'DELETE',
-      headers: { 'Content-Type': 'application/json' }
-    });
+    const response = await API.delete(`/delete-company/${companyId}`);
 
-    if (response.ok) {
+    if (response.status === 200) {
       alert("Company deleted successfully!");
-      fetchCompanies(); // List refresh කරන්න
+      fetchCompanies();
     } else {
       const errorData = await response.json();
       alert("Failed to delete company: " + (errorData.message || "Unknown error"));
@@ -1280,7 +1276,7 @@ const fetchDashboardCounts = async () => {
         <div style={{ 
             background: '#0a0a0a', 
             borderRadius: '28px', 
-            maxWidth: '600px', // මෙතනින් තමයි size එක ලොකු කරන්නේ
+            maxWidth: '600px', 
             width: '100%', 
             maxHeight: '92vh', 
             overflowY: 'auto', 
@@ -1302,7 +1298,6 @@ const fetchDashboardCounts = async () => {
                 </div>
 
                 <img 
-                    //src={`https://eprbackend-production.up.railway.app/qr-images/${selectedRequest.qrId}.png`} 
                     src={selectedRequest.qrImage || 'https://cdn-icons-png.flaticon.com/512/7141/7141731.png'}
                     alt="QR Code" 
                     style={{ 
@@ -1317,7 +1312,6 @@ const fetchDashboardCounts = async () => {
                     }}
                     onError={(e) => {
                         e.target.onerror = null; 
-                       // e.target.src = 'https://cdn-icons-png.flaticon.com/512/7141/7141731.png';
                        e.target.src = 'https://cdn-icons-png.flaticon.com/512/7141/7141731.png';
                     }}
                 />
@@ -1451,7 +1445,7 @@ const styles = {
     },
    sidebar: { 
     width: '320px', 
-    position: 'fixed', // 👈 මේක තමයි ප්‍රධානම දේ
+    position: 'fixed', 
     top: 0,
     left: 0,
     bottom: 0,
@@ -1461,7 +1455,7 @@ const styles = {
     display: 'flex',
     flexDirection: 'column',
     padding: '50px 25px',
-    zIndex: 100 // 👈 අනිත් දේවල් වලට වඩා උඩින් තියෙන්න
+    zIndex: 100 
 },
 
     mainContent: {
