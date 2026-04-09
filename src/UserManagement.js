@@ -56,7 +56,7 @@ const approveCustomer = async (id) => {
         if (window.confirm(`Are you sure you want to delete this ${type}?`)) {
             try {
             const endpoint = type === 'Admin' 
-                ? `/admin/${id}` 
+                ? `/admin/admin/${id}` 
                 : `/admin/customer/${id}`;
             
             const response = await API.delete(endpoint);
