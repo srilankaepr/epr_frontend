@@ -78,7 +78,7 @@ const approveCustomer = async (id) => {
     const handleLogout = () => {
         if (window.confirm("Are you sure you want to logout?")) {
             localStorage.clear();
-            navigate('/'); // Navigate to root like Dashboard
+            navigate('/'); 
         }
     };
 
