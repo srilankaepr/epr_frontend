@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import API from './api';
 
 const ProductRegistration = () => {
     // 1. State එකට data සම්බන්ධ කිරීම
