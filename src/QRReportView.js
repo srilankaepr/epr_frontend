@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { jsPDF } from 'jspdf'; 
 import autoTable from 'jspdf-autotable'; 
+import API from './api'; 
 
 const QRReportView = () => {
     const [allData, setAllData] = useState([]);
@@ -13,30 +14,34 @@ const QRReportView = () => {
         brand: 'All'
     });
 
-    // 1. බැක්එන්ඩ් එකෙන් දත්ත ගේන ලොජික් එක
-    useEffect(() => {
-        const fetchAllQRs = async () => {
-            try {
-                setIsLoading(true);
-                const response = await fetch('https://eprbackend-production.up.railway.app/api/get-all-generated-qrs');
-                const data = await response.json();
-                console.log("Full Data from Backend:", data);
-                if (response.ok) {
-                    setAllData(data);
-                }
-            } catch (err) {
-                console.error("Fetch error:", err);
-            } finally {
-                setIsLoading(false);
+ useEffect(() => {
+    const fetchAllQRs = async () => {
+        try {
+            setIsLoading(true);
+            
+            const response = await API.get('/qr/get-all-generated-qrs');
+            const data = response.data;
+            
+            console.log("Full Data from Backend:", data);
+            
+            if (response.status === 200) {
+                setAllData(data);
             }
-        };
-        fetchAllQRs();
-    }, []);
-
-    // 2. සර්ච් සහ ෆිල්ටර් ලොජික් එක
-   const filteredQRs = allData.filter(qr => {
-    const term = searchTerm.toLowerCase();
+        } catch (err) {
+            console.error("Fetch error:", err);
+            if (err.response?.status === 401) {
+                console.error("Unauthorized access to QR reports!");
+            }
+        } finally {
+            setIsLoading(false);
+        }
+    };
     
+    fetchAllQRs();
+}, []);
+
+    const filteredQRs = allData.filter(qr => {
+    const term = searchTerm.toLowerCase();
     const matchesSearch = 
         (qr.qrId || "").toLowerCase().includes(term) || 
         (qr.serialNumber || "").toLowerCase().includes(term) ||
@@ -61,14 +66,12 @@ const exportPDF = () => {
                 const startDate = new Date(dateRange.start);
                 const endDate = new Date(dateRange.end);
                 
-                // එදා දවස ඇතුළේ තියෙන දත්ත ඔක්කොම ගන්න වෙලාව සෙට් කරනවා
                 endDate.setHours(23, 59, 59, 999);
 
                 return qrDate >= startDate && qrDate <= endDate;
             });
         }
 
-        // දත්ත නැත්නම් රිපෝට් එක හදන්නේ නැතුව දැනුම් දෙනවා
         if (dataToExport.length === 0) {
             alert("No records found for the selected date range!");
             return;
