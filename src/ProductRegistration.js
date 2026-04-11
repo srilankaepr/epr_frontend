@@ -48,29 +48,28 @@ const ProductRegistration = () => {
         setMaterials(updatedMaterials);
     };
 
-    // 🚀 API එකට දත්ත යවන කොටස
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        const finalData = { ...productData, materials };
+   // 🚀 API එකට දත්ත යවන කොටස
+const handleSubmit = async (e) => {
+    e.preventDefault();
+    const finalData = { ...productData, materials };
 
-        try {
-            const response = await fetch('https://eprbackend-production.up.railway.app/api/products/register', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(finalData),
-            });
+    try {
+        const response = await API.post('/products/register', finalData);
 
-            if (response.ok) {
-                alert("✅ Product Registered Successfully!");
-            } else {
-                alert("❌ Registration Failed!");
-            }
-        } catch (error) {
-            console.error("Error:", error);
-            alert("⚠️ Backend Error! Make sure your server is running.");
+        if (response.status === 200 || response.status === 201) {
+            alert("✅ Product Registered Successfully!");
         }
-    };
-
+    } catch (error) {
+        console.error("Error:", error);
+        
+        const errorMsg = error.response?.data?.error || "Registration Failed!";
+        alert(`❌ ${errorMsg}`);
+        
+        if (error.response?.status === 401) {
+            console.error("Auth Error: Your session might have expired.");
+        }
+    }
+};
     const styles = {
         formContainer: { background: 'rgba(255, 255, 255, 0.03)', padding: '40px', borderRadius: '20px', border: '1px solid rgba(255, 255, 255, 0.1)', maxWidth: '900px', margin: '0 auto', color: '#fff', fontFamily: 'Segoe UI, sans-serif' },
         sectionTitle: { fontSize: '24px', color: '#2ecc71', marginBottom: '30px', fontWeight: 'bold', textAlign: 'center' },
