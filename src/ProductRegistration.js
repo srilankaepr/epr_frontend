@@ -55,8 +55,7 @@ const handleSubmit = async (e) => {
     const finalData = { ...productData, materials };
 
     try {
-        const response = await API.post('/products/register', finalData);
-
+       const response = await API.post('/customers/products/register', finalData);
         if (response.status === 200 || response.status === 201) {
             alert("✅ Product Registered Successfully!");
         }
