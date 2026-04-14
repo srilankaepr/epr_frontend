@@ -20,7 +20,7 @@ const UserDashboard = () => {
     const [profileImage, setProfileImage] = useState("https://via.placeholder.com/150"); 
     const [formData, setFormData] = useState({
     orgRole: '',
-    companyName: '',
+    companyName: '',  
     companyWebsite: '',
     phone: '',
     whatsapp: '',
