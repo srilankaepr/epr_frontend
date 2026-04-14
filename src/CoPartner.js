@@ -20,7 +20,7 @@ const CoPartner = () => {
 
     const fetchPartners = async () => {
         try {
-            const res = await axios.get(`${API_URL}/all`);
+            const res = await axios.get(`${API_URL}/all`);  
             setPartners(res.data);
         } catch (err) {
             console.error("Error fetching data");
