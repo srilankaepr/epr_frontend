@@ -10,14 +10,12 @@ import batteryImg from './assets/battery.jpg';
 import oilImg from './assets/oil.jpg';
 import FeedbackPage from './FeedbackPage';
 import ProductRegistration from './ProductRegistration';
+import API from './api'; 
+
 
 const UserDashboard = () => {
     const navigate = useNavigate();
     const [activeTab, setActiveTab] = useState('ORDER NOW');
-    //const [rating, setRating] = useState(0);  
-    //const [hover, setHover] = useState(0);  
-
-
     const [isEditing, setIsEditing] = useState(false);
     const [profileImage, setProfileImage] = useState("https://via.placeholder.com/150"); 
     const [formData, setFormData] = useState({
@@ -40,17 +38,22 @@ const UserDashboard = () => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
     const uploadProfilePicture = async (file) => {
+    console.log("Starting upload...");
+    
     const formDataObj = new FormData();
     formDataObj.append('image', file);
     formDataObj.append('email', formData.officialEmail); 
     formDataObj.append('role', 'customer'); 
 
     try {
-        const response = await fetch('https://eprbackend-production-6318.up.railway.app/api/upload-photo', {
-            method: 'POST',
-            body: formDataObj,
+        const response = await API.post('/upload-photo', formDataObj, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
         });
-        const data = await response.json();
+
+        const data = response.data;
+
         if (data.imageUrl) {
             setProfileImage(data.imageUrl); 
             setFormData(prev => ({ ...prev, profilePic: data.imageUrl }));
@@ -61,13 +64,10 @@ const UserDashboard = () => {
     }
 };
 
-   // UserDashboard.js ඇතුළත
-
 const handleImageChange = async (e) => {
     if (e.target.files && e.target.files[0]) {
         const file = e.target.files[0];
 
-        // 1. පින්තූරය පෙන්වන්න (Preview) - දැනට තියෙන කොටස
         const reader = new FileReader();
         reader.onload = (event) => setProfileImage(event.target.result);
         reader.readAsDataURL(file);
@@ -77,12 +77,14 @@ const handleImageChange = async (e) => {
         formDataObj.append('email', formData.officialEmail); 
         formDataObj.append('role', 'customer'); 
 
-        try {
-            const response = await fetch('https://eprbackend-production-6318.up.railway.app/api/upload-photo', {
-                method: 'POST',
-                body: formDataObj,
+       try {
+            const response = await API.post('/upload-photo', formDataObj, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
             });
-            const data = await response.json();
+
+            const data = response.data;
             
             if (data.imageUrl) {
                 setProfileImage(data.imageUrl); 
@@ -118,16 +120,17 @@ const handleImageChange = async (e) => {
     const userEmail = localStorage.getItem('userEmail');
         if (userEmail) {
             try {
-                const response = await fetch(`https://eprbackend-production-6318.up.railway.app/api/user-details/${userEmail}`);
-                const data = await response.json();
-                if (response.ok) {
-                    setFormData(data.user);
-                    if (data.user.profilePic) {
-                        setProfileImage(data.user.profilePic);
-                    }
+                const response = await API.get(`/user-details/${userEmail}`);
+                const data = response.data;
+
+            if (data.user) {
+                setFormData(data.user);
+                if (data.user.profilePic) {
+                    setProfileImage(data.user.profilePic);
                 }
+            }
             } catch (error) {
-                console.error("Error fetching user data:", error);
+                console.error("Error fetching user data:", error.response?.data || error.message);
             }
         }
     };
@@ -191,7 +194,6 @@ const handleImageChange = async (e) => {
 
               onClick={() => {
                     if (item.id === 'about') {
-                        // කෙලින්ම eprs.lk සයිට් එකට වෙනම ටැබ් එකක යවනවා
                         window.open('https://eprs.lk', '_blank');
                     } else {
                         setActiveTab(item.id);
@@ -368,26 +370,23 @@ const handleImageChange = async (e) => {
              <button 
     style={{ ...styles.updateBtn, background: isEditing ? '#7dc27f' : '#7dc27f' }} 
     onClick={async () => {
-        if (isEditing) {
+       if (isEditing) {
             try {
-                // Backend එකේ Update API එකට දත්ත යවනවා
-                const response = await fetch(`https://eprbackend-production-6318.up.railway.app/api/user-details/update/${formData.officialEmail}`, {
-                    method: 'PUT',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(formData),
-                });
+                const response = await API.put(`/user-details/update/${formData.officialEmail}`, formData);
 
-                const data = await response.json();
+                const data = response.data;
 
-                if (response.ok) {
-                    alert("✅ Profile Updated in Database Successfully!");
-                    localStorage.setItem('user', JSON.stringify(formData));
-                } else {
-                    alert(`❌ Update Failed: ${data.error}`);
-                }
+                alert("✅ Profile Updated in Database Successfully!");
+                localStorage.setItem('user', JSON.stringify(formData));
+                
             } catch (error) {
                 console.error("Update error:", error);
-                alert("⚠️ Connection Error! Make sure your server is running.");
+                
+                if (error.response) {
+                    alert(`❌ Update Failed: ${error.response.data.error || 'Server error'}`);
+                } else {
+                    alert("⚠️ Connection Error! Make sure your server is running.");
+                }
             }
         }
         setIsEditing(!isEditing);
