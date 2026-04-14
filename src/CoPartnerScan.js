@@ -114,8 +114,6 @@ const CoPartnerScan = () => {
 };
 
   const onScanFailure = (error) => {
-    // සාමාන්‍යයෙන් Scan වෙමින් පවතින විට එන errors පෙන්වීමට අවශ්‍ය නැත
-    // console.warn(`QR scan error: ${error}`);
   };
 
 return (
