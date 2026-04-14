@@ -46,7 +46,7 @@ const UserDashboard = () => {
     formDataObj.append('role', 'customer'); 
 
     try {
-        const response = await API.post('/upload-photo', formDataObj, {
+        const response = await API.post('/customers/upload-photo', formDataObj, {
             headers: {
                 'Content-Type': 'multipart/form-data',
             },
@@ -78,7 +78,7 @@ const handleImageChange = async (e) => {
         formDataObj.append('role', 'customer'); 
 
        try {
-            const response = await API.post('/upload-photo', formDataObj, {
+            const response = await API.post('/customers/upload-photo', formDataObj, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },
@@ -120,7 +120,7 @@ const handleImageChange = async (e) => {
     const userEmail = localStorage.getItem('userEmail');
         if (userEmail) {
             try {
-                const response = await API.get(`/user-details/${userEmail}`);
+                const response = await API.get(`/customers/user-details/${userEmail}`);
                 const data = response.data;
 
             if (data.user) {
@@ -372,7 +372,7 @@ const handleImageChange = async (e) => {
     onClick={async () => {
        if (isEditing) {
             try {
-                const response = await API.put(`/user-details/update/${formData.officialEmail}`, formData);
+                const response = await API.put(`/customers/user-details/update/${formData.officialEmail}`, formData);
 
                 const data = response.data;
 
