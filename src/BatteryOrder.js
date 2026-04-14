@@ -379,7 +379,7 @@ const styles = {
     countBadge: { background: 'rgba(255, 255, 255, 0.05)', padding: '8px 15px', borderRadius: '8px', display: 'inline-block', marginBottom: '15px', fontSize: '14px' },
     th: { padding: '12px', color: '#e67e22', fontSize: '14px' },
     td: { padding: '12px', borderBottom: '1px solid rgba(255, 255, 255, 0.05)', fontSize: '13px' },
-    tableRow: { transition: '0.3s' },
+    tableRow: { transition: '0.3s' }, 
     reportBtn: { background: '#e67e22', color: '#fff', border: 'none', padding: '10px 20px', borderRadius: '10px', cursor: 'pointer', fontWeight: 'bold' },
     typeQR: { background: 'rgba(241, 196, 15, 0.2)', color: '#f1c40f', padding: '3px 8px', borderRadius: '5px', fontSize: '11px' },
     qrDownloadBtn: { padding: '5px 12px', background: '#3498db', color: 'white', border: 'none', borderRadius: '6px', fontSize: '11px', fontWeight: 'bold', cursor: 'pointer' },

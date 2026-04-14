@@ -15,7 +15,7 @@ import OilOrder from './OilOrder';
 import AdminOrders from './AdminOrders';
 import QRManagement from './QRManagement';
 import CustomerVerify from './CustomerVerify';
-import CoPartner from './CoPartner';
+import CoPartner from './CoPartner';  
 import PartnerDashboard from './PartnerDashboard';
 import CoPartnerScan from './CoPartnerScan';
 import ForgotPassword from './ForgotPassword';
