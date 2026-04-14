@@ -16,7 +16,7 @@ const CoPartner = () => {
         _id: '', coPartnerId: '', name: '', nic: '', email: '', password: '', district: '', pradeshiyaSabha: ''
     });
 
-    const API_URL = "https://eprbackend-production.up.railway.app/api/partners";
+    const API_URL = "https://eprbackend-production-6318.up.railway.app/api/partners";
 
     const fetchPartners = async () => {
         try {

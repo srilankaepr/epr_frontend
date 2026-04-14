@@ -18,7 +18,7 @@ const CustomerVerify = () => {
     const [showSuccessPopup, setShowSuccessPopup] = useState(false);
     const [successMessage, setSuccessMessage] = useState('');
 
-    const API_BASE_URL = 'https://eprbackend-production.up.railway.app/api';
+    const API_BASE_URL = 'https://eprbackend-production-6318.up.railway.app/api';
 
     // Countdown Logic
     useEffect(() => {

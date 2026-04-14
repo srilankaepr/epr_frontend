@@ -14,8 +14,8 @@ import ProductRegistration from './ProductRegistration';
 const UserDashboard = () => {
     const navigate = useNavigate();
     const [activeTab, setActiveTab] = useState('ORDER NOW');
-    //const [rating, setRating] = useState(0);   ooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
-    //const [hover, setHover] = useState(0);   ooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
+    //const [rating, setRating] = useState(0);  
+    //const [hover, setHover] = useState(0);  
 
 
     const [isEditing, setIsEditing] = useState(false);
@@ -36,18 +36,17 @@ const UserDashboard = () => {
 
     });
 
-    // --- 2. Input වෙනස් වෙද්දී සහ Image එක මාරු වෙද්දී වැඩ කරන Functions ---
     const handleInputChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
     const uploadProfilePicture = async (file) => {
     const formDataObj = new FormData();
     formDataObj.append('image', file);
-    formDataObj.append('email', formData.officialEmail); // ලොග් වෙලා ඉන්න Customer ගේ Email එක
-    formDataObj.append('role', 'customer'); // Customer කෙනෙක් නිසා
+    formDataObj.append('email', formData.officialEmail); 
+    formDataObj.append('role', 'customer'); 
 
     try {
-        const response = await fetch('https://eprbackend-production.up.railway.app/api/upload-photo', {
+        const response = await fetch('https://eprbackend-production-6318.up.railway.app/api/upload-photo', {
             method: 'POST',
             body: formDataObj,
         });
@@ -73,14 +72,13 @@ const handleImageChange = async (e) => {
         reader.onload = (event) => setProfileImage(event.target.result);
         reader.readAsDataURL(file);
 
-        // 2. පින්තූරය Backend එකට යවන කොටස (මෙන්න මේකයි අලුතින් ඕනේ)
         const formDataObj = new FormData();
         formDataObj.append('image', file);
-        formDataObj.append('email', formData.officialEmail); // ලොග් වෙලා ඉන්න යූසර්ගේ Email එක
-        formDataObj.append('role', 'customer'); // Customer කෙනෙක් නිසා
+        formDataObj.append('email', formData.officialEmail); 
+        formDataObj.append('role', 'customer'); 
 
         try {
-            const response = await fetch('https://eprbackend-production.up.railway.app/api/upload-photo', {
+            const response = await fetch('https://eprbackend-production-6318.up.railway.app/api/upload-photo', {
                 method: 'POST',
                 body: formDataObj,
             });
@@ -100,7 +98,6 @@ const handleImageChange = async (e) => {
 };
 
     useEffect(() => {
-    // --- 1. Animation Styles එකතු කිරීම (දැනට තියෙන කොටස) ---
     const styleSheet = document.createElement("style");
     styleSheet.innerText = `
       @keyframes fadeInUp {
@@ -118,10 +115,10 @@ const handleImageChange = async (e) => {
 
     // --- 2. Backend එකෙන් User Data ගේන කොටස (අලුත් කොටස) ---
     const fetchUserData = async () => {
-        const userEmail = localStorage.getItem('userEmail');
+    const userEmail = localStorage.getItem('userEmail');
         if (userEmail) {
             try {
-                const response = await fetch(`https://eprbackend-production.up.railway.app/api/user-details/${userEmail}`);
+                const response = await fetch(`https://eprbackend-production-6318.up.railway.app/api/user-details/${userEmail}`);
                 const data = await response.json();
                 if (response.ok) {
                     setFormData(data.user);
@@ -374,7 +371,7 @@ const handleImageChange = async (e) => {
         if (isEditing) {
             try {
                 // Backend එකේ Update API එකට දත්ත යවනවා
-                const response = await fetch(`https://eprbackend-production.up.railway.app/api/user-details/update/${formData.officialEmail}`, {
+                const response = await fetch(`https://eprbackend-production-6318.up.railway.app/api/user-details/update/${formData.officialEmail}`, {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(formData),

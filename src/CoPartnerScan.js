@@ -62,7 +62,7 @@ const CoPartnerScan = () => {
         const pName = localStorage.getItem('userName'); 
         const pPhone = localStorage.getItem('partnerPhone');
 
-        const response = await axios.post('https://eprbackend-production.up.railway.app/api/partner/confirm-collection', {
+        const response = await axios.post('https://eprbackend-production-6318.up.railway.app/api/partner/confirm-collection', {
             qrId: finalId.trim(), 
             partnerId: pId,
             partnerName: pName,
@@ -95,7 +95,7 @@ const CoPartnerScan = () => {
         const pName = localStorage.getItem('userName'); // 👈 අපි කලින් හදාගත්ත විදියට userName එක ගත්තා
         const pPhone = localStorage.getItem('partnerPhone');
 
-        const response = await axios.post('https://eprbackend-production.up.railway.app/api/partner/confirm-collection', {
+        const response = await axios.post('https://eprbackend-production-6318.up.railway.app/api/partner/confirm-collection', {
             qrId: manualId.trim(), 
             partnerId: pId,
             partnerName: pName,

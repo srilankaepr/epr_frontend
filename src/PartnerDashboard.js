@@ -30,7 +30,7 @@ const partnerId = localStorage.getItem('coPartnerId') || 'N/A';
  const fetchDashboardData = async (isAuto = false) => {
     if (!isAuto) setLoading(true);
     try {
-      const res = await fetch('https://eprbackend-production.up.railway.app/api/co-partner/dashboard', {
+      const res = await fetch('https://eprbackend-production-6318.up.railway.app/api/co-partner/dashboard', {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('coPartnerToken')}`
         }
