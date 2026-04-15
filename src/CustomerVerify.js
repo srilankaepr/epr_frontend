@@ -1,24 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import API from './api'; 
 
 const CustomerVerify = () => {
     const [searchParams] = useSearchParams();
     const qrId = searchParams.get('id');
 
-    const [viewMode, setViewMode] = useState('loading'); // loading, NEW, EXISTING, LIMIT_REACHED, REMINDER_MODE, SUCCESS_DONE
+    const [viewMode, setViewMode] = useState('loading'); 
     const [userData, setUserData] = useState(null);
     const [formData, setFormData] = useState({ name: '', phone: '', address: '' });
     const [message, setMessage] = useState({ text: '', type: '' });
     const [loading, setLoading] = useState(false);
-
-    // Countdown state
     const [timeLeft, setTimeLeft] = useState(null);
-
     const [showConfirmDialog, setShowConfirmDialog] = useState(false);
     const [showSuccessPopup, setShowSuccessPopup] = useState(false);
     const [successMessage, setSuccessMessage] = useState('');
-
-    const API_BASE_URL = 'https://eprbackend-production-6318.up.railway.app/api';
 
     // Countdown Logic
     useEffect(() => {
@@ -41,45 +37,38 @@ const CustomerVerify = () => {
         return `${hours}h ${minutes}m ${seconds}s`;
     };
 
-    useEffect(() => {
+   useEffect(() => {
         const verifyQR = async () => {
             if (!qrId) {
                 setViewMode('error');
                 return;
             }
             try {
-                const response = await fetch(`${API_BASE_URL}/verify-product`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ cuSerial: qrId })
-                });
+                const response = await API.post(`/qr/verify-product`, { cuSerial: qrId }); 
+                const data = response.data;
 
-                const data = await response.json();
-
-                if (response.ok) {
-                    if (data.status === "PENDING_LIMIT") {
-                        setViewMode('LIMIT_REACHED');
-                        setTimeLeft(data.remainingTime);
-                    } else if (data.status === "SHOW_REMINDER") {
-                        setViewMode('REMINDER_MODE');
-                        setUserData(data.userData);
-                        setFormData({
-                            name: data.userData.cuName || '',
-                            phone: data.userData.cuPhone || '',
-                            address: data.userData.cuAddress || ''
-                        });
-                    } else if (data.status === "EXISTING") {
-                        setViewMode('EXISTING');
-                        setUserData(data.userData);
-                        setFormData({
-                            name: data.userData.cuName || '',
-                            phone: data.userData.cuPhone || '',
-                            address: data.userData.cuAddress || ''
-                        });
-                        setShowConfirmDialog(true);
-                    } else if (data.status === "NEW") {
-                        setViewMode('NEW');
-                    }
+                if (data.status === "PENDING_LIMIT") {
+                    setViewMode('LIMIT_REACHED');
+                    setTimeLeft(data.remainingTime);
+                } else if (data.status === "SHOW_REMINDER") {
+                    setViewMode('REMINDER_MODE');
+                    setUserData(data.userData);
+                    setFormData({
+                        name: data.userData.cuName || '',
+                        phone: data.userData.cuPhone || '',
+                        address: data.userData.cuAddress || ''
+                    });
+                } else if (data.status === "EXISTING") {
+                    setViewMode('EXISTING');
+                    setUserData(data.userData);
+                    setFormData({
+                        name: data.userData.cuName || '',
+                        phone: data.userData.cuPhone || '',
+                        address: data.userData.cuAddress || ''
+                    });
+                    setShowConfirmDialog(true);
+                } else if (data.status === "NEW") {
+                    setViewMode('NEW');
                 } else {
                     setViewMode('error');
                 }
@@ -99,82 +88,78 @@ const CustomerVerify = () => {
         if (loading) return;
         setLoading(true);
         setMessage({ text: '', type: '' });
+        
         try {
-            const response = await fetch(`${API_BASE_URL}/save-registration`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    cuSerial: qrId,
-                    cuName: formData.name,
-                    cuPhone: formData.phone,
-                    cuAddress: formData.address
-                })
+            // 1. fetch වෙනුවට API.post පාවිච්චි කරමු
+            // 2. පාර (Path) විදිහට /qr/save-registration පාවිච්චි කරනවා
+            const response = await API.post('/qr/save-registration', {
+                cuSerial: qrId,
+                cuName: formData.name,
+                cuPhone: formData.phone,
+                cuAddress: formData.address
             });
 
-            if (response.ok) {
-                setSuccessMessage("Registration Successful! ✅");
-                setShowSuccessPopup(true);
-                setViewMode('SUCCESS_DONE'); // අලුත් Mode එකට හරවනවා
-                setTimeout(() => setShowSuccessPopup(false), 5000);
-            } else {
-                setMessage({ text: 'Registration failed. Please try again.', type: 'error' });
-            }
+            // 3. Axios වලදී සාර්ථක ප්‍රතිචාරයක් ලැබුණොත් කෙලින්ම මෙතනට එනවා
+            setSuccessMessage("Registration Successful! ✅");
+            setShowSuccessPopup(true);
+            setViewMode('SUCCESS_DONE'); 
+            setTimeout(() => setShowSuccessPopup(false), 5000);
+
         } catch (err) {
-            setMessage({ text: 'Connection Error!', type: 'error' });
+            // 4. Backend එකෙන් එන වැරදි මැසේජ් එකක් තිබේ නම් එය පෙන්වනවා
+            const errorMsg = err.response?.data?.error || 'Registration failed. Please try again.';
+            setMessage({ text: errorMsg, type: 'error' });
         } finally {
             setLoading(false);
         }
     };
 
-    const handleRecycleSubmit = async () => {
+const handleRecycleSubmit = async () => {
         setLoading(true);
         try {
-            const response = await fetch(`${API_BASE_URL}/save-recycle-request`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    qrId: qrId.trim(),
-                    cuName: formData.name,
-                    cuPhone: formData.phone,
-                    cuAddress: formData.address,
-                    cuCompany: userData?.cuCompany,
-                    cuProduct: userData?.cuProduct,
-                    cuBrand: userData?.cuBrand
-                })
+            // 1. fetch වෙනුවට API.post පාවිච්චි කරමු
+            // 2. පාර (Path) විදිහට /qr/save-recycle-request පාවිච්චි කරනවා
+            const response = await API.post('/qr/save-recycle-request', {
+                qrId: qrId.trim(),
+                cuName: formData.name,
+                cuPhone: formData.phone,
+                cuAddress: formData.address,
+                cuCompany: userData?.cuCompany,
+                cuProduct: userData?.cuProduct,
+                cuBrand: userData?.cuBrand
             });
 
-            if (response.ok) {
-                setSuccessMessage("Your recycle request was sent successfully. ✅");
-                setShowSuccessPopup(true);
-                setShowConfirmDialog(false);
-                setTimeout(() => setShowSuccessPopup(false), 5000);
-            } else {
-                setMessage({ text: 'Request failed to send.', type: 'error' });
-            }
+            // 3. Axios වලදී සාර්ථක ප්‍රතිචාරයක් ලැබුණොත් කෙලින්ම මෙතනට එනවා
+            setSuccessMessage("Your recycle request was sent successfully. ✅");
+            setShowSuccessPopup(true);
+            setShowConfirmDialog(false);
+            setTimeout(() => setShowSuccessPopup(false), 5000);
+
         } catch (err) {
-            setMessage({ text: 'Connection Error!', type: 'error' });
+            // 4. සර්වර් එකෙන් එන වැරදි පණිවිඩයක් තිබේ නම් එය පෙන්වනවා
+            const errorMsg = err.response?.data?.error || 'Request failed to send.';
+            setMessage({ text: errorMsg, type: 'error' });
         } finally {
             setLoading(false);
         }
     };
 
-    const handleSendReminder = async () => {
+ const handleSendReminder = async () => {
         setLoading(true);
         try {
-            const response = await fetch(`${API_BASE_URL}/send-reminder`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ qrId: qrId })
-            });
-            if (response.ok) {
-                setSuccessMessage("Follow-up reminder sent successfully! 🔔");
-                setShowSuccessPopup(true);
-                setTimeout(() => setShowSuccessPopup(false), 5000);
-            } else {
-                setMessage({ text: 'Failed to send reminder.', type: 'error' });
-            }
+            // 1. fetch වෙනුවට API.post පාවිච්චි කරනවා
+            // 2. පාර (Path) විදිහට /qr/send-reminder පාවිච්චි කරනවා
+            const response = await API.post('/qr/send-reminder', { qrId: qrId });
+
+            // 3. Axios වලදී සාර්ථක ප්‍රතිචාරයක් ලැබුණොත් කෙලින්ම මෙතනට එනවා
+            setSuccessMessage("Follow-up reminder sent successfully! 🔔");
+            setShowSuccessPopup(true);
+            setTimeout(() => setShowSuccessPopup(false), 5000);
+
         } catch (err) {
-            setMessage({ text: 'Connection Error!', type: 'error' });
+            // 4. සර්වර් එකෙන් එන වැරදි පණිවිඩයක් තිබේ නම් එය පෙන්වනවා
+            const errorMsg = err.response?.data?.error || 'Failed to send reminder.';
+            setMessage({ text: errorMsg, type: 'error' });
         } finally {
             setLoading(false);
         }
