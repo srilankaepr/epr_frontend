@@ -33,7 +33,6 @@ const partnerId = localStorage.getItem('coPartnerId') || 'N/A';
 const res = await API.get('/qr/dashboard'); 
 const data = res.data; 
 
-      if (res.ok) {
         setStats({
           totalQR: data.totalQR || 0,
           pending: data.pending || 0,
@@ -42,8 +41,7 @@ const data = res.data;
         });
 
         const allRequests = data.recentCollected || [];
-
-        // 2. ඒවයින් 'Pending' තත්ත්වයේ තියෙන ඒවා විතරක් වෙන් කරගන්නවා
+        setRecentCollected(allRequests);
         const pendingRequests = allRequests.filter(req => 
           req.status && req.status.toString().toLowerCase() === 'pending'
         );
@@ -81,7 +79,7 @@ const data = res.data;
 
         setRecentCollected(allRequests);
         // --- Logic අවසානයි ---
-      }
+      
     } catch (err) {
       console.error("Fetch Error:", err);
     } finally {
