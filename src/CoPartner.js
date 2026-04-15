@@ -19,7 +19,7 @@ const CoPartner = () => {
     
     const fetchPartners = async () => {
         try {
-            const res = await API.get('/all');
+            const res = await API.get('/partners/all');
             setPartners(res.data);
         } catch (err) {
             console.error("Error fetching data");
@@ -72,7 +72,7 @@ const CoPartner = () => {
     const handleDelete = async (id) => {
         if (window.confirm("Are you sure you want to delete this partner?")) {
             try {
-                await API.delete(`/delete/${id}`);
+                await API.delete(`/partners/delete/${id}`);
                 fetchPartners();
             } catch (err) {
                 alert("Delete failed.");
