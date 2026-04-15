@@ -2,25 +2,24 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import logo from './logo.png'; 
 import AddPartnerForm from './AddPartnerForm'; 
-import axios from 'axios';
+import API from './api';
 
 const CoPartner = () => {
     const navigate = useNavigate();
     const [view, setView] = useState('list'); 
     const [partners, setPartners] = useState([]); 
-    const [searchTerm, setSearchTerm] = useState(''); // අලුතින් එක් කළා (Search)
-    const [filterDistrict, setFilterDistrict] = useState(''); // අලුතින් එක් කළා (Filter)
+    const [searchTerm, setSearchTerm] = useState(''); 
+    const [filterDistrict, setFilterDistrict] = useState(''); 
     const [showPassword, setShowPassword] = useState(false); 
     const [isEditing, setIsEditing] = useState(false);
     const [partnerData, setPartnerData] = useState({
         _id: '', coPartnerId: '', name: '', nic: '', email: '', password: '', district: '', pradeshiyaSabha: ''
     });
 
-    const API_URL = "https://eprbackend-production-6318.up.railway.app/api/partners";   
-
+    
     const fetchPartners = async () => {
         try {
-            const res = await axios.get(`${API_URL}/all`);  
+            const res = await API.get('/all');
             setPartners(res.data);
         } catch (err) {
             console.error("Error fetching data");
@@ -41,11 +40,11 @@ const CoPartner = () => {
     }
         try {
             if (isEditing) {
-                await axios.put(`${API_URL}/update/${partnerData._id}`, partnerData);
+                await API.put(`/update/${partnerData._id}`, partnerData);
                 alert("Partner Details Updated Successfully! ✅");
             } else {
                 const { _id, coPartnerId, ...submitData } = partnerData; 
-                const response = await axios.post(`${API_URL}/register`, submitData);
+                const response = await API.post('/register', submitData);
                 const newID = response.data?.partner?.coPartnerId || "Generated";
                 alert(`New Partner Registered Successfully! \nAssigned ID: ${newID} 🚀`);
             }
@@ -233,7 +232,7 @@ const styles = {
     container: { display: 'flex', minHeight: '100vh', background: `linear-gradient(rgba(0, 0, 0, 0.48), rgba(0, 0, 0, 0.48)), url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&q=80&w=2072')`, backgroundSize: 'cover', backgroundPosition: 'center', backgroundAttachment: 'fixed', color: '#fff', fontFamily: "'Inter', sans-serif", overflow: 'hidden' },
 sidebar: { 
     width: '320px', 
-    position: 'fixed', // 👈 මේක තමයි ප්‍රධානම දේ
+    position: 'fixed', 
     top: 0,
     left: 0,
     bottom: 0,
@@ -243,7 +242,7 @@ sidebar: {
     display: 'flex',
     flexDirection: 'column',
     padding: '50px 25px',
-    zIndex: 100 // 👈 අනිත් දේවල් වලට වඩා උඩින් තියෙන්න
+    zIndex: 100 
 },
     logoCircle: { width: '100px', height: '100px', background: '#fff', borderRadius: '24px', margin: '0 auto', display: 'flex', justifyContent: 'center', alignItems: 'center', boxShadow: '0 15px 35px rgba(0,0,0,0.5)', overflow: 'hidden' },
     logoImg: { width: '85%' },

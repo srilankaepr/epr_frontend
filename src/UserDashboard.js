@@ -110,7 +110,6 @@ const deleteProfilePicture = async () => {
     `;
     document.head.appendChild(styleSheet);
 
-    // --- 2. Backend එකෙන් User Data ගේන කොටස (අලුත් කොටස) ---
     const fetchUserData = async () => {
     const userEmail = localStorage.getItem('userEmail');
         if (userEmail) {
@@ -254,7 +253,6 @@ const deleteProfilePicture = async () => {
     </div>
 )}
 
-
     {activeTab === 'ORDER NOW' && (
         /* මෙන්න මෙතනටයි animation එකයි contentPadding එකයි දෙන්නම දාන්න ඕනේ */
         <div style={{ 
@@ -287,7 +285,6 @@ const deleteProfilePicture = async () => {
                         <p style={styles.cardDesc}>{cat.desc}</p>
                     </div>
                 </div>
-                /* -------------------------------------- */
 
             ))}
         </div>
