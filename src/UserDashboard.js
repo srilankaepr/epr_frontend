@@ -330,7 +330,7 @@ const deleteProfilePicture = async () => {
                 onClick={deleteProfilePicture}
                 style={{
                     position: 'absolute', top: '5px', left: '5px',
-                    background: '#ff4d4d', borderRadius: '50%',
+                    background: '#fbfbfb', borderRadius: '50%',
                     width: '30px', height: '30px', display: 'flex',
                     alignItems: 'center', justifyContent: 'center',
                     cursor: 'pointer', fontSize: '14px', border: '2px solid #fff',
