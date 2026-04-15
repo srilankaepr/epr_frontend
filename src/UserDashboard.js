@@ -10,7 +10,8 @@ import batteryImg from './assets/battery.jpg';
 import oilImg from './assets/oil.jpg';
 import FeedbackPage from './FeedbackPage';
 import ProductRegistration from './ProductRegistration';
-import API from './api'; // 👈 API import එක මෙතනට දැම්මා
+import API from './api'; 
+
 
 const UserDashboard = () => {
     const navigate = useNavigate();
@@ -19,7 +20,7 @@ const UserDashboard = () => {
     const [profileImage, setProfileImage] = useState("https://via.placeholder.com/150"); 
     const [formData, setFormData] = useState({
     orgRole: '',
-    companyName: '',
+    companyName: '',  
     companyWebsite: '',
     phone: '',
     whatsapp: '',
@@ -30,68 +31,46 @@ const UserDashboard = () => {
     country: '',
     contactPersonName: '',
     contactPersonMobile: ''
+
     });
 
     const handleInputChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
-    const uploadProfilePicture = async (file) => {
-    console.log("Starting upload...");
+
+    
+const uploadProfilePicture = async (file) => {
     const formDataObj = new FormData();
     formDataObj.append('image', file);
     formDataObj.append('email', formData.officialEmail); 
     formDataObj.append('role', 'customer'); 
 
     try {
-        // 👈 fetch වෙනුවට API.post දැම්මා
         const response = await API.post('/customers/upload-photo', formDataObj, {
             headers: { 'Content-Type': 'multipart/form-data' },
         });
-
-        const data = response.data; // 👈 axios වල data ගන්නේ මෙහෙමයි
-
+        const data = response.data;
         if (data.imageUrl) {
             setProfileImage(data.imageUrl); 
             setFormData(prev => ({ ...prev, profilePic: data.imageUrl }));
-            localStorage.setItem('userPhoto', data.imageUrl); 
+            localStorage.setItem('userPhoto', data.imageUrl);
+            alert("✅ Profile Photo Uploaded Successfully!"); 
         }
     } catch (error) {
         console.error("Upload failed:", error);
+        alert("❌ Photo upload failed!");
     }
 };
 
 const handleImageChange = async (e) => {
     if (e.target.files && e.target.files[0]) {
         const file = e.target.files[0];
-
         const reader = new FileReader();
         reader.onload = (event) => setProfileImage(event.target.result);
         reader.readAsDataURL(file);
 
-        const formDataObj = new FormData();
-        formDataObj.append('image', file);
-        formDataObj.append('email', formData.officialEmail); 
-        formDataObj.append('role', 'customer'); 
-
-       try {
-            // 👈 fetch වෙනුවට API.post දැම්මා
-            const response = await API.post('/customers/upload-photo', formDataObj, {
-                headers: { 'Content-Type': 'multipart/form-data' },
-            });
-
-            const data = response.data;
-            
-            if (data.imageUrl) {
-                setProfileImage(data.imageUrl); 
-                setFormData(prev => ({ ...prev, profilePic: data.imageUrl }));
-                localStorage.setItem('userPhoto', data.imageUrl);
-                alert("✅ Profile Photo Uploaded Successfully!");
-            }
-        } catch (error) {
-            console.error("Upload failed:", error);
-            alert("❌ Photo upload failed!");
-        }
+        await uploadProfilePicture(file); 
     }
 };
 
@@ -99,17 +78,23 @@ const handleImageChange = async (e) => {
     const styleSheet = document.createElement("style");
     styleSheet.innerText = `
       @keyframes fadeInUp {
-        from { opacity: 0; transform: translateY(20px); }
-        to { opacity: 1; transform: translateY(0); }
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
       }
     `;
     document.head.appendChild(styleSheet);
 
+    // --- 2. Backend එකෙන් User Data ගේන කොටස (අලුත් කොටස) ---
     const fetchUserData = async () => {
     const userEmail = localStorage.getItem('userEmail');
         if (userEmail) {
             try {
-                // 👈 fetch වෙනුවට API.get දැම්මා
                 const response = await API.get(`/customers/user-details/${userEmail}`);
                 const data = response.data;
 
@@ -132,6 +117,7 @@ const handleImageChange = async (e) => {
         };
     }, []);
 
+    // Logout Function
     const handleLogout = () => {
         if(window.confirm("Are you sure you want to logout?")) {
             localStorage.clear(); 
@@ -149,13 +135,21 @@ const handleImageChange = async (e) => {
     ];
 
     return (
-        <div style={{ ...styles.container, backgroundImage: `url(${bgImage})` }}>
+        <div style={{
+            ...styles.container,
+            backgroundImage: `url(${bgImage})` 
+        }}>
             <div style={styles.overlay}></div>
+
+            {/* SIDEBAR */}
             <aside style={styles.sidebar}>
                 <div style={styles.logoWrapper}>
                     <img src={logo} alt="Logo" style={styles.glowingLogo} />
                     <p style={styles.ecoMotto}>Circular Economy Platform</p>
                 </div>
+
+                
+                
               <nav style={styles.navMenu}>
     {[
         { id: 'REGISTER PRODUCT', label: 'REGISTER YOUR PRODUCT' },
@@ -166,7 +160,13 @@ const handleImageChange = async (e) => {
     ].map((item) => {
         const isActive = activeTab === item.id;
         return (
-            <div key={item.id} style={{ ...styles.navLink, ...(isActive ? styles.activeNavLink : {}) }} 
+            <div 
+                key={item.id}
+                style={{
+                    ...styles.navLink, 
+                    ...(isActive ? styles.activeNavLink : {})
+                }} 
+
               onClick={() => {
                     if (item.id === 'about') {
                         window.open('https://eprs.lk', '_blank');
@@ -174,47 +174,121 @@ const handleImageChange = async (e) => {
                         setActiveTab(item.id);
                     }
                 }}
+
+
+                onMouseEnter={(e) => {
+                    if (!isActive) {
+                        e.currentTarget.style.background = 'rgba(255, 255, 255, 0.08)';
+                        e.currentTarget.style.border = '1px solid rgba(255, 255, 255, 0.2)';
+                        e.currentTarget.style.transform = 'translateY(-2px)'; 
+                    }
+                }}
+                onMouseLeave={(e) => {
+                    if (!isActive) {
+                        e.currentTarget.style.background = 'rgba(255, 255, 255, 0.03)';
+                        e.currentTarget.style.border = '1px solid rgba(255, 255, 255, 0.05)';
+                        e.currentTarget.style.transform = 'translateY(0)';
+                    }
+                }}
             >
+                <span style={{ 
+                    fontSize: '20px',
+                    filter: isActive ? 'drop-shadow(0 0 5px #2ecc71)' : 'none' 
+                }}>
+                    {item.icon}
+                </span> 
                 {item.label}
             </div>
         );
     })}
 </nav>
-                <div style={styles.logoutBtn} onClick={handleLogout}>LOG OUT</div>
+{/* LOGOUT BUTTON - දැන් NAVIGATION එකට උඩින් තියෙන්නේ (Req: Udta ganna) */}
+                <div 
+                    style={styles.logoutBtn} 
+                    onClick={handleLogout}
+                    onMouseEnter={(e) => {
+                        e.currentTarget.style.boxShadow = '0 0 20px rgba(255, 77, 77, 0.6)';
+                        e.currentTarget.style.background = 'rgba(255, 77, 77, 0.2)';
+                        e.currentTarget.style.transform = 'scale(1.02)';
+                    }}
+                    onMouseLeave={(e) => {
+                        e.currentTarget.style.boxShadow = 'none';
+                        e.currentTarget.style.background = 'rgba(255, 77, 77, 0.05)';
+                        e.currentTarget.style.transform = 'scale(1)';
+                    }}
+                >
+                    <span style={{ fontSize: '18px' }}></span> LOG OUT
+                </div>
+
+
+
             </aside>
 
+{/* MAIN AREA */}
 <main style={styles.mainArea}>
+
+{/* --- PRODUCT REGISTRATION SECTION --- */}
 {activeTab === 'REGISTER PRODUCT' && (
-    <div style={{ ...styles.contentPadding, animation: 'fadeInUp 0.6s ease-out forwards' }}><ProductRegistration /></div>
+    <div style={{ ...styles.contentPadding, animation: 'fadeInUp 0.6s ease-out forwards' }}>
+        <ProductRegistration />
+    </div>
 )}
 
+
     {activeTab === 'ORDER NOW' && (
-        <div style={{ ...styles.contentPadding, animation: 'fadeInUp 0.6s ease-out forwards' }}>
+        /* මෙන්න මෙතනටයි animation එකයි contentPadding එකයි දෙන්නම දාන්න ඕනේ */
+        <div style={{ 
+            ...styles.contentPadding, 
+            animation: 'fadeInUp 0.6s ease-out forwards' 
+        }}>
             <h1 style={styles.mainTitle}>CUSTOMER DASHBOARD</h1>
             <p style={styles.subTitle}>Select a category to start your recycling journey</p>
+            
             <div style={styles.grid}>
                 {categories.map((cat, i) => (
-                    <div key={i} style={styles.card} onClick={() => navigate(cat.path)}>
+                    <div 
+                        key={i} 
+                        style={styles.card} 
+                        onClick={() => navigate(cat.path)}
+                        onMouseEnter={(e) => {
+                            e.currentTarget.style.transform = 'scale(1.05) translateY(-10px)';
+                            e.currentTarget.style.boxShadow = '0 15px 35px rgba(46, 204, 113, 0.3)';
+                            e.currentTarget.style.borderColor = '#2ecc71';
+                        }}        
+                    onMouseLeave={(e) => {
+                        e.currentTarget.style.transform = 'scale(1) translateY(0)';
+                        e.currentTarget.style.boxShadow = 'none';
+                        e.currentTarget.style.borderColor = '#333';
+                    }}
+                >
                     <img src={cat.img} alt={cat.name} style={styles.cardImg} />
                     <div style={styles.cardInfo}>
                         <h3 style={styles.cardTitle}>{cat.name}</h3>
                         <p style={styles.cardDesc}>{cat.desc}</p>
                     </div>
                 </div>
+                /* -------------------------------------- */
+
             ))}
         </div>
     </div>
 )}
               
+                        
+               {/* UserDashboard.js ඇතුළේ */}
 {activeTab === 'feedback' && <FeedbackPage currentUser={formData} />}         
 
+             {/* --- MY PROFILE SECTION --- */}
 {activeTab === 'profile' && (
     <div style={{ ...styles.contentPadding, animation: 'fadeInUp 0.6s ease-out' }}>
         <h1 style={styles.mainTitle}>MY PROFILE</h1>
+        <p style={styles.subTitle}>Manage your account and profile details</p>
+
         <div style={styles.profileCard}>
+            {/* Profile Picture Header */}
             <div style={styles.profileHeader}>
                 <div style={styles.avatarWrapper}>
-                    <img src={`${profileImage}?t=${new Date().getTime()}`} alt="Profile" style={styles.profileImg} />
+<img src={`${profileImage}?t=${new Date().getTime()}`} alt="Profile"  style={styles.profileImg} />
                     {isEditing && (
                         <label style={styles.uploadIcon}>
                             📷 <input type="file" accept="image/*" onChange={handleImageChange} style={{ display: 'none' }} />
@@ -227,7 +301,10 @@ const handleImageChange = async (e) => {
                     <span style={styles.roleTag}>{formData.orgRole}</span>
                 </div>
             </div>
+
             <hr style={{ border: '0.1px solid rgba(255,255,255,0.05)', margin: '30px 0' }} />
+
+            {/* Input Fields Grid */}
             <div style={styles.profileGrid}>
              {[
     { label: 'Organization Role', name: 'orgRole', value: formData.orgRole },
@@ -259,19 +336,27 @@ const handleImageChange = async (e) => {
             }} 
         />
     </div>
+
                 ))}
             </div>
+
+            {/* Action Buttons */}
             <div style={styles.profileActions}>
-             <button style={{ ...styles.updateBtn, background: '#7dc27f' }} 
+             <button 
+    style={{ ...styles.updateBtn, background: isEditing ? '#7dc27f' : '#7dc27f' }} 
     onClick={async () => {
        if (isEditing) {
             try {
-                // 👈 fetch වෙනුවට API.put දැම්මා
                 const response = await API.put(`/customers/user-details/update/${formData.officialEmail}`, formData);
+
+                const data = response.data;
+
                 alert("✅ Profile Updated in Database Successfully!");
                 localStorage.setItem('user', JSON.stringify(formData));
+                
             } catch (error) {
                 console.error("Update error:", error);
+                
                 if (error.response) {
                     alert(`❌ Update Failed: ${error.response.data.error || 'Server error'}`);
                 } else {
@@ -285,19 +370,23 @@ const handleImageChange = async (e) => {
     {isEditing ? " SAVE CHANGES" : " EDIT PROFILE"}
 </button>
                 {isEditing && (
-                    <button style={{ ...styles.deleteAccBtn, borderColor: '#666', color: '#666' }} onClick={() => setIsEditing(false)}>CANCEL</button>
+                    <button style={{ ...styles.deleteAccBtn, borderColor: '#666', color: '#666' }} onClick={() => setIsEditing(false)}>
+                        CANCEL
+                    </button>
                 )}
             </div>
         </div>
     </div>
 )}
 
+{/* --- ABOUT SECTION --- */}
 {activeTab === 'about' && (
     <div style={styles.centeredPage}>
         <h1 style={styles.mainTitle}>ABOUT US</h1>
         <p style={styles.subTitle}>We are committed to a greener future.</p>
         <div style={{maxWidth: '600px', textAlign: 'center', color: '#bbb', lineHeight: '1.8'}}>
-            EPRS (Pvt) Ltd is a leading waste management solution provider in Sri Lanka.
+            EPRS (Pvt) Ltd is a leading waste management solution provider in Sri Lanka, 
+            specializing in electronic, plastic, and industrial waste recycling.
         </div>
     </div>
 )}
@@ -305,6 +394,7 @@ const handleImageChange = async (e) => {
         </div>
     );
 };
+
 const styles = {
 
 // --- Profile Styles ටික ---
