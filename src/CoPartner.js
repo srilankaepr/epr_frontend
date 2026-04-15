@@ -19,7 +19,7 @@ const CoPartner = () => {
     
     const fetchPartners = async () => {
         try {
-            const res = await API.get('/partners/all');
+            const res = await API.get('/all');
             setPartners(res.data);
         } catch (err) {
             console.error("Error fetching data");
@@ -40,11 +40,11 @@ const CoPartner = () => {
     }
         try {
             if (isEditing) {
-                await API.put(`/partners/update/${partnerData._id}`, partnerData);
+                await API.put(`/update/${partnerData._id}`, partnerData);
                 alert("Partner Details Updated Successfully! ✅");
             } else {
                 const { _id, coPartnerId, ...submitData } = partnerData; 
-                const response = await API.post('/partners/register', submitData);
+                const response = await API.post('/register', submitData);
                 const newID = response.data?.partner?.coPartnerId || "Generated";
                 alert(`New Partner Registered Successfully! \nAssigned ID: ${newID} 🚀`);
             }
@@ -72,7 +72,7 @@ const CoPartner = () => {
     const handleDelete = async (id) => {
         if (window.confirm("Are you sure you want to delete this partner?")) {
             try {
-                await API.delete(`/partners/delete/${id}`);
+                await API.delete(`/delete/${id}`);
                 fetchPartners();
             } catch (err) {
                 alert("Delete failed.");
