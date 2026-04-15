@@ -4,6 +4,7 @@ import logo from './logo.png';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import bgImage from './assets/copartner.jpg';
+import API from './api';
 
 const CoPartnerDashboard = () => {
   const navigate = useNavigate();
