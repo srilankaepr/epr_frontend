@@ -74,6 +74,26 @@ const handleImageChange = async (e) => {
     }
 };
 
+const deleteProfilePicture = async () => {
+    if (window.confirm("Are you sure you want to delete the profile picture?")) {
+        try {
+            const response = await API.post('/customers/delete-photo', {
+                email: formData.officialEmail,
+                role: 'customer'
+            });
+
+            if (response.status === 200) {
+                setProfileImage("https://via.placeholder.com/150"); 
+                localStorage.removeItem('userPhoto');
+                alert("✅ Profile picture deleted successfully!");
+            }
+        } catch (error) {
+            console.error("Delete failed:", error);
+            alert("❌ Profile picture deletion failed!");
+        }
+    }
+};
+
     useEffect(() => {
     const styleSheet = document.createElement("style");
     styleSheet.innerText = `
@@ -288,16 +308,42 @@ const handleImageChange = async (e) => {
             {/* Profile Picture Header */}
             <div style={styles.profileHeader}>
                 <div style={styles.avatarWrapper}>
-                    <img 
-    src={profileImage.startsWith('data:') ? profileImage : `${profileImage}?t=${new Date().getTime()}`} 
+                   
+<img 
+    src={
+        profileImage && profileImage !== "https://via.placeholder.com/150" 
+        ? (profileImage.startsWith('data:') ? profileImage : `${profileImage}?t=${new Date().getTime()}`)
+        : "https://www.pngall.com/wp-content/uploads/5/User-Profile-PNG.png" 
+    } 
     alt="Profile" 
     style={styles.profileImg} 
 />
-                    {isEditing && (
-                        <label style={styles.uploadIcon}>
-                            📷 <input type="file" accept="image/*" onChange={handleImageChange} style={{ display: 'none' }} />
-                        </label>
-                    )}
+
+{isEditing && (
+    <>
+        <label style={styles.uploadIcon}>
+            📷 <input type="file" accept="image/*" onChange={handleImageChange} style={{ display: 'none' }} />
+        </label>
+        
+        {profileImage && profileImage !== "https://via.placeholder.com/150" && (
+            <div 
+                onClick={deleteProfilePicture}
+                style={{
+                    position: 'absolute', top: '5px', left: '5px',
+                    background: '#ff4d4d', borderRadius: '50%',
+                    width: '30px', height: '30px', display: 'flex',
+                    alignItems: 'center', justifyContent: 'center',
+                    cursor: 'pointer', fontSize: '14px', border: '2px solid #fff',
+                    zIndex: 2
+                }}
+                title="Remove Photo"
+            >
+                ❌
+            </div>
+        )}
+    </>
+)}
+                   
                 </div>
                 <div style={{ textAlign: 'left' }}>
                     <h2 style={{ margin: 0, color: '#2ecc71', fontSize: '28px' }}>{formData.contactPersonName}</h2>
