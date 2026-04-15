@@ -72,7 +72,7 @@ const CoPartner = () => {
     const handleDelete = async (id) => {
         if (window.confirm("Are you sure you want to delete this partner?")) {
             try {
-                await axios.delete(`${API_URL}/delete/${id}`);
+                await API.delete(`/delete/${id}`);
                 fetchPartners();
             } catch (err) {
                 alert("Delete failed.");
