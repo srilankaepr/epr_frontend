@@ -120,7 +120,7 @@ const handleImageChange = async (e) => {
     const userEmail = localStorage.getItem('userEmail');
         if (userEmail) {
             try {
-                const response = await API.put(`/customers/user-details/${userEmail}`);
+                const response = await API.get(`/customers/user-details/${userEmail}`);
                 const data = response.data;
 
             if (data.user) {
