@@ -389,7 +389,7 @@ const fetchDashboardCounts = async () => {
 
                 const uniqueSuffix = Math.random().toString(36).substring(2, 7).toUpperCase();
                 const fullID = `EPR-${idDateCode}-${i.toString().padStart(4, '0')}-${uniqueSuffix}`;
-                const qrValue = `https://dumidu.vercel.app/verify-product?id=${fullID}`;
+                const qrValue = `https://epr-srilanka.vercel.app/verify-product?id=${fullID}`;
                 const qrDataURL = await QRCode.toDataURL(qrValue, { width: 800, margin: 4, errorCorrectionLevel: 'H' });
                 await new Promise((resolve, reject) => {
                     qrImage.onload = resolve;
