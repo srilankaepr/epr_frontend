@@ -142,7 +142,7 @@ if (response.status === 200) {
 
                     <div style={styles.copyrightBox}>
                         <p style={styles.copyrightText}>
-                            © {new Date().getFullYear()} <span style={styles.brand}>EPR PORTAL</span>
+                            © {new Date().getFullYear()} <span style={styles.brand}>SRI LANKA EPR PORTAL</span>
                         </p>
                         <p style={styles.rights}>SECURED GOVERNANCE INTERFACE</p>
                     </div>
