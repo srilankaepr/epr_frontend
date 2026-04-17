@@ -322,7 +322,7 @@ const removeInvoice = (e) => {
             {order.status || 'Pending'}
         </span>
 
-        {order.status === 'QR Sent' && order.qrZipFile && (
+        {order.status === 'QR Sent' && order.qrZipUrl && (
            <button 
                 onClick={() => window.open(order.qrZipUrl, '_blank')}
                  style={styles.qrDownloadBtn}
