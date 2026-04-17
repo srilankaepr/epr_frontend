@@ -81,7 +81,7 @@ if (response.status === 200) {
                     <div style={styles.logoFrame}>
                         <img src={logo} alt="EPR Logo" style={styles.logoImg} />
                     </div>
-                    <h1 style={styles.title}>EPR PORTAL</h1>
+                    <h1 style={styles.title}>SRI LANKA EPR PORTAL</h1>
                     <p style={styles.subText}>Leading the Path to Global Circular Economy</p>
                 </div>
 
