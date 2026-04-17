@@ -487,8 +487,8 @@ mainContentAnimation: {
     },
     logoWrapper: { textAlign: 'center', marginBottom: '30px' },
  glowingLogo: {
-    width: '140px',          
-    height: '140px',
+    width: '110px',          
+    height: '110px',
     borderRadius: '50%',     
     objectFit: 'contain',    
     backgroundColor: '#fff', 
@@ -574,13 +574,13 @@ activeNavLink: {
 ecoMotto: { 
         fontSize: '23px', 
         fontStyle: 'italic', 
-        color: '#2ecc71', // ලස්සන කොළ පාටක්
-        marginTop: '-10px', // ලෝගෝ එකට ලං වෙන්න
+        color: '#2ecc71', 
+        marginTop: '-10px', 
         marginBottom: '30px', 
         textAlign: 'center',
         fontWeight: '500',
         letterSpacing: '0.5px',
-        textShadow: '0 0 10px rgba(46, 204, 113, 0.3)' // ලාවට Glow වෙනවා
+        textShadow: '0 0 10px rgba(46, 204, 113, 0.3)' 
     },
 
 
