@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Html5QrcodeScanner } from 'html5-qrcode';
-import axios from 'axios';
+import api from './api';
 
 const CoPartnerScan = () => {
   const navigate = useNavigate();
   const [result, setResult] = useState('Scan the QR code approved by the customer.');
   const [loading, setLoading] = useState(false);
   const [scanning, setScanning] = useState(false);
-  const [manualId, setManualId] = useState(''); // 👈 අතින් ගහන ID එක තියාගන්න
+  const [manualId, setManualId] = useState(''); 
 
   useEffect(() => {
     let scanner = null;
@@ -31,7 +31,6 @@ const CoPartnerScan = () => {
 
       scanner.render(onScanSuccess, onScanFailure);
 
-      // UI එකේ ඇති අනවශ්‍ය බටන් ඉවත් කිරීම
       const forceRemoveInternal = setInterval(() => {
         const internalStop = document.querySelector('.html5-qrcode-stop-button');
         if (internalStop) {
@@ -62,7 +61,7 @@ const CoPartnerScan = () => {
         const pName = localStorage.getItem('userName'); 
         const pPhone = localStorage.getItem('partnerPhone');
 
-        const response = await axios.post('https://eprbackend-production-6318.up.railway.app/api/partner/confirm-collection', {
+const response = await api.post('/partner/confirm-collection', {  
             qrId: finalId.trim(), 
             partnerId: pId,
             partnerName: pName,
@@ -75,7 +74,6 @@ const CoPartnerScan = () => {
         }
     } catch (err) {
         console.error("Scan Error:", err);
-        // Backend එකෙන් එවන Error Message එක පෙන්වයි
         alert(err.response?.data?.message || "An error occurred in the system. Please try again.");
     } finally {
         setLoading(false);
@@ -92,10 +90,9 @@ const CoPartnerScan = () => {
     setLoading(true);
     try {
         const pId = localStorage.getItem('coPartnerId');
-        const pName = localStorage.getItem('userName'); // 👈 අපි කලින් හදාගත්ත විදියට userName එක ගත්තා
+        const pName = localStorage.getItem('userName'); 
         const pPhone = localStorage.getItem('partnerPhone');
-
-        const response = await axios.post('https://eprbackend-production-6318.up.railway.app/api/partner/confirm-collection', {
+        const response = await api.post('/partner/confirm-collection', {
             qrId: manualId.trim(), 
             partnerId: pId,
             partnerName: pName,
