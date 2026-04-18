@@ -90,8 +90,7 @@ const CustomerVerify = () => {
         setMessage({ text: '', type: '' });
         
         try {
-            // 1. fetch වෙනුවට API.post පාවිච්චි කරමු
-            // 2. පාර (Path) විදිහට /qr/save-registration පාවිච්චි කරනවා
+                    
             const response = await API.post('/qr/save-registration', {
                 cuSerial: qrId,
                 cuName: formData.name,
@@ -99,14 +98,12 @@ const CustomerVerify = () => {
                 cuAddress: formData.address
             });
 
-            // 3. Axios වලදී සාර්ථක ප්‍රතිචාරයක් ලැබුණොත් කෙලින්ම මෙතනට එනවා
             setSuccessMessage("Registration Successful! ✅");
             setShowSuccessPopup(true);
             setViewMode('SUCCESS_DONE'); 
             setTimeout(() => setShowSuccessPopup(false), 5000);
 
         } catch (err) {
-            // 4. Backend එකෙන් එන වැරදි මැසේජ් එකක් තිබේ නම් එය පෙන්වනවා
             const errorMsg = err.response?.data?.error || 'Registration failed. Please try again.';
             setMessage({ text: errorMsg, type: 'error' });
         } finally {
@@ -157,7 +154,6 @@ const handleRecycleSubmit = async () => {
             setTimeout(() => setShowSuccessPopup(false), 5000);
 
         } catch (err) {
-            // 4. සර්වර් එකෙන් එන වැරදි පණිවිඩයක් තිබේ නම් එය පෙන්වනවා
             const errorMsg = err.response?.data?.error || 'Failed to send reminder.';
             setMessage({ text: errorMsg, type: 'error' });
         } finally {

@@ -7,7 +7,7 @@ import earthVideo from './assets/earth.mp4';
 
 const ForgotPassword = () => {
     const navigate = useNavigate();
-    const [step, setStep] = useState(1); // 1: Email, 2: OTP, 3: New Password
+    const [step, setStep] = useState(1); 
     const [email, setEmail] = useState('');
     const [otp, setOtp] = useState('');
     const [newPassword, setNewPassword] = useState('');
