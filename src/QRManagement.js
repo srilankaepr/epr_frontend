@@ -188,7 +188,8 @@ const handleSaveProduct = async () => {
 
     const fetchRegisteredQRs = async () => {
         try {
-          const response = await API.get('/qr/qr-registrations/all');
+         // const response = await API.get('/qr/qr-registrations/all');
+        const response = await API.get('/qr-registrations/all');
         if (response.status !== 200) throw new Error(`HTTP error! status: ${response.status}`);
         setRegisteredQRs(response.data);
     } catch (err) {
