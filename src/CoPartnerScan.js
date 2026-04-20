@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Html5QrcodeScanner } from 'html5-qrcode';
-import api from './api';
+import API from './api';
 
 const CoPartnerScan = () => {
   const navigate = useNavigate();
