@@ -217,12 +217,12 @@ const handleSaveProduct = async () => {
                             id: Date.now() + Math.random(),
                             requestId: req._id,
                             message: {
-                              name: req.cuName,
-                  address: req.cuAddress || 'No Address Provided',
-                  phone: req.cuPhone || 'No Phone',
-                  product: req.cuProduct,
-                  date: new Date(req.requestedAt).toLocaleDateString(),
-                  time: new Date(req.requestedAt).toLocaleTimeString()
+                            name: req.cuName,
+                            address: req.cuAddress || 'No Address Provided',
+                            phone: req.cuPhone || 'No Phone',
+                            product: req.cuProduct,
+                            date: new Date(req.requestedAt).toLocaleDateString(),
+                            time: new Date(req.requestedAt).toLocaleTimeString()
                             }
                         }, ...prev];
                     });
@@ -542,7 +542,6 @@ if (dbResponse.status !== 200 && dbResponse.status !== 201) {
         <p style={{ fontSize: '13px', color: '#666', textAlign: 'center', padding: '20px' }}>No new requests</p>
       ) : (
         notifications.map((n, index) => {
-          // PubNub එකෙන් හෝ API එකෙන් එන ඕනෑම data structure එකකට ගැලපෙන ලෙස
           const data = n.message || n; 
           
           return (
@@ -982,7 +981,6 @@ if (dbResponse.status !== 200 && dbResponse.status !== 201) {
             <tbody>
                 {registeredQRs.length > 0 ? (
                     (() => {
-                        // 🛠️ Search Logic: Name සහ Serial/ID දෙකෙන්ම Filter කරයි
                         const filteredData = registeredQRs.filter(reg => {
                             const name = reg.cuName ? reg.cuName.toLowerCase() : "";
                             const serial = (reg.cuSerial || reg.qrId || "").toLowerCase();
@@ -1040,11 +1038,11 @@ if (dbResponse.status !== 200 && dbResponse.status !== 201) {
            <h3 
     onClick={() => setFilterStatus('All')} // ක්ලික් කළාම 'All' වලට මාරු කරනවා
     style={{ 
-        color: filterStatus === 'All' ? '#2ecc71' : '#fff', // All වෙලාවට විතරක් කොළ පාට පෙන්වන්න
+        color: filterStatus === 'All' ? '#2ecc71' : '#fff', 
         margin: 0, 
         fontSize: '22px', 
         fontWeight: '600',
-        cursor: 'pointer', // මවුස් එක ගෙනිච්චම අතක සලකුණ එන්න
+        cursor: 'pointer', 
         transition: '0.3s'
     }}
 >
@@ -1129,8 +1127,6 @@ if (dbResponse.status !== 200 && dbResponse.status !== 201) {
                 <tbody>
                   {recycleRequests.length > 0 ? (
         (() => {
-            // 1. මුලින්ම Status එක අනුව Filter කරනවා (ඔයාගේ පරණ logic එක)
-            // 2. ඊටපස්සේ searchTerm එක අනුව Filter කරනවා (අලුත් logic එක)
             const filteredItems = recycleRequests
                 .filter(req => filterStatus === 'All' ? true : (req.status || 'Pending') === filterStatus)
                 .filter(req => {
