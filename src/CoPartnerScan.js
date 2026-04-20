@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Html5QrcodeScanner } from 'html5-qrcode';
-import axios from 'axios';
+import API from './api';
 
 const CoPartnerScan = () => {
   const navigate = useNavigate();
@@ -61,7 +61,7 @@ const CoPartnerScan = () => {
         const pName = localStorage.getItem('userName'); 
         const pPhone = localStorage.getItem('partnerPhone');
 
-        const response = await axios.post('https://eprbackend-production-6318.up.railway.app/api/partner/confirm-collection', {
+const response = await API.post('/partners/confirm-collection', {
             qrId: finalId.trim(), 
             partnerId: pId,
             partnerName: pName,
@@ -92,7 +92,7 @@ const CoPartnerScan = () => {
         const pId = localStorage.getItem('coPartnerId');
         const pName = localStorage.getItem('userName'); 
         const pPhone = localStorage.getItem('partnerPhone');
-        const response = await axios.post('https://eprbackend-production-6318.up.railway.app/api/partner/confirm-collection', {
+        const response = await API.post('/partners/confirm-collection', {
             qrId: manualId.trim(), 
             partnerId: pId,
             partnerName: pName,
