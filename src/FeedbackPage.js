@@ -143,12 +143,12 @@ const FeedbackPage = ({ currentUser: propsUser }) => {
                         <p style={styles.commentText}>{f.text}</p>
                         
                         {/* ✅ currentUser ගේ නිවැරදි email එක අනුව Edit/Delete පාලනය */}
-                      {!isAdmin && (f.officialEmail === currentUser?.officialEmail || f.officialEmail === currentUser?.email) && (
-                       <div style={styles.actionRow}>
-                              <button onClick={() => {setEditingId(f._id); setText(f.text); setRating(f.rating);}} style={styles.editBtn}>Edit</button>
-                              <button onClick={() => handleDelete(f._id)} style={styles.deleteBtn}>Delete</button>
-                       </div>
-                               )}
+                     {!isAdmin && (f.officialEmail === currentUser?.officialEmail || f.officialEmail === currentUser?.email) && (
+                          <div style={styles.actionRow}>
+                                 <button onClick={() => {setEditingId(f._id); setText(f.text); setRating(f.rating);}} style={styles.editBtn}>Edit</button>
+                                 <button onClick={() => handleDelete(f._id)} style={styles.deleteBtn}>Delete</button>
+                            </div>
+                           )}
 
                         {f.reply && (
                             <div style={styles.replyBox}>
