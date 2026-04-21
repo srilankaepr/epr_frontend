@@ -13,8 +13,7 @@ const FeedbackPage = ({ currentUser: propsUser }) => {
     const adminEmail = localStorage.getItem('adminEmail');
 
     const currentUser = propsUser || (userString ? JSON.parse(userString) : null);
-
-    const isAdmin = !!adminEmail && currentUser?.adminRole === 'Admin';
+    const isAdmin = !!adminEmail && (!!currentUser?.fullName || currentUser?.adminRole === 'Admin');
     const fetchFeedbacks = async () => {
         try {
             const res = await API.get('/admin/feedbacks');
