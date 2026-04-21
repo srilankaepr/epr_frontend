@@ -7,10 +7,14 @@ const FeedbackPage = ({ currentUser: propsUser }) => {
     const [rating, setRating] = useState(0);
     const [hover, setHover] = useState(0);
     const [editingId, setEditingId] = useState(null);
+    const [replyTexts, setReplyTexts] = useState({}); 
 
-    // ✅ Props වලින් හෝ LocalStorage එකෙන් නිවැරදි User දත්ත ලබා ගැනීම
     const userString = localStorage.getItem('user');
+    const adminEmail = localStorage.getItem('adminEmail');
+
     const currentUser = propsUser || (userString ? JSON.parse(userString) : null);
+
+    const isAdmin = !!adminEmail;
 
     const fetchFeedbacks = async () => {
         try {
@@ -29,7 +33,6 @@ const FeedbackPage = ({ currentUser: propsUser }) => {
         e.preventDefault();
         if (rating === 0) return alert("Please select a star rating!");
 
-        // ✅ Anonymous ප්‍රශ්නය විසඳීම: ඔයාගේ DB එකේ ඇති contactPersonName සහ officialEmail නිවැරදිව ගැලපීම
         const feedbackData = { 
             user: currentUser?.contactPersonName || currentUser?.companyName || currentUser?.fullName || "Anonymous", 
             officialEmail: currentUser?.officialEmail || currentUser?.email || "N/A",
@@ -63,10 +66,27 @@ const FeedbackPage = ({ currentUser: propsUser }) => {
         }
     };
 
+
+    const handleAdminReply = async (id) => {
+    const replyText = replyTexts[id];
+    if (!replyText || replyText.trim() === "") return alert("Please enter a reply!");
+
+    try {
+        await API.put(`/admin/feedbacks/${id}`, { reply: replyText });
+        
+        setReplyTexts(prev => ({ ...prev, [id]: "" }));
+        fetchFeedbacks();
+        alert("Reply sent successfully!");
+    } catch (err) {
+        console.error("Error sending reply:", err);
+    }
+};
+
     return (
         <div style={styles.feedbackContainer}>
             <h1 style={styles.mainTitle}>USER FEEDBACK</h1>
             
+        {!currentUser?.isAdmin && (    
             <form onSubmit={handleSubmit} style={styles.feedbackForm}>
                 <h3 style={{marginBottom: '15px', color: '#2ecc71'}}>
                     {editingId ? "Update Your Review" : "Share Your Experience"}
@@ -104,7 +124,7 @@ const FeedbackPage = ({ currentUser: propsUser }) => {
                     )}
                 </div>
             </form>
-
+        )}
             <div style={styles.commentsSection}>
                 <h3 style={{marginBottom: '20px', borderBottom: '1px solid #222', paddingBottom: '10px'}}>
                     Community Reviews ({feedbacks.length})
@@ -136,9 +156,42 @@ const FeedbackPage = ({ currentUser: propsUser }) => {
                                 <p style={{margin: '5px 0 0 0', color: '#eee'}}>{f.reply}</p>
                             </div>
                         )}
-                    </div>
-                ))}
-            </div>
+
+{currentUser?.isAdmin && (
+    <div style={{ marginTop: '15px', borderTop: '1px solid #222', paddingTop: '15px' }}>
+        <input 
+            type="text" 
+            placeholder={f.reply ? "Update your reply..." : "Write a reply to this customer..."}
+            // මෙතන replyTexts state එක පාවිච්චි වෙනවා
+            value={replyTexts[f._id] || ""}
+            onChange={(e) => setReplyTexts({ ...replyTexts, [f._id]: e.target.value })}
+            style={{
+                width: '100%', 
+                height: '40px', 
+                background: '#000', 
+                border: '1px solid #444', 
+                color: '#fff', 
+                borderRadius: '8px', 
+                padding: '0 15px', 
+                marginBottom: '10px',
+                outline: 'none',
+                boxSizing: 'border-box',
+                display: 'block'
+            }} 
+        />
+        <button 
+            type="button"
+            onClick={() => handleAdminReply(f._id)} 
+            style={{...styles.submitBtn, padding: '8px 15px', fontSize: '12px'}}
+        >
+            {f.reply ? "Update Reply" : "Send Reply"}
+        </button>
+    </div>
+)}
+
+ </div>
+     ))}
+         </div>
         </div>
     );
 };

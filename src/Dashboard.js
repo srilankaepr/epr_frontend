@@ -7,7 +7,6 @@ import FeedbackPage from './FeedbackPage';
 const Dashboard = () => {
     const navigate = useNavigate();
     const [showMenu, setShowMenu] = useState(false);
-
     const [adminInfo, setAdminInfo] = useState({
         name: localStorage.getItem('adminName') || "Admin", 
         email: localStorage.getItem('adminEmail') || "admin@system.com",
@@ -23,6 +22,7 @@ const Dashboard = () => {
         active: 0
     });
     const [topCompanies, setTopCompanies] = useState([]); 
+    const [feedbacks, setFeedbacks] = useState([]);
 
     useEffect(() => {
         const handleClickOutside = (event) => {
