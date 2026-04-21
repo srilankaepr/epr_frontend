@@ -194,7 +194,13 @@ if (topRes.status === 200) {
             <h2 style={styles.logoTitle}>EPR SYSTEM</h2>
 
             <nav style={styles.nav}>
-                <button style={styles.navBtnActive}>Summary</button>
+                <button 
+                    style={activeTab === 'dashboard' ? styles.navBtnActive : styles.navBtn}
+                    onClick={() => setActiveTab('dashboard')}
+                >
+                    Summary
+                </button>
+
                 {['User Management', 'Co-Partner', 'Orders', 'QR Management'].map((item) => (
                     <button 
                         key={item} 
@@ -255,6 +261,8 @@ if (topRes.status === 200) {
             </header>
 
             <div style={{...styles.contentArea, animation: 'fadeInUp 1s ease-out'}}>
+
+                {activeTab === 'dashboard' ? (
                 <div style={styles.placeholderGrid}>
 
                {/* 1. PRODUCT REGISTRY  */}
@@ -347,10 +355,15 @@ if (topRes.status === 200) {
                         </div>
                     </div>
                 </div> 
+                ) : (
+                    <div style={{ animation: 'fadeIn 0.5s ease' }}>
+                        <FeedbackPage currentUser={adminInfo} /> 
+                    </div>
+                )}
             </div>
         </div>
     </div>
-);
+   );
 };
 const styles = {
     container: { 
