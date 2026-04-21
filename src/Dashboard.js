@@ -248,7 +248,7 @@ if (topRes.status === 200) {
             <div style={{...styles.contentArea, animation: 'fadeInUp 1s ease-out'}}>
                 <div style={styles.placeholderGrid}>
 
-
+               {/* 1. PRODUCT REGISTRY  */}
                       <div 
                         style={{...styles.miniCard, cursor: 'pointer', transition: '0.3s'}} 
                         onClick={() => navigate('/admin-products')}
@@ -266,7 +266,28 @@ if (topRes.status === 200) {
                         <p style={styles.cardLab}>View & Manage Registered Products</p>
                     </div>
 
-                    {/* කාඩ් 1: Total PIBO */}
+            {/* CUSTOMER FEEDBACK */}
+                <div 
+            style={{...styles.miniCard, cursor: 'pointer', transition: '0.3s'}} 
+            onClick={() => setActiveTab('feedbacks')}
+            onMouseEnter={(e) => {
+                e.currentTarget.style.background = 'rgba(46, 204, 113, 0.1)';
+                e.currentTarget.style.transform = 'translateY(-5px)';
+            }}
+            onMouseLeave={(e) => {
+                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.03)';
+                e.currentTarget.style.transform = 'translateY(0)';
+            }}
+        >
+            <div style={{...styles.cardIcon, color: '#f1c40f'}}>💬</div>
+            <h3 style={styles.cardVal}>{feedbacks.length}</h3>
+            <p style={styles.cardLab}>Customer Feedbacks</p>
+            <div style={{marginTop: '5px', color: '#2ecc71', fontSize: '12px', fontWeight: 'bold'}}>
+                View & Reply →
+            </div>
+        </div>
+
+                    {/* Total PIBO */}
                     <div style={styles.miniCard}>
                         <div style={{...styles.cardIcon, color: '#3498db'}}>👤</div>
                         <h3 style={styles.cardVal}>{counts.pibo}</h3>
@@ -287,14 +308,14 @@ if (topRes.status === 200) {
                         </div>
                     </div>
 
-                    {/* කාඩ් 2: Total Recyclers */}
+                    {/* Total Recyclers */}
                     <div style={styles.miniCard}>
                         <div style={{...styles.cardIcon, color: '#f39c12'}}>🚚</div>
                         <h3 style={styles.cardVal}>{counts.recyclers}</h3>
                         <p style={styles.cardLab}>Total Recyclers</p>
                     </div>
 
-                    {/* කාඩ් 3: Top 5 QR Leaders */}
+                    {/*  Top 5 QR Leaders */}
                     <div style={styles.miniCard}>
                         <p style={{...styles.cardLab, marginBottom: '15px'}}>Top 5 QR Leaders</p>
                         <div style={styles.topFiveList}>
