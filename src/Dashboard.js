@@ -183,9 +183,10 @@ if (topRes.status === 200) {
                 </div>
             </div>
             <h2 style={styles.logoTitle}>EPR SYSTEM</h2>
+
             <nav style={styles.nav}>
                 <button style={styles.navBtnActive}>Summary</button>
-                {['User Management', 'Co-Partner', 'Orders', 'QR Management'].map((item) => (
+                {['User Management', 'Co-Partner', 'Orders', 'QR Management', 'Feedbacks'].map((item) => (
                     <button 
                         key={item} 
                         className="nav-item"
@@ -195,6 +196,7 @@ if (topRes.status === 200) {
                             else if (item === 'Co-Partner') navigate('/co-partner');
                             else if (item === 'Orders') navigate('/admin-orders');
                             else if (item === 'QR Management') navigate('/qr-management');
+                            else if (item === 'Feedbacks') setActiveTab('feedbacks');
                         }}
                     >
                         {item}
