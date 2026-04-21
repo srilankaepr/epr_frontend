@@ -1,17 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import API from './api'; 
 
-const FeedbackPage = ({ currentUser }) => {
+const FeedbackPage = ({ currentUser: propsUser }) => {
     const [feedbacks, setFeedbacks] = useState([]);
     const [text, setText] = useState("");
     const [rating, setRating] = useState(0);
     const [hover, setHover] = useState(0);
     const [editingId, setEditingId] = useState(null);
 
-    // 1. සියලුම Feedback ලබා ගැනීම
+    // ✅ Props වලින් හෝ LocalStorage එකෙන් නිවැරදි User දත්ත ලබා ගැනීම
+    const userString = localStorage.getItem('user');
+    const currentUser = propsUser || (userString ? JSON.parse(userString) : null);
+
     const fetchFeedbacks = async () => {
         try {
-            // ✅ Backend එකේ app.use('/api/admin', adminRoutes) නිසා මෙතනට /admin අනිවාර්යයි
             const res = await API.get('/admin/feedbacks');
             setFeedbacks(res.data);
         } catch (err) { 
@@ -23,14 +25,13 @@ const FeedbackPage = ({ currentUser }) => {
         fetchFeedbacks(); 
     }, []);
 
-    // 2. Feedback එකක් Submit කිරීම (Create & Update)
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (rating === 0) return alert("Please select a star rating!");
 
-        // ✅ Backend එකේ authRoutes.js එකෙන් එවන්නේ fullName කියන key එකයි
+        // ✅ Anonymous ප්‍රශ්නය විසඳීම: ඔයාගේ DB එකේ ඇති contactPersonName සහ officialEmail නිවැරදිව ගැලපීම
         const feedbackData = { 
-            user: currentUser?.fullName || currentUser?.contactPersonName || currentUser?.name || "Anonymous", 
+            user: currentUser?.contactPersonName || currentUser?.companyName || currentUser?.fullName || "Anonymous", 
             officialEmail: currentUser?.officialEmail || currentUser?.email || "N/A",
             text, 
             rating 
@@ -38,11 +39,9 @@ const FeedbackPage = ({ currentUser }) => {
 
         try {
             if (editingId) {
-                // ✅ Update කරද්දී පාවිච්චි වන නිවැරදි පාර
                 await API.put(`/admin/feedbacks/${editingId}`, { text, rating });
                 setEditingId(null);
             } else {
-                // ✅ අලුතින් Post කරද්දී පාවිච්චි වන නිවැරදි පාර
                 await API.post('/admin/feedbacks', feedbackData);
             }
             setText(""); 
@@ -53,11 +52,9 @@ const FeedbackPage = ({ currentUser }) => {
         }
     };
 
-    // 3. Feedback එකක් මකා දැමීම (Delete)
     const handleDelete = async (id) => {
         if (window.confirm("Are you sure you want to delete this feedback?")) {
             try {
-                // ✅ Delete කරද්දී පාවිච්චි වන නිවැරදි පාර
                 await API.delete(`/admin/feedbacks/${id}`);
                 fetchFeedbacks();
             } catch (err) {
@@ -70,13 +67,11 @@ const FeedbackPage = ({ currentUser }) => {
         <div style={styles.feedbackContainer}>
             <h1 style={styles.mainTitle}>USER FEEDBACK</h1>
             
-            {/* Feedback Form එක */}
             <form onSubmit={handleSubmit} style={styles.feedbackForm}>
                 <h3 style={{marginBottom: '15px', color: '#2ecc71'}}>
                     {editingId ? "Update Your Review" : "Share Your Experience"}
                 </h3>
                 
-                {/* Star Rating Section */}
                 <div style={styles.starRow}>
                     {[1, 2, 3, 4, 5].map((star) => (
                         <span key={star} 
@@ -110,7 +105,6 @@ const FeedbackPage = ({ currentUser }) => {
                 </div>
             </form>
 
-            {/* Feedback List එක */}
             <div style={styles.commentsSection}>
                 <h3 style={{marginBottom: '20px', borderBottom: '1px solid #222', paddingBottom: '10px'}}>
                     Community Reviews ({feedbacks.length})
@@ -128,7 +122,7 @@ const FeedbackPage = ({ currentUser }) => {
                         </div>
                         <p style={styles.commentText}>{f.text}</p>
                         
-                        {/* ✅ තමන්ගේම ඒවට Edit/Delete පෙන්නන්න නිවැරදි email එක බලනවා */}
+                        {/* ✅ currentUser ගේ නිවැරදි email එක අනුව Edit/Delete පාලනය */}
                         {(f.officialEmail === currentUser?.officialEmail || f.officialEmail === currentUser?.email) && (
                             <div style={styles.actionRow}>
                                 <button onClick={() => {setEditingId(f._id); setText(f.text); setRating(f.rating);}} style={styles.editBtn}>Edit</button>
@@ -136,7 +130,6 @@ const FeedbackPage = ({ currentUser }) => {
                             </div>
                         )}
 
-                        {/* Admin Reply කොටස */}
                         {f.reply && (
                             <div style={styles.replyBox}>
                                 <strong>Admin <span style={styles.replyTag}>REPLY</span></strong>
@@ -150,7 +143,6 @@ const FeedbackPage = ({ currentUser }) => {
     );
 };
 
-// Styles (කිසිම වෙනසක් කර නැත)
 const styles = {
     feedbackContainer: { 
         maxWidth: '700px',     
