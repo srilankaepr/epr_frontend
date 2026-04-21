@@ -14,8 +14,7 @@ const FeedbackPage = ({ currentUser: propsUser }) => {
 
     const currentUser = propsUser || (userString ? JSON.parse(userString) : null);
 
-// FeedbackPage.js - පේළිය 17 අවට isAdmin හදන තැනට මේක දාපන්
-const isAdmin = !!adminEmail && currentUser?.adminRole === 'Admin';
+    const isAdmin = !!adminEmail && currentUser?.adminRole === 'Admin';
     const fetchFeedbacks = async () => {
         try {
             const res = await API.get('/admin/feedbacks');
@@ -81,20 +80,6 @@ const isAdmin = !!adminEmail && currentUser?.adminRole === 'Admin';
         console.error("Error sending reply:", err);
     }
 };
-
-
-
-console.log("--- DEBUG START ---");
-console.log("adminEmail in LocalStorage:", localStorage.getItem('adminEmail'));
-console.log("user in LocalStorage:", localStorage.getItem('user'));
-console.log("isAdmin status:", isAdmin);
-console.log("currentUser Object:", currentUser);
-console.log("--- DEBUG END ---");
-
-
-
-
-
 
 
     return (
