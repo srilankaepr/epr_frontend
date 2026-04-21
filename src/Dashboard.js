@@ -77,6 +77,15 @@ if (topRes.status === 200) {
     } catch (err) {
         console.error("Top companies fetch error:", err);
     }
+  
+    try {
+            const feedbackRes = await API.get('/admin/feedbacks');
+            if (feedbackRes.status === 200) {
+                setFeedbacks(feedbackRes.data); 
+            }
+        } catch (err) {
+            console.error("Error fetching feedbacks for dashboard:", err);
+        }
     };
 
         fetchAdminData();
