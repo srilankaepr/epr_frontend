@@ -186,7 +186,7 @@ if (topRes.status === 200) {
 
             <nav style={styles.nav}>
                 <button style={styles.navBtnActive}>Summary</button>
-                {['User Management', 'Co-Partner', 'Orders', 'QR Management', 'Feedbacks'].map((item) => (
+                {['User Management', 'Co-Partner', 'Orders', 'QR Management'].map((item) => (
                     <button 
                         key={item} 
                         className="nav-item"
@@ -196,7 +196,6 @@ if (topRes.status === 200) {
                             else if (item === 'Co-Partner') navigate('/co-partner');
                             else if (item === 'Orders') navigate('/admin-orders');
                             else if (item === 'QR Management') navigate('/qr-management');
-                            else if (item === 'Feedbacks') setActiveTab('feedbacks');
                         }}
                     >
                         {item}
