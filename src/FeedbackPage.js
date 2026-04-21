@@ -82,6 +82,21 @@ const FeedbackPage = ({ currentUser: propsUser }) => {
     }
 };
 
+
+
+console.log("--- DEBUG START ---");
+console.log("adminEmail in LocalStorage:", localStorage.getItem('adminEmail'));
+console.log("user in LocalStorage:", localStorage.getItem('user'));
+console.log("isAdmin status:", isAdmin);
+console.log("currentUser Object:", currentUser);
+console.log("--- DEBUG END ---");
+
+
+
+
+
+
+
     return (
         <div style={styles.feedbackContainer}>
             <h1 style={styles.mainTitle}>USER FEEDBACK</h1>
@@ -143,7 +158,6 @@ const FeedbackPage = ({ currentUser: propsUser }) => {
                         <p style={styles.commentText}>{f.text}</p>
                         
                         {/* ✅ currentUser ගේ නිවැරදි email එක අනුව Edit/Delete පාලනය */}
-                     // පේළිය 116 අවට:
 {!isAdmin && (currentUser?.officialEmail === f.officialEmail || currentUser?.email === f.officialEmail) && (
     <div style={styles.actionRow}>
         <button onClick={() => {setEditingId(f._id); setText(f.text); setRating(f.rating);}} style={styles.editBtn}>Edit</button>
