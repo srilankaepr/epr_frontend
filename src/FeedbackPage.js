@@ -9,11 +9,18 @@ const FeedbackPage = ({ currentUser: propsUser }) => {
     const [editingId, setEditingId] = useState(null);
     const [replyTexts, setReplyTexts] = useState({}); 
 
-    const userString = localStorage.getItem('user');
+ 
+const userString = localStorage.getItem('user');
     const adminEmail = localStorage.getItem('adminEmail');
 
     const currentUser = propsUser || (userString ? JSON.parse(userString) : null);
+
+   
     const isAdmin = !!adminEmail && (!!currentUser?.fullName || currentUser?.adminRole === 'Admin');
+
+    // 🔴 පොඩි Debug එකක් දාමු බලාගන්න (මේක පස්සේ අයින් කරන්න පුළුවන්)
+    console.log("Is Admin Check:", { isAdmin, hasAdminEmail: !!adminEmail, hasFullName: !!currentUser?.fullName });
+
     const fetchFeedbacks = async () => {
         try {
             const res = await API.get('/admin/feedbacks');
