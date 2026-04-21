@@ -86,7 +86,7 @@ const FeedbackPage = ({ currentUser: propsUser }) => {
         <div style={styles.feedbackContainer}>
             <h1 style={styles.mainTitle}>USER FEEDBACK</h1>
             
-        {!currentUser?.isAdmin && (    
+        {!isAdmin && (    
             <form onSubmit={handleSubmit} style={styles.feedbackForm}>
                 <h3 style={{marginBottom: '15px', color: '#2ecc71'}}>
                     {editingId ? "Update Your Review" : "Share Your Experience"}
@@ -157,12 +157,11 @@ const FeedbackPage = ({ currentUser: propsUser }) => {
                             </div>
                         )}
 
-{currentUser?.isAdmin && (
+{isAdmin && (
     <div style={{ marginTop: '15px', borderTop: '1px solid #222', paddingTop: '15px' }}>
         <input 
             type="text" 
             placeholder={f.reply ? "Update your reply..." : "Write a reply to this customer..."}
-            // මෙතන replyTexts state එක පාවිච්චි වෙනවා
             value={replyTexts[f._id] || ""}
             onChange={(e) => setReplyTexts({ ...replyTexts, [f._id]: e.target.value })}
             style={{
