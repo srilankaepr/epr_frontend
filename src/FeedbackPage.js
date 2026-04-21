@@ -14,7 +14,7 @@ const FeedbackPage = ({ currentUser: propsUser }) => {
 
     const currentUser = propsUser || (userString ? JSON.parse(userString) : null);
 
-    const isAdmin = !!adminEmail && !localStorage.getItem('user');
+    const isAdmin = (!!adminEmail && !localStorage.getItem('user')) || currentUser?.adminRole === 'Admin' || !!currentUser?.fullName;
 
     const fetchFeedbacks = async () => {
         try {
@@ -143,12 +143,13 @@ const FeedbackPage = ({ currentUser: propsUser }) => {
                         <p style={styles.commentText}>{f.text}</p>
                         
                         {/* ✅ currentUser ගේ නිවැරදි email එක අනුව Edit/Delete පාලනය */}
-                     {!isAdmin && (f.officialEmail === currentUser?.officialEmail || f.officialEmail === currentUser?.email) && (
-                          <div style={styles.actionRow}>
-                                 <button onClick={() => {setEditingId(f._id); setText(f.text); setRating(f.rating);}} style={styles.editBtn}>Edit</button>
-                                 <button onClick={() => handleDelete(f._id)} style={styles.deleteBtn}>Delete</button>
-                            </div>
-                           )}
+                     // පේළිය 116 අවට:
+{!isAdmin && (currentUser?.officialEmail === f.officialEmail || currentUser?.email === f.officialEmail) && (
+    <div style={styles.actionRow}>
+        <button onClick={() => {setEditingId(f._id); setText(f.text); setRating(f.rating);}} style={styles.editBtn}>Edit</button>
+        <button onClick={() => handleDelete(f._id)} style={styles.deleteBtn}>Delete</button>
+    </div>
+)}
 
                         {f.reply && (
                             <div style={styles.replyBox}>
