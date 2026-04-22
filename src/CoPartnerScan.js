@@ -268,35 +268,38 @@ return (
 
 const styles = {
   mainBtn: {
-    padding: '30px 120px',
+    padding: isMobile ? '16px 40px' : '30px 120px',
     background: 'linear-gradient(135deg, #2ecc71, #27ae60)',
     border: 'none',
     borderRadius: '100px',
     color: '#fff',
-    fontSize: '32px',
+    fontSize: isMobile ? '24px' : '32px',
     fontWeight: 'bold',
     cursor: 'pointer',
-    boxShadow: '0 20px 50px rgba(46, 204, 113, 0.4)',
-    transition: '0.3s'
+    boxShadow: isMobile ? '0 10px 25px rgba(46, 204, 113, 0.3)' : '0 20px 50px rgba(46, 204, 113, 0.4)',
+    transition: '0.3s',
+    boxSizing: 'border-box'
   },
   stopBtn: {
-    padding: '24px 80px',
+    padding: isMobile ? '16px 40px' : '24px 80px',
     background: 'linear-gradient(135deg, #e74c3c, #c0392b)',
     border: 'none',
     borderRadius: '80px',
     color: '#fff',
-    fontSize: '30px',
+    fontSize: isMobile ? '24px' : '30px',
     fontWeight: 'bold',
     cursor: 'pointer'
   },
   backBtn: {
-    padding: '20px 60px',
+    padding: isMobile ? '14px 30px' : '20px 60px',
     background: '#222',
     border: '1px solid #444',
     borderRadius: '80px',
     color: '#888',
-    fontSize: '24px',
-    cursor: 'pointer'
+    fontSize: isMobile ? '16px' : '24px',
+    cursor: 'pointer',
+    width: isMobile ? '100%' : 'auto',
+    boxSizing: 'border-box'
   }
 };
 
