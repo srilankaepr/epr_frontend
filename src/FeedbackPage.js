@@ -10,20 +10,24 @@ const FeedbackPage = ({ currentUser: propsUser }) => {
     const [replyTexts, setReplyTexts] = useState({}); 
 
     const userString = localStorage.getItem('user');
-    const adminEmail = localStorage.getItem('adminEmail');
+    
+    // ✅ Admin හඳුනාගැනීම සඳහා localStorage හි ඇති adminRole එකම භාවිතා කරයි
+    const isAdmin = localStorage.getItem('adminRole') === 'Admin';
 
-    // ලොග් වී සිටින පරිශීලකයා හඳුනා ගැනීම
     const currentUser = propsUser || (userString ? JSON.parse(userString) : null);
-
-    // ✅ 100% නිවැරදි isAdmin Logic එක
-    // Admin කෙනෙක් නම් අනිවාර්යයෙන්ම adminEmail එක තිබිය යුතු අතර 
-    // එක්කෝ fullName තිබිය යුතුය නැතිනම් adminRole එක 'Admin' විය යුතුය.
-    const isAdmin = !!adminEmail && (!!currentUser?.fullName || currentUser?.adminRole === 'Admin');
 
     const fetchFeedbacks = async () => {
         try {
             const res = await API.get('/admin/feedbacks');
-            setFeedbacks(res.data);
+            const data = res.data;
+            setFeedbacks(data);
+
+            // ✅ Admin Reply එක Edit කිරීමට හැකි වන පරිදි දැනට ඇති reply දත්ත replyTexts state එකට ඇතුළත් කරයි
+            const initialReplies = {};
+            data.forEach(f => {
+                if (f.reply) initialReplies[f._id] = f.reply;
+            });
+            setReplyTexts(initialReplies);
         } catch (err) { 
             console.error("Error fetching feedbacks:", err); 
         }
@@ -76,9 +80,8 @@ const FeedbackPage = ({ currentUser: propsUser }) => {
 
         try {
             await API.put(`/admin/feedbacks/${id}`, { reply: replyText });
-            setReplyTexts(prev => ({ ...prev, [id]: "" }));
             fetchFeedbacks();
-            alert("Reply sent successfully!");
+            alert("Reply updated successfully!");
         } catch (err) {
             console.error("Error sending reply:", err);
         }
@@ -88,7 +91,7 @@ const FeedbackPage = ({ currentUser: propsUser }) => {
         <div style={styles.feedbackContainer}>
             <h1 style={styles.mainTitle}>USER FEEDBACK</h1>
             
-            {/* ✅ Admin නොවන අයට (Customers) පමණක් Feedback Form එක පෙන්වයි */}
+            {/* ✅ 1. Feedback Form - Customer හට පමණක් පෙනේ (Admin හට නොපෙනේ) */}
             {!isAdmin && (    
                 <form onSubmit={handleSubmit} style={styles.feedbackForm}>
                     <h3 style={{marginBottom: '15px', color: '#2ecc71'}}>
@@ -146,15 +149,22 @@ const FeedbackPage = ({ currentUser: propsUser }) => {
                         </div>
                         <p style={styles.commentText}>{f.text}</p>
                         
-                        {/* ✅ Edit/Delete - තමන්ගේ පෝස්ට් එකට පමණක් සහ Admin නොවන අයට පමණක් පෙන්වයි */}
-                        {!isAdmin && (f.officialEmail === currentUser?.officialEmail || f.officialEmail === currentUser?.email) && (
-                            <div style={styles.actionRow}>
-                                <button onClick={() => {setEditingId(f._id); setText(f.text); setRating(f.rating);}} style={styles.editBtn}>Edit</button>
-                                <button onClick={() => handleDelete(f._id)} style={styles.deleteBtn}>Delete</button>
-                            </div>
-                        )}
+                        {/* ✅ 2. Action Row - Edit/Delete Buttons */}
+                        <div style={styles.actionRow}>
+                            {/* Customer හට තමන්ගේ feedback එක පමණක් Edit/Delete කළ හැක */}
+                            {!isAdmin && (f.officialEmail === currentUser?.officialEmail || f.officialEmail === currentUser?.email) && (
+                                <>
+                                    <button onClick={() => {setEditingId(f._id); setText(f.text); setRating(f.rating);}} style={styles.editBtn}>Edit</button>
+                                    <button onClick={() => handleDelete(f._id)} style={styles.deleteBtn}>Delete</button>
+                                </>
+                            )}
+                            
+                            {/* ✅ Admin හට ඕනෑම පෝස්ට් එකක් Delete කළ හැක */}
+                            {isAdmin && (
+                                <button onClick={() => handleDelete(f._id)} style={styles.deleteBtn}>Delete Post</button>
+                            )}
+                        </div>
 
-                        {/* ✅ Admin Reply පෙන්වීම */}
                         {f.reply && (
                             <div style={styles.replyBox}>
                                 <strong>Admin <span style={styles.replyTag}>REPLY</span></strong>
@@ -162,15 +172,27 @@ const FeedbackPage = ({ currentUser: propsUser }) => {
                             </div>
                         )}
 
-                        {/* ✅ Admin Reply Box - Admin කෙනෙකුට පමණක් පෙන්වයි */}
+                        {/* ✅ 3. Admin Reply Section - Admin හට පමණක් පෙනේ (Reply Edit/Update කළ හැක) */}
                         {isAdmin && (
                             <div style={{ marginTop: '15px', borderTop: '1px solid #222', paddingTop: '15px' }}>
                                 <input 
                                     type="text" 
-                                    placeholder={f.reply ? "Update your reply..." : "Write a reply to this customer..."}
+                                    placeholder={f.reply ? "Edit your reply..." : "Write a reply to this customer..."}
                                     value={replyTexts[f._id] || ""}
                                     onChange={(e) => setReplyTexts({ ...replyTexts, [f._id]: e.target.value })}
-                                    style={styles.replyInput} 
+                                    style={{
+                                        width: '100%', 
+                                        height: '40px', 
+                                        background: '#000', 
+                                        border: '1px solid #444', 
+                                        color: '#fff', 
+                                        borderRadius: '8px', 
+                                        padding: '0 15px', 
+                                        marginBottom: '10px',
+                                        outline: 'none',
+                                        boxSizing: 'border-box',
+                                        display: 'block'
+                                    }} 
                                 />
                                 <button 
                                     type="button"
@@ -195,7 +217,6 @@ const styles = {
     starRow: { fontSize: '32px', marginBottom: '15px', display: 'flex', gap: '8px' },
     star: { cursor: 'pointer', transition: '0.2s' },
     textArea: { width: '100%', height: '120px', background: '#000', border: '1px solid #444', color: '#fff', borderRadius: '10px', padding: '15px', marginBottom: '15px', outline: 'none', boxSizing: 'border-box', display: 'block' },
-    replyInput: { width: '100%', height: '40px', background: '#000', border: '1px solid #444', color: '#fff', borderRadius: '8px', padding: '0 15px', marginBottom: '10px', outline: 'none', boxSizing: 'border-box', display: 'block' },
     submitBtn: { background: '#2ecc71', color: '#000', border: 'none', padding: '12px 25px', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer', transition: '0.3s' },
     cancelBtn: { background: '#444', color: '#fff', border: 'none', padding: '12px 25px', borderRadius: '8px', cursor: 'pointer' },
     commentItem: { background: '#111', padding: '20px', borderRadius: '15px', border: '1px solid #222', marginBottom: '20px' },
