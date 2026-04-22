@@ -158,6 +158,48 @@ const deleteProfilePicture = async () => {
     return (
        <div style={{ ...getStyles(isMobile, isDrawerOpen).container, backgroundImage: `url(${bgImage})` }}>
        <div style={getStyles(isMobile, isDrawerOpen).overlay}></div>
+       {/* --- Step 3: Hamburger Menu & Overlay --- */}
+        {isMobile && (
+            <div 
+                onClick={() => setIsDrawerOpen(!isDrawerOpen)}
+                style={{
+                    position: 'fixed',
+                    top: '20px',
+                    left: '20px',
+                    zIndex: 1001,
+                    background: '#2ecc71',
+                    color: '#000',
+                    width: '45px',
+                    height: '45px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    borderRadius: '12px',
+                    cursor: 'pointer',
+                    fontSize: '24px',
+                    boxShadow: '0 4px 15px rgba(0,0,0,0.3)',
+                    transition: 'all 0.3s ease'
+                }}
+            >
+                {isDrawerOpen ? '✕' : '☰'}
+            </div>
+        )}
+
+        {isMobile && isDrawerOpen && (
+            <div 
+                onClick={() => setIsDrawerOpen(false)}
+                style={{
+                    position: 'fixed',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    background: 'rgba(0, 0, 0, 0.7)',
+                    backdropFilter: 'blur(4px)',
+                    zIndex: 99,
+                }}
+            />
+        )}
             {/* SIDEBAR */}
             <aside style={getStyles(isMobile, isDrawerOpen).sidebar}>
                 <div style={getStyles(isMobile, isDrawerOpen).logoWrapper}>
