@@ -15,6 +15,8 @@ import API from './api';
 
 const UserDashboard = () => {
     const navigate = useNavigate();
+    const [isDrawerOpen, setIsDrawerOpen] = useState(false); 
+    const isMobile = window.innerWidth <= 768; 
     const [activeTab, setActiveTab] = useState('ORDER NOW');
     const [isEditing, setIsEditing] = useState(false);
     const [profileImage, setProfileImage] = useState("https://via.placeholder.com/150"); 
@@ -483,7 +485,8 @@ mainContentAnimation: {
     sidebar: {
         width: '280px', backgroundColor: 'rgba(23, 22, 22, 0.98)',
         borderRight: '1px solid #333', display: 'flex', flexDirection: 'column',
-        padding: '40px 20px', zIndex: 10, position: 'fixed', height: '100vh'
+        padding: '40px 20px', zIndex: 10, position: 'fixed', height: '100vh',transition: 'all 0.3s ease',
+        left: isMobile ? (isDrawerOpen ? '0' : '-320px') : '0', top: 0
     },
     logoWrapper: { textAlign: 'center', marginBottom: '30px' },
  glowingLogo: {
@@ -533,8 +536,12 @@ activeNavLink: {
         fontSize: '15px', letterSpacing: '4px',marginTop: 'auto', marginBottom: '60px'
     },
     mainArea: {
-        flex: 1, marginLeft: '280px', zIndex: 2, position: 'relative'
-    },
+    flex: 1, 
+    marginLeft: isMobile ? '0' : '280px', 
+    zIndex: 2, 
+    position: 'relative',
+    transition: 'margin-left 0.3s ease'},
+    
     mainTitle: { fontSize: '40px', textAlign: 'center', letterSpacing: '2px', fontWeight: '800' },
     subTitle: { textAlign: 'center', color: '#2ecc71', marginBottom: '50px' },
     grid: {
