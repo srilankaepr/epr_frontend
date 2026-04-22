@@ -898,19 +898,6 @@ return (
     </div>
   );
 };
-const getContainerStyle = (isMobile) => ({
-    minHeight: '100vh',
-    width: '100%',
-    backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.8)), url(${bgImage})`,
-    backgroundSize: 'cover',
-    backgroundPosition: 'center',
-    backgroundAttachment: isMobile ? 'scroll' : 'fixed', 
-    backgroundRepeat: 'no-repeat',
-    color: '#6dcd8a',
-    padding: isMobile ? '10px' : '20px', 
-    fontFamily: "'Poppins', sans-serif",
-    boxSizing: 'border-box'
-});
 
 const getStatCardStyle = (isMobile) => ({
     background: isMobile ? 'rgba(20, 20, 20, 0.92)' : 'rgba(255, 255, 255, 0.05)',
@@ -948,6 +935,20 @@ welcomeCard: {
     position: 'relative', 
     zIndex: 10 
 },
+
+container: {
+    minHeight: '100vh',
+    width: '100%',
+    backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.8)), url(${bgImage})`,
+    backgroundSize: 'cover',
+    backgroundPosition: 'center',
+    backgroundAttachment:'fixed', 
+    backgroundRepeat: 'no-repeat',
+    color: '#fff',
+    padding: '20px',
+    fontFamily: "'Poppins', sans-serif",
+    boxSizing: 'border-box'
+  },
 
     welcomeLeft: { flex: 1,minWidth: '280px'},
     welcomeTitle: { fontSize: '32px',fontWeight: 'bold', color: '#fff', margin: 0, marginBottom: '10px'},
