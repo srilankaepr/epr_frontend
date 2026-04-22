@@ -365,7 +365,7 @@ return (
         margin: isMobile ? '10px' : '20px 30px', 
         marginBottom: '30px',
         borderBottom: '1px solid rgba(46, 204, 113, 0.3)',
-        position: 'sticky', 
+        position: 'relative', 
         top: isMobile ? '10px' : '20px',
         zIndex: 999999,
         gap: isMobile ? '15px' : '0' 
@@ -415,7 +415,7 @@ return (
         >
           Logout
         </button>
-      </div> <div style={{ marginBottom: '30px' }}></div>
+      </div> 
 
       {/* Welcome Section */}
       <div style={styles.welcomeCard}>
