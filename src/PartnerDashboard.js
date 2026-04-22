@@ -347,6 +347,65 @@ const downloadRecentTablePDF = () => {
     doc.save(`Pending_Requests_${new Date().toLocaleDateString()}.pdf`);
 };
 
+const getStatCardStyle = (isMobile) => ({
+    background: isMobile ? 'rgba(20, 20, 20, 0.92)' : 'rgba(255, 255, 255, 0.05)',
+    borderRadius: '20px',
+    padding: isMobile ? '15px' : '25px', 
+    minHeight: isMobile ? '110px' : '160px', 
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backdropFilter: isMobile ? 'blur(4px)' : 'blur(12px)', // ✅ Speed optimized
+    WebkitBackdropFilter: isMobile ? 'blur(4px)' : 'blur(12px)',
+    border: '1px solid rgba(255, 255, 255, 0.05)',
+    position: 'relative', 
+    zIndex: 1,
+    boxSizing: 'border-box',
+    textAlign: 'center'
+  });
+
+  const styles = {
+    welcomeCard: {
+      background: isMobile ? 'rgba(20, 20, 20, 0.95)' : 'rgba(255, 255, 255, 0.05)', 
+      padding: isMobile ? '20px' : '30px 40px',
+      borderRadius: '25px',
+      display: 'flex',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginBottom: '40px',
+      border: '1px solid rgba(46, 204, 113, 0.3)', 
+      backdropFilter: isMobile ? 'none' : 'blur(15px)', 
+      WebkitBackdropFilter: isMobile ? 'none' : 'blur(15px)',
+      flexWrap: 'wrap',
+      gap: '20px',
+      boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.37)',
+      position: 'relative', 
+      zIndex: 10 
+    },
+    container: {
+      minHeight: '100vh',
+      width: '100%',
+      backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.8)), url(${bgImage})`,
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+      backgroundAttachment: isMobile ? 'scroll' : 'fixed', 
+      backgroundRepeat: 'no-repeat',
+      color: '#fff',
+      padding: isMobile ? '10px' : '20px',
+      fontFamily: "'Poppins', sans-serif",
+      boxSizing: 'border-box'
+    },
+    welcomeLeft: { flex: 1, minWidth: '280px' },
+    welcomeTitle: { fontSize: isMobile ? '24px' : '32px', fontWeight: 'bold', color: '#fff', margin: 0, marginBottom: '10px' },
+    highlightText: { color: '#2ecc71', textTransform: 'capitalize' },
+    welcomeSub: { color: '#aaa', fontSize: isMobile ? '14px' : '16px', margin: 0, maxWidth: '500px', lineHeight: '1.5' },
+    idBadgeContainer: { textAlign: isMobile ? 'center' : 'right', width: isMobile ? '100%' : 'auto' },
+    idBadge: { background: '#1a1a1a', padding: '12px 25px', borderRadius: '15px', border: '1px solid #2ecc71', display: 'flex', flexDirection: 'column', alignItems: 'center', boxShadow: '0 0 20px rgba(46, 204, 113, 0.1)' },
+    idLabel: { color: '#2ecc71', fontSize: '11px', fontWeight: 'bold', letterSpacing: '2px', marginBottom: '5px' },
+    idValue: { color: '#fff', fontSize: '18px', fontWeight: 'bold', fontFamily: 'monospace' }
+  };
+
 
 return (
     <div style={styles.container}>
@@ -884,64 +943,4 @@ return (
   );
 };
 
-const getStatCardStyle = (isMobile) => ({
-    background: isMobile ? 'rgba(20, 20, 20, 0.92)' : 'rgba(255, 255, 255, 0.05)',
-    borderRadius: '20px',
-    padding: isMobile ? '15px' : '25px', 
-    minHeight: isMobile ? '110px' : '160px', 
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'center',
-    alignItems: 'center',
-    backdropFilter: isMobile ? 'blur(4px)' : 'blur(12px)',
-    WebkitBackdropFilter: isMobile ? 'blur(4px)' : 'blur(12px)',
-    border: '1px solid rgba(255, 255, 255, 0.05)',
-    position: 'relative', 
-    zIndex: 1,
-    boxSizing: 'border-box',
-    textAlign: 'center'
-});
-
-const styles = {
-welcomeCard: {
-    background: 'rgba(255, 255, 255, 0.05)', 
-    padding: '30px 40px',
-    borderRadius: '25px',
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: '40px',
-    border: '1px solid rgba(46, 204, 113, 0.3)', 
-    backdropFilter: 'blur(15px)', 
-    WebkitBackdropFilter: 'blur(15px)',
-    flexWrap: 'wrap',
-    gap: '20px',
-    boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.37)',
-    position: 'relative', 
-    zIndex: 10 
-},
-
-container: {
-    minHeight: '100vh',
-    width: '100%',
-    backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.8)), url(${bgImage})`,
-    backgroundSize: 'cover',
-    backgroundPosition: 'center',
-    backgroundAttachment: 'fixed', 
-    backgroundRepeat: 'no-repeat',
-    color: '#fff',
-    padding: '20px',
-    fontFamily: "'Poppins', sans-serif",
-    boxSizing: 'border-box'
-  },
-
-    welcomeLeft: { flex: 1,minWidth: '280px'},
-    welcomeTitle: { fontSize: '32px',fontWeight: 'bold', color: '#fff', margin: 0, marginBottom: '10px'},
-    highlightText: {color: '#2ecc71',textTransform: 'capitalize' },
-    welcomeSub: {color: '#aaa', fontSize: '16px', margin: 0, maxWidth: '500px', lineHeight: '1.5'},
-    idBadgeContainer: { textAlign: 'right' },
-    idBadge: { background: '#1a1a1a',padding: '12px 25px', borderRadius: '15px', border: '1px solid #2ecc71',display: 'flex', flexDirection: 'column', alignItems: 'center', boxShadow: '0 0 20px rgba(46, 204, 113, 0.1)' },
-    idLabel: { color: '#2ecc71', fontSize: '11px', fontWeight: 'bold', letterSpacing: '2px', marginBottom: '5px' },
-    idValue: { color: '#fff',fontSize: '18px',fontWeight: 'bold',fontFamily: 'monospace'}
-};
 export default CoPartnerDashboard;
