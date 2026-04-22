@@ -415,7 +415,7 @@ return (
         >
           Logout
         </button>
-      </div>
+      </div> <div style={{ marginBottom: '30px' }}></div>
 
       {/* Welcome Section */}
       <div style={styles.welcomeCard}>
