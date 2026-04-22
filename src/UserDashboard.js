@@ -184,7 +184,7 @@ const deleteProfilePicture = async () => {
                     ...(isActive ? styles.activeNavLink : {})
                 }} 
 
-              onClick={() => {
+              onClick={() => { 
                     if (item.id === 'about') {
                         window.open('https://eprs.lk', '_blank');
                     } else {
