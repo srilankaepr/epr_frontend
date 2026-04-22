@@ -156,22 +156,18 @@ const deleteProfilePicture = async () => {
     ];
 
     return (
-        <div style={{
-            ...styles.container,
-            backgroundImage: `url(${bgImage})` 
-        }}>
-            <div style={styles.overlay}></div>
-
+       <div style={{ ...getStyles(isMobile, isDrawerOpen).container, backgroundImage: `url(${bgImage})` }}>
+       <div style={getStyles(isMobile, isDrawerOpen).overlay}></div>
             {/* SIDEBAR */}
-            <aside style={styles.sidebar}>
-                <div style={styles.logoWrapper}>
-                    <img src={logo} alt="Logo" style={styles.glowingLogo} />
-                    <p style={styles.ecoMotto}>Circular Economy Platform</p>
+            <aside style={getStyles(isMobile, isDrawerOpen).sidebar}>
+                <div style={getStyles(isMobile, isDrawerOpen).logoWrapper}>
+                    <img src={logo} alt="Logo" style={getStyles(isMobile, isDrawerOpen).glowingLogo} />
+                    <p style={getStyles(isMobile, isDrawerOpen).ecoMotto}>Circular Economy Platform</p>
                 </div>
 
                 
                 
-              <nav style={styles.navMenu}>
+              <nav style={getStyles(isMobile, isDrawerOpen).navMenu}>
     {[
         { id: 'REGISTER PRODUCT', label: 'REGISTER YOUR PRODUCT' },
         { id: 'ORDER NOW', label: 'ORDER NOW' },
@@ -444,165 +440,68 @@ const deleteProfilePicture = async () => {
     );
 };
 
-const styles = {
-
-// --- Profile Styles ටික ---
-    profileCard: { background: 'rgba(255, 255, 255, 0.03)', borderRadius: '30px', padding: '40px', border: '1px solid rgba(255, 255, 255, 0.05)', maxWidth: '950px', margin: '0 auto', boxShadow: '0 25px 50px rgba(0,0,0,0.4)' },
-    profileHeader: { display: 'flex', alignItems: 'center', gap: '35px' },
+const getStyles = (isMobile, isDrawerOpen) => ({
+    // --- Profile Styles ---
+    profileCard: { background: 'rgba(255, 255, 255, 0.03)', borderRadius: '30px', padding: isMobile ? '20px' : '40px', border: '1px solid rgba(255, 255, 255, 0.05)', maxWidth: '950px', margin: '0 auto', boxShadow: '0 25px 50px rgba(0,0,0,0.4)' },
+    profileHeader: { display: 'flex', flexDirection: isMobile ? 'column' : 'row', alignItems: 'center', gap: isMobile ? '20px' : '35px', textAlign: isMobile ? 'center' : 'left' },
     avatarWrapper: { position: 'relative', width: '130px', height: '130px' },
     profileImg: { width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover', border: '4px solid #2ecc71', padding: '4px' },
     uploadIcon: { position: 'absolute', bottom: '5px', right: '5px', background: '#395d46', borderRadius: '50%', width: '35px', height: '35px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' },
     roleTag: { background: 'rgba(46, 204, 113, 0.15)', color: '#2ecc71', padding: '6px 18px', borderRadius: '20px', fontSize: '13px', fontWeight: 'bold' },
-    profileGrid: { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginTop: '25px' },
+    profileGrid: { display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: '20px', marginTop: '25px' },
     infoBox: { display: 'flex', flexDirection: 'column', gap: '8px', textAlign: 'left' },
     infoLabel: { fontSize: '12px', color: '#666', marginLeft: '5px' },
     profileInput: { background: 'rgba(255, 255, 255, 0.05)', border: '1px solid rgba(255, 255, 255, 0.1)', borderRadius: '12px', padding: '14px 18px', color: '#fff', fontSize: '15px', outline: 'none', transition: '0.3s' },
-    profileActions: { display: 'flex', gap: '20px', marginTop: '40px' },
+    profileActions: { display: 'flex', flexDirection: isMobile ? 'column' : 'row', gap: '20px', marginTop: '40px' },
     updateBtn: { flex: 2, color: '#000', border: 'none', padding: '16px', borderRadius: '15px', fontWeight: '800', cursor: 'pointer', fontSize: '15px' },
     deleteAccBtn: { flex: 1, background: 'transparent', color: '#ff4d4d', border: '1.5px solid #ff4d4d', padding: '16px', borderRadius: '15px', fontWeight: '800', cursor: 'pointer' },
 
+    mainContentAnimation: { animation: 'fadeInUp 0.6s ease-out forwards' },
+    contentPadding: { padding: isMobile ? '20px' : '50px', paddingTop: isMobile ? '80px' : '50px' }, // Mobile වලදී menu එකට ඉඩ තැබුවා
 
-
-
-mainContentAnimation: {
-        animation: 'fadeInUp 0.6s ease-out forwards',
-    },
-
-    contentPadding: { 
-        padding: '50px' 
-    },
-
-
-    container: {
-        display: 'flex', minHeight: '100vh', backgroundSize: 'cover',
-        backgroundPosition: 'center', backgroundAttachment: 'fixed',
-        color: '#fff', fontFamily: 'Poppins, sans-serif'
-    },
-    overlay: {
-        position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
-        backgroundColor: 'rgba(0, 0, 0, 0.85)', zIndex: 1
-    },
+    container: { display: 'flex', minHeight: '100vh', backgroundSize: 'cover', backgroundPosition: 'center', backgroundAttachment: 'fixed', color: '#fff', fontFamily: 'Poppins, sans-serif' },
+    overlay: { position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0, 0, 0, 0.85)', zIndex: 1 },
+    
     sidebar: {
-        width: '280px', backgroundColor: 'rgba(23, 22, 22, 0.98)',
-        borderRight: '1px solid #333', display: 'flex', flexDirection: 'column',
-        padding: '40px 20px', zIndex: 10, position: 'fixed', height: '100vh',transition: 'all 0.3s ease',
+        width: '280px', backgroundColor: 'rgba(23, 22, 22, 0.98)', borderRight: '1px solid #333', display: 'flex', flexDirection: 'column',
+        padding: '40px 20px', zIndex: 100, position: 'fixed', height: '100vh', transition: 'all 0.3s ease',
         left: isMobile ? (isDrawerOpen ? '0' : '-320px') : '0', top: 0
     },
-    logoWrapper: { textAlign: 'center', marginBottom: '30px' },
- glowingLogo: {
-    width: '110px',          
-    height: '110px',
-    borderRadius: '50%',     
-    objectFit: 'contain',    
-    backgroundColor: '#fff', 
-    padding: '5px',          
-    border: '5px solid #00ff11', 
-    marginBottom: '30px',
-    display: 'block',
-    marginLeft: 'auto',
-    marginRight: 'auto',
-},
-    navMenu: { flex: 1, marginTop: '20px' },
-navLink: {
-    padding: '20px 20px',
-    margin: '10px 0',
-    cursor: 'pointer',
-    fontSize: '16px',
-    display: 'flex',
-    alignItems: 'center',
-    gap: '15px',
-    borderRadius: '15px',      
-    transition: 'all 0.3s ease',
-    fontWeight: '500',
-    color: '#ccc',
-    background: 'rgba(255, 255, 255, 0.03)',
-    border: '1px solid rgba(255, 255, 255, 0.05)', 
-    boxShadow: '0 4px 15px rgba(0, 0, 0, 0.2)',
-},
 
-// මේකෙන් තමයි Active බටන් එක කැපිලා පේන්නේ
-activeNavLink: {
-    background: 'rgba(46, 204, 113, 0.15)', 
-    color: '#2ecc71',
-    border: '1px solid rgba(46, 204, 113, 0.4)',
-    boxShadow: '0 0 15px rgba(46, 204, 113, 0.2)', 
-},
-    logoutBtn: {
-        padding: '12px 20px', color: '#ff4d4d', cursor: 'pointer',
-        fontWeight: 'bold', border: '1px solid rgba(255, 77, 77, 0.3)',
-        borderRadius: '12px', display: 'flex', alignItems: 'center',
-        justifyContent: 'center', gap: '19px', transition: 'all 0.3s ease',
-        background: 'rgba(255, 77, 77, 0.05)', width: '85%',
-        fontSize: '15px', letterSpacing: '4px',marginTop: 'auto', marginBottom: '60px'
-    },
-    mainArea: {
-    flex: 1, 
-    marginLeft: isMobile ? '0' : '280px', 
-    zIndex: 2, 
-    position: 'relative',
-    transition: 'margin-left 0.3s ease'},
+    logoWrapper: { textAlign: 'center', marginBottom: '30px' },
+    glowingLogo: { width: isMobile ? '80px' : '110px', height: isMobile ? '80px' : '110px', borderRadius: '50%', objectFit: 'contain', backgroundColor: '#fff', padding: '5px', border: '5px solid #00ff11', marginBottom: '30px', display: 'block', marginLeft: 'auto', marginRight: 'auto' },
+    navMenu: { flex: 1, marginTop: '20px' },
+    navLink: { padding: '20px 20px', margin: '10px 0', cursor: 'pointer', fontSize: '16px', display: 'flex', alignItems: 'center', gap: '15px', borderRadius: '15px', transition: 'all 0.3s ease', fontWeight: '500', color: '#ccc', background: 'rgba(255, 255, 255, 0.03)', border: '1px solid rgba(255, 255, 255, 0.05)', boxShadow: '0 4px 15px rgba(0, 0, 0, 0.2)' },
+    activeNavLink: { background: 'rgba(46, 204, 113, 0.15)', color: '#2ecc71', border: '1px solid rgba(46, 204, 113, 0.4)', boxShadow: '0 0 15px rgba(46, 204, 113, 0.2)' },
     
-    mainTitle: { fontSize: '40px', textAlign: 'center', letterSpacing: '2px', fontWeight: '800' },
-    subTitle: { textAlign: 'center', color: '#2ecc71', marginBottom: '50px' },
-    grid: {
-        display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', gap: '30px'
-    },
-   card: {
-    backgroundColor: 'rgba(255, 255, 255, 0.05)',
-    borderRadius: '25px',
-    overflow: 'hidden',
-    border: '1px solid #333',
-    cursor: 'pointer',
-    transition: 'all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)', 
-    position: 'relative'
-},
+    logoutBtn: { padding: '12px 20px', color: '#ff4d4d', cursor: 'pointer', fontWeight: 'bold', border: '1px solid rgba(255, 77, 77, 0.3)', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '19px', transition: 'all 0.3s ease', background: 'rgba(255, 77, 77, 0.05)', width: '85%', fontSize: '15px', letterSpacing: '4px', marginTop: 'auto', marginBottom: '60px' },
+    
+    mainArea: { flex: 1, marginLeft: isMobile ? '0' : '280px', zIndex: 2, position: 'relative', transition: 'margin-left 0.3s ease' },
+    mainTitle: { fontSize: isMobile ? '28px' : '40px', textAlign: 'center', letterSpacing: '2px', fontWeight: '800' },
+    subTitle: { textAlign: 'center', color: '#2ecc71', marginBottom: '50px', fontSize: isMobile ? '14px' : '16px' },
+    
+    grid: { display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fit, minmax(350px, 1fr))', gap: '30px' },
+    card: { backgroundColor: 'rgba(255, 255, 255, 0.05)', borderRadius: '25px', overflow: 'hidden', border: '1px solid #333', cursor: 'pointer', transition: 'all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)', position: 'relative' },
     cardImg: { width: '100%', height: '220px', objectFit: 'cover' },
     cardInfo: { padding: '25px' },
     cardTitle: { color: '#2ecc71', margin: '0 0 12px 0', fontSize: '20px' },
     cardDesc: { fontSize: '14px', color: '#bbb', lineHeight: '1.6' },
 
-    // Feedback Styles
-    feedbackContainer: { maxWidth: '900px', margin: '0 auto', padding: '50px' },
-    feedbackForm: {
-        background: 'rgba(255,255,255,0.05)', padding: '30px', borderRadius: '25px',
-        border: '1px solid #444', marginBottom: '40px'
-    },
+    // --- Feedback & Comments Styles (මෙන්න මගහැරුණු ටික) ---
+    feedbackContainer: { maxWidth: '900px', margin: '0 auto', padding: isMobile ? '20px' : '50px' },
+    feedbackForm: { background: 'rgba(255,255,255,0.05)', padding: '30px', borderRadius: '25px', border: '1px solid #444', marginBottom: '40px' },
     starRow: { fontSize: '30px', marginBottom: '20px', cursor: 'pointer' },
-    textArea: {
-        width: '100%', height: '120px', background: 'rgba(0,0,0,0.3)',
-        border: '1px solid #444', color: '#fff', borderRadius: '15px',
-        padding: '15px', outline: 'none', marginBottom: '20px'
-    },
-    submitBtn: {
-        background: '#2ecc71', color: '#000', border: 'none',
-        padding: '12px 30px', borderRadius: '10px', fontWeight: 'bold', cursor: 'pointer'
-    },
-
-ecoMotto: { 
-        fontSize: '23px', 
-        fontStyle: 'italic', 
-        color: '#2ecc71', 
-        marginTop: '-10px', 
-        marginBottom: '30px', 
-        textAlign: 'center',
-        fontWeight: '500',
-        letterSpacing: '0.5px',
-        textShadow: '0 0 10px rgba(46, 204, 113, 0.3)' 
-    },
-
-
+    textArea: { width: '100%', height: '120px', background: 'rgba(0,0,0,0.3)', border: '1px solid #444', color: '#fff', borderRadius: '15px', padding: '15px', outline: 'none', marginBottom: '20px' },
+    submitBtn: { background: '#2ecc71', color: '#000', border: 'none', padding: '12px 30px', borderRadius: '10px', fontWeight: 'bold', cursor: 'pointer' },
+    
+    ecoMotto: { fontSize: isMobile ? '18px' : '23px', fontStyle: 'italic', color: '#2ecc71', marginTop: '-10px', marginBottom: '30px', textAlign: 'center', fontWeight: '500', letterSpacing: '0.5px', textShadow: '0 0 10px rgba(46, 204, 113, 0.3)' },
+    
     commentsSection: { marginTop: '50px' },
-    commentItem: {
-        background: 'rgba(255,255,255,0.02)', padding: '20px', borderRadius: '15px',
-        marginBottom: '15px', border: '1px solid #222'
-    },
+    commentItem: { background: 'rgba(255,255,255,0.02)', padding: '20px', borderRadius: '15px', marginBottom: '15px', border: '1px solid #222' },
     commentHeader: { display: 'flex', justifyContent: 'space-between', marginBottom: '10px' },
-    replyBtn: {
-        background: 'transparent', border: '1px solid #444', color: '#888',
-        padding: '5px 12px', borderRadius: '5px', cursor: 'pointer', fontSize: '12px'
-    },
+    replyBtn: { background: 'transparent', border: '1px solid #444', color: '#888', padding: '5px 12px', borderRadius: '5px', cursor: 'pointer', fontSize: '12px' },
     replyTag: { fontSize: '10px', background: '#2ecc71', color: '#000', padding: '2px 8px', borderRadius: '4px' },
     centeredPage: { display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '80vh' }
-};
+});
 
 export default UserDashboard;
