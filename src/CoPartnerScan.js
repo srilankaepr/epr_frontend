@@ -238,18 +238,18 @@ return (
       {/* Action Buttons */}
       <div style={{ marginTop: '40px', display: 'flex', flexDirection: 'column', gap: '15px', width: '100%', maxWidth: '600px' }}>
         {!scanning ? (
-          <button onClick={() => setScanning(true)} style={styles.mainBtn}>
+          <button onClick={() => setScanning(true)} style={getstyles(isMobile).mainBtn}>
             Launch Scanner
           </button>
         ) : (
-          <button onClick={() => setScanning(false)} style={styles.stopBtn}>
+          <button onClick={() => setScanning(false)} style={getstyles(isMobile).stopBtn}>
             Disable Scanner
           </button>
         )}
 
         <button
           onClick={() => navigate('/partner-dashboard')}
-          style={styles.backBtn}
+          style={getstyles(isMobile).backBtn}
         >
           Return to Dashboard
         </button>
@@ -266,7 +266,7 @@ return (
   );
 };
 
-const styles = {
+const getstyles = (isMobile) => ({
   mainBtn: {
     padding: isMobile ? '16px 40px' : '30px 120px',
     background: 'linear-gradient(135deg, #2ecc71, #27ae60)',
@@ -301,6 +301,6 @@ const styles = {
     width: isMobile ? '100%' : 'auto',
     boxSizing: 'border-box'
   }
-};
+});
 
 export default CoPartnerScan;
