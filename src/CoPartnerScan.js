@@ -162,7 +162,7 @@ return (
               border: '1px solid #333',
               background: '#080808',
               color: '#fff',
-              fontSize: '18px',
+              fontSize: isMobile ? '10px' : '18px',
               textAlign: 'center',
               outline: 'none',
               transition: '0.3s',
