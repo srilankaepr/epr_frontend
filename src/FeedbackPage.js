@@ -9,17 +9,16 @@ const FeedbackPage = ({ currentUser: propsUser }) => {
     const [editingId, setEditingId] = useState(null);
     const [replyTexts, setReplyTexts] = useState({}); 
 
- 
-const userString = localStorage.getItem('user');
+    const userString = localStorage.getItem('user');
     const adminEmail = localStorage.getItem('adminEmail');
 
+    // ලොග් වී සිටින පරිශීලකයා හඳුනා ගැනීම
     const currentUser = propsUser || (userString ? JSON.parse(userString) : null);
 
-   
+    // ✅ 100% නිවැරදි isAdmin Logic එක
+    // Admin කෙනෙක් නම් අනිවාර්යයෙන්ම adminEmail එක තිබිය යුතු අතර 
+    // එක්කෝ fullName තිබිය යුතුය නැතිනම් adminRole එක 'Admin' විය යුතුය.
     const isAdmin = !!adminEmail && (!!currentUser?.fullName || currentUser?.adminRole === 'Admin');
-
-    // 🔴 පොඩි Debug එකක් දාමු බලාගන්න (මේක පස්සේ අයින් කරන්න පුළුවන්)
-    console.log("Is Admin Check:", { isAdmin, hasAdminEmail: !!adminEmail, hasFullName: !!currentUser?.fullName });
 
     const fetchFeedbacks = async () => {
         try {
@@ -71,66 +70,65 @@ const userString = localStorage.getItem('user');
         }
     };
 
-
     const handleAdminReply = async (id) => {
-    const replyText = replyTexts[id];
-    if (!replyText || replyText.trim() === "") return alert("Please enter a reply!");
+        const replyText = replyTexts[id];
+        if (!replyText || replyText.trim() === "") return alert("Please enter a reply!");
 
-    try {
-        await API.put(`/admin/feedbacks/${id}`, { reply: replyText });
-        
-        setReplyTexts(prev => ({ ...prev, [id]: "" }));
-        fetchFeedbacks();
-        alert("Reply sent successfully!");
-    } catch (err) {
-        console.error("Error sending reply:", err);
-    }
-};
-
+        try {
+            await API.put(`/admin/feedbacks/${id}`, { reply: replyText });
+            setReplyTexts(prev => ({ ...prev, [id]: "" }));
+            fetchFeedbacks();
+            alert("Reply sent successfully!");
+        } catch (err) {
+            console.error("Error sending reply:", err);
+        }
+    };
 
     return (
         <div style={styles.feedbackContainer}>
             <h1 style={styles.mainTitle}>USER FEEDBACK</h1>
             
-        {!isAdmin && (    
-            <form onSubmit={handleSubmit} style={styles.feedbackForm}>
-                <h3 style={{marginBottom: '15px', color: '#2ecc71'}}>
-                    {editingId ? "Update Your Review" : "Share Your Experience"}
-                </h3>
-                
-                <div style={styles.starRow}>
-                    {[1, 2, 3, 4, 5].map((star) => (
-                        <span key={star} 
-                            style={{...styles.star, color: (hover || rating) >= star ? '#2ecc71' : '#555'}}
-                            onClick={() => setRating(star)}
-                            onMouseEnter={() => setHover(star)}
-                            onMouseLeave={() => setHover(0)}
-                        >★</span>
-                    ))}
-                </div>
+            {/* ✅ Admin නොවන අයට (Customers) පමණක් Feedback Form එක පෙන්වයි */}
+            {!isAdmin && (    
+                <form onSubmit={handleSubmit} style={styles.feedbackForm}>
+                    <h3 style={{marginBottom: '15px', color: '#2ecc71'}}>
+                        {editingId ? "Update Your Review" : "Share Your Experience"}
+                    </h3>
+                    
+                    <div style={styles.starRow}>
+                        {[1, 2, 3, 4, 5].map((star) => (
+                            <span key={star} 
+                                style={{...styles.star, color: (hover || rating) >= star ? '#2ecc71' : '#555'}}
+                                onClick={() => setRating(star)}
+                                onMouseEnter={() => setHover(star)}
+                                onMouseLeave={() => setHover(0)}
+                            >★</span>
+                        ))}
+                    </div>
 
-                <textarea 
-                    value={text} 
-                    onChange={(e) => setText(e.target.value)}
-                    placeholder="Tell us what you think..." 
-                    style={styles.textArea} 
-                    required
-                />
+                    <textarea 
+                        value={text} 
+                        onChange={(e) => setText(e.target.value)}
+                        placeholder="Tell us what you think..." 
+                        style={styles.textArea} 
+                        required
+                    />
 
-                <div style={{display: 'flex', gap: '10px'}}>
-                    <button type="submit" style={styles.submitBtn}>
-                        {editingId ? "Update Now" : "Post Feedback"}
-                    </button>
-                    {editingId && (
-                        <button 
-                            type="button" 
-                            onClick={() => {setEditingId(null); setText(""); setRating(0);}} 
-                            style={styles.cancelBtn}
-                        >Cancel</button>
-                    )}
-                </div>
-            </form>
-        )}
+                    <div style={{display: 'flex', gap: '10px'}}>
+                        <button type="submit" style={styles.submitBtn}>
+                            {editingId ? "Update Now" : "Post Feedback"}
+                        </button>
+                        {editingId && (
+                            <button 
+                                type="button" 
+                                onClick={() => {setEditingId(null); setText(""); setRating(0);}} 
+                                style={styles.cancelBtn}
+                            >Cancel</button>
+                        )}
+                    </div>
+                </form>
+            )}
+
             <div style={styles.commentsSection}>
                 <h3 style={{marginBottom: '20px', borderBottom: '1px solid #222', paddingBottom: '10px'}}>
                     Community Reviews ({feedbacks.length})
@@ -148,14 +146,15 @@ const userString = localStorage.getItem('user');
                         </div>
                         <p style={styles.commentText}>{f.text}</p>
                         
-                        {/* ✅ currentUser ගේ නිවැරදි email එක අනුව Edit/Delete පාලනය */}
-{!isAdmin && (currentUser?.officialEmail === f.officialEmail || currentUser?.email === f.officialEmail) && (
-    <div style={styles.actionRow}>
-        <button onClick={() => {setEditingId(f._id); setText(f.text); setRating(f.rating);}} style={styles.editBtn}>Edit</button>
-        <button onClick={() => handleDelete(f._id)} style={styles.deleteBtn}>Delete</button>
-    </div>
-)}
+                        {/* ✅ Edit/Delete - තමන්ගේ පෝස්ට් එකට පමණක් සහ Admin නොවන අයට පමණක් පෙන්වයි */}
+                        {!isAdmin && (f.officialEmail === currentUser?.officialEmail || f.officialEmail === currentUser?.email) && (
+                            <div style={styles.actionRow}>
+                                <button onClick={() => {setEditingId(f._id); setText(f.text); setRating(f.rating);}} style={styles.editBtn}>Edit</button>
+                                <button onClick={() => handleDelete(f._id)} style={styles.deleteBtn}>Delete</button>
+                            </div>
+                        )}
 
+                        {/* ✅ Admin Reply පෙන්වීම */}
                         {f.reply && (
                             <div style={styles.replyBox}>
                                 <strong>Admin <span style={styles.replyTag}>REPLY</span></strong>
@@ -163,57 +162,40 @@ const userString = localStorage.getItem('user');
                             </div>
                         )}
 
-{isAdmin && (
-    <div style={{ marginTop: '15px', borderTop: '1px solid #222', paddingTop: '15px' }}>
-        <input 
-            type="text" 
-            placeholder={f.reply ? "Update your reply..." : "Write a reply to this customer..."}
-            value={replyTexts[f._id] || ""}
-            onChange={(e) => setReplyTexts({ ...replyTexts, [f._id]: e.target.value })}
-            style={{
-                width: '100%', 
-                height: '40px', 
-                background: '#000', 
-                border: '1px solid #444', 
-                color: '#fff', 
-                borderRadius: '8px', 
-                padding: '0 15px', 
-                marginBottom: '10px',
-                outline: 'none',
-                boxSizing: 'border-box',
-                display: 'block'
-            }} 
-        />
-        <button 
-            type="button"
-            onClick={() => handleAdminReply(f._id)} 
-            style={{...styles.submitBtn, padding: '8px 15px', fontSize: '12px'}}
-        >
-            {f.reply ? "Update Reply" : "Send Reply"}
-        </button>
-    </div>
-)}
-
- </div>
-     ))}
-         </div>
+                        {/* ✅ Admin Reply Box - Admin කෙනෙකුට පමණක් පෙන්වයි */}
+                        {isAdmin && (
+                            <div style={{ marginTop: '15px', borderTop: '1px solid #222', paddingTop: '15px' }}>
+                                <input 
+                                    type="text" 
+                                    placeholder={f.reply ? "Update your reply..." : "Write a reply to this customer..."}
+                                    value={replyTexts[f._id] || ""}
+                                    onChange={(e) => setReplyTexts({ ...replyTexts, [f._id]: e.target.value })}
+                                    style={styles.replyInput} 
+                                />
+                                <button 
+                                    type="button"
+                                    onClick={() => handleAdminReply(f._id)} 
+                                    style={{...styles.submitBtn, padding: '8px 15px', fontSize: '12px'}}
+                                >
+                                    {f.reply ? "Update Reply" : "Send Reply"}
+                                </button>
+                            </div>
+                        )}
+                    </div>
+                ))}
+            </div>
         </div>
     );
 };
 
 const styles = {
-    feedbackContainer: { 
-        maxWidth: '700px',     
-        margin: '0 auto',       
-        padding: '40px 20px',
-        boxSizing: 'border-box',
-        width: '100%'           
-    },
+    feedbackContainer: { maxWidth: '700px', margin: '0 auto', padding: '40px 20px', boxSizing: 'border-box', width: '100%' },
     mainTitle: { fontSize: '28px', textAlign: 'center', color: '#fff', marginBottom: '30px', letterSpacing: '2px' },
     feedbackForm: { background: 'rgba(255,255,255,0.05)', padding: '25px', borderRadius: '15px', border: '1px solid #333', marginBottom: '40px' },
     starRow: { fontSize: '32px', marginBottom: '15px', display: 'flex', gap: '8px' },
     star: { cursor: 'pointer', transition: '0.2s' },
-    textArea: { width: '100%', height: '120px', background: '#000', border: '1px solid #444', color: '#fff', borderRadius: '10px', padding: '15px', marginBottom: '15px', outline: 'none',boxSizing: 'border-box',display: 'block'},
+    textArea: { width: '100%', height: '120px', background: '#000', border: '1px solid #444', color: '#fff', borderRadius: '10px', padding: '15px', marginBottom: '15px', outline: 'none', boxSizing: 'border-box', display: 'block' },
+    replyInput: { width: '100%', height: '40px', background: '#000', border: '1px solid #444', color: '#fff', borderRadius: '8px', padding: '0 15px', marginBottom: '10px', outline: 'none', boxSizing: 'border-box', display: 'block' },
     submitBtn: { background: '#2ecc71', color: '#000', border: 'none', padding: '12px 25px', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer', transition: '0.3s' },
     cancelBtn: { background: '#444', color: '#fff', border: 'none', padding: '12px 25px', borderRadius: '8px', cursor: 'pointer' },
     commentItem: { background: '#111', padding: '20px', borderRadius: '15px', border: '1px solid #222', marginBottom: '20px' },
