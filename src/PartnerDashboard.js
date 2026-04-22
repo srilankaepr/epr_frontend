@@ -653,37 +653,52 @@ return (
         </button>
       </div>
 
-     {/* Tab Content 1: Summary View (දැන් මේක Pending Requests View එක) */}
+     {/* Tab Content*/}
 {activeTab === 'summary' && (
 <div style={{ 
-    background: 'rgba(0,0,0,0.4)', // වීදුරුවක් වගේ පේන්න
+    background: 'rgba(0,0,0,0.4)', 
     borderRadius: '15px', 
-    padding: '25px',
+    padding: isMobile ? '15px' : '25px',
     backdropFilter: 'blur(10px)',
-    border: '1px solid rgba(255,255,255,0.05)'
+    border: '1px solid rgba(255,255,255,0.05)',
+    width: '100%',
+    boxSizing: 'border-box'
   }}>
-    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px' }}>
-      {/* මාතෘකාව වෙනස් කළා */}
+    <div style={{ 
+      display: 'flex', 
+      justifyContent: 'space-between', 
+      alignItems: 'center', 
+      marginBottom: '15px',
+      flexDirection: isMobile ? 'column' : 'row', // ✅ ෆෝන් එකේදී බටන් එක යටට ගන්න
+      gap: isMobile ? '10px' : '0'
+    }}>
       <h3 style={{ color: '#f1c40f', margin: 0 }}>⚠️ New Pending Collection Requests</h3>
       
       <button 
         onClick={downloadRecentTablePDF}
         style={{
           padding: '8px 16px',
-          backgroundColor: '#f1c40f', // Pending නිසා කහ පාටට හුරු කළා
+          backgroundColor: '#f1c40f', 
           color: '#000',
           border: 'none',
           borderRadius: '6px',
           cursor: 'pointer',
           fontWeight: 'bold',
-          fontSize: '13px'
+          fontSize: '13px',
+          width: isMobile ? '100%' : 'auto'
         }}
       >
         Download Pending List PDF
       </button>
     </div>
-
-    <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+<div style={{ 
+      overflowX: 'auto', 
+      width: '100%', 
+      display: 'block',
+      WebkitOverflowScrolling: 'touch', 
+      borderRadius: '10px'
+    }}>
+    <table style={{ width: '100%', borderCollapse: 'collapse',minWidth: isMobile ? '600px' : '100%' }}>
       <thead>
         <tr style={{ borderBottom: '2px solid #f1c40f', color: '#aaa' }}>
           <th style={{ padding: '15px', textAlign: 'left' }}>Customer Name</th>
@@ -724,6 +739,7 @@ return (
         )}
       </tbody>
     </table>
+    </div>
   </div>
 )}
 
