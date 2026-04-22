@@ -915,7 +915,7 @@ welcomeCard: {
 container: {
     minHeight: '100vh',
     width: '100%',
-    backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.8)), url(${bgImage})`,
+    backgroundImage: '#404b40',
     backgroundSize: 'cover',
     backgroundPosition: 'center',
     backgroundAttachment: 'fixed', 
