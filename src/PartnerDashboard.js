@@ -915,7 +915,7 @@ welcomeCard: {
 container: {
     minHeight: '100vh',
     width: '100%',
-    backgroundImage: '#404b40',
+    backgroundColor: '#607b6d',
     backgroundSize: 'cover',
     backgroundPosition: 'center',
     backgroundAttachment: 'fixed', 
