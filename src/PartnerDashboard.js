@@ -748,9 +748,11 @@ return (
   <div style={{ 
     background: 'rgba(0,0,0,0.4)', 
     borderRadius: '15px', 
-    padding: '25px',
+    padding: isMobile ? '15px' : '25px',
     backdropFilter: 'blur(10px)',
-    border: '1px solid rgba(255,255,255,0.05)'
+    border: '1px solid rgba(255,255,255,0.05)',
+    width: '100%',
+    boxSizing: 'border-box'
   }}>          
           {/* Header section with Title, PDF Button and Search Bar */}
           <div style={{ 
@@ -762,8 +764,8 @@ return (
             gap: '15px'
           }}>
             <h3 style={{ color: '#2ecc71', margin: 0 }}>My Detailed Collection Records</h3>
-            
-            <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+            <div style={{  display: 'flex',  gap: '10px',  alignItems: 'center',flexDirection: isMobile ? 'column' : 'row',  width: isMobile ? '100%' : 'auto'}}>
+              
               {/* PDF Download Button */}
               <button 
                 onClick={downloadPDFReport}
@@ -776,7 +778,8 @@ return (
                   cursor: 'pointer',
                   fontWeight: 'bold',
                   fontSize: '14px',
-                  transition: '0.3s'
+                  transition: '0.3s',
+                  width: isMobile ? '100%' : 'auto'
                 }}
                 onMouseOver={(e) => e.target.style.backgroundColor = '#27ae60'}
                 onMouseOut={(e) => e.target.style.backgroundColor = '#2ecc71'}
@@ -792,7 +795,7 @@ return (
                 onChange={(e) => setSearchTerm(e.target.value)}
                 style={{
                   padding: '10px 15px',
-                  width: '250px',
+                  width: isMobile ? '100%' : '250px',
                   background: 'rgba(255,255,255,0.08)',
                   border: '1px solid rgba(46,204,113,0.3)',
                   borderRadius: '8px',
@@ -802,24 +805,26 @@ return (
               />
             </div>
           </div>
-
-
-          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+<div style={{ 
+      overflowX: 'auto', 
+      width: '100%', 
+      display: 'block',
+      WebkitOverflowScrolling: 'touch', 
+      borderRadius: '10px'
+    }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse',minWidth: isMobile ? '700px' : '100%' }}>
             <thead>
               <tr style={{ borderBottom: '2px solid #2ecc71', color: '#aaa' }}>
                 <th style={{ padding: '15px', textAlign: 'left' }}>QR ID</th>
                 <th style={{ padding: '15px', textAlign: 'left' }}>Product & Brand</th>
                 <th style={{ padding: '15px', textAlign: 'left' }}>Customer Details</th>
-<th style={{ padding: '15px', textAlign: 'left' }}>Collected Date & Time</th>
+                <th style={{ padding: '15px', textAlign: 'left' }}>Collected Date & Time</th>
               </tr>
             </thead>
-        
       <tbody>
-  {/* මෙතනදී අපි කෙලින්ම myRecords එක අරගෙන සර්ච් එකට අදාළව filter කරනවා */}
   {myRecords.filter(req => {
     if (!searchTerm) return true;
     const search = searchTerm.toLowerCase();
-    // Optional chaining (?.) දාලා තියෙන නිසා අගයක් නැති වුණත් crash වෙන්නේ නැහැ
     return (
       (req.qrId?.toLowerCase().includes(search)) || 
       (req.cuProduct?.toLowerCase().includes(search)) ||
@@ -870,9 +875,11 @@ return (
       </td>
     </tr>
   )}
-</tbody>
-</table>
-</div> )}
+     </tbody>
+   </table>
+  </div>
+</div> 
+)}
     </div>
   );
 };
