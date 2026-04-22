@@ -885,12 +885,30 @@ return (
 };
 
 const statCardStyle = {
-    background: 'rgba(255, 255, 255, 0.05)',
+    // ✅ ෆෝන් එකේදී බ්ලර් එක සැහැල්ලු නිසා පසුබිම් වර්ණය පොඩ්ඩක් තද කළා
+    background: isMobile ? 'rgba(20, 20, 20, 0.92)' : 'rgba(255, 255, 255, 0.05)',
     borderRadius: '20px',
-    padding: '25px',
+    
+    // ✅ 4n එකේදී padding 25px සිට 15px දක්වා අඩු කළා (කාඩ් එකේ පළල/දිග අඩු වීමට)
+    padding: isMobile ? '15px' : '25px', 
+    
+    // ✅ කාඩ් එකේ උස (Height) ෆෝන් එකේදී අඩු කළා
+    minHeight: isMobile ? '110px' : '160px', 
+    
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+    
+    // ✅ ෆෝන් එකේදී බ්ලර් එක 4px වලට සැහැල්ලු කළා (Speed එක වැඩි වීමට)
+    backdropFilter: isMobile ? 'blur(4px)' : 'blur(12px)',
+    WebkitBackdropFilter: isMobile ? 'blur(4px)' : 'blur(12px)',
+    
+    border: '1px solid rgba(255, 255, 255, 0.05)',
     position: 'relative', 
-    zIndex: 1, 
-    backdropFilter: 'blur(12px)'
+    zIndex: 1,
+    boxSizing: 'border-box',
+    textAlign: 'center'
 };
 
 const styles = {
@@ -926,54 +944,13 @@ container: {
     boxSizing: 'border-box'
   },
 
-    welcomeLeft: {
-        flex: 1,
-        minWidth: '280px'
-    },
-    welcomeTitle: {
-        fontSize: '32px',
-        fontWeight: 'bold',
-        color: '#fff',
-        margin: 0,
-        marginBottom: '10px'
-    },
-    highlightText: {
-        color: '#2ecc71',
-        textTransform: 'capitalize'
-    },
-    welcomeSub: {
-        color: '#aaa',
-        fontSize: '16px',
-        margin: 0,
-        maxWidth: '500px',
-        lineHeight: '1.5'
-    },
-    idBadgeContainer: {
-        textAlign: 'right'
-    },
-    idBadge: {
-        background: '#1a1a1a',
-        padding: '12px 25px',
-        borderRadius: '15px',
-        border: '1px solid #2ecc71',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        boxShadow: '0 0 20px rgba(46, 204, 113, 0.1)'
-    },
-    idLabel: {
-        color: '#2ecc71',
-        fontSize: '11px',
-        fontWeight: 'bold',
-        letterSpacing: '2px',
-        marginBottom: '5px'
-    },
-    idValue: {
-        color: '#fff',
-        fontSize: '18px',
-        fontWeight: 'bold',
-        fontFamily: 'monospace'
-    }
+    welcomeLeft: { flex: 1,minWidth: '280px'},
+    welcomeTitle: { fontSize: '32px',fontWeight: 'bold', color: '#fff', margin: 0, marginBottom: '10px'},
+    highlightText: {color: '#2ecc71',textTransform: 'capitalize' },
+    welcomeSub: {color: '#aaa', fontSize: '16px', margin: 0, maxWidth: '500px', lineHeight: '1.5'},
+    idBadgeContainer: { textAlign: 'right' },
+    idBadge: { background: '#1a1a1a',padding: '12px 25px', borderRadius: '15px', border: '1px solid #2ecc71',display: 'flex', flexDirection: 'column', alignItems: 'center', boxShadow: '0 0 20px rgba(46, 204, 113, 0.1)' },
+    idLabel: { color: '#2ecc71', fontSize: '11px', fontWeight: 'bold', letterSpacing: '2px', marginBottom: '5px' },
+    idValue: { color: '#fff',fontSize: '18px',fontWeight: 'bold',fontFamily: 'monospace'}
 };
-
 export default CoPartnerDashboard;
