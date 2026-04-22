@@ -561,7 +561,7 @@ return (
       </div>
 
       {/* Stats Cards Section */}
-      <div style={{ display: 'grid', gridTemplateColumns: isMobile ? 'repeat(2, 1fr)' : 'repeat(auto-fit, minmax(250px, 1fr))', gap: '25px', marginBottom: '50px' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '25px', marginBottom: '50px' }}>
         <div style={statCardStyle}>
           <h3 style={{ color: '#3498db' }}>Total QR Count</h3>
           <p style={{ fontSize: '48px', fontWeight: 'bold' }}>{stats.totalQR}</p>
@@ -935,4 +935,5 @@ container: {
     idLabel: { color: '#2ecc71', fontSize: '11px', fontWeight: 'bold', letterSpacing: '2px', marginBottom: '5px' },
     idValue: { color: '#fff',fontSize: '18px',fontWeight: 'bold',fontFamily: 'monospace'}
 };
+
 export default CoPartnerDashboard;
