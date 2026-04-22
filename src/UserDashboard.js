@@ -160,14 +160,14 @@ const deleteProfilePicture = async () => {
        <div style={getStyles(isMobile, isDrawerOpen).overlay}></div>
             {/* SIDEBAR */}
             <aside style={getStyles(isMobile, isDrawerOpen).sidebar}>
-                <div style={getStyles(isMobile, isDrawerOpen).logoWrapper}>
-                    <img src={logo} alt="Logo" style={getStyles(isMobile, isDrawerOpen).glowingLogo} />
-                    <p style={getStyles(isMobile, isDrawerOpen).ecoMotto}>Circular Economy Platform</p>
+                <div style={styles.logoWrapper}>
+                    <img src={logo} alt="Logo" style={styles.glowingLogo} />
+                    <p style={styles.ecoMotto}>Circular Economy Platform</p>
                 </div>
 
                 
                 
-              <nav style={getStyles(isMobile, isDrawerOpen).navMenu}>
+              <nav style={styles.navMenu}>
     {[
         { id: 'REGISTER PRODUCT', label: 'REGISTER YOUR PRODUCT' },
         { id: 'ORDER NOW', label: 'ORDER NOW' },
@@ -184,7 +184,7 @@ const deleteProfilePicture = async () => {
                     ...(isActive ? styles.activeNavLink : {})
                 }} 
 
-              onClick={() => { 
+              onClick={() => {
                     if (item.id === 'about') {
                         window.open('https://eprs.lk', '_blank');
                     } else {
@@ -242,8 +242,7 @@ const deleteProfilePicture = async () => {
             </aside>
 
 {/* MAIN AREA */}
-<main style={styles.mainArea}>
-
+<main style={getStyles(isMobile, isDrawerOpen).mainArea}>
 {/* --- PRODUCT REGISTRATION SECTION --- */}
 {activeTab === 'REGISTER PRODUCT' && (
     <div style={{ ...styles.contentPadding, animation: 'fadeInUp 0.6s ease-out forwards' }}>
@@ -260,7 +259,7 @@ const deleteProfilePicture = async () => {
             <h1 style={styles.mainTitle}>CUSTOMER DASHBOARD</h1>
             <p style={styles.subTitle}>Select a category to start your recycling journey</p>
             
-            <div style={styles.grid}>
+<div style={getStyles(isMobile, isDrawerOpen).grid}>
                 {categories.map((cat, i) => (
                     <div 
                         key={i} 
