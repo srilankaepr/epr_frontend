@@ -469,13 +469,13 @@ return (
   <div style={{ 
       position: 'absolute', 
       top: '65px', 
-      right: '0px', 
-      width: '380px', 
+      right: isMobile ? '-150px' : '0px', 
+      width: isMobile ? '300px' : '380px',
       zIndex: 10001, 
       background: 'rgba(15, 15, 15, 0.98)', 
       border: '1px solid rgba(46, 204, 113, 0.3)', 
       borderRadius: '24px', 
-      padding: '25px', 
+      padding: isMobile ? '15px' : '25px',
       maxHeight: '550px', 
       overflowY: 'auto',
       boxShadow: '0 10px 30px rgba(0,0,0,0.8)' 
