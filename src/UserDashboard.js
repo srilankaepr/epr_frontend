@@ -160,14 +160,14 @@ const deleteProfilePicture = async () => {
        <div style={getStyles(isMobile, isDrawerOpen).overlay}></div>
             {/* SIDEBAR */}
             <aside style={getStyles(isMobile, isDrawerOpen).sidebar}>
-                <div style={styles.logoWrapper}>
-                    <img src={logo} alt="Logo" style={styles.glowingLogo} />
-                    <p style={styles.ecoMotto}>Circular Economy Platform</p>
+                <div style={getStyles(isMobile, isDrawerOpen).logoWrapper}>
+                    <img src={logo} alt="Logo" style={getStyles(isMobile, isDrawerOpen).glowingLogo} />
+                    <p style={getStyles(isMobile, isDrawerOpen).ecoMotto}>Circular Economy Platform</p>
                 </div>
 
                 
                 
-              <nav style={styles.navMenu}>
+              <nav style={getStyles(isMobile, isDrawerOpen).navMenu}>
     {[
         { id: 'REGISTER PRODUCT', label: 'REGISTER YOUR PRODUCT' },
         { id: 'ORDER NOW', label: 'ORDER NOW' },
@@ -180,8 +180,8 @@ const deleteProfilePicture = async () => {
             <div 
                 key={item.id}
                 style={{
-                    ...styles.navLink, 
-                    ...(isActive ? styles.activeNavLink : {})
+                    ...getStyles(isMobile, isDrawerOpen).navLink, 
+                    ...(isActive ? getStyles(isMobile, isDrawerOpen).activeNavLink : {})
                 }} 
 
               onClick={() => {
@@ -221,7 +221,7 @@ const deleteProfilePicture = async () => {
 </nav>
 {/* LOGOUT BUTTON - දැන් NAVIGATION එකට උඩින් තියෙන්නේ (Req: Udta ganna) */}
                 <div 
-                    style={styles.logoutBtn} 
+                    style={getStyles(isMobile, isDrawerOpen).logoutBtn} 
                     onClick={handleLogout}
                     onMouseEnter={(e) => {
                         e.currentTarget.style.boxShadow = '0 0 20px rgba(255, 77, 77, 0.6)';
@@ -245,7 +245,7 @@ const deleteProfilePicture = async () => {
 <main style={getStyles(isMobile, isDrawerOpen).mainArea}>
 {/* --- PRODUCT REGISTRATION SECTION --- */}
 {activeTab === 'REGISTER PRODUCT' && (
-    <div style={{ ...styles.contentPadding, animation: 'fadeInUp 0.6s ease-out forwards' }}>
+    <div style={{ ...getStyles(isMobile, isDrawerOpen).contentPadding, animation: 'fadeInUp 0.6s ease-out forwards' }}>
         <ProductRegistration />
     </div>
 )}
@@ -253,17 +253,17 @@ const deleteProfilePicture = async () => {
     {activeTab === 'ORDER NOW' && (
         /* මෙන්න මෙතනටයි animation එකයි contentPadding එකයි දෙන්නම දාන්න ඕනේ */
         <div style={{ 
-            ...styles.contentPadding, 
+            ...getStyles(isMobile, isDrawerOpen).contentPadding, 
             animation: 'fadeInUp 0.6s ease-out forwards' 
         }}>
-            <h1 style={styles.mainTitle}>CUSTOMER DASHBOARD</h1>
-            <p style={styles.subTitle}>Select a category to start your recycling journey</p>
+            <h1 style={getStyles(isMobile, isDrawerOpen).mainTitle}>CUSTOMER DASHBOARD</h1>
+            <p style={getStyles(isMobile, isDrawerOpen).subTitle}>Select a category to start your recycling journey</p>
             
 <div style={getStyles(isMobile, isDrawerOpen).grid}>
                 {categories.map((cat, i) => (
                     <div 
                         key={i} 
-                        style={styles.card} 
+                        style={getStyles(isMobile, isDrawerOpen).card} 
                         onClick={() => navigate(cat.path)}
                         onMouseEnter={(e) => {
                             e.currentTarget.style.transform = 'scale(1.05) translateY(-10px)';
@@ -276,10 +276,10 @@ const deleteProfilePicture = async () => {
                         e.currentTarget.style.borderColor = '#333';
                     }}
                 >
-                    <img src={cat.img} alt={cat.name} style={styles.cardImg} />
-                    <div style={styles.cardInfo}>
-                        <h3 style={styles.cardTitle}>{cat.name}</h3>
-                        <p style={styles.cardDesc}>{cat.desc}</p>
+                    <img src={cat.img} alt={cat.name} style={getStyles(isMobile, isDrawerOpen).cardImg} />
+                    <div style={getStyles(isMobile, isDrawerOpen).cardInfo}>
+                        <h3 style={getStyles(isMobile, isDrawerOpen).cardTitle}>{cat.name}</h3>
+                        <p style={getStyles(isMobile, isDrawerOpen).cardDesc}>{cat.desc}</p>
                     </div>
                 </div>
 
@@ -294,14 +294,14 @@ const deleteProfilePicture = async () => {
 
              {/* --- MY PROFILE SECTION --- */}
 {activeTab === 'profile' && (
-    <div style={{ ...styles.contentPadding, animation: 'fadeInUp 0.6s ease-out' }}>
-        <h1 style={styles.mainTitle}>MY PROFILE</h1>
-        <p style={styles.subTitle}>Manage your account and profile details</p>
+    <div style={{ ...getStyles(isMobile, isDrawerOpen).contentPadding, animation: 'fadeInUp 0.6s ease-out' }}>
+        <h1 style={getStyles(isMobile, isDrawerOpen).mainTitle}>MY PROFILE</h1>
+        <p style={getStyles(isMobile, isDrawerOpen).subTitle}>Manage your account and profile details</p>
 
-        <div style={styles.profileCard}>
+        <div style={getStyles(isMobile, isDrawerOpen).profileCard}>
             {/* Profile Picture Header */}
-            <div style={styles.profileHeader}>
-                <div style={styles.avatarWrapper}>
+            <div style={getStyles(isMobile, isDrawerOpen).profileHeader}>
+                <div style={getStyles(isMobile, isDrawerOpen).avatarWrapper}>
                    
 <img 
     src={
@@ -310,12 +310,12 @@ const deleteProfilePicture = async () => {
         : "https://www.pngall.com/wp-content/uploads/5/User-Profile-PNG.png" 
     } 
     alt="Profile" 
-    style={styles.profileImg} 
+    style={getStyles(isMobile, isDrawerOpen).profileImg} 
 />
 
 {isEditing && (
     <>
-        <label style={styles.uploadIcon}>
+        <label style={getStyles(isMobile, isDrawerOpen).uploadIcon}>
             📷 <input type="file" accept="image/*" onChange={handleImageChange} style={{ display: 'none' }} />
         </label>
         
@@ -342,14 +342,14 @@ const deleteProfilePicture = async () => {
                 <div style={{ textAlign: 'left' }}>
                     <h2 style={{ margin: 0, color: '#2ecc71', fontSize: '28px' }}>{formData.contactPersonName}</h2>
                     <p style={{ color: '#888', margin: '5px 0' }}>{formData.officialEmail}</p>
-                    <span style={styles.roleTag}>{formData.orgRole}</span>
+                    <span style={getStyles(isMobile, isDrawerOpen).roleTag}>{formData.orgRole}</span>
                 </div>
             </div>
 
             <hr style={{ border: '0.1px solid rgba(255,255,255,0.05)', margin: '30px 0' }} />
 
             {/* Input Fields Grid */}
-            <div style={styles.profileGrid}>
+            <div style={getStyles(isMobile, isDrawerOpen).profileGrid}>
              {[
     { label: 'Organization Role', name: 'orgRole', value: formData.orgRole },
     { label: 'Company Name', name: 'companyName', value: formData.companyName },
@@ -364,8 +364,8 @@ const deleteProfilePicture = async () => {
     { label: 'Contact Person Name', name: 'contactPersonName', value: formData.contactPersonName },
     { label: 'Contact Person Mobile', name: 'contactPersonMobile', value: formData.contactPersonMobile },
 ].map((field) => (
-    <div key={field.name} style={styles.infoBox}>
-        <label style={styles.infoLabel}>{field.label}</label>
+    <div key={field.name} style={getStyles(isMobile, isDrawerOpen).infoBox}>
+        <label style={getStyles(isMobile, isDrawerOpen).infoLabel}>{field.label}</label>
         <input 
             name={field.name}
             type="text" 
@@ -373,7 +373,7 @@ const deleteProfilePicture = async () => {
             onChange={handleInputChange}
             disabled={field.isEmail ? true : !isEditing}
             style={{
-                ...styles.profileInput,
+                ...getStyles(isMobile, isDrawerOpen).profileInput,
                 border: field.isEmail ? '1px solid #333' : (isEditing ? '1px solid #2ecc71' : '1px solid rgba(255,255,255,0.1)'),
                 opacity: field.isEmail ? 0.6 : 1,
                 cursor: field.isEmail ? 'not-allowed' : 'text'
@@ -385,9 +385,9 @@ const deleteProfilePicture = async () => {
             </div>
 
             {/* Action Buttons */}
-            <div style={styles.profileActions}>
+            <div style={getStyles(isMobile, isDrawerOpen).profileActions}>
              <button 
-    style={{ ...styles.updateBtn, background: isEditing ? '#7dc27f' : '#7dc27f' }} 
+    style={{ ...getStyles(isMobile, isDrawerOpen).updateBtn, background: isEditing ? '#7dc27f' : '#7dc27f' }} 
     onClick={async () => {
        if (isEditing) {
             try {
@@ -414,7 +414,7 @@ const deleteProfilePicture = async () => {
     {isEditing ? " SAVE CHANGES" : " EDIT PROFILE"}
 </button>
                 {isEditing && (
-                    <button style={{ ...styles.deleteAccBtn, borderColor: '#666', color: '#666' }} onClick={() => setIsEditing(false)}>
+                    <button style={{ ...getStyles(isMobile, isDrawerOpen).deleteAccBtn, borderColor: '#666', color: '#666' }} onClick={() => setIsEditing(false)}>
                         CANCEL
                     </button>
                 )}
@@ -425,9 +425,9 @@ const deleteProfilePicture = async () => {
 
 {/* --- ABOUT SECTION --- */}
 {activeTab === 'about' && (
-    <div style={styles.centeredPage}>
-        <h1 style={styles.mainTitle}>ABOUT US</h1>
-        <p style={styles.subTitle}>We are committed to a greener future.</p>
+    <div style={getStyles(isMobile, isDrawerOpen).centeredPage}>
+        <h1 style={getStyles(isMobile, isDrawerOpen).mainTitle}>ABOUT US</h1>
+        <p style={getStyles(isMobile, isDrawerOpen).subTitle}>We are committed to a greener future.</p>
         <div style={{maxWidth: '600px', textAlign: 'center', color: '#bbb', lineHeight: '1.8'}}>
             EPRS (Pvt) Ltd is a leading waste management solution provider in Sri Lanka, 
             specializing in electronic, plastic, and industrial waste recycling.
