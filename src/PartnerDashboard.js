@@ -359,9 +359,14 @@ return (
         padding: isMobile ? '15px' : '15px 30px', 
         background: 'rgba(255, 255, 255, 0.05)',
         backdropFilter: 'blur(15px)',
+        WebkitBackdropFilter: 'blur(15px)',
+        border: '1px solid rgba(46, 204, 113, 0.3)',
+        borderRadius: '25px', 
+        margin: isMobile ? '10px' : '20px 30px', 
+        marginBottom: '30px',
         borderBottom: '1px solid rgba(46, 204, 113, 0.3)',
         position: 'sticky', 
-        top: 0,
+        top: isMobile ? '10px' : '20px',
         zIndex: 999999,
         gap: isMobile ? '15px' : '0' 
       }}>
