@@ -358,8 +358,8 @@ return (
         alignItems: 'center',
         padding: isMobile ? '15px' : '15px 30px', 
         background: 'rgba(255, 255, 255, 0.05)',
-        backdropFilter: 'blur(15px)',
-        WebkitBackdropFilter: 'blur(15px)',
+        backdropFilter: isMobile ? 'none' : 'blur(15px)',
+        WebkitBackdropFilter: isMobile ? 'none' : 'blur(15px)',
         border: '1px solid rgba(46, 204, 113, 0.3)',
         borderRadius: '25px', 
         margin: isMobile ? '10px' : '20px 30px', 
@@ -659,7 +659,7 @@ return (
     background: 'rgba(0,0,0,0.4)', 
     borderRadius: '15px', 
     padding: isMobile ? '15px' : '25px',
-    backdropFilter: 'blur(10px)',
+    backdropFilter:isMobile ? 'none' : 'blur(10px)',
     border: '1px solid rgba(255,255,255,0.05)',
     width: '100%',
     boxSizing: 'border-box'
@@ -669,7 +669,7 @@ return (
       justifyContent: 'space-between', 
       alignItems: 'center', 
       marginBottom: '15px',
-      flexDirection: isMobile ? 'column' : 'row', // ✅ ෆෝන් එකේදී බටන් එක යටට ගන්න
+      flexDirection: isMobile ? 'column' : 'row', 
       gap: isMobile ? '10px' : '0'
     }}>
       <h3 style={{ color: '#f1c40f', margin: 0 }}>⚠️ New Pending Collection Requests</h3>
@@ -749,7 +749,7 @@ return (
     background: 'rgba(0,0,0,0.4)', 
     borderRadius: '15px', 
     padding: isMobile ? '15px' : '25px',
-    backdropFilter: 'blur(10px)',
+    backdropFilter:isMobile ? 'none' : 'blur(10px)',
     border: '1px solid rgba(255,255,255,0.05)',
     width: '100%',
     boxSizing: 'border-box'
