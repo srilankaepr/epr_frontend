@@ -561,21 +561,22 @@ return (
       </div>
 
       {/* Stats Cards Section */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '25px', marginBottom: '50px' }}>
-        <div style={statCardStyle}>
-          <h3 style={{ color: '#3498db' }}>Total QR Count</h3>
-          <p style={{ fontSize: '48px', fontWeight: 'bold' }}>{stats.totalQR}</p>
-        </div>
-        
-        <div style={statCardStyle}>
-          <h3 style={{ color: '#f1c40f' }}>Pending Requests</h3>
-          <p style={{ fontSize: '48px', fontWeight: 'bold' }}>{stats.pending}</p>
-        </div>
-        
-        <div style={statCardStyle}>
-          <h3 style={{ color: '#2ecc71' }}>Total Collected</h3>
-          <p style={{ fontSize: '48px', fontWeight: 'bold' }}>{stats.collected}</p>
-        </div>
+     <div style={{ display: 'grid',  gridTemplateColumns: isMobile ? 'repeat(2, 1fr)' : 'repeat(auto-fit, minmax(250px, 1fr))', gap: isMobile ? '15px' : '25px', marginBottom: '50px' }}>
+  
+  <div style={getStatCardStyle(isMobile)}>
+    <h3 style={{ color: '#3498db', fontSize: isMobile ? '13px' : '16px' }}>Total QR Count</h3>
+    <p style={{ fontSize: isMobile ? '32px' : '48px', fontWeight: 'bold' }}>{stats.totalQR}</p>
+  </div>
+  
+  <div style={getStatCardStyle(isMobile)}>
+    <h3 style={{ color: '#f1c40f', fontSize: isMobile ? '13px' : '16px' }}>Pending Requests</h3>
+    <p style={{ fontSize: isMobile ? '32px' : '48px', fontWeight: 'bold' }}>{stats.pending}</p>
+  </div>
+  
+  <div style={getStatCardStyle(isMobile)}>
+    <h3 style={{ color: '#2ecc71', fontSize: isMobile ? '13px' : '16px' }}>Total Collected</h3>
+    <p style={{ fontSize: isMobile ? '32px' : '48px', fontWeight: 'bold' }}>{stats.collected}</p>
+  </div>
 
         {/* My Combined Collections Card */}
         <div style={{
@@ -884,14 +885,23 @@ return (
   );
 };
 
-const statCardStyle = {
-    background: 'rgba(255, 255, 255, 0.05)',
+const getStatCardStyle = (isMobile) => ({
+    background: isMobile ? 'rgba(20, 20, 20, 0.92)' : 'rgba(255, 255, 255, 0.05)',
     borderRadius: '20px',
-    padding: '25px',
+    padding: isMobile ? '15px' : '25px', 
+    minHeight: isMobile ? '110px' : '160px', 
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backdropFilter: isMobile ? 'blur(4px)' : 'blur(12px)',
+    WebkitBackdropFilter: isMobile ? 'blur(4px)' : 'blur(12px)',
+    border: '1px solid rgba(255, 255, 255, 0.05)',
     position: 'relative', 
-    zIndex: 1, 
-    backdropFilter: 'blur(12px)'
-};
+    zIndex: 1,
+    boxSizing: 'border-box',
+    textAlign: 'center'
+});
 
 const styles = {
 welcomeCard: {
