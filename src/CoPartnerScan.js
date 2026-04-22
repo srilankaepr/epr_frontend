@@ -5,6 +5,7 @@ import API from './api';
 
 const CoPartnerScan = () => {
   const navigate = useNavigate();
+  const isMobile = window.innerWidth <= 768;
   const [result, setResult] = useState('Scan the QR code approved by the customer.');
   const [loading, setLoading] = useState(false);
   const [scanning, setScanning] = useState(false);
@@ -126,7 +127,7 @@ return (
     }}>
       {/* Header Section */}
       <div style={{ textAlign: 'center', marginBottom: '40px' }}>
-        <h1 style={{ color: '#2ecc71', fontSize: '42px', fontWeight: '800', marginBottom: '10px', letterSpacing: '-1px' }}>
+        <h1 style={{ color: '#2ecc71',fontSize: isMobile ? '38px' : '42px', fontWeight: '800', marginBottom: '10px', letterSpacing: '-1px' }}>
           Collection Portal
         </h1>
         <p style={{ color: '#666', fontSize: '18px' }}>{result}</p>
@@ -138,10 +139,11 @@ return (
         maxWidth: '600px',
         background: 'linear-gradient(145deg, #141414, #0f0f0f)',
         borderRadius: '24px',
-        padding: '30px',
+        padding: isMobile ? '20px' : '30px',
         border: '1px solid #222',
         boxShadow: '0 20px 40px rgba(0,0,0,0.4)',
-        marginBottom: '30px'
+        marginBottom: '30px',
+        boxSizing: 'border-box'
       }}>
         <h3 style={{ fontSize: '16px', color: '#2ecc71', textTransform: 'uppercase', letterSpacing: '2px', marginBottom: '20px', textAlign: 'center' }}>
           Manual ID Verification
@@ -155,7 +157,7 @@ return (
             onChange={(e) => setManualId(e.target.value)}
             style={{
               width: '100%',
-              padding: '18px',
+              padding: isMobile ? '14px' : '18px',
               borderRadius: '12px',
               border: '1px solid #333',
               background: '#080808',
@@ -171,7 +173,7 @@ return (
             onClick={handleManualCollect}
             style={{
               width: '100%',
-              padding: '18px',
+              padding: isMobile ? '14px' : '18px',
               background: '#fff',
               color: '#000',
               borderRadius: '12px',
