@@ -560,75 +560,62 @@ return (
         </div>
       </div>
 
-{/* Stats Cards Section */}
-  <div style={{ display: 'grid',  gridTemplateColumns: isMobile ? 'repeat(2, 1fr)' : 'repeat(auto-fit, minmax(250px, 1fr))', gap: isMobile ? '15px' : '25px', marginBottom: '50px' }}>
-  
-  <div style={getStatCardStyle(isMobile)}>
-    <h3 style={{ color: '#3498db', fontSize: isMobile ? '13px' : '16px' }}>Total QR Count</h3>
-    <p style={{ fontSize: isMobile ? '32px' : '48px', fontWeight: 'bold' }}>{stats.totalQR}</p>
-  </div>
-  
-  <div style={getStatCardStyle(isMobile)}>
-    <h3 style={{ color: '#f1c40f', fontSize: isMobile ? '13px' : '16px' }}>Pending Requests</h3>
-    <p style={{ fontSize: isMobile ? '32px' : '48px', fontWeight: 'bold' }}>{stats.pending}</p>
-  </div>
-  
-  <div style={getStatCardStyle(isMobile)}>
-    <h3 style={{ color: '#2ecc71', fontSize: isMobile ? '13px' : '16px' }}>Total Collected</h3>
-    <p style={{ fontSize: isMobile ? '32px' : '48px', fontWeight: 'bold' }}>{stats.collected}</p>
-  </div>
+      {/* Stats Cards Section */}
+      <div style={{ display: 'grid', gridTemplateColumns: isMobile ? 'repeat(2, 1fr)' : 'repeat(auto-fit, minmax(250px, 1fr))', gap: '25px', marginBottom: '50px' }}>
+        <div style={statCardStyle}>
+          <h3 style={{ color: '#3498db' }}>Total QR Count</h3>
+          <p style={{ fontSize: '48px', fontWeight: 'bold' }}>{stats.totalQR}</p>
+        </div>
+        
+        <div style={statCardStyle}>
+          <h3 style={{ color: '#f1c40f' }}>Pending Requests</h3>
+          <p style={{ fontSize: '48px', fontWeight: 'bold' }}>{stats.pending}</p>
+        </div>
+        
+        <div style={statCardStyle}>
+          <h3 style={{ color: '#2ecc71' }}>Total Collected</h3>
+          <p style={{ fontSize: '48px', fontWeight: 'bold' }}>{stats.collected}</p>
+        </div>
 
-{/* My Combined Collections Card */}
-<div style={{
-  ...getStatCardStyle(isMobile), 
-  background: 'linear-gradient(135deg, rgba(155, 89, 182, 0.1), rgba(41, 128, 185, 0.1))',
-  border: '1px solid #9b59b6',
-  minHeight: isMobile ? '110px' : '160px', 
-  display: 'flex',
-  flexDirection: 'column',
-  justifyContent: 'center',
-  alignItems: 'center'
-}}>
-  <h3 style={{ 
-    color: '#dcdde1', 
-    fontSize: isMobile ? '11px' : '15px', 
-    marginBottom: '10px', 
-    textTransform: 'uppercase', 
-    letterSpacing: '1px' 
-  }}>
-    My Collections
-  </h3>
-  
-  <div style={{ textAlign: 'center', marginBottom: '5px' }}>
-    <p style={{ 
-      fontSize: isMobile ? '32px' : '48px', 
-      fontWeight: 'bold', 
-      margin: '0', 
-      color: '#fff', 
-      lineHeight: '1' 
-    }}>
-      {lifetimeCount}
-    </p>
-    <span style={{ fontSize: isMobile ? '9px' : '12px', color: '#9b59b6', fontWeight: 'bold' }}>LIFETIME</span>
-  </div>
+        {/* My Combined Collections Card */}
+        <div style={{
+          ...statCardStyle,
+          background: 'linear-gradient(135deg, rgba(155, 89, 182, 0.1), rgba(41, 128, 185, 0.1))',
+          border: '1px solid #9b59b6',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          alignItems: 'center',
+          minHeight: '160px'
+        }}>
+          <h3 style={{ color: '#dcdde1', fontSize: '15px', marginBottom: '10px', textTransform: 'uppercase', letterSpacing: '1px' }}>
+            My Collections
+          </h3>
+          
+          <div style={{ textAlign: 'center', marginBottom: '5px' }}>
+            <p style={{ fontSize: '48px', fontWeight: 'bold', margin: '0', color: '#fff', lineHeight: '1' }}>
+              {lifetimeCount}
+            </p>
+            <span style={{ fontSize: '12px', color: '#9b59b6', fontWeight: 'bold' }}>LIFETIME</span>
+          </div>
 
-  <div style={{
-    marginTop: isMobile ? '8px' : '15px',
-    padding: isMobile ? '5px 12px' : '5px 20px',
-    background: 'rgba(46, 204, 113, 0.15)',
-    borderRadius: '50px',
-    border: '1px solid rgba(46, 204, 113, 0.4)',
-    display: 'flex',
-    alignItems: 'center',
-    gap: '8px'
-  }}>
-    <div style={{ width: '6px', height: '6px', background: '#2ecc71', borderRadius: '50%' }}></div>
-    <span style={{ fontSize: isMobile ? '11px' : '14px', color: '#2ecc71', fontWeight: 'bold' }}>
-      Today: {todayCount}
-    </span>
-  </div>
- </div>
-</div>
+          <div style={{
+            marginTop: '15px',
+            padding: '5px 20px',
+            background: 'rgba(46, 204, 113, 0.15)',
+            borderRadius: '50px',
+            border: '1px solid rgba(46, 204, 113, 0.4)',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px'
+          }}>
+            <div style={{ width: '8px', height: '8px', background: '#2ecc71', borderRadius: '50%' }}></div>
+            <span style={{ fontSize: '14px', color: '#2ecc71', fontWeight: 'bold' }}>
+              Today: {todayCount}
+            </span>
+          </div>
+        </div>
+      </div>
 
       {/* Quick Collect Button */}
       <div style={{ textAlign: 'center', marginBottom: '50px' }}>
@@ -669,11 +656,10 @@ return (
      {/* Tab Content*/}
 {activeTab === 'summary' && (
 <div style={{ 
-  background: isMobile ? 'rgba(15, 15, 15, 0.98)' : 'rgba(0,0,0,0.4)', 
+    background: 'rgba(0,0,0,0.4)', 
     borderRadius: '15px', 
     padding: isMobile ? '15px' : '25px',
-    backdropFilter: isMobile ? 'none' : 'blur(10px)', 
-    WebkitBackdropFilter: isMobile ? 'none' : 'blur(10px)',
+    backdropFilter: 'blur(10px)',
     border: '1px solid rgba(255,255,255,0.05)',
     width: '100%',
     boxSizing: 'border-box'
@@ -683,7 +669,7 @@ return (
       justifyContent: 'space-between', 
       alignItems: 'center', 
       marginBottom: '15px',
-      flexDirection: isMobile ? 'column' : 'row', 
+      flexDirection: isMobile ? 'column' : 'row', // ✅ ෆෝන් එකේදී බටන් එක යටට ගන්න
       gap: isMobile ? '10px' : '0'
     }}>
       <h3 style={{ color: '#f1c40f', margin: 0 }}>⚠️ New Pending Collection Requests</h3>
@@ -760,11 +746,10 @@ return (
      {/* Tab Content 2: My Detailed Collection List */}
 {activeTab === 'my_details' && (
   <div style={{ 
-   background: isMobile ? 'rgba(15, 15, 15, 0.98)' : 'rgba(0,0,0,0.4)', 
+    background: 'rgba(0,0,0,0.4)', 
     borderRadius: '15px', 
     padding: isMobile ? '15px' : '25px',
-    backdropFilter: isMobile ? 'none' : 'blur(10px)', 
-    WebkitBackdropFilter: isMobile ? 'none' : 'blur(10px)',
+    backdropFilter: 'blur(10px)',
     border: '1px solid rgba(255,255,255,0.05)',
     width: '100%',
     boxSizing: 'border-box'
@@ -899,23 +884,14 @@ return (
   );
 };
 
-const getStatCardStyle = (isMobile) => ({
-    background: isMobile ? 'rgba(20, 20, 20, 0.92)' : 'rgba(255, 255, 255, 0.05)',
+const statCardStyle = {
+    background: 'rgba(255, 255, 255, 0.05)',
     borderRadius: '20px',
-    padding: isMobile ? '15px' : '25px', 
-    minHeight: isMobile ? '110px' : '160px', 
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'center',
-    alignItems: 'center',
-    backdropFilter: isMobile ? 'blur(4px)' : 'blur(12px)',
-    WebkitBackdropFilter: isMobile ? 'blur(4px)' : 'blur(12px)',
-    border: '1px solid rgba(255, 255, 255, 0.05)',
+    padding: '25px',
     position: 'relative', 
-    zIndex: 1,
-    boxSizing: 'border-box',
-    textAlign: 'center'
-});
+    zIndex: 1, 
+    backdropFilter: 'blur(12px)'
+};
 
 const styles = {
 welcomeCard: {
@@ -942,7 +918,7 @@ container: {
     backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.8)), url(${bgImage})`,
     backgroundSize: 'cover',
     backgroundPosition: 'center',
-    backgroundAttachment:'fixed', 
+    backgroundAttachment: 'fixed', 
     backgroundRepeat: 'no-repeat',
     color: '#fff',
     padding: '20px',
