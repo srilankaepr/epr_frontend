@@ -348,28 +348,32 @@ const downloadRecentTablePDF = () => {
 };
 
 
-
 return (
     <div style={styles.container}>
-      {/* Header Section - මෙතන තියෙන්නේ එකම එක Header එකයි */}
+     {/* Header Section - Responsive Optimized */}
       <div style={{
-       display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: '15px 30px',
-    background: 'rgba(10, 10, 10, 0.9)',
-    backdropFilter: 'blur(10px)',
-    borderBottom: '1px solid #222',
-    
-    // 👇 මේ පේළි 3 අනිවාර්යයෙන්ම දාන්න
-    position: 'sticky', // නැත්නම් relative
-    top: 0,
-    zIndex: 999999,
+        display: 'flex',
+        flexDirection: isMobile ? 'column' : 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        padding: isMobile ? '15px' : '15px 30px', 
+        background: 'rgba(10, 10, 10, 0.9)',
+        backdropFilter: 'blur(10px)',
+        borderBottom: '1px solid #222',
+        position: 'sticky', 
+        top: 0,
+        zIndex: 999999,
+        gap: isMobile ? '15px' : '0' 
       }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '25px' }}>
+        <div style={{ 
+          display: 'flex', 
+          alignItems: 'center', 
+          gap: isMobile ? '15px' : '25px',
+          flexDirection: isMobile ? 'column' : 'row' 
+        }}>
           <div style={{
-            width: '100px',
-            height: '100px',
+            width: isMobile ? '70px' : '100px', 
+            height: isMobile ? '70px' : '100px',
             borderRadius: '50%',
             overflow: 'hidden',
             border: '3px solid #2ecc71',
@@ -379,7 +383,8 @@ return (
           </div>
           <h1 style={{
             margin: 0,
-            fontSize: '28px',
+            fontSize: isMobile ? '20px' : '28px',
+            textAlign: isMobile ? 'center' : 'left',
             background: 'linear-gradient(90deg, #2ecc71, #27ae60)',
             WebkitBackgroundClip: 'text',
             WebkitTextFillColor: 'transparent',
@@ -392,7 +397,8 @@ return (
         <button 
           onClick={handleLogout}
           style={{
-            padding: '12px 30px',
+            padding: isMobile ? '10px 20px' : '12px 30px',
+            width: isMobile ? '100%' : 'auto', 
             background: 'linear-gradient(135deg, #e74c3c, #c0392b)',
             border: 'none',
             borderRadius: '50px',
