@@ -469,7 +469,7 @@ return (
   <div style={{ 
       position: 'absolute', 
       top: '65px', 
-      right: isMobile ? '-150px' : '0px', 
+      right: isMobile ? '-200px' : '0px', 
       width: isMobile ? '300px' : '380px',
       zIndex: 10001, 
       background: 'rgba(15, 15, 15, 0.98)', 
