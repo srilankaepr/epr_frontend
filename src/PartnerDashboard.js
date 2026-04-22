@@ -906,7 +906,7 @@ const getContainerStyle = (isMobile) => ({
     backgroundPosition: 'center',
     backgroundAttachment: isMobile ? 'scroll' : 'fixed', 
     backgroundRepeat: 'no-repeat',
-    color: '#fff',
+    color: '#6dcd8a',
     padding: isMobile ? '10px' : '20px', 
     fontFamily: "'Poppins', sans-serif",
     boxSizing: 'border-box'
