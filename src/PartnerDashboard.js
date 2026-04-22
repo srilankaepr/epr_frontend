@@ -669,10 +669,11 @@ return (
      {/* Tab Content*/}
 {activeTab === 'summary' && (
 <div style={{ 
-    background: 'rgba(0,0,0,0.4)', 
+  background: isMobile ? 'rgba(15, 15, 15, 0.98)' : 'rgba(0,0,0,0.4)', 
     borderRadius: '15px', 
     padding: isMobile ? '15px' : '25px',
-    backdropFilter: 'blur(10px)',
+    backdropFilter: isMobile ? 'none' : 'blur(10px)', 
+    WebkitBackdropFilter: isMobile ? 'none' : 'blur(10px)',
     border: '1px solid rgba(255,255,255,0.05)',
     width: '100%',
     boxSizing: 'border-box'
@@ -682,7 +683,7 @@ return (
       justifyContent: 'space-between', 
       alignItems: 'center', 
       marginBottom: '15px',
-      flexDirection: isMobile ? 'column' : 'row', // ✅ ෆෝන් එකේදී බටන් එක යටට ගන්න
+      flexDirection: isMobile ? 'column' : 'row', 
       gap: isMobile ? '10px' : '0'
     }}>
       <h3 style={{ color: '#f1c40f', margin: 0 }}>⚠️ New Pending Collection Requests</h3>
@@ -759,10 +760,11 @@ return (
      {/* Tab Content 2: My Detailed Collection List */}
 {activeTab === 'my_details' && (
   <div style={{ 
-    background: 'rgba(0,0,0,0.4)', 
+   background: isMobile ? 'rgba(15, 15, 15, 0.98)' : 'rgba(0,0,0,0.4)', 
     borderRadius: '15px', 
     padding: isMobile ? '15px' : '25px',
-    backdropFilter: 'blur(10px)',
+    backdropFilter: isMobile ? 'none' : 'blur(10px)', 
+    WebkitBackdropFilter: isMobile ? 'none' : 'blur(10px)',
     border: '1px solid rgba(255,255,255,0.05)',
     width: '100%',
     boxSizing: 'border-box'
