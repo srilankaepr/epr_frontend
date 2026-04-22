@@ -942,7 +942,7 @@ container: {
     backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.8)), url(${bgImage})`,
     backgroundSize: 'cover',
     backgroundPosition: 'center',
-    backgroundAttachment: 'fixed', 
+    backgroundAttachment: isMobile ? 'scroll' : 'fixed',
     backgroundRepeat: 'no-repeat',
     color: '#fff',
     padding: '20px',
