@@ -560,8 +560,8 @@ return (
         </div>
       </div>
 
-      {/* Stats Cards Section */}
-     <div style={{ display: 'grid',  gridTemplateColumns: isMobile ? 'repeat(2, 1fr)' : 'repeat(auto-fit, minmax(250px, 1fr))', gap: isMobile ? '15px' : '25px', marginBottom: '50px' }}>
+{/* Stats Cards Section */}
+  <div style={{ display: 'grid',  gridTemplateColumns: isMobile ? 'repeat(2, 1fr)' : 'repeat(auto-fit, minmax(250px, 1fr))', gap: isMobile ? '15px' : '25px', marginBottom: '50px' }}>
   
   <div style={getStatCardStyle(isMobile)}>
     <h3 style={{ color: '#3498db', fontSize: isMobile ? '13px' : '16px' }}>Total QR Count</h3>
@@ -578,45 +578,57 @@ return (
     <p style={{ fontSize: isMobile ? '32px' : '48px', fontWeight: 'bold' }}>{stats.collected}</p>
   </div>
 
-        {/* My Combined Collections Card */}
-        <div style={{
-          ...statCardStyle,
-          background: 'linear-gradient(135deg, rgba(155, 89, 182, 0.1), rgba(41, 128, 185, 0.1))',
-          border: '1px solid #9b59b6',
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'center',
-          alignItems: 'center',
-          minHeight: '160px'
-        }}>
-          <h3 style={{ color: '#dcdde1', fontSize: '15px', marginBottom: '10px', textTransform: 'uppercase', letterSpacing: '1px' }}>
-            My Collections
-          </h3>
-          
-          <div style={{ textAlign: 'center', marginBottom: '5px' }}>
-            <p style={{ fontSize: '48px', fontWeight: 'bold', margin: '0', color: '#fff', lineHeight: '1' }}>
-              {lifetimeCount}
-            </p>
-            <span style={{ fontSize: '12px', color: '#9b59b6', fontWeight: 'bold' }}>LIFETIME</span>
-          </div>
+{/* My Combined Collections Card */}
+<div style={{
+  ...getStatCardStyle(isMobile), 
+  background: 'linear-gradient(135deg, rgba(155, 89, 182, 0.1), rgba(41, 128, 185, 0.1))',
+  border: '1px solid #9b59b6',
+  minHeight: isMobile ? '110px' : '160px', 
+  display: 'flex',
+  flexDirection: 'column',
+  justifyContent: 'center',
+  alignItems: 'center'
+}}>
+  <h3 style={{ 
+    color: '#dcdde1', 
+    fontSize: isMobile ? '11px' : '15px', 
+    marginBottom: '10px', 
+    textTransform: 'uppercase', 
+    letterSpacing: '1px' 
+  }}>
+    My Collections
+  </h3>
+  
+  <div style={{ textAlign: 'center', marginBottom: '5px' }}>
+    <p style={{ 
+      fontSize: isMobile ? '32px' : '48px', 
+      fontWeight: 'bold', 
+      margin: '0', 
+      color: '#fff', 
+      lineHeight: '1' 
+    }}>
+      {lifetimeCount}
+    </p>
+    <span style={{ fontSize: isMobile ? '9px' : '12px', color: '#9b59b6', fontWeight: 'bold' }}>LIFETIME</span>
+  </div>
 
-          <div style={{
-            marginTop: '15px',
-            padding: '5px 20px',
-            background: 'rgba(46, 204, 113, 0.15)',
-            borderRadius: '50px',
-            border: '1px solid rgba(46, 204, 113, 0.4)',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px'
-          }}>
-            <div style={{ width: '8px', height: '8px', background: '#2ecc71', borderRadius: '50%' }}></div>
-            <span style={{ fontSize: '14px', color: '#2ecc71', fontWeight: 'bold' }}>
-              Today: {todayCount}
-            </span>
-          </div>
-        </div>
-      </div>
+  <div style={{
+    marginTop: isMobile ? '8px' : '15px',
+    padding: isMobile ? '5px 12px' : '5px 20px',
+    background: 'rgba(46, 204, 113, 0.15)',
+    borderRadius: '50px',
+    border: '1px solid rgba(46, 204, 113, 0.4)',
+    display: 'flex',
+    alignItems: 'center',
+    gap: '8px'
+  }}>
+    <div style={{ width: '6px', height: '6px', background: '#2ecc71', borderRadius: '50%' }}></div>
+    <span style={{ fontSize: isMobile ? '11px' : '14px', color: '#2ecc71', fontWeight: 'bold' }}>
+      Today: {todayCount}
+    </span>
+  </div>
+ </div>
+</div>
 
       {/* Quick Collect Button */}
       <div style={{ textAlign: 'center', marginBottom: '50px' }}>
