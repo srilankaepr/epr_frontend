@@ -884,32 +884,23 @@ return (
   );
 };
 
-const statCardStyle = {
-    // ✅ ෆෝන් එකේදී බ්ලර් එක සැහැල්ලු නිසා පසුබිම් වර්ණය පොඩ්ඩක් තද කළා
+const getStatCardStyle = (isMobile) => ({
     background: isMobile ? 'rgba(20, 20, 20, 0.92)' : 'rgba(255, 255, 255, 0.05)',
     borderRadius: '20px',
-    
-    // ✅ 4n එකේදී padding 25px සිට 15px දක්වා අඩු කළා (කාඩ් එකේ පළල/දිග අඩු වීමට)
     padding: isMobile ? '15px' : '25px', 
-    
-    // ✅ කාඩ් එකේ උස (Height) ෆෝන් එකේදී අඩු කළා
     minHeight: isMobile ? '110px' : '160px', 
-    
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
-    
-    // ✅ ෆෝන් එකේදී බ්ලර් එක 4px වලට සැහැල්ලු කළා (Speed එක වැඩි වීමට)
     backdropFilter: isMobile ? 'blur(4px)' : 'blur(12px)',
     WebkitBackdropFilter: isMobile ? 'blur(4px)' : 'blur(12px)',
-    
     border: '1px solid rgba(255, 255, 255, 0.05)',
     position: 'relative', 
     zIndex: 1,
     boxSizing: 'border-box',
     textAlign: 'center'
-};
+});
 
 const styles = {
 welcomeCard: {
