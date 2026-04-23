@@ -710,9 +710,9 @@ if (dbResponse.status !== 200 && dbResponse.status !== 201) {
                             </div>
                         )}
 
-                        {activeTab === 'summary' && (
-                              <DirectCollections />
-                                        )}
+            {activeTab === 'summary' && (
+    <DirectCollections />
+)}
 
                         {activeTab === 'user_management' && (
                             <div className="glass-card" style={styles.card}>
