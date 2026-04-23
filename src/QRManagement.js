@@ -711,27 +711,8 @@ if (dbResponse.status !== 200 && dbResponse.status !== 201) {
                         )}
 
                         {activeTab === 'summary' && (
-                            <div className="glass-card" style={styles.card}>
-                                <h3 style={styles.cardTitle}>QR Production Summary</h3>
-                                <table style={styles.table}>
-                                    <thead>
-                                        <tr style={styles.tableHead}>
-                                            <th style={{ padding: '15px', color: '#2ecc71', textAlign: 'left' }}>Company</th>
-                                            <th style={{ padding: '15px', color: '#2ecc71', textAlign: 'left' }}>Product</th>
-                                            <th style={{ padding: '15px', color: '#2ecc71', textAlign: 'left' }}>Quantity</th>
-                                            <th style={{ padding: '15px', color: '#2ecc71', textAlign: 'left' }}>Status</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td colSpan="4" style={{ textAlign: 'center', padding: '40px', color: '#666' }}>
-                                                <div style={{ opacity: 0.6 }}>No batches found in the records.</div>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        )}
+                              <DirectCollections />
+                                        )}
 
                         {activeTab === 'user_management' && (
                             <div className="glass-card" style={styles.card}>
