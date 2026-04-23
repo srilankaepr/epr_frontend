@@ -6,6 +6,7 @@ import QRCode from 'qrcode';
 import logo from './logo.png';
 import QRReportView from './QRReportView';
 import API from './api'; 
+import DirectCollections from './DirectCollections';
 
 function QRManagement() {
     const [counts, setCounts] = useState({
