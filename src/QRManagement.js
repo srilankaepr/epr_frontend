@@ -590,7 +590,7 @@ if (dbResponse.status !== 200 && dbResponse.status !== 201) {
                         <button onClick={() => setActiveTab('company')} style={activeTab === 'company' ? styles.activeNavBtn : styles.navBtn}>Add Company</button>
                         <button onClick={() => setActiveTab('product')} style={activeTab === 'product' ? styles.activeNavBtn : styles.navBtn}>Add Product</button>
                         <button onClick={() => setActiveTab('batch')} style={activeTab === 'batch' ? styles.activeNavBtn : styles.navBtn}>Batch QR Generation</button>
-                        <button onClick={() => setActiveTab('summary')} style={activeTab === 'summary' ? styles.activeNavBtn : styles.navBtn}>QR Summary (Empty)</button>
+                        <button onClick={() => setActiveTab('summary')} style={activeTab === 'summary' ? styles.activeNavBtn : styles.navBtn}>Direct Collections</button>
                         <button onClick={() => setActiveTab('user_management')} style={activeTab === 'user_management' ? styles.activeNavBtn : styles.navBtn}>QR User Management</button>
                     </div>
 
