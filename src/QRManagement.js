@@ -1128,8 +1128,6 @@ if (dbResponse.status !== 200 && dbResponse.status !== 201) {
                 <tbody>
                   {recycleRequests.length > 0 ? (
         (() => {
-            // 1. මුලින්ම Status එක අනුව Filter කරනවා (ඔයාගේ පරණ logic එක)
-            // 2. ඊටපස්සේ searchTerm එක අනුව Filter කරනවා (අලුත් logic එක)
             const filteredItems = recycleRequests
                 .filter(req => filterStatus === 'All' ? true : (req.status || 'Pending') === filterStatus)
                 .filter(req => {
@@ -1597,7 +1595,7 @@ const styles = {
     notifDropdown: {
         position: 'absolute',
         top: '55px',
-        left: '0', // Header එකේ ලස්සනට පේන්න මේක '0' කරන්න
+        left: '0', 
         background: '#111',
         border: '1px solid #333',
         width: '280px',
@@ -1614,8 +1612,8 @@ const styles = {
     notifDropdown: {
     position: 'absolute',
     top: '55px',
-    right: '0px',      // 👈 මේක '0px' කරන්න (එතකොට දකුණට සමපාත වෙනවා)
-    left: 'auto',      // 👈 මේක 'auto' කරන්න (වම් පැත්ත නිදහස් කරන්න)
+    right: '0px',      
+    left: 'auto',     
     background: '#111',
     border: '1px solid #333',
     width: '280px',

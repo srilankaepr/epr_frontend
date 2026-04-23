@@ -356,13 +356,8 @@ sidebar: {
     display: 'flex',
     flexDirection: 'column',
     padding: '50px 25px',
-    zIndex: 100 // 👈 අනිත් දේවල් වලට වඩා උඩින් තියෙන්න
+    zIndex: 100 
 },
-
-
-
-
-
 
 
     logoCircle: { width: '100px', height: '100px', background: '#fff', borderRadius: '24px', margin: '0 auto', display: 'flex', justifyContent: 'center', alignItems: 'center', boxShadow: '0 15px 35px rgba(0,0,0,0.5)', overflow: 'hidden' },
