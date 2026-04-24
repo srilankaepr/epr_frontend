@@ -36,7 +36,7 @@ const DirectCollections = () => {
             for (let i = 1; i <= finalQty; i++) {
                 const randomStr = Math.random().toString(36).substring(2, 7).toUpperCase();
                 const fullID = `${finalCpId}-${dateCode}-${i.toString().padStart(4, '0')}-${randomStr}`;
-                const currentQrUrl = `https://www.epr-srilanka.com/verify-product?id=${fullID}`;
+                const currentQrUrl = `https://www.epr-srilanka.com/direct-verify?id=${fullID}`;
                 const qrOnlyDataURL = await QRCode.toDataURL(currentQrUrl, { width: 500, margin: 2 });
 
                 await new Promise((resolve) => {
