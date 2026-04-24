@@ -24,6 +24,7 @@ import ProtectedRoute from './ProtectedRoute';
 import FeedbackPage from './FeedbackPage'; 
 import ProductRegistration from './ProductRegistration';
 import AdminProductView from './AdminProductView'; 
+import DirectVerify from './DirectVerify';
 
 function App() {
   return (
@@ -36,6 +37,7 @@ function App() {
         <Route path="/register-admin" element={<RegisterAdmin />} />
         <Route path="/register-customer" element={<RegisterCustomer />} />
         <Route path="/verify-product" element={<CustomerVerify />} />
+        <Route path="/direct-verify" element={<DirectVerify />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
 
         {/* --- PROTECTED ROUTES (Role-based Protection) --- */}
