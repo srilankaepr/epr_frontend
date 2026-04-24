@@ -80,7 +80,7 @@ const DirectCollections = () => {
                         type="text" 
                         value={cpId} 
                         onChange={(e) => setCpId(e.target.value)} 
-                        placeholder="e.g. CP782"
+                        placeholder="e.g. CP001"
                         style={styles.input}
                     />
                 </div>
