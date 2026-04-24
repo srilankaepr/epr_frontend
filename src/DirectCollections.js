@@ -24,7 +24,6 @@ const DirectCollections = () => {
 
         const zip = new JSZip();
         const now = new Date();
-        // Date code: YYMMDD
         const dateCode = `${now.getFullYear().toString().slice(-2)}${(now.getMonth() + 1).toString().padStart(2, '0')}${now.getDate().toString().padStart(2, '0')}`;
         
         try {
@@ -35,14 +34,17 @@ const DirectCollections = () => {
             const qrImg = new Image(); 
 
             for (let i = 1; i <= finalQty; i++) {
-                const qrValue = `https://www.epr-srilanka.com/verify-product?id=${fullID}`;
-                const qrOnlyDataURL = await QRCode.toDataURL(qrValue, { width: 500, margin: 2 });
+                const randomStr = Math.random().toString(36).substring(2, 7).toUpperCase();
+                const fullID = `${finalCpId}-${dateCode}-${i.toString().padStart(4, '0')}-${randomStr}`;
+                const currentQrUrl = `https://www.epr-srilanka.com/verify-product?id=${fullID}`;
+                const qrOnlyDataURL = await QRCode.toDataURL(currentQrUrl, { width: 500, margin: 2 });
 
                 await new Promise((resolve) => {
                     qrImg.onload = () => {
                         ctx.fillStyle = "white";
                         ctx.fillRect(0, 0, canvas.width, canvas.height);
                         ctx.drawImage(qrImg, 0, 0);
+                        
                         ctx.fillStyle = "black"; 
                         ctx.textAlign = "center";
                         ctx.font = "bold 22px Arial"; 
@@ -54,13 +56,7 @@ const DirectCollections = () => {
                 });
 
                 const base64Data = canvas.toDataURL("image/png").split(',')[1];
-                
-                // 2. Create QR Code Image
-                const qrValue = `https://www.epr-srilanka.com/verify-product?id=${fullID}`;
-                const qrDataURL = await QRCode.toDataURL(qrValue, { width: 500, margin: 2 });
-                const base64Data = qrDataURL.split(',')[1];
 
-                // 3. Save to MongoDB (Backend Call)
                 await API.post('/qr/save-qr-direct', {
                     qrId: fullID,
                     coPartnerId: finalCpId,
@@ -68,10 +64,8 @@ const DirectCollections = () => {
                     status: 'Generated' 
                 });
 
-                // 4. Add to Zip
                 zip.file(`${fullID}.png`, base64Data, { base64: true });
 
-                // Update Progress
                 if (i % 10 === 0 || i === finalQty) {
                     setProgress(Math.round((i / finalQty) * 100));
                 }
