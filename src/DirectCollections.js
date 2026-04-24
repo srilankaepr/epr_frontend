@@ -28,10 +28,32 @@ const DirectCollections = () => {
         const dateCode = `${now.getFullYear().toString().slice(-2)}${(now.getMonth() + 1).toString().padStart(2, '0')}${now.getDate().toString().padStart(2, '0')}`;
         
         try {
+            const canvas = document.createElement('canvas'); 
+            const ctx = canvas.getContext('2d');
+            canvas.width = 500;  
+            canvas.height = 580; 
+            const qrImg = new Image(); 
+
             for (let i = 1; i <= finalQty; i++) {
-                // 1. Generate Unique ID
-                const randomStr = Math.random().toString(36).substring(2, 7).toUpperCase();
-                const fullID = `${finalCpId}-${dateCode}-${i.toString().padStart(4, '0')}-${randomStr}`;
+                const qrValue = `https://www.epr-srilanka.com/verify-product?id=${fullID}`;
+                const qrOnlyDataURL = await QRCode.toDataURL(qrValue, { width: 500, margin: 2 });
+
+                await new Promise((resolve) => {
+                    qrImg.onload = () => {
+                        ctx.fillStyle = "white";
+                        ctx.fillRect(0, 0, canvas.width, canvas.height);
+                        ctx.drawImage(qrImg, 0, 0);
+                        ctx.fillStyle = "black"; 
+                        ctx.textAlign = "center";
+                        ctx.font = "bold 22px Arial"; 
+                        ctx.fillText(fullID, canvas.width / 2, 545); 
+                        
+                        resolve();
+                    };
+                    qrImg.src = qrOnlyDataURL;
+                });
+
+                const base64Data = canvas.toDataURL("image/png").split(',')[1];
                 
                 // 2. Create QR Code Image
                 const qrValue = `https://www.epr-srilanka.com/verify-product?id=${fullID}`;
@@ -43,7 +65,7 @@ const DirectCollections = () => {
                     qrId: fullID,
                     coPartnerId: finalCpId,
                     batchDate: dateCode,
-                    status: 'Generated' // පසුව මේක logic එක අනුව වෙනස් කරමු
+                    status: 'Generated' 
                 });
 
                 // 4. Add to Zip
