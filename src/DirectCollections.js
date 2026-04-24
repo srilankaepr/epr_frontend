@@ -114,7 +114,7 @@ const styles = {
     card: { background: 'rgba(255, 255, 255, 0.03)', padding: '40px', borderRadius: '30px', border: '1px solid rgba(255, 255, 255, 0.1)' },
     formGrid: { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '30px', marginBottom: '30px' },
     inputGroup: { display: 'flex', flexDirection: 'column', gap: '10px' },
-    label: { color: '#888', fontSize: '14px' },
+    label: { color: '#fbf9f9', fontSize: '14px' },
     input: { padding: '15px', borderRadius: '12px', background: 'rgba(0,0,0,0.4)', border: '1px solid #333', color: '#fff', fontSize: '16px' },
     btn: { width: '100%', padding: '18px', borderRadius: '15px', color: '#000', fontWeight: '800', border: 'none', cursor: 'pointer', fontSize: '16px', transition: '0.3s' }
 };
