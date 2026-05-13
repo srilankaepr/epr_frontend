@@ -9,7 +9,7 @@ const AdminOrders = () => {
     const navigate = useNavigate();
     const BASE_URL = API.defaults.baseURL;
     const [orders, setOrders] = useState([]);
-    const [, setLoading] = useState(true);
+    const [loading, setLoading] = useState(true);
     const [filterDivision, setFilterDivision] = useState('ALL');
     const [filterType, setFilterType] = useState('ALL');
     const [filterStatus, setFilterStatus] = useState('ALL'); 
