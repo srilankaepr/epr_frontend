@@ -319,7 +319,7 @@ if (topRes.status === 200) {
                                 <div style={styles.breakdownValue}>{counts.importer}</div>
                             </div>
                             <div style={styles.breakdownItem}>
-                                <span style={styles.breakdownLabel}>Brands</span>
+                                <span style={styles.breakdownLabel}>Brand Owners</span>
                                 <div style={styles.breakdownValue}>{counts.brandOwner}</div>
                             </div>
                         </div>
