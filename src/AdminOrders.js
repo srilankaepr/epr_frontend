@@ -9,7 +9,7 @@ const AdminOrders = () => {
     const navigate = useNavigate();
     const BASE_URL = API.defaults.baseURL;
     const [orders, setOrders] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const [, setLoading] = useState(true);
     const [filterDivision, setFilterDivision] = useState('ALL');
     const [filterType, setFilterType] = useState('ALL');
     const [filterStatus, setFilterStatus] = useState('ALL'); 
@@ -336,9 +336,8 @@ const styles = {
     container: { 
         display: 'flex', minHeight: '100vh', 
         background: `linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&q=80&w=2072')`,
-      backgroundSize: 'cover', backgroundPosition: 'center', backgroundAttachment: 'fixed',
-       backgroundAttachment: 'fixed', // 👈 මේකෙන් තමයි image එක scroll නොවී fix වෙන්නේ
-   backgroundRepeat: 'no-repeat',
+        backgroundSize: 'cover', backgroundPosition: 'center', backgroundAttachment: 'fixed',
+        backgroundRepeat: 'no-repeat',
     color: '#fff', fontFamily: "'Inter', sans-serif" 
     },
 
