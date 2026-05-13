@@ -42,7 +42,7 @@ function App() {
 
         {/* --- PROTECTED ROUTES (Role-based Protection) --- */}
         
-        {/* 1. Admin පේජ් (ADMIN ට පමණි) */}
+        {/* 1. Admin */}
         <Route path="/dashboard" element={<ProtectedRoute allowedRole="ADMIN"><Dashboard /></ProtectedRoute>} />
         <Route path="/user-management" element={<ProtectedRoute allowedRole="ADMIN"><UserManagement /></ProtectedRoute>} />
         <Route path="/admin-orders" element={<ProtectedRoute allowedRole="ADMIN"><AdminOrders /></ProtectedRoute>} />
@@ -52,7 +52,7 @@ function App() {
         <Route path="/admin-products" element={<ProtectedRoute allowedRole="ADMIN"><AdminProductView /></ProtectedRoute>} />
 
 
-        {/* 2. Customer පේජ් (CUSTOMER ට පමණි) */}
+        {/* 2. Customer */}
         <Route path="/user-dashboard" element={<ProtectedRoute allowedRole="CUSTOMER"><UserDashboard /></ProtectedRoute>} />
         <Route path="/electronic-order" element={<ProtectedRoute allowedRole="CUSTOMER"><ElectronicOrder /></ProtectedRoute>} />
         <Route path="/plastic-order" element={<ProtectedRoute allowedRole="CUSTOMER"><PlasticOrder /></ProtectedRoute>} />
@@ -62,7 +62,7 @@ function App() {
         <Route path="/oil-order" element={<ProtectedRoute allowedRole="CUSTOMER"><OilOrder /></ProtectedRoute>} />
         <Route path="/product-registration" element={<ProtectedRoute allowedRole="CUSTOMER"><ProductRegistration /></ProtectedRoute>} />
 
-        {/* 3. Co-partner පේජ් (PARTNER ට පමණි) */}
+        {/* 3. Co-partner */}
         <Route path="/partner-dashboard" element={<ProtectedRoute allowedRole="PARTNER"><PartnerDashboard /></ProtectedRoute>} />
         <Route path="/co-partner/scan" element={<ProtectedRoute allowedRole="PARTNER"><CoPartnerScan /></ProtectedRoute>} />
          
