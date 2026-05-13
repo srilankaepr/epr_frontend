@@ -7,7 +7,6 @@ import API from './api';
 const AdminRegister = () => {
     const navigate = useNavigate();
     
-    // --- මුල් Logic එක ඒ විදිහටම තියෙනවා ---
     const [formData, setFormData] = useState({
         fullName: '',
         email: '',
