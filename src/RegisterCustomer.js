@@ -25,6 +25,7 @@ const RegisterCustomer = () => {
         isCoPartner: false,
         coPartnerFullName: '',
         coPartnerAnotherEmail: '',
+        coPartnerPhone: '',
         coPartnerNic: '',
         coPartnerDistrict: '',
         coPartnerPradeshiyaSabha: ''
@@ -287,6 +288,10 @@ const RegisterCustomer = () => {
                                     <div style={styles.inputWrapper}>
                                         <label style={styles.label}>ANOTHER EMAIL</label>
                                         <input name="coPartnerAnotherEmail" type="email" placeholder="alternative@email.com" style={styles.input} onChange={handleChange} required />
+                                    </div>
+                                    <div style={styles.inputWrapper}>
+                                        <label style={styles.label}>PHONE NUMBER</label>
+                                        <input name="coPartnerPhone" type="text" maxLength="10" placeholder="07XXXXXXXX" style={styles.input} onChange={handleChange} required />
                                     </div>
                                     <div style={styles.inputWrapper}>
                                         <label style={styles.label}>NATIONAL ID (NIC)</label>
