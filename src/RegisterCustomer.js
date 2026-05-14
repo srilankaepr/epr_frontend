@@ -134,24 +134,28 @@ const RegisterCustomer = () => {
                 <form onSubmit={handleSubmit} style={styles.form}>
                     
                     {/* 🆕 පියවර 1: Company / Individual ලියාපදිංචි වර්ගය තේරීමේ බොත්තම් */}
-                    <h3 style={styles.sectionHeader}>Registration Type</h3>
-                    <div style={{ display: 'flex', gap: '12px', marginBottom: '25px', flexWrap: 'wrap' }}>
-                        {['Company', 'Individual'].map((type) => (
-                            <button
-                                key={type}
-                                type="button"
-                                onClick={() => setFormData({ ...formData, regType: type })}
-                                style={{
-                                    flex: '1 1 150px', padding: '12px', borderRadius: '12px', fontWeight: 'bold', cursor: 'pointer',
-                                    background: formData.regType === type ? 'rgba(46, 204, 113, 0.15)' : 'rgba(255,255,255,0.03)',
-                                    border: formData.regType === type ? '2px solid #2ecc71' : '1px solid rgba(255,255,255,0.1)',
-                                    color: formData.regType === type ? '#2ecc71' : '#aaa', transition: '0.3s'
-                                }}
-                            >
-                                {type === 'Company' ? '🏢 Company Registration' : '👤 Individual Registration'}
-                            </button>
-                        ))}
-                    </div>
+                  {initialRole === 'RECYCLER' && (
+    <>
+        <h3 style={styles.sectionHeader}>Registration Type</h3>
+        <div style={{ display: 'flex', gap: '12px', marginBottom: '25px', flexWrap: 'wrap' }}>
+            {['Company', 'Individual'].map((type) => (
+                <button
+                    key={type}
+                    type="button"
+                    onClick={() => setFormData({ ...formData, regType: type })}
+                    style={{
+                        flex: '1 1 150px', padding: '12px', borderRadius: '12px', fontWeight: 'bold', cursor: 'pointer',
+                        background: formData.regType === type ? 'rgba(46, 204, 113, 0.15)' : 'rgba(255,255,255,0.03)',
+                        border: formData.regType === type ? '2px solid #2ecc71' : '1px solid rgba(255,255,255,0.1)',
+                        color: formData.regType === type ? '#2ecc71' : '#aaa', transition: '0.3s'
+                    }}
+                >
+                    {type === 'Company' ? '🏢 Company Registration' : '👤 Individual Registration'}
+                </button>
+            ))}
+        </div>
+    </>
+)}
 
                     <h3 style={styles.sectionHeader}>1. Organization Details</h3>
                     <div style={styles.inputWrapper}>
