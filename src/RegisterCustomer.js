@@ -271,7 +271,7 @@ const RegisterCustomer = () => {
                                     onChange={(e) => setFormData({ ...formData, isCoPartner: e.target.checked })}
                                     style={{ width: '18px', height: '18px', cursor: 'pointer' }}
                                 />
-                                REGISTER AS A CO-PARTNER (OPTIONAL)
+                                IF YOU WANT TO REGISTER AS A CO-PARTNER PLEASE CHECK THIS BOX AND FILL THE BELOW DETAILS
                             </label>
 
                             {formData.isCoPartner && (
