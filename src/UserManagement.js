@@ -9,6 +9,8 @@ const UserManagement = () => {
     const [data, setData] = useState({ admins: [], customers: [] });
     const [stats, setStats] = useState({ total: 0, pending: 0, approved: 0 });
     const [filterStatus, setFilterStatus] = useState('All');
+    const [filterRole, setFilterRole] = useState('All'); // 🆕 Role එක Filter කිරීමට අලුතින් එක් කළ State එක
+
     const fetchStats = async () => {
         try {
             const res = await API.get('/admin/customer-stats');
@@ -29,7 +31,8 @@ const UserManagement = () => {
             console.error("Error fetching data", err);
         }
     };
-const approveCustomer = async (id) => {
+
+    const approveCustomer = async (id) => {
         if (!window.confirm("Are you sure you want to approve this customer?")) return;
 
         try {
@@ -46,6 +49,7 @@ const approveCustomer = async (id) => {
             alert(`❌ ${errorMsg}`);
         }
     };
+
     useEffect(() => {
         fetchUsers();
         fetchStats();
@@ -55,26 +59,26 @@ const approveCustomer = async (id) => {
     const deleteUser = async (id, type) => {
         if (window.confirm(`Are you sure you want to delete this ${type}?`)) {
             try {
-            const endpoint = type === 'Admin' 
-                ? `/admin/admin/${id}` 
-                : `/admin/customer/${id}`;
-            
-            const response = await API.delete(endpoint);
-            
-            if (response.status === 200) {
-                alert(`✅ ${type} deleted successfully!`);
-                fetchUsers(); 
-                fetchStats(); 
+                const endpoint = type === 'Admin' 
+                    ? `/admin/admin/${id}` 
+                    : `/admin/customer/${id}`;
+                
+                const response = await API.delete(endpoint);
+                
+                if (response.status === 200) {
+                    alert(`✅ ${type} deleted successfully!`);
+                    fetchUsers(); 
+                    fetchStats(); 
+                }
+            } catch (err) {
+                console.error("Delete Error:", err);
+                const errorMsg = err.response?.data?.error || `Error deleting ${type}`;
+                alert(`❌ ${errorMsg}`);
             }
-        } catch (err) {
-            console.error("Delete Error:", err);
-            const errorMsg = err.response?.data?.error || `Error deleting ${type}`;
-            alert(`❌ ${errorMsg}`);
         }
-    }
-};
+    };
 
-    // --- LOGOUT LOGIC (EXACTLY LIKE DASHBOARD) ---
+    // --- LOGOUT LOGIC ---
     const handleLogout = () => {
         if (window.confirm("Are you sure you want to logout?")) {
             localStorage.clear();
@@ -82,7 +86,7 @@ const approveCustomer = async (id) => {
         }
     };
 
-    // --- PDF EXPORT LOGIC (FULL DATA) ---
+    // --- PDF EXPORT LOGIC ---
     const downloadPDF = () => {
         const doc = new jsPDF('l', 'pt', 'a4');
         doc.setFontSize(20);
@@ -113,9 +117,10 @@ const approveCustomer = async (id) => {
             headStyles: { fillColor: [52, 152, 219] },
             styles: { fontSize: 7, cellPadding: 2, overflow: 'linebreak' },
             columnStyles: { 
-            0: { cellWidth: 20 }, 
-            1: { cellWidth: 80 }, 
-            11: { cellWidth: 100 }  }
+                0: { cellWidth: 20 }, 
+                1: { cellWidth: 80 }, 
+                11: { cellWidth: 100 }  
+            }
         });
 
         doc.save("Full_User_Management_Report.pdf");
@@ -158,15 +163,7 @@ const approveCustomer = async (id) => {
                     <button className="nav-item" style={styles.navBtn} onClick={() => navigate('/admin-orders')}>Orders</button>
                     <button className="nav-item" style={styles.navBtn} onClick={() => navigate('/qr-management')}>QR Management</button>
                 </nav>
-                
-                {/* Logout Button Styled Like Dashboard */}
-                <button 
-                    className="logout-glow" 
-                    style={styles.logoutBtn} 
-                    onClick={handleLogout}
-                >
-                    Logout System
-                </button>
+                <button className="logout-glow" style={styles.logoutBtn} onClick={handleLogout}>Logout System</button>
             </div>
 
             <div style={styles.mainContent}>
@@ -207,54 +204,78 @@ const approveCustomer = async (id) => {
 
                     <h3 style={{...styles.sectionTitle, marginTop: '50px'}}>REGISTERED CUSTOMERS</h3>
 
-      <div style={styles.statsGrid}>
-    {/* 1. Total Customers Card */}
-    <div 
-        style={{
-            ...styles.statCard, 
-            cursor: 'pointer', 
-            border: filterStatus === 'All' ? '2px solid #fff' : '1px solid rgba(255,255,255,0.1)',
-            transform: filterStatus === 'All' ? 'scale(1.05)' : 'scale(1)',
-            transition: '0.3s'
-        }} 
-        onClick={() => setFilterStatus('All')}
-    >
-        <span style={styles.statLabel}>TOTAL CUSTOMERS</span>
-        <h2 style={styles.statValue}>{stats.total}</h2>
-    </div>
+                    <div style={styles.statsGrid}>
+                        <div 
+                            style={{
+                                ...styles.statCard, 
+                                cursor: 'pointer', 
+                                border: filterStatus === 'All' ? '2px solid #fff' : '1px solid rgba(255,255,255,0.1)',
+                                transform: filterStatus === 'All' ? 'scale(1.05)' : 'scale(1)',
+                                transition: '0.3s'
+                            }} 
+                            onClick={() => setFilterStatus('All')}
+                        >
+                            <span style={styles.statLabel}>TOTAL CUSTOMERS</span>
+                            <h2 style={styles.statValue}>{stats.total}</h2>
+                        </div>
 
-    {/* 2. Pending Approvals Card */}
-    <div 
-        style={{
-            ...styles.statCard, 
-            cursor: 'pointer', 
-            borderLeft: '4px solid #f1c40f',
-            border: filterStatus === 'Pending' ? '2px solid #f1c40f' : '1px solid rgba(255,255,255,0.1)',
-            transform: filterStatus === 'Pending' ? 'scale(1.05)' : 'scale(1)',
-            transition: '0.3s'
-        }} 
-        onClick={() => setFilterStatus('Pending')}
-    >
-        <span style={styles.statLabel}>PENDING APPROVALS</span>
-        <h2 style={{...styles.statValue, color: '#f1c40f'}}>{stats.pending}</h2>
-    </div>
+                        <div 
+                            style={{
+                                ...styles.statCard, 
+                                cursor: 'pointer', 
+                                borderLeft: '4px solid #f1c40f',
+                                border: filterStatus === 'Pending' ? '2px solid #f1c40f' : '1px solid rgba(255,255,255,0.1)',
+                                transform: filterStatus === 'Pending' ? 'scale(1.05)' : 'scale(1)',
+                                transition: '0.3s'
+                            }} 
+                            onClick={() => setFilterStatus('Pending')}
+                        >
+                            <span style={styles.statLabel}>PENDING APPROVALS</span>
+                            <h2 style={{...styles.statValue, color: '#f1c40f'}}>{stats.pending}</h2>
+                        </div>
 
-    {/* 3. Approved Customers Card */}
-    <div 
-        style={{
-            ...styles.statCard, 
-            cursor: 'pointer', 
-            borderLeft: '4px solid #2ecc71',
-            border: filterStatus === 'Approved' ? '2px solid #2ecc71' : '1px solid rgba(255,255,255,0.1)',
-            transform: filterStatus === 'Approved' ? 'scale(1.05)' : 'scale(1)',
-            transition: '0.3s'
-        }} 
-        onClick={() => setFilterStatus('Approved')}
-    >
-        <span style={styles.statLabel}>APPROVED CUSTOMERS</span>
-        <h2 style={{...styles.statValue, color: '#2ecc71'}}>{stats.approved}</h2>
-    </div>
-</div>
+                        <div 
+                            style={{
+                                ...styles.statCard, 
+                                cursor: 'pointer', 
+                                borderLeft: '4px solid #2ecc71',
+                                border: filterStatus === 'Approved' ? '2px solid #2ecc71' : '1px solid rgba(255,255,255,0.1)',
+                                transform: filterStatus === 'Approved' ? 'scale(1.05)' : 'scale(1)',
+                                transition: '0.3s'
+                            }} 
+                            onClick={() => setFilterStatus('Approved')}
+                        >
+                            <span style={styles.statLabel}>APPROVED CUSTOMERS</span>
+                            <h2 style={{...styles.statValue, color: '#2ecc71'}}>{stats.approved}</h2>
+                        </div>
+                    </div>
+
+                    {/* 🆕 පාරිභෝගික භූමිකාව (Role) අනුව පෙරීමට එක් කළ Dropdown එක */}
+                    <div style={{ marginBottom: '20px', display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: '15px' }}>
+                        <label style={{ color: '#2ecc71', fontSize: '14px', fontWeight: 'bold' }}>FILTER BY ROLE:</label>
+                        <select 
+                            value={filterRole} 
+                            onChange={(e) => setFilterRole(e.target.value)}
+                            style={{
+                                background: 'rgba(255, 255, 255, 0.05)',
+                                color: '#fff',
+                                border: '1px solid rgba(46, 204, 113, 0.4)',
+                                padding: '10px 15px',
+                                borderRadius: '10px',
+                                outline: 'none',
+                                cursor: 'pointer',
+                                fontSize: '14px'
+                            }}
+                        >
+                            <option value="All">All Roles</option>
+                            <option value="Producer">Producer</option>
+                            <option value="Importer">Importer</option>
+                            <option value="Brand Owner">Brand Owner</option>
+                            <option value="Collector">Collector</option>
+                            <option value="Transporter">Transporter</option>
+                            <option value="Recycler">Recycler</option>
+                        </select>
+                    </div>
 
                     <div className="glass-table-wrapper" style={styles.tableWrapper}>
                         <table style={{...styles.table, minWidth: '2000px'}}>
@@ -280,6 +301,7 @@ const approveCustomer = async (id) => {
                             <tbody>
                                 {data.customers
                                        .filter(c => filterStatus === 'All' ? true : (c.status === filterStatus))
+                                       .filter(c => filterRole === 'All' ? true : (c.orgRole === filterRole)) // 🆕 Role එක අනුව Filter කිරීම
                                        .map((c, i) => (
                                     <tr key={i} className="table-row" style={styles.row}>
                                         <td style={styles.tdFirst}>{i + 1}</td>
@@ -295,107 +317,79 @@ const approveCustomer = async (id) => {
                                         <td style={styles.td}>{c.contactPersonMobile}</td>
                                         <td style={styles.td}>{`${c.address1}, ${c.address2}`}</td>
                                         <td style={styles.td}>{c.country}</td>
-   
-<td style={styles.td}>
-    <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', flexDirection: 'column' }}>
-        
-        {(() => {
-            // ✅ Base64 සහ URL දෙකම හඳුනාගන්නා අලුත් Function එක
-            const handleDownload = (docData) => {
-                if (!docData) return;
+                                        <td style={styles.td}>
+                                            <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', flexDirection: 'column' }}>
+                                                {(() => {
+                                                    const handleDownload = (docData) => {
+                                                        if (!docData) return;
+                                                        if (docData.startsWith('data:application/pdf') || docData.startsWith('data:image')) {
+                                                            const newWindow = window.open();
+                                                            newWindow.document.write(
+                                                                `<iframe src="${docData}" frameborder="0" style="border:0; top:0px; left:0px; bottom:0px; right:0px; width:100%; height:100%;" allowfullscreen></iframe>`
+                                                            );
+                                                        } else {
+                                                            const cleanUrl = docData.replace('/fl_attachment/', '/');
+                                                            window.open(cleanUrl, '_blank');
+                                                        }
+                                                    };
 
-                // 1. මේක අලුත් Base64 String එකක් නම් (PDF හෝ Image)
-                if (docData.startsWith('data:application/pdf') || docData.startsWith('data:image')) {
-                    const newWindow = window.open();
-                    newWindow.document.write(
-                        `<iframe src="${docData}" frameborder="0" style="border:0; top:0px; left:0px; bottom:0px; right:0px; width:100%; height:100%;" allowfullscreen></iframe>`
-                    );
-                } 
-                // 2. මේක පරණ Cloudinary URL එකක් නම්
-                else {
-                    const cleanUrl = docData.replace('/fl_attachment/', '/');
-                    window.open(cleanUrl, '_blank');
-                }
-            };
-
-            return (
-                <>
-                    {c.brcDocument && (
-                        <button 
-                            onClick={() => handleDownload(c.brcDocument)}
-                            style={{...styles.docLink, background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left', color: '#3498db'}}
-                        >
-                            <span role="img" aria-label="doc">📄</span> BRC
-                        </button>
-                    )}
-
-                    {c.vatDocument && (
-                        <button 
-                            onClick={() => handleDownload(c.vatDocument)}
-                            style={{...styles.docLink, background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left', color: '#3498db'}}
-                        >
-                            <span role="img" aria-label="doc">📄</span> VAT
-                        </button>
-                    )}
-
-                    {c.billingDocument && (
-                        <button 
-                            onClick={() => handleDownload(c.billingDocument)}
-                            style={{...styles.docLink, background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left', color: '#3498db'}}
-                        >
-                            <span role="img" aria-label="doc">📄</span> Billing
-                        </button>
-                    )}
-
-                    {/* පරණ ලේඛන තිබේ නම් (Verification Docs) */}
-                    {c.verificationDocs && c.verificationDocs.length > 0 && c.verificationDocs.map((doc, index) => (
-                        <button 
-                            key={index}
-                            onClick={() => handleDownload(doc)}
-                            style={{...styles.docLink, background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left', color: '#3498db'}}
-                        >
-                            <span role="img" aria-label="doc">📄</span> Old Doc {index + 1}
-                        </button>
-                    ))}
-                </>
-            );
-        })()}
-
-        {!(c.brcDocument || c.vatDocument || c.billingDocument || (c.verificationDocs && c.verificationDocs.length > 0)) && (
-            <span style={{ color: 'rgba(255,255,255,0.3)', fontSize: '12px' }}>No Docs</span>
-        )}
-    </div>
-</td>
-
-
-
-                         <td style={styles.tdLast}>
-                          {c.status === 'Pending' && (
-                        <button 
-                            onClick={() => approveCustomer(c._id)} 
-                            style={styles.approveBtn}
-                        >
-                            Approve
-                        </button>
-                    )}
-                    {localStorage.getItem('adminRole') === 'SuperAdmin' && (
-                                 <button 
-                                     onClick={() => deleteUser(c._id, 'Customer')} 
-                                     style={styles.deleteBtn}
-                                                >
-                                              Delete
-                                           </button>
-                                          )}
-
-                                          {c.status !== 'Pending' && localStorage.getItem('adminRole') !== 'SuperAdmin' && (
-        <span style={{ color: '#bdc3c7', fontSize: '12px', fontStyle: 'italic' }}>
-            No Actions
-                                         </span>
+                                                    return (
+                                                        <>
+                                                            {c.brcDocument && (
+                                                                <button 
+                                                                    onClick={() => handleDownload(c.brcDocument)}
+                                                                    style={{...styles.docLink, background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left', color: '#3498db'}}
+                                                                >
+                                                                    <span role="img" aria-label="doc">📄</span> BRC
+                                                                </button>
+                                                            )}
+                                                            {c.vatDocument && (
+                                                                <button 
+                                                                    onClick={() => handleDownload(c.vatDocument)}
+                                                                    style={{...styles.docLink, background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left', color: '#3498db'}}
+                                                                >
+                                                                    <span role="img" aria-label="doc">📄</span> VAT
+                                                                </button>
+                                                            )}
+                                                            {c.billingDocument && (
+                                                                <button 
+                                                                    onClick={() => handleDownload(c.billingDocument)}
+                                                                    style={{...styles.docLink, background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left', color: '#3498db'}}
+                                                                >
+                                                                    <span role="img" aria-label="doc">📄</span> Billing
+                                                                </button>
+                                                            )}
+                                                            {c.verificationDocs && c.verificationDocs.length > 0 && c.verificationDocs.map((doc, index) => (
+                                                                <button 
+                                                                    key={index}
+                                                                    onClick={() => handleDownload(doc)}
+                                                                    style={{...styles.docLink, background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left', color: '#3498db'}}
+                                                                >
+                                                                    <span role="img" aria-label="doc">📄</span> Old Doc {index + 1}
+                                                                </button>
+                                                            ))}
+                                                        </>
+                                                    );
+                                                })()}
+                                                {!(c.brcDocument || c.vatDocument || c.billingDocument || (c.verificationDocs && c.verificationDocs.length > 0)) && (
+                                                    <span style={{ color: 'rgba(255,255,255,0.3)', fontSize: '12px' }}>No Docs</span>
+                                                )}
+                                            </div>
+                                        </td>
+                                        <td style={styles.tdLast}>
+                                            {c.status === 'Pending' && (
+                                                <button onClick={() => approveCustomer(c._id)} style={styles.approveBtn}>Approve</button>
                                             )}
-                                      </td>
-                                   </tr>
-                                  ))}
-                           </tbody>
+                                            {localStorage.getItem('adminRole') === 'SuperAdmin' && (
+                                                <button onClick={() => deleteUser(c._id, 'Customer')} style={styles.deleteBtn}>Delete</button>
+                                            )}
+                                            {c.status !== 'Pending' && localStorage.getItem('adminRole') !== 'SuperAdmin' && (
+                                                <span style={{ color: '#bdc3c7', fontSize: '12px', fontStyle: 'italic' }}>No Actions</span>
+                                            )}
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
                         </table>
                     </div>
                 </div>
@@ -411,21 +405,12 @@ const styles = {
         backgroundSize: 'cover', backgroundPosition: 'center', backgroundAttachment: 'fixed',
         color: '#fff', fontFamily: "'Inter', sans-serif" 
     },
- sidebar: { 
-    width: '320px', 
-    position: 'fixed', 
-    top: 0,
-    left: 0,
-    bottom: 0,
-    background: 'rgba(10, 10, 10, 0.6)',
-    backdropFilter: 'blur(25px)',
-    borderRight: '1px solid rgba(255, 255, 255, 0.1)', 
-    display: 'flex',
-    flexDirection: 'column',
-    padding: '50px 25px',
-    zIndex: 100 
-},
-
+    sidebar: { 
+        width: '320px', position: 'fixed', top: 0, left: 0, bottom: 0,
+        background: 'rgba(10, 10, 10, 0.6)', backdropFilter: 'blur(25px)',
+        borderRight: '1px solid rgba(255, 255, 255, 0.1)', display: 'flex',
+        flexDirection: 'column', padding: '50px 25px', zIndex: 100 
+    },
     logoCircle: { 
         width: '100px', height: '100px', background: '#fff', borderRadius: '24px', 
         margin: '0 auto', display: 'flex', justifyContent: 'center', alignItems: 'center',
@@ -436,23 +421,12 @@ const styles = {
     nav: { display: 'flex', flexDirection: 'column', gap: '12px', flex: 1 },
     navBtn: { padding: '16px 20px', background: 'transparent', border: 'none', color: '#bbb', textAlign: 'left', cursor: 'pointer', borderRadius: '15px', transition: 'all 0.4s', fontSize: '15px' },
     navBtnActive: { padding: '16px 20px', background: 'linear-gradient(135deg, #2ecc71 0%, #27ae60 100%)', border: 'none', color: '#fff', textAlign: 'left', borderRadius: '15px', fontWeight: '700' },
-    
-    // --- Dashboard Styled Logout Button ---
     logoutBtn: { 
-        padding: '15px', 
-        border: '1px solid rgba(231, 76, 60, 0.4)', 
-        color: '#e74c3c', 
-        background: 'rgba(231, 76, 60, 0.05)', 
-        borderRadius: '15px', 
-        cursor: 'pointer', 
-        fontWeight: 'bold', 
-        textTransform: 'uppercase',
-        letterSpacing: '1px',
-        transition: 'all 0.3s ease'
+        padding: '15px', border: '1px solid rgba(231, 76, 60, 0.4)', color: '#e74c3c', 
+        background: 'rgba(231, 76, 60, 0.05)', borderRadius: '15px', cursor: 'pointer', 
+        fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '1px', transition: 'all 0.3s ease'
     },
-
-    mainContent: { flex: 1, padding: '60px', overflowY: 'auto',marginLeft: '320px', // 👈 Sidebar එකේ width එක මෙතනට margin එකක් ලෙස දෙන්න
-    width: 'calc(100% - 320px)' },
+    mainContent: { flex: 1, padding: '60px', overflowY: 'auto', marginLeft: '320px', width: 'calc(100% - 320px)' },
     header: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '60px' },
     pageTitle: { fontSize: '32px', fontWeight: '900', margin: 0, letterSpacing: '-1px' },
     subTitle: { color: '#2ecc71', margin: '5px 0 0', fontSize: '14px', letterSpacing: '1px' },
@@ -468,64 +442,25 @@ const styles = {
     td: { padding: '15px', fontSize: '14px', color: '#ddd', borderRight: '1px solid rgba(255, 255, 255, 0.1)' },
     tdFirst: { padding: '15px', fontSize: '14px', color: '#ddd', borderRight: '1px solid rgba(255, 255, 255, 0.1)', textAlign: 'center' },
     tdLast: { padding: '15px', fontSize: '14px', color: '#ddd' },
-    statsGrid: {
-        display: 'grid',
-        gridTemplateColumns: 'repeat(3, 1fr)',
-        gap: '20px',
-        marginBottom: '40px'
-    },
+    statsGrid: { display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '20px', marginBottom: '40px' },
     statCard: {
-        background: 'rgba(255, 255, 255, 0.05)',
-        padding: '25px',
-        borderRadius: '15px',
-        backdropFilter: 'blur(10px)',
-        border: '1px solid rgba(255, 255, 255, 0.1)',
-        textAlign: 'center',
-        transition: '0.3s'
+        background: 'rgba(255, 255, 255, 0.05)', padding: '25px', borderRadius: '15px',
+        backdropFilter: 'blur(10px)', border: '1px solid rgba(255, 255, 255, 0.1)',
+        textAlign: 'center', transition: '0.3s'
     },
-
     approveBtn: {
-    background: 'rgba(46, 204, 113, 0.15)', // ලස්සන transparent කොළ පාටක්
-    color: '#2ecc71', // Text එක කොළ පාටින්
-    border: '1px solid rgba(46, 204, 113, 0.4)', // සිහින් border එකක්
-    padding: '8px 16px',
-    borderRadius: '8px',
-    cursor: 'pointer',
-    fontSize: '13px',
-    fontWeight: '600',
-    marginRight: '8px',
-    transition: 'all 0.3s ease',
-    backdropFilter: 'blur(5px)', // Glass effect එක
-    textTransform: 'uppercase',
-    letterSpacing: '0.5px'
-},
-    statLabel: {
-        fontSize: '12px',
-        color: '#2ecc71',
-        letterSpacing: '1px',
-        fontWeight: 'bold',
-        textTransform: 'uppercase'
+        background: 'rgba(46, 204, 113, 0.15)', color: '#2ecc71', border: '1px solid rgba(46, 204, 113, 0.4)',
+        padding: '8px 16px', borderRadius: '8px', cursor: 'pointer', fontSize: '13px',
+        fontWeight: '600', marginRight: '8px', transition: 'all 0.3s ease',
+        backdropFilter: 'blur(5px)', textTransform: 'uppercase', letterSpacing: '0.5px'
     },
-    statValue: {
-        fontSize: '35px',
-        margin: '10px 0 0',
-        fontWeight: '900',
-        color: '#fff'
-    },
+    statLabel: { fontSize: '12px', color: '#2ecc71', letterSpacing: '1px', fontWeight: 'bold', textTransform: 'uppercase' },
+    statValue: { fontSize: '35px', margin: '10px 0 0', fontWeight: '900', color: '#fff' },
     deleteBtn: { background: 'rgba(231, 76, 60, 0.1)', color: '#e74c3c', border: '1px solid #e74c3c', padding: '6px 12px', borderRadius: '8px', cursor: 'pointer', fontSize: '12px', fontWeight: 'bold' },
     docLink: {
-        background: 'rgba(52, 152, 219, 0.15)', 
-        color: '#3498db',
-        border: '1px solid rgba(52, 152, 219, 0.4)',
-        padding: '5px 10px',
-        borderRadius: '6px',
-        textDecoration: 'none',
-        fontSize: '11px',
-        fontWeight: '600',
-        display: 'inline-flex',
-        alignItems: 'center',
-        gap: '4px',
-        transition: '0.3s'
+        background: 'rgba(52, 152, 219, 0.15)', color: '#3498db', border: '1px solid rgba(52, 152, 219, 0.4)',
+        padding: '5px 10px', borderRadius: '6px', textDecoration: 'none', fontSize: '11px',
+        fontWeight: '600', display: 'inline-flex', alignItems: 'center', gap: '4px', transition: '0.3s'
     },
 };
 
