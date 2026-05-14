@@ -12,17 +12,46 @@ const CoPartner = () => {
     const [filterDistrict, setFilterDistrict] = useState(''); 
     const [showPassword, setShowPassword] = useState(false); 
     const [isEditing, setIsEditing] = useState(false);
+    
+    // 🆕 අලුතින් එක් කළ ස්ටේට්ස්
+    const [activeTab, setActiveTab] = useState('active'); // 'active' හෝ 'requests'
+    const [pendingRequests, setPendingRequests] = useState([]);
+
     const [partnerData, setPartnerData] = useState({
         _id: '', coPartnerId: '', name: '', nic: '', email: '', password: '', district: '', pradeshiyaSabha: ''
     });
 
-
+    // දැනට ඉන්න පාර්ට්නර්ලා ගේන එක
     const fetchPartners = async () => {
         try {
-const res = await API.get('/partners/all');
+            const res = await API.get('/partners/all');
             setPartners(res.data);
         } catch (err) {
             console.error("Error fetching data");
+        }
+    };
+
+    // 🆕 රික්වෙස්ට් එවපු අය ගේන එක
+    const fetchRequests = async () => {
+        try {
+            const res = await API.get('/partners/pending-requests');
+            setPendingRequests(res.data);
+        } catch (err) {
+            console.error("Error fetching requests");
+        }
+    };
+
+    // 🆕 රික්වෙස්ට් එකක් Approve කරන එක
+    const handleApprove = async (customerId) => {
+        if (window.confirm("Are you sure you want to approve this partner request? 🚀")) {
+            try {
+                const res = await API.put(`/partners/approve-request/${customerId}`);
+                alert(res.data.message);
+                fetchRequests();
+                fetchPartners();
+            } catch (err) {
+                alert("Approval failed. Please try again.");
+            }
         }
     };
 
@@ -89,9 +118,9 @@ const res = await API.get('/partners/all');
 
     useEffect(() => {
         fetchPartners();
+        fetchRequests(); // 🆕 Page load වෙද්දී Requests ගේන්න
     }, []);
 
-    // --- Search & Filter Logic (අලුතින් එක් කළ කොටස) ---
     const filteredPartners = partners.filter(p => {
         const matchesSearch = 
             p.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
@@ -112,6 +141,8 @@ const res = await API.get('/partners/all');
             .nav-item:hover { background: rgba(46, 204, 113, 0.15) !important; color: #2ecc71 !important; padding-left: 28px !important; }
             .logout-glow:hover { background: rgba(231, 76, 60, 0.2) !important; transform: scale(1.02); box-shadow: 0 0 20px rgba(231, 76, 60, 0.4); }
             .search-input:focus { border-color: #2ecc71 !important; box-shadow: 0 0 10px rgba(46, 204, 113, 0.2); }
+            .tab-btn { padding: 12px 20px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #888; border-radius: 12px; cursor: pointer; transition: 0.3s; font-weight: bold; }
+            .tab-btn-active { padding: 12px 20px; background: rgba(46, 204, 113, 0.15); border: 1px solid #2ecc71; color: #2ecc71; border-radius: 12px; cursor: pointer; transition: 0.3s; font-weight: bold; }
         `;
         document.head.appendChild(styleSheet);
     }, []);
@@ -139,9 +170,9 @@ const res = await API.get('/partners/all');
                         <h1 style={styles.pageTitle}>CO-PARTNER MANAGEMENT</h1>
                         <p style={styles.subTitle}>Manage and monitor your business co-partners</p>
                         <div style={styles.statsBadge}>
-                            <span style={{ color: '#aaa', fontSize: '14px' }}>Found Partners: </span>
+                            <span style={{ color: '#aaa', fontSize: '14px' }}>Active Partners: </span>
                             <span style={{ color: '#2ecc71', fontSize: '20px', fontWeight: 'bold', marginLeft: '10px' }}>
-                                {filteredPartners.length}
+                                {partners.length}
                             </span>
                         </div>
                     </div>
@@ -156,59 +187,118 @@ const res = await API.get('/partners/all');
                 <div style={{animation: 'fadeIn 1s ease-in'}}>
                     {view === 'list' ? (
                         <>
-                            <div style={styles.searchContainer}>
-                                <input 
-                                    type="text" 
-                                    className="search-input"
-                                    placeholder="Search by Name, NIC or ID..." 
-                                    style={styles.searchInput}
-                                    value={searchTerm}
-                                    onChange={(e) => setSearchTerm(e.target.value)}
-                                />
-                                <select 
-                                    style={styles.filterSelect}
-                                    value={filterDistrict}
-                                    onChange={(e) => setFilterDistrict(e.target.value)}
+                            {/* 🆕 Tabs Selection */}
+                            <div style={{ display: 'flex', gap: '15px', marginBottom: '25px' }}>
+                                <button 
+                                    className={activeTab === 'active' ? "tab-btn-active" : "tab-btn"} 
+                                    onClick={() => setActiveTab('active')}
                                 >
-                                    <option value="">All Districts</option>
-                                    {districtsList.map(d => <option key={d} value={d}>{d}</option>)}
-                                </select>
+                                    Created Partners ({filteredPartners.length})
+                                </button>
+                                <button 
+                                    className={activeTab === 'requests' ? "tab-btn-active" : "tab-btn"} 
+                                    onClick={() => setActiveTab('requests')}
+                                >
+                                    Pending Requests ({pendingRequests.length})
+                                </button>
                             </div>
 
-                            <div style={styles.card}>
-                                <h3 style={styles.cardTitle}>Created Co-Partners</h3>
-                                <table style={styles.table}>
-                                    <thead>
-                                        <tr style={styles.tableHeader}>
-                                            <th style={styles.th}>Partner ID</th>
-                                            <th style={styles.th}>Name</th>
-                                            <th style={styles.th}>Phone</th>
-                                            <th style={styles.th}>NIC</th>
-                                            <th style={styles.th}>Email</th>
-                                            <th style={styles.th}>District</th>
-                                            <th style={styles.th}>Actions</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {filteredPartners.length > 0 ? filteredPartners.map((p) => (
-                                            <tr key={p._id} style={styles.tableRow}>
-                                                <td style={styles.td}>{p.coPartnerId}</td>
-                                                <td style={styles.td}>{p.name}</td>
-                                                <td style={styles.td}>{p.phone || 'N/A'}</td>
-                                                <td style={styles.td}>{p.nic}</td>
-                                                <td style={styles.td}>{p.email}</td>
-                                                <td style={styles.td}>{p.district}</td>
-                                                <td style={styles.td}>
-                                                    <button style={styles.editBtn} onClick={() => handleEdit(p)}>Edit</button>
-                                                    <button style={styles.deleteBtn} onClick={() => handleDelete(p._id)}>Delete</button>
-                                                </td>
+                            {activeTab === 'active' ? (
+                                <>
+                                    <div style={styles.searchContainer}>
+                                        <input 
+                                            type="text" 
+                                            className="search-input"
+                                            placeholder="Search by Name, NIC or ID..." 
+                                            style={styles.searchInput}
+                                            value={searchTerm}
+                                            onChange={(e) => setSearchTerm(e.target.value)}
+                                        />
+                                        <select 
+                                            style={styles.filterSelect}
+                                            value={filterDistrict}
+                                            onChange={(e) => setFilterDistrict(e.target.value)}
+                                        >
+                                            <option value="">All Districts</option>
+                                            {districtsList.map(d => <option key={d} value={d}>{d}</option>)}
+                                        </select>
+                                    </div>
+
+                                    <div style={styles.card}>
+                                        <h3 style={styles.cardTitle}>Created Co-Partners</h3>
+                                        <table style={styles.table}>
+                                            <thead>
+                                                <tr style={styles.tableHeader}>
+                                                    <th style={styles.th}>Partner ID</th>
+                                                    <th style={styles.th}>Name</th>
+                                                    <th style={styles.th}>Phone</th>
+                                                    <th style={styles.th}>NIC</th>
+                                                    <th style={styles.th}>Email</th>
+                                                    <th style={styles.th}>District</th>
+                                                    <th style={styles.th}>Actions</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {filteredPartners.length > 0 ? filteredPartners.map((p) => (
+                                                    <tr key={p._id} style={styles.tableRow}>
+                                                        <td style={styles.td}>{p.coPartnerId}</td>
+                                                        <td style={styles.td}>{p.name}</td>
+                                                        <td style={styles.td}>{p.phone || 'N/A'}</td>
+                                                        <td style={styles.td}>{p.nic}</td>
+                                                        <td style={styles.td}>{p.email}</td>
+                                                        <td style={styles.td}>{p.district}</td>
+                                                        <td style={styles.td}>
+                                                            <button style={styles.editBtn} onClick={() => handleEdit(p)}>Edit</button>
+                                                            <button style={styles.deleteBtn} onClick={() => handleDelete(p._id)}>Delete</button>
+                                                        </td>
+                                                    </tr>
+                                                )) : (
+                                                    <tr><td colSpan="7" style={{textAlign:'center', padding:'20px', color:'#999'}}>No Partners Found.</td></tr>
+                                                )}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </>
+                            ) : (
+                                <div style={styles.card}>
+                                    <h3 style={styles.cardTitle}>Pending Co-Partner Requests</h3>
+                                    <table style={styles.table}>
+                                        <thead>
+                                            <tr style={styles.tableHeader}>
+                                                <th style={styles.th}>Name</th>
+                                                <th style={styles.th}>Phone</th>
+                                                <th style={styles.th}>NIC</th>
+                                                <th style={styles.th}>Alt. Email</th>
+                                                <th style={styles.th}>District</th>
+                                                <th style={styles.th}>Pradeshiya Sabha</th>
+                                                <th style={styles.th}>Action</th>
                                             </tr>
-                                        )) : (
-                                            <tr><td colSpan="6" style={{textAlign:'center', padding:'20px', color:'#999'}}>No Partners Found matching your search.</td></tr>
-                                        )}
-                                    </tbody>
-                                </table>
-                            </div>
+                                        </thead>
+                                        <tbody>
+                                            {pendingRequests.length > 0 ? pendingRequests.map((req) => (
+                                                <tr key={req._id} style={styles.tableRow}>
+                                                    <td style={styles.td}>{req.coPartnerFullName}</td>
+                                                    <td style={styles.td}>{req.coPartnerPhone}</td>
+                                                    <td style={styles.td}>{req.coPartnerNic}</td>
+                                                    <td style={styles.td}>{req.coPartnerAnotherEmail}</td>
+                                                    <td style={styles.td}>{req.coPartnerDistrict}</td>
+                                                    <td style={styles.td}>{req.coPartnerPradeshiyaSabha}</td>
+                                                    <td style={styles.td}>
+                                                        <button 
+                                                            style={{...styles.addBtn, padding: '5px 15px', fontSize: '12px'}} 
+                                                            onClick={() => handleApprove(req._id)}
+                                                        >
+                                                            Approve
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            )) : (
+                                                <tr><td colSpan="7" style={{textAlign:'center', padding:'20px', color:'#999'}}>No Pending Requests.</td></tr>
+                                            )}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            )}
                         </>
                     ) : (
                         <AddPartnerForm 
