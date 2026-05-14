@@ -9,7 +9,7 @@ const UserManagement = () => {
     const [data, setData] = useState({ admins: [], customers: [] });
     const [stats, setStats] = useState({ total: 0, pending: 0, approved: 0 });
     const [filterStatus, setFilterStatus] = useState('All');
-    const [filterRole, setFilterRole] = useState('All'); // 🆕 Role එක Filter කිරීමට අලුතින් එක් කළ State එක
+    const [filterRole, setFilterRole] = useState('All'); 
 
     const fetchStats = async () => {
         try {
@@ -253,28 +253,28 @@ const UserManagement = () => {
                     {/* 🆕 පාරිභෝගික භූමිකාව (Role) අනුව පෙරීමට එක් කළ Dropdown එක */}
                     <div style={{ marginBottom: '20px', display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: '15px' }}>
                         <label style={{ color: '#2ecc71', fontSize: '14px', fontWeight: 'bold' }}>FILTER BY ROLE:</label>
-                        <select 
-                            value={filterRole} 
-                            onChange={(e) => setFilterRole(e.target.value)}
-                            style={{
-                                background: 'rgba(255, 255, 255, 0.05)',
-                                color: '#fff',
-                                border: '1px solid rgba(46, 204, 113, 0.4)',
-                                padding: '10px 15px',
-                                borderRadius: '10px',
-                                outline: 'none',
-                                cursor: 'pointer',
-                                fontSize: '14px'
-                            }}
-                        >
-                            <option value="All">All Roles</option>
-                            <option value="Producer">Producer</option>
-                            <option value="Importer">Importer</option>
-                            <option value="Brand Owner">Brand Owner</option>
-                            <option value="Collector">Collector</option>
-                            <option value="Transporter">Transporter</option>
-                            <option value="Recycler">Recycler</option>
-                        </select>
+                       <select 
+                                value={filterRole} 
+                                onChange={(e) => setFilterRole(e.target.value)}
+                                style={{
+                                     background: 'rgba(255, 255, 255, 0.05)',
+                                     color: '#fff',
+                                     border: '1px solid rgba(46, 204, 113, 0.4)',
+                                     padding: '10px 15px',
+                                     borderRadius: '10px',
+                                     outline: 'none',
+                                     cursor: 'pointer',
+                                     fontSize: '14px'
+                                     }}
+                                  >
+                          <option value="All" style={{ background: '#111', color: '#fff' }}>All Roles</option>
+                          <option value="Producer" style={{ background: '#111', color: '#fff' }}>Producer</option>
+                          <option value="Importer" style={{ background: '#111', color: '#fff' }}>Importer</option>
+                          <option value="Brand Owner" style={{ background: '#111', color: '#fff' }}>Brand Owner</option>
+                          <option value="Collector" style={{ background: '#111', color: '#fff' }}>Collector</option>
+                          <option value="Transporter" style={{ background: '#111', color: '#fff' }}>Transporter</option>
+                          <option value="Recycler" style={{ background: '#111', color: '#fff' }}>Recycler</option>
+                       </select>
                     </div>
 
                     <div className="glass-table-wrapper" style={styles.tableWrapper}>
@@ -464,4 +464,4 @@ const styles = {
     },
 };
 
-export default UserManagement;   
+export default UserManagement;
