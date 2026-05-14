@@ -87,13 +87,13 @@ const RegisterCustomer = () => {
         }
 
         // 🆕 Payload එක සාකච්ඡා කරගත් පරිදි සකස් කිරීම
-        const finalPayload = {
+       const finalPayload = {
             ...formData,
-            brcFile: formData.regType === 'Company' ? fileStrings.brc : "", 
-            vatFile: formData.regType === 'Company' ? fileStrings.vat : "",
-            billingFile: formData.regType === 'Company' ? fileStrings.billing : "",
-            // Individual නම් NIC එක verificationDocs Array එක ඇතුළට දමයි
-            verificationDocs: formData.regType === 'Individual' && fileStrings.nic ? [fileStrings.nic] : []
+            brcFile: (initialRole === 'RECYCLER' && formData.regType === 'Individual') ? "" : fileStrings.brc, 
+            vatFile: (initialRole === 'RECYCLER' && formData.regType === 'Individual') ? "" : fileStrings.vat,
+            billingFile: (initialRole === 'RECYCLER' && formData.regType === 'Individual') ? "" : fileStrings.billing,
+            
+            verificationDocs: (initialRole === 'RECYCLER' && formData.regType === 'Individual' && fileStrings.nic) ? [fileStrings.nic] : []
         };
 
         try {
@@ -196,19 +196,19 @@ const RegisterCustomer = () => {
                     </div>
 
                     {/* 🆕 Company Type එකට පමණක් Company Name & Website පෙන්වීම */}
-                    {formData.regType === 'Company' && (
-                        <>
-                            <div style={styles.inputWrapper}>
-                                <label style={styles.label}>COMPANY NAME</label>
-                                <input name="companyName" type="text" placeholder="Legal Entity Name" style={styles.input} onChange={handleChange} required />
-                            </div>
+                   {(initialRole !== 'RECYCLER' || formData.regType === 'Company') && (
+    <>
+        <div style={styles.inputWrapper}>
+            <label style={styles.label}>COMPANY NAME</label>
+            <input name="companyName" type="text" placeholder="Legal Entity Name" style={styles.input} onChange={handleChange} required />
+        </div>
 
-                            <div style={styles.inputWrapper}>
-                                <label style={styles.label}>COMPANY WEBSITE (OPTIONAL)</label>
-                                <input name="companyWebsite" type="text" placeholder="https://www.company.com" style={styles.input} onChange={handleChange} />
-                            </div>
-                        </>
-                    )}
+        <div style={styles.inputWrapper}>
+            <label style={styles.label}>COMPANY WEBSITE (OPTIONAL)</label>
+            <input name="companyWebsite" type="text" placeholder="https://www.company.com" style={styles.input} onChange={handleChange} />
+        </div>
+    </>
+)}
 
                     <h3 style={styles.sectionHeader}>2. Contact & Address</h3>
                     <div style={styles.row}>
@@ -315,7 +315,7 @@ const RegisterCustomer = () => {
                     </div>
 
                     {/* 🆕 පියවර 4: ලියාපදිංචි වර්ගය අනුව වෙනස් වන File Upload Component එක */}
-                    {formData.regType === 'Company' ? (
+                    {(initialRole !== 'RECYCLER' || formData.regType === 'Company') ? (
                         <>
                             <div style={{ marginBottom: '18px' }}>
                                 <label style={styles.label}>UPLOAD BRC (Business Registration)</label>
