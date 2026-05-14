@@ -257,7 +257,7 @@ const handleSubmit = async (e) => {
                     </div>
 
                     <div style={styles.inputWrapper}>
-                        <label style={styles.label}>ESTABLISHED DATE / DOB</label>
+                        <label style={styles.label}>ESTABLISHED DATE</label>
                         <input name="dob" type="date" style={styles.input} onChange={handleChange} required />
                     </div>
 
