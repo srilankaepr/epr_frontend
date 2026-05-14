@@ -11,19 +11,28 @@ const RegisterCustomer = () => {
     const initialRole = location.state?.selectedRole || '';
 
     const [formData, setFormData] = useState({
-        orgRole: initialRole === 'RECYCLER' ? 'Collector' : 'Producer', // Default selection setup
+        regType: 'Company', // 🆕 Company හෝ Individual තත්ත්වය සේව් කර ගැනීමට
+        orgRole: initialRole === 'RECYCLER' ? 'Collector' : 'Producer', 
         companyName: '', 
         companyWebsite: '', 
         phone: '', whatsapp: '', officialEmail: '',
         address1: '', address2: '', postalCode: '', country: '',
         contactPersonName: '', contactPersonMobile: '',
         dob: '', 
-        password: '', confirmPassword: ''
+        password: '', confirmPassword: '',
+        
+        // 🆕 CO-PARTNER / COLLECTOR සඳහා අලුතින් එක් කළ ෆීල්ඩ්ස්
+        isCoPartner: false,
+        coPartnerFullName: '',
+        coPartnerAnotherEmail: '',
+        coPartnerNic: '',
+        coPartnerDistrict: '',
+        coPartnerPradeshiyaSabha: ''
     });
 
-    const [fileStrings, setFileStrings] = useState({ brc: "", vat: "", billing: "" });
+    // 🆕 NIC සඳහා 'nic' ස්ට්‍රින්ග් එක ඇතුළත් කළා
+    const [fileStrings, setFileStrings] = useState({ brc: "", vat: "", billing: "" , nic: "" });
 
-    // ✅ ලෝඩ් වෙද්දීම Role එක අනුව බටන් ලිස්ට් එක මෙතනින් තීරණය වෙනවා
     const roleOptions = initialRole === 'RECYCLER' 
         ? [
             { label: 'COLLECTOR', value: 'Collector', icon: '🚛' },
@@ -77,11 +86,14 @@ const RegisterCustomer = () => {
             return;
         }
 
+        // 🆕 Payload එක සාකච්ඡා කරගත් පරිදි සකස් කිරීම
         const finalPayload = {
             ...formData,
-            brcFile: fileStrings.brc, 
-            vatFile: fileStrings.vat,
-            billingFile: fileStrings.billing
+            brcFile: formData.regType === 'Company' ? fileStrings.brc : "", 
+            vatFile: formData.regType === 'Company' ? fileStrings.vat : "",
+            billingFile: formData.regType === 'Company' ? fileStrings.billing : "",
+            // Individual නම් NIC එක verificationDocs Array එක ඇතුළට දමයි
+            verificationDocs: formData.regType === 'Individual' && fileStrings.nic ? [fileStrings.nic] : []
         };
 
         try {
@@ -121,11 +133,30 @@ const RegisterCustomer = () => {
 
                 <form onSubmit={handleSubmit} style={styles.form}>
                     
+                    {/* 🆕 පියවර 1: Company / Individual ලියාපදිංචි වර්ගය තේරීමේ බොත්තම් */}
+                    <h3 style={styles.sectionHeader}>Registration Type</h3>
+                    <div style={{ display: 'flex', gap: '12px', marginBottom: '25px', flexWrap: 'wrap' }}>
+                        {['Company', 'Individual'].map((type) => (
+                            <button
+                                key={type}
+                                type="button"
+                                onClick={() => setFormData({ ...formData, regType: type })}
+                                style={{
+                                    flex: '1 1 150px', padding: '12px', borderRadius: '12px', fontWeight: 'bold', cursor: 'pointer',
+                                    background: formData.regType === type ? 'rgba(46, 204, 113, 0.15)' : 'rgba(255,255,255,0.03)',
+                                    border: formData.regType === type ? '2px solid #2ecc71' : '1px solid rgba(255,255,255,0.1)',
+                                    color: formData.regType === type ? '#2ecc71' : '#aaa', transition: '0.3s'
+                                }}
+                            >
+                                {type === 'Company' ? '🏢 Company Registration' : '👤 Individual Registration'}
+                            </button>
+                        ))}
+                    </div>
+
                     <h3 style={styles.sectionHeader}>1. Organization Details</h3>
                     <div style={styles.inputWrapper}>
                         <label style={styles.label}>ORGANIZATION ROLE</label>
                         
-                        {/* ✅ බෝසා, දැන් මෙතන PIBO වගේම RECYCLER එකටත් බටන් 3 පේන්න හදලා තියෙන්නේ */}
                         <div style={{ display: 'flex', gap: '12px', marginTop: '10px', flexWrap: 'wrap' }}>
                             {roleOptions.map((r) => (
                                 <div 
@@ -164,15 +195,20 @@ const RegisterCustomer = () => {
                         </div>
                     </div>
 
-                    <div style={styles.inputWrapper}>
-                        <label style={styles.label}>COMPANY NAME</label>
-                        <input name="companyName" type="text" placeholder="Legal Entity Name" style={styles.input} onChange={handleChange} required />
-                    </div>
+                    {/* 🆕 Company Type එකට පමණක් Company Name & Website පෙන්වීම */}
+                    {formData.regType === 'Company' && (
+                        <>
+                            <div style={styles.inputWrapper}>
+                                <label style={styles.label}>COMPANY NAME</label>
+                                <input name="companyName" type="text" placeholder="Legal Entity Name" style={styles.input} onChange={handleChange} required />
+                            </div>
 
-                    <div style={styles.inputWrapper}>
-                        <label style={styles.label}>COMPANY WEBSITE (OPTIONAL)</label>
-                        <input name="companyWebsite" type="text" placeholder="https://www.company.com" style={styles.input} onChange={handleChange} />
-                    </div>
+                            <div style={styles.inputWrapper}>
+                                <label style={styles.label}>COMPANY WEBSITE (OPTIONAL)</label>
+                                <input name="companyWebsite" type="text" placeholder="https://www.company.com" style={styles.input} onChange={handleChange} />
+                            </div>
+                        </>
+                    )}
 
                     <h3 style={styles.sectionHeader}>2. Contact & Address</h3>
                     <div style={styles.row}>
@@ -225,6 +261,48 @@ const RegisterCustomer = () => {
                         <input name="dob" type="date" style={styles.input} onChange={handleChange} required />
                     </div>
 
+                    {/* 🆕 ඡේදය 3: Collector කෙනෙක් වුණොත් පමණක් Co-Partner ලොජික් එක ක්‍රියාත්මක කිරීම */}
+                    {formData.orgRole === 'Collector' && (
+                        <div style={{ marginBottom: '20px', background: 'rgba(52, 152, 219, 0.05)', padding: '18px', borderRadius: '15px', border: '1px solid rgba(52, 152, 219, 0.2)' }}>
+                            <label style={{ color: '#3498db', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer', fontSize: '14px' }}>
+                                <input 
+                                    type="checkbox" 
+                                    checked={formData.isCoPartner} 
+                                    onChange={(e) => setFormData({ ...formData, isCoPartner: e.target.checked })}
+                                    style={{ width: '18px', height: '18px', cursor: 'pointer' }}
+                                />
+                                REGISTER AS A CO-PARTNER (OPTIONAL)
+                            </label>
+
+                            {formData.isCoPartner && (
+                                <div style={{ marginTop: '18px' }}>
+                                    <div style={styles.inputWrapper}>
+                                        <label style={styles.label}>CO-PARTNER FULL NAME</label>
+                                        <input name="coPartnerFullName" type="text" placeholder="Your Full Name" style={styles.input} onChange={handleChange} required />
+                                    </div>
+                                    <div style={styles.inputWrapper}>
+                                        <label style={styles.label}>ANOTHER EMAIL</label>
+                                        <input name="coPartnerAnotherEmail" type="email" placeholder="alternative@email.com" style={styles.input} onChange={handleChange} required />
+                                    </div>
+                                    <div style={styles.inputWrapper}>
+                                        <label style={styles.label}>NATIONAL ID (NIC)</label>
+                                        <input name="coPartnerNic" type="text" placeholder="19XXXXXXXXXX or XXXXXXXXXV" style={styles.input} onChange={handleChange} required />
+                                    </div>
+                                    <div style={styles.row}>
+                                        <div style={styles.rowItem}>
+                                            <label style={styles.label}>DISTRICT</label>
+                                            <input name="coPartnerDistrict" type="text" placeholder="Gampaha" style={styles.input} onChange={handleChange} required />
+                                        </div>
+                                        <div style={styles.rowItem}>
+                                            <label style={styles.label}>PRADESHIYA SABHA</label>
+                                            <input name="coPartnerPradeshiyaSabha" type="text" placeholder="Pradeshiya Sabha Name" style={styles.input} onChange={handleChange} required />
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    )}
+
                     <div style={styles.row}>
                         <div style={styles.rowItem}>
                             <label style={styles.label}>PASSWORD</label>
@@ -236,23 +314,34 @@ const RegisterCustomer = () => {
                         </div>
                     </div>
 
-                    <div style={{ marginBottom: '18px' }}>
-                        <label style={styles.label}>UPLOAD BRC (Business Registration)</label>
-                        <input type="file" onChange={(e) => handleFileBase64(e, 'brc')} style={styles.input} accept=".pdf,.jpg,.jpeg,.png" />
-                        {fileStrings.brc && <p style={{ color: '#2ecc71', fontSize: '14px', marginTop: '5px' }}>✅ BRC Document selected</p>}
-                    </div>
+                    {/* 🆕 පියවර 4: ලියාපදිංචි වර්ගය අනුව වෙනස් වන File Upload Component එක */}
+                    {formData.regType === 'Company' ? (
+                        <>
+                            <div style={{ marginBottom: '18px' }}>
+                                <label style={styles.label}>UPLOAD BRC (Business Registration)</label>
+                                <input type="file" onChange={(e) => handleFileBase64(e, 'brc')} style={styles.input} accept=".pdf,.jpg,.jpeg,.png" />
+                                {fileStrings.brc && <p style={{ color: '#2ecc71', fontSize: '14px', marginTop: '5px' }}>✅ BRC Document selected</p>}
+                            </div>
 
-                    <div style={{ marginBottom: '18px' }}>
-                        <label style={styles.label}>UPLOAD VAT DOCUMENT(include TIN)</label>
-                        <input type="file" onChange={(e) => handleFileBase64(e, 'vat')} style={styles.input} accept=".pdf,.jpg,.jpeg,.png" />
-                        {fileStrings.vat && <p style={{ color: '#2ecc71', fontSize: '14px', marginTop: '5px' }}>✅ VAT Document selected</p>}
-                    </div>
+                            <div style={{ marginBottom: '18px' }}>
+                                <label style={styles.label}>UPLOAD VAT DOCUMENT(include TIN)</label>
+                                <input type="file" onChange={(e) => handleFileBase64(e, 'vat')} style={styles.input} accept=".pdf,.jpg,.jpeg,.png" />
+                                {fileStrings.vat && <p style={{ color: '#2ecc71', fontSize: '14px', marginTop: '5px' }}>✅ VAT Document selected</p>}
+                            </div>
 
-                    <div style={{ marginBottom: '18px' }}>
-                        <label style={styles.label}>UPLOAD BILLING PROOF (Electricity / Water)</label>
-                        <input type="file" onChange={(e) => handleFileBase64(e, 'billing')} style={styles.input} accept=".pdf,.jpg,.jpeg,.png" />
-                        {fileStrings.billing && <p style={{ color: '#2ecc71', fontSize: '14px', marginTop: '5px' }}>✅ Billing Proof selected</p>}
-                    </div>   
+                            <div style={{ marginBottom: '18px' }}>
+                                <label style={styles.label}>UPLOAD BILLING PROOF (Electricity / Water)</label>
+                                <input type="file" onChange={(e) => handleFileBase64(e, 'billing')} style={styles.input} accept=".pdf,.jpg,.jpeg,.png" />
+                                {fileStrings.billing && <p style={{ color: '#2ecc71', fontSize: '14px', marginTop: '5px' }}>✅ Billing Proof selected</p>}
+                            </div>
+                        </>
+                    ) : (
+                        <div style={{ marginBottom: '18px' }}>
+                            <label style={styles.label}>UPLOAD NIC / DRIVING LICENSE (FRONT & BACK)</label>
+                            <input type="file" onChange={(e) => handleFileBase64(e, 'nic')} style={styles.input} accept=".pdf,.jpg,.jpeg,.png" />
+                            {fileStrings.nic && <p style={{ color: '#2ecc71', fontSize: '14px', marginTop: '5px' }}>✅ NIC / License Document selected</p>}
+                        </div>
+                    )}
 
                     <button type="submit" style={styles.registerBtn}>SUBMIT FOR THE APPROVAL</button>
                 </form>
@@ -289,6 +378,8 @@ const styles = {
     inputWrapper: { marginBottom: '18px' },
     label: { display: 'block', fontSize: '14px', color: '#aaa', marginBottom: '8px', letterSpacing: '1px', fontWeight: 'bold' },
     input: { width: '100%', padding: '15px', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.1)', background: 'rgba(255, 255, 255, 0.04)', color: '#fff', fontSize: '17px', boxSizing: 'border-box', transition: '0.3s' },
+    selectInput: { width: '100%', padding: '15px', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.1)', background: '#121212', color: '#fff', fontSize: '17px', boxSizing: 'border-box', transition: '0.3s', cursor: 'pointer' },
+    selectOption: { background: '#121212', color: '#fff', padding: '10px' },
     row: { display: 'flex', flexWrap: 'wrap', gap: '20px', marginBottom: '18px' },
     rowItem: { flex: '1 1 200px' },
     registerBtn: { width: '100%', padding: '18px', borderRadius: '12px', border: 'none', background: '#3498db', color: '#fff', fontWeight: '900', fontSize: '17px', letterSpacing: '2px', cursor: 'pointer', boxShadow: '0 10px 30px rgba(52, 152, 219, 0.3)', marginTop: '25px', transition: '0.3s' },
