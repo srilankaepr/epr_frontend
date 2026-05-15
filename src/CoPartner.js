@@ -43,15 +43,17 @@ const CoPartner = () => {
 
     // 🆕 රික්වෙස්ට් එකක් Approve කරන එක
     const handleApprove = async (customerId) => {
-        if (window.confirm("Are you sure you want to approve this partner request? 🚀")) {
+        if (window.confirm("Are you sure you want to approve this partner request?")) {
             try {
                 const res = await API.put(`/partners/approve-request/${customerId}`);
                 alert(res.data.message);
-                fetchRequests();
-                fetchPartners();
-            } catch (err) {
-                alert("Approval failed. Please try again.");
-            }
+                    await fetchRequests(); 
+                    await fetchPartners(); 
+            
+        } catch (err) {
+            console.error("Approval Error:", err);
+            alert("Approval failed. Please try again.");
+        }
         }
     };
 
