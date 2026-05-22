@@ -124,7 +124,7 @@ const RegisterCustomer = () => {
                     <div style={styles.logoFrame}>
                         <img src={logo} alt="EPR Logo" style={styles.logoImg} />
                     </div>
-                    <h2 style={styles.title}>  {initialRole === 'RECYCLER' ? 'RECYCLER REGISTRATION' : 'PIBO REGISTRATION'}  </h2>
+                    <h2 style={styles.title}>  {initialRole === 'RECYCLER' ? 'PRO REGISTRATION' : 'PIBO REGISTRATION'}  </h2>
                     <p style={styles.subText}>
                         {initialRole === 'RECYCLER' 
                             ? 'COLLECTOR / TRANSPORTER / RECYCLER: Join the circular ecosystem' 
