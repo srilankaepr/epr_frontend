@@ -267,7 +267,7 @@ const RegisterCustomer = () => {
                     </div>
 
                     {/* 🆕 ඡේදය 3: Collector කෙනෙක් වුණොත් පමණක් Co-Partner ලොජික් එක ක්‍රියාත්මක කිරීම */}
-                    {formData.orgRole === 'Collector' && (
+                    {(formData.orgRole === 'Collector' || formData.orgRole === 'Total Solution Provider') && (
                         <div style={{ marginBottom: '20px', background: 'rgba(52, 152, 219, 0.05)', padding: '18px', borderRadius: '15px', border: '1px solid rgba(52, 152, 219, 0.2)' }}>
                             <label style={{ color: '#3498db', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer', fontSize: '14px' }}>
                                 <input 
