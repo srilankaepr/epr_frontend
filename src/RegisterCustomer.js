@@ -75,6 +75,12 @@ const RegisterCustomer = () => {
             return;
         }
 
+        // 💥 මෙන්න අපි කතා කරපු ඊමේල් වැලිඩේෂන් එක නූලටම මෙතනට දැම්මා:
+        if (formData.isCoPartner && formData.officialEmail === formData.coPartnerAnotherEmail) {
+            alert("❌ Official Email and Co-Partner Email cannot be the same! Please use a different email for the Co-Partner.");
+            return;
+        }
+
         if (!validatePhone(formData.phone)) {
             alert("❌ Please enter a valid 10-digit Phone Number.");
             return;
