@@ -11,7 +11,7 @@ const RegisterCustomer = () => {
     const initialRole = location.state?.selectedRole || '';
 
     const [formData, setFormData] = useState({
-        regType: 'Company', // 🆕 Company හෝ Individual තත්ත්වය සේව් කර ගැනීමට
+        regType: 'Company', 
         orgRole: initialRole === 'RECYCLER' ? 'Collector' : 'Producer', 
         companyName: '', 
         companyWebsite: '', 
@@ -20,7 +20,7 @@ const RegisterCustomer = () => {
         contactPersonName: '', contactPersonMobile: '',
         dob: '', 
         password: '', confirmPassword: '',
-        
+
         // 🆕 CO-PARTNER / COLLECTOR සඳහා අලුතින් එක් කළ ෆීල්ඩ්ස්
         isCoPartner: false,
         coPartnerFullName: '',
@@ -38,7 +38,8 @@ const RegisterCustomer = () => {
         ? [
             { label: 'COLLECTOR', value: 'Collector', icon: '🚛' },
             { label: 'TRANSPORTER', value: 'Transporter', icon: '🚚' },
-            { label: 'RECYCLER', value: 'Recycler', icon: '♻️' }
+            { label: 'RECYCLER', value: 'Recycler', icon: '♻️' },
+            { label: 'TOTAL SOLUTION PROVIDER', value: 'Total Solution Provider', icon: '🌐' }
         ]
         : [
             { label: 'PRODUCER', value: 'Producer', icon: '🏭' },
@@ -127,7 +128,7 @@ const RegisterCustomer = () => {
                     <h2 style={styles.title}>  {initialRole === 'RECYCLER' ? 'PRO REGISTRATION' : 'PIBO REGISTRATION'}  </h2>
                     <p style={styles.subText}>
                         {initialRole === 'RECYCLER' 
-                            ? 'COLLECTOR / TRANSPORTER / RECYCLER: Join the circular ecosystem' 
+                            ? 'COLLECTOR / TRANSPORTER / RECYCLER / TOTAL SOLUTION PROVIDER: Join the circular ecosystem' 
                             : 'Producers, Importers & Brand Owners: Join the circular ecosystem'}
                     </p>
                 </div>
@@ -214,7 +215,6 @@ const RegisterCustomer = () => {
         </div>
     </>
 )}
-
                     <h3 style={styles.sectionHeader}>2. Contact & Address</h3>
                     <div style={styles.row}>
                         <div style={styles.rowItem}>
