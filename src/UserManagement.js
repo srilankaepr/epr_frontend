@@ -56,7 +56,12 @@ const UserManagement = () => {
     }, []);
 
     // --- DELETE LOGIC ---
-    const deleteUser = async (id, type) => {
+const deleteUser = async (id, type) => {
+        if (localStorage.getItem('adminRole') !== 'SuperAdmin') {
+            alert("🚨 Unauthorized Access! Only SuperAdmin is allowed to delete records.");
+            return;
+        }
+
         if (window.confirm(`Are you sure you want to delete this ${type}?`)) {
             try {
                 const endpoint = type === 'Admin' 
@@ -252,7 +257,7 @@ const UserManagement = () => {
 
                     {/* 🆕 පාරිභෝගික භූමිකාව (Role) අනුව පෙරීමට එක් කළ Dropdown එක */}
                     <div style={{ marginBottom: '20px', display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: '15px' }}>
-                        <label style={{ color: '#2ecc71', fontSize: '14px', fontWeight: 'bold' }}>FILTER BY ROLE:</label>
+                    <label style={{ color: '#2ecc71', fontSize: '14px', fontWeight: 'bold' }}>FILTER BY ROLE:</label>
                        <select 
                                 value={filterRole} 
                                 onChange={(e) => setFilterRole(e.target.value)}
@@ -301,7 +306,7 @@ const UserManagement = () => {
                             <tbody>
                                 {data.customers
                                        .filter(c => filterStatus === 'All' ? true : (c.status === filterStatus))
-                                       .filter(c => filterRole === 'All' ? true : (c.orgRole === filterRole)) // 🆕 Role එක අනුව Filter කිරීම
+                                       .filter(c => filterRole === 'All' ? true : (c.orgRole === filterRole)) 
                                        .map((c, i) => (
                                     <tr key={i} className="table-row" style={styles.row}>
                                         <td style={styles.tdFirst}>{i + 1}</td>
