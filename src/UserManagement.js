@@ -58,7 +58,7 @@ const UserManagement = () => {
     // --- DELETE LOGIC ---
 const deleteUser = async (id, type) => {
         if (localStorage.getItem('adminRole') !== 'SuperAdmin') {
-            alert("🚨 Unauthorized Access! Only SuperAdmin is allowed to delete records.");
+            alert(`🚨 Unauthorized Access! Only SuperAdmin is allowed to delete an ${type}.`);
             return;
         }
 
@@ -193,16 +193,22 @@ const deleteUser = async (id, type) => {
                                 </tr>
                             </thead>
                             <tbody>
-                                {data.admins.map((admin, i) => (
-                                    <tr key={i} className="table-row" style={styles.row}>
-                                        <td style={styles.tdFirst}>{i + 1}</td>
-                                        <td style={styles.td}>{admin.fullName}</td>
-                                        <td style={styles.td}>{admin.email}</td>
-                                        <td style={styles.tdLast}>
-                                            <button onClick={() => deleteUser(admin._id, 'Admin')} style={styles.deleteBtn}>Remove</button>
-                                        </td>
-                                    </tr>
-                                ))}
+                             {data.admins.map((admin, i) => (
+                                  <tr key={i} className="table-row" style={styles.row}>
+                                       <td style={styles.tdFirst}>{i + 1}</td>
+                                       <td style={styles.td}>{admin.fullName}</td>
+                                       <td style={styles.td}>{admin.email}</td>
+                                       <td style={styles.tdLast}>
+                             {localStorage.getItem('adminRole') === 'SuperAdmin' && (
+                                         <button onClick={() => deleteUser(admin._id, 'Admin')} style={styles.deleteBtn}>Remove</button>
+                                )}
+
+                                    {localStorage.getItem('adminRole') !== 'SuperAdmin' && (
+                                       <span style={{ color: '#bdc3c7', fontSize: '12px', fontStyle: 'italic' }}>No Actions</span>
+                                )}
+                                    </td>
+                                 </tr>
+                               ))}
                             </tbody>
                         </table>
                     </div>
