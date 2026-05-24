@@ -51,9 +51,9 @@ const UserManagement = () => {
     };
 
     useEffect(() => {
-        fetchUsers();
-        fetchStats();
-    }, []);
+    Promise.all([fetchUsers(), fetchStats()])
+        .catch(err => console.error("Error loading initial data:", err));
+}, []);
 
     // --- DELETE LOGIC ---
 const deleteUser = async (id, type) => {
