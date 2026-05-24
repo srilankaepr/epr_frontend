@@ -56,7 +56,7 @@ const UserManagement = () => {
     }, []);
 
     // --- DELETE LOGIC ---
-    const deleteUser = async (id, type) => {
+const deleteUser = async (id, type) => {
         if (localStorage.getItem('adminRole') !== 'SuperAdmin') {
             alert(`🚨 Unauthorized Access! Only SuperAdmin is allowed to delete an ${type}.`);
             return;
@@ -109,7 +109,7 @@ const UserManagement = () => {
 
         let finalY = doc.lastAutoTable.finalY;
         const customerRows = data.customers.map((c, i) => [
-            i + 1, c.regNumber || '-', c.companyName, c.orgRole, c.companyWebsite || '-', c.officialEmail, 
+            i + 1,c.regNumber || '-', c.companyName, c.orgRole, c.companyWebsite || '-', c.officialEmail, 
             c.phone, c.whatsapp || '-', c.dob || '-', c.contactPersonName, 
             c.contactPersonMobile, `${c.address1}, ${c.address2}`, c.country
         ]);
@@ -191,26 +191,24 @@ const UserManagement = () => {
                                     <th style={styles.th}>Email Address</th>
                                     <th style={styles.thLast}>Actions</th>
                                 </tr>
-                            </tbody>
+                            </thead>
                             <tbody>
-                                {data.admins.map((admin, i) => (
-                                    <tr key={i} className="table-row" style={styles.row}>
-                                        <td style={styles.tdFirst}>{i + 1}</td>
-                                        <td style={styles.td}>{admin.fullName}</td>
-                                        <td style={styles.td}>{admin.email}</td>
-                                        <td style={styles.tdLast}>
-                                            {/* 🟢 SuperAdmin ට විතරක් Remove බටන් එක පෙන්වීම */}
-                                            {localStorage.getItem('adminRole') === 'SuperAdmin' && (
-                                                <button onClick={() => deleteUser(admin._id, 'Admin')} style={styles.deleteBtn}>Remove</button>
-                                            )}
+                             {data.admins.map((admin, i) => (
+                                  <tr key={i} className="table-row" style={styles.row}>
+                                       <td style={styles.tdFirst}>{i + 1}</td>
+                                       <td style={styles.td}>{admin.fullName}</td>
+                                       <td style={styles.td}>{admin.email}</td>
+                                       <td style={styles.tdLast}>
+                             {localStorage.getItem('adminRole') === 'SuperAdmin' && (
+                <button onClick={() => deleteUser(admin._id, 'Admin')} style={styles.deleteBtn}>Remove</button>
+            )}
 
-                                            {/* 🟢 සාමාන්‍ය Admin කෙනෙක්ට No Actions කියලා පෙන්වීම */}
-                                            {localStorage.getItem('adminRole') !== 'SuperAdmin' && (
-                                                <span style={{ color: '#bdc3c7', fontSize: '12px', fontStyle: 'italic' }}>No Actions</span>
-                                            )}
-                                        </td>
-                                    </tr>
-                                ))}
+            {localStorage.getItem('adminRole') !== 'SuperAdmin' && (
+                <span style={{ color: '#bdc3c7', fontSize: '12px', fontStyle: 'italic' }}>No Actions</span>
+            )}
+                                   </td>
+                                 </tr>
+                               ))}
                             </tbody>
                         </table>
                     </div>
@@ -263,30 +261,31 @@ const UserManagement = () => {
                         </div>
                     </div>
 
+                    {/* 🆕 පාරිභෝගික භූමිකාව (Role) අනුව පෙරීමට එක් කළ Dropdown එක */}
                     <div style={{ marginBottom: '20px', display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: '15px' }}>
-                        <label style={{ color: '#2ecc71', fontSize: '14px', fontWeight: 'bold' }}>FILTER BY ROLE:</label>
-                        <select 
-                            value={filterRole} 
-                            onChange={(e) => setFilterRole(e.target.value)}
-                            style={{
-                                background: 'rgba(255, 255, 255, 0.05)',
-                                color: '#fff',
-                                border: '1px solid rgba(46, 204, 113, 0.4)',
-                                padding: '10px 15px',
-                                borderRadius: '10px',
-                                outline: 'none',
-                                cursor: 'pointer',
-                                fontSize: '14px'
-                            }}
-                        >
-                            <option value="All" style={{ background: '#111', color: '#fff' }}>All Roles</option>
-                            <option value="Producer" style={{ background: '#111', color: '#fff' }}>Producer</option>
-                            <option value="Importer" style={{ background: '#111', color: '#fff' }}>Importer</option>
-                            <option value="Brand Owner" style={{ background: '#111', color: '#fff' }}>Brand Owner</option>
-                            <option value="Collector" style={{ background: '#111', color: '#fff' }}>Collector</option>
-                            <option value="Transporter" style={{ background: '#111', color: '#fff' }}>Transporter</option>
-                            <option value="Recycler" style={{ background: '#111', color: '#fff' }}>Recycler</option>
-                        </select>
+                    <label style={{ color: '#2ecc71', fontSize: '14px', fontWeight: 'bold' }}>FILTER BY ROLE:</label>
+                       <select 
+                                value={filterRole} 
+                                onChange={(e) => setFilterRole(e.target.value)}
+                                style={{
+                                     background: 'rgba(255, 255, 255, 0.05)',
+                                     color: '#fff',
+                                     border: '1px solid rgba(46, 204, 113, 0.4)',
+                                     padding: '10px 15px',
+                                     borderRadius: '10px',
+                                     outline: 'none',
+                                     cursor: 'pointer',
+                                     fontSize: '14px'
+                                     }}
+                                  >
+                          <option value="All" style={{ background: '#111', color: '#fff' }}>All Roles</option>
+                          <option value="Producer" style={{ background: '#111', color: '#fff' }}>Producer</option>
+                          <option value="Importer" style={{ background: '#111', color: '#fff' }}>Importer</option>
+                          <option value="Brand Owner" style={{ background: '#111', color: '#fff' }}>Brand Owner</option>
+                          <option value="Collector" style={{ background: '#111', color: '#fff' }}>Collector</option>
+                          <option value="Transporter" style={{ background: '#111', color: '#fff' }}>Transporter</option>
+                          <option value="Recycler" style={{ background: '#111', color: '#fff' }}>Recycler</option>
+                       </select>
                     </div>
 
                     <div className="glass-table-wrapper" style={styles.tableWrapper}>
@@ -312,95 +311,95 @@ const UserManagement = () => {
                             </thead>
                             <tbody>
                                 {data.customers
-                                    .filter(c => filterStatus === 'All' ? true : (c.status === filterStatus))
-                                    .filter(c => filterRole === 'All' ? true : (c.orgRole === filterRole)) 
-                                    .map((c, i) => (
-                                        <tr key={i} className="table-row" style={styles.row}>
-                                            <td style={styles.tdFirst}>{i + 1}</td>
-                                            <td style={{...styles.td, fontWeight: 'bold', color: '#2ecc71'}}> {c.regNumber || 'N/A'}</td>
-                                            <td style={styles.td}>{c.companyName}</td>
-                                            <td style={styles.td}>{c.orgRole}</td>
-                                            <td style={styles.td}>{c.companyWebsite || '-'}</td>
-                                            <td style={styles.td}>{c.officialEmail}</td>
-                                            <td style={styles.td}>{c.phone}</td>
-                                            <td style={styles.td}>{c.whatsapp || '-'}</td>
-                                            <td style={styles.td}>{c.dob}</td>
-                                            <td style={styles.td}>{c.contactPersonName}</td>
-                                            <td style={styles.td}>{c.contactPersonMobile}</td>
-                                            <td style={styles.td}>{`${c.address1}, ${c.address2}`}</td>
-                                            <td style={styles.td}>{c.country}</td>
-                                            <td style={styles.td}>
-                                                <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', flexDirection: 'column' }}>
-                                                    {(() => {
-                                                        const handleDownload = (docData) => {
-                                                            if (!docData) return;
-                                                            if (docData.startsWith('data:application/pdf') || docData.startsWith('data:image')) {
-                                                                const newWindow = window.open();
-                                                                newWindow.document.write(
-                                                                    `<iframe src="${docData}" frameborder="0" style="border:0; top:0px; left:0px; bottom:0px; right:0px; width:100%; height:100%;" allowfullscreen></iframe>`
-                                                                );
-                                                            } else {
-                                                                const cleanUrl = docData.replace('/fl_attachment/', '/');
-                                                                window.open(cleanUrl, '_blank');
-                                                            }
-                                                        };
+                                       .filter(c => filterStatus === 'All' ? true : (c.status === filterStatus))
+                                       .filter(c => filterRole === 'All' ? true : (c.orgRole === filterRole)) 
+                                       .map((c, i) => (
+                                    <tr key={i} className="table-row" style={styles.row}>
+                                        <td style={styles.tdFirst}>{i + 1}</td>
+                                        <td style={{...styles.td, fontWeight: 'bold', color: '#2ecc71'}}> {c.regNumber || 'N/A'}</td>
+                                        <td style={styles.td}>{c.companyName}</td>
+                                        <td style={styles.td}>{c.orgRole}</td>
+                                        <td style={styles.td}>{c.companyWebsite || '-'}</td>
+                                        <td style={styles.td}>{c.officialEmail}</td>
+                                        <td style={styles.td}>{c.phone}</td>
+                                        <td style={styles.td}>{c.whatsapp || '-'}</td>
+                                        <td style={styles.td}>{c.dob}</td>
+                                        <td style={styles.td}>{c.contactPersonName}</td>
+                                        <td style={styles.td}>{c.contactPersonMobile}</td>
+                                        <td style={styles.td}>{`${c.address1}, ${c.address2}`}</td>
+                                        <td style={styles.td}>{c.country}</td>
+                                        <td style={styles.td}>
+                                            <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', flexDirection: 'column' }}>
+                                                {(() => {
+                                                    const handleDownload = (docData) => {
+                                                        if (!docData) return;
+                                                        if (docData.startsWith('data:application/pdf') || docData.startsWith('data:image')) {
+                                                            const newWindow = window.open();
+                                                            newWindow.document.write(
+                                                                `<iframe src="${docData}" frameborder="0" style="border:0; top:0px; left:0px; bottom:0px; right:0px; width:100%; height:100%;" allowfullscreen></iframe>`
+                                                            );
+                                                        } else {
+                                                            const cleanUrl = docData.replace('/fl_attachment/', '/');
+                                                            window.open(cleanUrl, '_blank');
+                                                        }
+                                                    };
 
-                                                        return (
-                                                            <>
-                                                                {c.brcDocument && (
-                                                                    <button 
-                                                                        onClick={() => handleDownload(c.brcDocument)}
-                                                                        style={{...styles.docLink, background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left', color: '#3498db'}}
-                                                                    >
-                                                                        <span role="img" aria-label="doc">📄</span> BRC
-                                                                    </button>
-                                                                )}
-                                                                {c.vatDocument && (
-                                                                    <button 
-                                                                        onClick={() => handleDownload(c.vatDocument)}
-                                                                        style={{...styles.docLink, background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left', color: '#3498db'}}
-                                                                    >
-                                                                        <span role="img" aria-label="doc">📄</span> VAT
-                                                                    </button>
-                                                                )}
-                                                                {c.billingDocument && (
-                                                                    <button 
-                                                                        onClick={() => handleDownload(c.billingDocument)}
-                                                                        style={{...styles.docLink, background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left', color: '#3498db'}}
-                                                                    >
-                                                                        <span role="img" aria-label="doc">📄</span> Billing
-                                                                    </button>
-                                                                )}
-                                                                {c.verificationDocs && c.verificationDocs.length > 0 && c.verificationDocs.map((doc, index) => (
-                                                                    <button 
-                                                                        key={index}
-                                                                        onClick={() => handleDownload(doc)}
-                                                                        style={{...styles.docLink, background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left', color: '#3498db'}}
-                                                                    >
-                                                                        <span role="img" aria-label="doc">📄</span> Old Doc {index + 1}
-                                                                    </button>
-                                                                ))}
-                                                            </>
-                                                        );
-                                                    })()}
-                                                    {!(c.brcDocument || c.vatDocument || c.billingDocument || (c.verificationDocs && c.verificationDocs.length > 0)) && (
-                                                        <span style={{ color: 'rgba(255,255,255,0.3)', fontSize: '12px' }}>No Docs</span>
-                                                    )}
-                                                </div>
-                                            </td>
-                                            <td style={styles.tdLast}>
-                                                {c.status === 'Pending' && (
-                                                    <button onClick={() => approveCustomer(c._id)} style={styles.approveBtn}>Approve</button>
+                                                    return (
+                                                        <>
+                                                            {c.brcDocument && (
+                                                                <button 
+                                                                    onClick={() => handleDownload(c.brcDocument)}
+                                                                    style={{...styles.docLink, background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left', color: '#3498db'}}
+                                                                >
+                                                                    <span role="img" aria-label="doc">📄</span> BRC
+                                                                </button>
+                                                            )}
+                                                            {c.vatDocument && (
+                                                                <button 
+                                                                    onClick={() => handleDownload(c.vatDocument)}
+                                                                    style={{...styles.docLink, background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left', color: '#3498db'}}
+                                                                >
+                                                                    <span role="img" aria-label="doc">📄</span> VAT
+                                                                </button>
+                                                            )}
+                                                            {c.billingDocument && (
+                                                                <button 
+                                                                    onClick={() => handleDownload(c.billingDocument)}
+                                                                    style={{...styles.docLink, background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left', color: '#3498db'}}
+                                                                >
+                                                                    <span role="img" aria-label="doc">📄</span> Billing
+                                                                </button>
+                                                            )}
+                                                            {c.verificationDocs && c.verificationDocs.length > 0 && c.verificationDocs.map((doc, index) => (
+                                                                <button 
+                                                                    key={index}
+                                                                    onClick={() => handleDownload(doc)}
+                                                                    style={{...styles.docLink, background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left', color: '#3498db'}}
+                                                                >
+                                                                    <span role="img" aria-label="doc">📄</span> Old Doc {index + 1}
+                                                                </button>
+                                                            ))}
+                                                        </>
+                                                    );
+                                                })()}
+                                                {!(c.brcDocument || c.vatDocument || c.billingDocument || (c.verificationDocs && c.verificationDocs.length > 0)) && (
+                                                    <span style={{ color: 'rgba(255,255,255,0.3)', fontSize: '12px' }}>No Docs</span>
                                                 )}
-                                                {localStorage.getItem('adminRole') === 'SuperAdmin' && (
-                                                    <button onClick={() => deleteUser(c._id, 'Customer')} style={styles.deleteBtn}>Delete</button>
-                                                )}
-                                                {c.status !== 'Pending' && localStorage.getItem('adminRole') !== 'SuperAdmin' && (
-                                                    <span style={{ color: '#bdc3c7', fontSize: '12px', fontStyle: 'italic' }}>No Actions</span>
-                                                )}
-                                            </td>
-                                        </tr>
-                                    ))}
+                                            </div>
+                                        </td>
+                                        <td style={styles.tdLast}>
+                                            {c.status === 'Pending' && (
+                                                <button onClick={() => approveCustomer(c._id)} style={styles.approveBtn}>Approve</button>
+                                            )}
+                                            {localStorage.getItem('adminRole') === 'SuperAdmin' && (
+                                                <button onClick={() => deleteUser(c._id, 'Customer')} style={styles.deleteBtn}>Delete</button>
+                                            )}
+                                            {c.status !== 'Pending' && localStorage.getItem('adminRole') !== 'SuperAdmin' && (
+                                                <span style={{ color: '#bdc3c7', fontSize: '12px', fontStyle: 'italic' }}>No Actions</span>
+                                            )}
+                                        </td>
+                                    </tr>
+                                ))}
                             </tbody>
                         </table>
                     </div>
