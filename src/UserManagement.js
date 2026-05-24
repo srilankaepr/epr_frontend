@@ -11,7 +11,7 @@ const UserManagement = () => {
     const [filterStatus, setFilterStatus] = useState('All');
     const [filterRole, setFilterRole] = useState('All'); 
     const [currentPage, setCurrentPage] = useState(1); 
-    const customersPerPage = 5; 
+    const customersPerPage = 10; 
 
     const fetchStats = async () => {
         try {
@@ -418,6 +418,83 @@ const deleteUser = async (id, type) => {
                            </tbody>
                         </table>
                     </div>
+
+{/* 🎛️ 🟢 පියවර 3: ලස්සන සහ Professional Pagination බටන්ස් පේළිය */}
+                    {(() => {
+                        // මුලින්ම දැනට ෆිල්ටර් වෙලා ඉන්න මුළු කස්ටමර්ලා ගණන ගන්නවා
+                        const filteredCustomersCount = data.customers
+                            .filter(c => filterStatus === 'All' ? true : (c.status === filterStatus))
+                            .filter(c => filterRole === 'All' ? true : (c.orgRole === filterRole)).length;
+
+                        // මුළු පිටු ගණන ගණනය කරනවා (උදා: කස්ටමර්ලා 25ක් හිටියොත් පිටු 3ක් හැදෙනවා)
+                        const totalPages = Math.ceil(filteredCustomersCount / customersPerPage);
+
+                        // පිටු 1කට වඩා තිබුණොත් විතරක් Pagination බටන්ස් පෙන්වනවා
+                        if (totalPages <= 1) return null;
+
+                        return (
+                            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '10px', marginTop: '30px', animation: 'fadeIn 1s ease-in' }}>
+                                {/* ⬅️ Previous බටන් එක */}
+                                <button 
+                                    onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                                    disabled={currentPage === 1}
+                                    style={{
+                                        padding: '10px 18px',
+                                        background: currentPage === 1 ? 'rgba(255,255,255,0.02)' : 'rgba(46, 204, 113, 0.1)',
+                                        border: '1px solid rgba(46, 204, 113, 0.3)',
+                                        color: currentPage === 1 ? '#666' : '#2ecc71',
+                                        borderRadius: '10px',
+                                        cursor: currentPage === 1 ? 'not-allowed' : 'pointer',
+                                        fontWeight: 'bold',
+                                        transition: '0.3s'
+                                    }}
+                                >
+                                    Previous
+                                </button>
+
+                                {/* 🔢 මැද තියෙන පිටු අංක (1, 2, 3...) */}
+                                {Array.from({ length: totalPages }, (_, index) => (
+                                    <button
+                                        key={index + 1}
+                                        onClick={() => setCurrentPage(index + 1)}
+                                        style={{
+                                            width: '40px',
+                                            height: '40px',
+                                            background: currentPage === index + 1 ? 'linear-gradient(135deg, #2ecc71 0%, #27ae60 100%)' : 'rgba(255,255,255,0.05)',
+                                            border: 'none',
+                                            color: '#fff',
+                                            borderRadius: '10px',
+                                            cursor: 'pointer',
+                                            fontWeight: 'bold',
+                                            boxShadow: currentPage === index + 1 ? '0 5px 15px rgba(46, 204, 113, 0.3)' : 'none',
+                                            transition: '0.3s'
+                                        }}
+                                    >
+                                        {index + 1}
+                                    </button>
+                                ))}
+
+                                {/* ➡️ Next බටන් එක */}
+                                <button 
+                                    onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                                    disabled={currentPage === totalPages}
+                                    style={{
+                                        padding: '10px 18px',
+                                        background: currentPage === totalPages ? 'rgba(255,255,255,0.02)' : 'rgba(46, 204, 113, 0.1)',
+                                        border: '1px solid rgba(46, 204, 113, 0.3)',
+                                        color: currentPage === totalPages ? '#666' : '#2ecc71',
+                                        borderRadius: '10px',
+                                        cursor: currentPage === totalPages ? 'not-allowed' : 'pointer',
+                                        fontWeight: 'bold',
+                                        transition: '0.3s'
+                                    }}
+                                >
+                                    Next
+                                </button>
+                            </div>
+                        );
+                    })()}
+
                 </div>
             </div>
         </div>
