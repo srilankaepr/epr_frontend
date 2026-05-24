@@ -11,7 +11,7 @@ const UserManagement = () => {
     const [filterStatus, setFilterStatus] = useState('All');
     const [filterRole, setFilterRole] = useState('All'); 
     const [currentPage, setCurrentPage] = useState(1); 
-    const customersPerPage = 10; 
+    const customersPerPage = 5; 
 
     const fetchStats = async () => {
         try {
