@@ -57,7 +57,7 @@ const UserManagement = () => {
 
     // --- DELETE LOGIC ---
 const deleteUser = async (id, type) => {
-        if (localStorage.getItem('adminRole') !== 'SuperAdminfake') {
+        if (localStorage.getItem('adminRole') !== 'SuperAdmin') {
             alert("🚨 Unauthorized Access! Only SuperAdmin is allowed to delete records.");
             return;
         }
