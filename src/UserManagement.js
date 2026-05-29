@@ -107,6 +107,7 @@ const UserManagement = () => {
         doc.setTextColor(46, 204, 113); 
         doc.text("User Management Full Report", 40, 40);
         
+        // 1. ඇඩ්මින්ලාගේ ටේබල් එක (පරණ විදිහටම)
         const adminRows = data.admins.map((admin, i) => [i + 1, admin.fullName, admin.email]);
         autoTable(doc, {
             startY: 90,
@@ -117,23 +118,40 @@ const UserManagement = () => {
         });
 
         let finalY = doc.lastAutoTable.finalY;
+
+        // 2. කස්ටමර්ලාගේ ටේබල් එක (ඔයාගේ පරණ පිරිසිදු MAP එකමයි, හැබැයි අලුත් PRO Fields ටික අන්තිමට ලස්සනට එකතු කරලා තියෙන්නේ)
         const customerRows = data.customers.map((c, i) => [
-            i + 1,c.regNumber || '-', c.companyName, c.orgRole, c.companyWebsite || '-', c.officialEmail, 
-            c.phone, c.whatsapp || '-', c.dob || '-', c.contactPersonName, 
-            c.contactPersonMobile, `${c.address1}, ${c.address2}`, c.country
+            i + 1,
+            c.regNumber || '-', 
+            c.companyName, 
+            c.orgRole, 
+            c.companyWebsite || '-', 
+            c.officialEmail, 
+            c.phone, 
+            c.whatsapp || '-', 
+            c.dob || '-', 
+            c.contactPersonName, 
+            c.contactPersonMobile, 
+            `${c.address1 || ''}, ${c.address2 || ''}`, 
+            c.country || 'Sri Lanka',
+            // 🆕 මෙන්න අලුත් Fields ටික PDF එකේ එකම තීරුවකට (Column) පිළිවෙළකට බස්සනවා:
+            c.orgRole === 'PRO' ? `Types: ${c.organizationTypes?.join(", ") || '-'}\nCaps: ${c.serviceCapabilities?.join(", ") || '-'}\nWaste: ${c.managedWasteCategories?.join(", ") || '-'}\nPIBOs: ${c.managedPibosCount || 0} | Coll: ${c.networkCollectorsCount || 0}` : '-'
         ]);
 
         autoTable(doc, {
             startY: finalY + 50,
-            head: [['#', 'Reg Number','Company', 'Role', 'Website', 'Email', 'Phone', 'WhatsApp', 'DOB', 'Contact Person', 'CP Mobile', 'Address', 'Country']],
+            // 🆕 හෙඩර් එකේ අන්তিමට 'PRO Specific Extra Data' කියලා අලුත් තීරුවක් (Column) එකතු කරා
+            head: [['#', 'Reg Number','Company', 'Role', 'Website', 'Email', 'Phone', 'WhatsApp', 'DOB', 'Contact Person', 'CP Mobile', 'Address', 'Country', 'PRO Specific Extra Data']],
             body: customerRows,
             theme: 'striped',
             headStyles: { fillColor: [52, 152, 219] },
-            styles: { fontSize: 7, cellPadding: 2, overflow: 'linebreak' },
+            styles: { fontSize: 6, cellPadding: 2, overflow: 'linebreak' }, // ටේබල් එක පළල් වෙන නිසා Font Size එක 6 කලා බෝසා කියවන්න ලේසි වෙන්න
             columnStyles: { 
                 0: { cellWidth: 20 }, 
-                1: { cellWidth: 80 }, 
-                11: { cellWidth: 100 }  
+                1: { cellWidth: 50 }, 
+                2: { cellWidth: 80 },
+                11: { cellWidth: 80 },
+                13: { cellWidth: 150, fontStyle: 'italic' } // අලුත් PRO Column එකට වැඩි ඉඩක් දුන්නා
             }
         });
 
