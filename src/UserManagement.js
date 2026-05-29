@@ -53,12 +53,12 @@ const UserManagement = () => {
     };
 
     useEffect(() => {
-    Promise.all([fetchUsers(), fetchStats()])
-        .catch(err => console.error("Error loading initial data:", err));
-}, []);
+        Promise.all([fetchUsers(), fetchStats()])
+            .catch(err => console.error("Error loading initial data:", err));
+    }, []);
 
     // --- DELETE LOGIC ---
-const deleteUser = async (id, type) => {
+    const deleteUser = async (id, type) => {
         if (localStorage.getItem('adminRole') !== 'SuperAdmin') {
             alert(`🚨 Unauthorized Access! Only SuperAdmin is allowed to delete an ${type}.`);
             return;
@@ -226,7 +226,7 @@ const deleteUser = async (id, type) => {
                                 transform: filterStatus === 'All' ? 'scale(1.05)' : 'scale(1)',
                                 transition: '0.3s'
                             }} 
-                            onClick={() => setFilterStatus('All')}
+                            onClick={() => { setFilterStatus('All'); setCurrentPage(1); }}
                         >
                             <span style={styles.statLabel}>TOTAL CUSTOMERS</span>
                             <h2 style={styles.statValue}>{stats.total}</h2>
@@ -241,7 +241,7 @@ const deleteUser = async (id, type) => {
                                 transform: filterStatus === 'Pending' ? 'scale(1.05)' : 'scale(1)',
                                 transition: '0.3s'
                             }} 
-                            onClick={() => setFilterStatus('Pending')}
+                            onClick={() => { setFilterStatus('Pending'); setCurrentPage(1); }}
                         >
                             <span style={styles.statLabel}>PENDING APPROVALS</span>
                             <h2 style={{...styles.statValue, color: '#f1c40f'}}>{stats.pending}</h2>
@@ -256,19 +256,18 @@ const deleteUser = async (id, type) => {
                                 transform: filterStatus === 'Approved' ? 'scale(1.05)' : 'scale(1)',
                                 transition: '0.3s'
                             }} 
-                            onClick={() => setFilterStatus('Approved')}
+                            onClick={() => { setFilterStatus('Approved'); setCurrentPage(1); }}
                         >
                             <span style={styles.statLabel}>APPROVED CUSTOMERS</span>
                             <h2 style={{...styles.statValue, color: '#2ecc71'}}>{stats.approved}</h2>
                         </div>
                     </div>
 
-                    {/* 🆕 පාරිභෝගික භූමිකාව (Role) අනුව පෙරීමට එක් කළ Dropdown එක */}
                     <div style={{ marginBottom: '20px', display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: '15px' }}>
                     <label style={{ color: '#2ecc71', fontSize: '14px', fontWeight: 'bold' }}>FILTER BY ROLE:</label>
                        <select 
                                 value={filterRole} 
-                                onChange={(e) => setFilterRole(e.target.value)}
+                                onChange={(e) => { setFilterRole(e.target.value); setCurrentPage(1); }}
                                 style={{
                                      background: 'rgba(255, 255, 255, 0.05)',
                                      color: '#fff',
@@ -287,6 +286,7 @@ const deleteUser = async (id, type) => {
                           <option value="Collector" style={{ background: '#111', color: '#fff' }}>Collector</option>
                           <option value="Transporter" style={{ background: '#111', color: '#fff' }}>Transporter</option>
                           <option value="Recycler" style={{ background: '#111', color: '#fff' }}>Recycler</option>
+                          <option value="PRO" style={{ background: '#111', color: '#fff' }}>PRO</option>
                        </select>
                     </div>
 
@@ -313,22 +313,17 @@ const deleteUser = async (id, type) => {
                             </thead>
                           <tbody>
     {(() => {
-        // 1️⃣ මුලින්ම පද්ධතියේ තියෙන Filters (Status සහ Role) ටික රන් කරලා දත්ත වෙන් කරගන්නවා
         const filteredCustomers = data.customers
             .filter(c => filterStatus === 'All' ? true : (c.status === filterStatus))
             .filter(c => filterRole === 'All' ? true : (c.orgRole === filterRole));
 
-        // 2️⃣ 🧮 ගණිතමය ලොජික් එක: පිටුව අනුව දත්ත කපන සීමාවන් (Indexes) සොයා ගැනීම
         const indexOfLastCustomer = currentPage * customersPerPage;
         const indexOfFirstCustomer = indexOfLastCustomer - customersPerPage;
         
-        // 3️⃣ මුළු දත්ත ලිස්ට් එකෙන් අදාළ පිටුවට අයිති 10 දෙනා විතරක් කපලා වෙන් කරගන්නවා (Slice)
         const currentCustomers = filteredCustomers.slice(indexOfFirstCustomer, indexOfLastCustomer);
 
-        // 4️⃣ ඒ කපාගත්තු 10 දෙනාව විතරක් ටේබල් එකේ Map කරලා පෙන්වනවා
         return currentCustomers.map((c, i) => (
             <tr key={i} className="table-row" style={styles.row}>
-                {/* 🔢 අනුක්‍රමික අංකය 1,2,3 වගේම 2වෙනි පිටුවේදී 11, 12, 13 කියලා දිගටම නිවැරදිව හැදෙන්න: */}
                 <td style={styles.tdFirst}>{indexOfFirstCustomer + i + 1}</td>
                 <td style={{...styles.td, fontWeight: 'bold', color: '#2ecc71'}}> {c.regNumber || 'N/A'}</td>
                 <td style={styles.td}>{c.companyName}</td>
@@ -419,22 +414,17 @@ const deleteUser = async (id, type) => {
                         </table>
                     </div>
 
-{/* 🎛️ 🟢 පියවර 3: ලස්සන සහ Professional Pagination බටන්ස් පේළිය */}
                     {(() => {
-                        // මුලින්ම දැනට ෆිල්ටර් වෙලා ඉන්න මුළු කස්ටමර්ලා ගණන ගන්නවා
                         const filteredCustomersCount = data.customers
                             .filter(c => filterStatus === 'All' ? true : (c.status === filterStatus))
                             .filter(c => filterRole === 'All' ? true : (c.orgRole === filterRole)).length;
 
-                        // මුළු පිටු ගණන ගණනය කරනවා (උදා: කස්ටමර්ලා 25ක් හිටියොත් පිටු 3ක් හැදෙනවා)
                         const totalPages = Math.ceil(filteredCustomersCount / customersPerPage);
 
-                        // පිටු 1කට වඩා තිබුණොත් විතරක් Pagination බටන්ස් පෙන්වනවා
                         if (totalPages <= 1) return null;
 
                         return (
                             <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '10px', marginTop: '30px', animation: 'fadeIn 1s ease-in' }}>
-                                {/* ⬅️ Previous බටන් එක */}
                                 <button 
                                     onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
                                     disabled={currentPage === 1}
@@ -452,7 +442,6 @@ const deleteUser = async (id, type) => {
                                     Previous
                                 </button>
 
-                                {/* 🔢 මැද තියෙන පිටු අංක (1, 2, 3...) */}
                                 {Array.from({ length: totalPages }, (_, index) => (
                                     <button
                                         key={index + 1}
@@ -474,7 +463,6 @@ const deleteUser = async (id, type) => {
                                     </button>
                                 ))}
 
-                                {/* ➡️ Next බටන් එක */}
                                 <button 
                                     onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
                                     disabled={currentPage === totalPages}
