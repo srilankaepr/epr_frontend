@@ -9,7 +9,7 @@ const RoleSelection = () => {
 const roles = [
     { name: 'ADMIN', icon: '🛡️', desc: 'System Governance & Oversight', color: '#2ecc71', bg: 'rgba(46, 204, 113, 0.15)', path: '/register-admin', roleType: 'admin' },
     { name: 'PIBO', icon: '👤', desc: 'Operational Access & Services', color: '#3498db', bg: 'rgba(52, 152, 219, 0.15)', path: '/register-customer', roleType: 'pibo_parent' }, 
-    { name: 'BECOME  PRO', icon: '🚚', desc: 'Producer Responsibility Organization', color: '#f39c12', bg: 'rgba(243, 156, 18, 0.15)', path: '/register-customer', roleType: 'RECYCLER' } 
+    { name: 'WASTE MANAGEMENT', icon: '🚚', desc: 'Producer Responsibility Organization', color: '#f39c12', bg: 'rgba(243, 156, 18, 0.15)', path: '/register-customer', roleType: 'RECYCLER' } 
 ];
 
 
