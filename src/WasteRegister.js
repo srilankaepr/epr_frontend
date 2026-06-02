@@ -8,7 +8,7 @@ const WasteRegister = () => {
     const navigate = useNavigate();
     const [step, setStep] = useState(1);
 
-    // --- 100%ක්ම Required & Multi-select වලට සකස් කළ State එක ---
+    // --- 100%ක්ම Required & Single-Select / Multi-select වලට සකස් කළ State එක ---
     const [formData, setFormData] = useState({
         regType: 'Company', // Company or Individual
         orgRole: 'RECYCLER', // Base identifier mapped to customer collection
@@ -18,13 +18,13 @@ const WasteRegister = () => {
         phone: '',
         whatsapp: '',
 
-        // Selected Entities (Step 2 Checkboxes)
+        // Selected Entity Type (Single-Select Radio Logic)
         isCollector: false,
         isRecycler: false,
         isTransporter: false,
         isTotalSolutionProvider: false,
 
-        // Organization Details (Step 3)
+        // Organization Details
         companyName: '',
         companyWebsite: '',
         regNumber: '',
@@ -35,12 +35,21 @@ const WasteRegister = () => {
         orgProvince: '',
         country: 'Sri Lanka',
 
-        // Contact Person (Step 4)
+        // Contact Person Details
         contactPersonName: '',
         contactDesignation: '',
         contactPersonMobile: '',
 
-        // Operational Role Details (Step 5 - Conditional Arrays)
+        // Co-Partner Fields (පරණ RegisterCustomer.js එකෙන් කෙලින්ම ගත්තා - Collector හට පමණි)
+        isCoPartner: false,
+        coPartnerFullName: '',
+        coPartnerAnotherEmail: '',
+        coPartnerPhone: '',
+        coPartnerNic: '',
+        coPartnerDistrict: '',
+        coPartnerPradeshiyaSabha: '',
+
+        // Operational Role Details (Conditional Render Specifications)
         collectionSystemTypes: [], 
         collectionAreaCoverage: '', 
         facilityRecyclingType: [], 
@@ -88,10 +97,37 @@ const WasteRegister = () => {
         envLicense: "", wasteLicense: "", boiApproval: ""
     });
 
-    // Static Dropdown Data Lists
+    // --- ලංකාවේ සියලුම දිස්ත්‍රික්ක සහ ඒවාට අදාළ ප්‍රාදේශීය සභා සිතියම (Dynamic Mapping) ---
     const districts = ["Colombo", "Gampaha", "Kalutara", "Kandy", "Matale", "Nuwara Eliya", "Galle", "Matara", "Hambantota", "Jaffna", "Kilinochchi", "Mannar", "Vavuniya", "Mullaitivu", "Batticaloa", "Ampara", "Trincomalee", "Kurunegala", "Puttalam", "Anuradhapura", "Polonnaruwa", "Badulla", "Moneragala", "Ratnapura", "Kegalle"];
     const provinces = ["Western", "Central", "Southern", "Northern", "Eastern", "North Western", "North Central", "Uva", "Sabaragamuwa"];
-    const pradeshiyaSabhas = ["All Pradeshiya Sabhas", "Colombo MC", "Dehiwala-Mount Lavinia MC", "Sri Jayawardenepura Kotte MC", "Moratuwa MC", "Kaduwela MC", "Maharagama UC", "Boralesgamuwa UC", "Kolonnawa UC", "Kotikawatta-Mulleriyawa PS", "Seethawakapura UC", "Homagama PS", "Gampaha MC", "Negombo MC", "Kandy MC", "Galle MC", "Jaffna MC", "Kurunegala MC", "Anuradhapura MC"];
+    
+    const districtToSabhas = {
+        Colombo: ["Colombo MC", "Dehiwala-Mount Lavinia MC", "Sri Jayawardenepura Kotte MC", "Moratuwa MC", "Kaduwela MC", "Maharagama UC", "Boralesgamuwa UC", "Kolonnawa UC", "Seethawakapura UC", "Homagama PS", "Kotikawatta-Mulleriyawa PS", "Hanwella PS"],
+        Gampaha: ["Gampaha MC", "Negombo MC", "Wattala-Mabole UC", "Peliyagoda UC", "Minuwangoda UC", "Ja-Ela UC", "Katunayake-Seeduwa UC", "Kelaniya PS", "Mahara PS", "Biyagama PS", "Dompe PS", "Mirigama PS"],
+        Kalutara: ["Kalutara UC", "Panadura UC", "Horana UC", "Beruwala UC", "Matugama PS", "Agalawatta PS", "Bandaragama PS", "Ingiriya PS"],
+        Kandy: ["Kandy MC", "Gampola UC", "Nawalapitiya UC", "Kadugannawa UC", "Harispattuwa PS", "Kundasale PS", "Ududumbara PS", "Yatinuwara PS"],
+        Matale: ["Matale MC", "Dambulla UC", "Galewela PS", "Naula PS", "Rattota PS", "Wilgamuwa PS"],
+        "Nuwara Eliya": ["Nuwara Eliya MC", "Hatton-Dickoya UC", "Talawakele-Lindula UC", "Ambagamuwa PS", "Walapane PS", "Hanguranketha PS"],
+        Galle: ["Galle MC", "Ambalangoda UC", "Hikkaduwa UC", "Karandeniya PS", "Baddegama PS", "Ahangama PS", "Elpitiya PS", "Bentota PS"],
+        Matara: ["Matara MC", "Weligama UC", "Devinuwara PS", "Dikwella PS", "Hakmana PS", "Kamburupitiya PS", "Akuressa PS"],
+        Hambantota: ["Hambantota MC", "Tangalle UC", "Ambalantota PS", "Tissamaharama PS", "Beliatta PS", "Angunakolapelessa PS"],
+        Jaffna: ["Jaffna MC", "Chavakachcheri UC", "Point Pedro UC", "Valvettithurai UC", "Nallur PS", "Karainagar PS", "Velanai PS", "Kopay PS"],
+        Kilinochchi: ["Karachchi PS", "Poonakary PS", "Pachchilaipalli PS"],
+        Mannar: ["Mannar UC", "Mannar PS", "Mantai West PS", "Nanaddan PS"],
+        Vavuniya: ["Vavuniya UC", "Vavuniya South PS", "Vavuniya North PS", "Vengalacheddikulam PS"],
+        Mullaitivu: ["Maritimepattu PS", "Puthukudiyiruppu PS", "Oddusuddan PS", "Tunukkai PS"],
+        Batticaloa: ["Batticaloa MC", "Eravur UC", "Kattankudy UC", "Koralai Pattu PS", "Manmunai PS"],
+        Ampara: ["Ampara UC", "Kalmunai MC", "Sainthamaruthu PS", "Akkaraipattu PS", "Sammanthurai PS", "Uhana PS"],
+        Trincomalee: ["Trincomalee UC", "Kinniya UC", "Muttur UC", "Kuchchaveli PS", "Kantale PS", "Seruwila PS"],
+        Kurunegala: ["Kurunegala MC", "Kuliyapitiya UC", "Narammala PS", "Wariyapola PS", "Bingiriya PS", "Ibbagamuwa PS", "Mawathagama PS"],
+        Puttalam: ["Puttalam UC", "Chilaw UC", "Kalpitiya PS", "Anamaduwa PS", "Wennappuwa PS", "Marawila PS", "Nattandiya PS"],
+        Anuradhapura: ["Anuradhapura MC", "Medawachchiya PS", "Kebithigollewa PS", "Padaviya PS", "Eppawala PS", "Galenbindunuwewa PS", "Thambuttegama PS"],
+        Polonnaruwa: ["Polonnaruwa UC", "Hingurakgoda PS", "Medirigiriya PS", "Welikanda PS", "Dimbulagala PS"],
+        Badulla: ["Badulla MC", "Bandarawela MC", "Hali-Ela PS", "Ella PS", "Mahiyanganaya PS", "Welimada PS", "Passara PS", "Diyatalawa PS"],
+        Moneragala: ["Moneragala PS", "Wellawaya PS", "Buttala PS", "Kataragama PS", "Bibile PS", "Siyambalanduwa PS"],
+        Ratnapura: ["Ratnapura MC", "Balangoda UC", "Pelmadulla PS", "Kuruwita PS", "Eheliyagoda PS", "Embilipitiya PS", "Godakawela PS"],
+        Kegalle: ["Kegalle UC", "Mawanella PS", "Warakapola PS", "Ruwanwella PS", "Dehiowita PS", "Galigamuwa PS", "Yatiyantota PS"]
+    };
 
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
@@ -101,7 +137,17 @@ const WasteRegister = () => {
         }));
     };
 
-    // Multi-select Checkbox Groups Handling Function
+    // --- Entity Type එක Single-Select (Radio) විදිහට හැසිරවීම ---
+    const handleEntityRoleChange = (selectedRoleField) => {
+        setFormData(prev => ({
+            ...prev,
+            isCollector: selectedRoleField === 'isCollector',
+            isRecycler: selectedRoleField === 'isRecycler',
+            isTransporter: selectedRoleField === 'isTransporter',
+            isTotalSolutionProvider: selectedRoleField === 'isTotalSolutionProvider'
+        }));
+    };
+
     const handleCheckboxGroup = (e, fieldName, value) => {
         const isChecked = e.target.checked;
         setFormData(prev => {
@@ -142,12 +188,16 @@ const WasteRegister = () => {
             return;
         }
 
+        if (formData.isCoPartner && formData.coPartnerPhone && !validatePhone(formData.coPartnerPhone)) {
+            alert("❌ Please enter a valid 10-digit Co-Partner Phone Number.");
+            return;
+        }
+
         if (!formData.wasteDeclarationConfirmed || !formData.wasteDeclarationPlatformAgreed || !formData.wasteDeclarationReportingAgreed || !formData.wasteDeclarationVerificationAgreed) {
             alert("❌ You must agree to all declaration and legal terms before submitting!");
             return;
         }
 
-        // Combining multi-select streams into single array for customer schema mapping
         const totalWasteCategories = [
             ...formData.generalWasteStreams,
             ...formData.eeWasteStreams,
@@ -207,7 +257,7 @@ const WasteRegister = () => {
                             step === 2 ? "ENTITY TYPE SELECTION" :
                             step === 3 ? "ORGANIZATION DETAILS" :
                             step === 4 ? "CONTACT PERSON DETAILS" :
-                            step === 5 ? "OPERATIONAL ROLE SPECS" :
+                            step === 5 ? "OPERATIONAL ROLE SPECS & CO-PARTNERS" :
                             step === 6 ? "WASTE CATEGORIES HANDLED" :
                             step === 7 ? "OPERATIONAL CAPACITY" :
                             step === 8 ? "EQUIPMENT & INFRASTRUCTURE" :
@@ -216,7 +266,7 @@ const WasteRegister = () => {
                         }
                     </div>
 
-                    {/* Step 1: Account Creation */}
+                    {/* Step 1: Account Creation (Mobile OTP block අයින් කර සකස් කරන ලදී) */}
                     {step === 1 && (
                         <div>
                             <h3 style={styles.sectionHeader}>Step 1: Account Creation</h3>
@@ -235,16 +285,16 @@ const WasteRegister = () => {
                                 </div>
                             </div>
                             <div style={styles.inputWrapper}>
-                                <label style={styles.label}>MOBILE NUMBER (FOR OTP VERIFICATION) *</label>
+                                <label style={styles.label}>MOBILE NUMBER *</label>
                                 <input name="phone" value={formData.phone} maxLength="10" placeholder="07XXXXXXXX" type="text" style={styles.input} onChange={handleChange} required />
                             </div>
                         </div>
                     )}
 
-                    {/* Step 2: Entity Type Selection */}
+                    {/* Step 2: Entity Type Selection (Single-Select Radio Card Style) */}
                     {step === 2 && (
                         <div>
-                            <h3 style={styles.sectionHeader}>Step 2: Entity Type Selection (Select One or Multiple)</h3>
+                            <h3 style={styles.sectionHeader}>Step 2: Entity Type Selection (Select Only One)</h3>
                             <div style={{ display: 'flex', gap: '15px', marginBottom: '25px' }}>
                                 {['Company', 'Individual'].map((t) => (
                                     <button key={t} type="button" onClick={() => setFormData({ ...formData, regType: t })} style={{ flex: 1, padding: '14px', borderRadius: '12px', fontWeight: 'bold', cursor: 'pointer', background: formData.regType === t ? 'rgba(243,156,18,0.15)' : 'rgba(255,255,255,0.03)', border: formData.regType === t ? '2px solid #f39c12' : '1px solid rgba(255,255,255,0.1)', color: formData.regType === t ? '#f39c12' : '#aaa', transition: '0.3s' }}>
@@ -254,13 +304,13 @@ const WasteRegister = () => {
                             </div>
                             <div style={{ display: 'flex', flexDirection: 'column', gap: '15px', marginTop: '10px' }}>
                                 {[
-                                    { id: 'isCollector', label: '🚛 Collector' },
-                                    { id: 'isRecycler', label: '♻️ Recycler' },
-                                    { id: 'isTransporter', label: '🚚 Transporter' },
-                                    { id: 'isTotalSolutionProvider', label: '🌐 Total Solution Provider' }
+                                    { field: 'isCollector', label: '🚛 Collector', id: 'role_collector' },
+                                    { field: 'isRecycler', label: '♻️ Recycler', id: 'role_recycler' },
+                                    { field: 'isTransporter', label: '🚚 Transporter', id: 'role_transporter' },
+                                    { field: 'isTotalSolutionProvider', label: '🌐 Total Solution Provider', id: 'role_total' }
                                 ].map((item) => (
-                                    <label key={item.id} style={{ display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer', color: '#ccc', fontSize: '16px', background: 'rgba(255,255,255,0.02)', padding: '15px', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)' }}>
-                                        <input type="checkbox" name={item.id} checked={formData[item.id]} onChange={handleChange} style={{ width: '20px', height: '20px', cursor: 'pointer' }} />
+                                    <label key={item.id} style={{ display: 'flex', alignItems: 'center', gap: '15px', cursor: 'pointer', color: formData[item.field] ? '#f39c12' : '#ccc', fontSize: '16px', background: formData[item.field] ? 'rgba(243,156,18,0.04)' : 'rgba(255,255,255,0.02)', padding: '15px', borderRadius: '12px', border: formData[item.field] ? '1px solid #f39c12' : '1px solid rgba(255,255,255,0.05)', transition: '0.2s' }}>
+                                        <input type="radio" name="entity_type_selection" checked={formData[item.field]} onChange={() => handleEntityRoleChange(item.field)} style={{ width: '20px', height: '20px', cursor: 'pointer', accentColor: '#f39c12' }} />
                                         {item.label}
                                     </label>
                                 ))}
@@ -314,6 +364,31 @@ const WasteRegister = () => {
                                 <label style={styles.label}>OPERATIONAL ADDRESS (IF DIFFERENT)</label>
                                 <input name="operationalAddress" value={formData.operationalAddress} type="text" placeholder="Warehouse / Processing Center Location" style={styles.input} onChange={handleChange} />
                             </div>
+
+                            {/* BR / Document Uploads Fields integrated into Org Details based on Type */}
+                            <div style={{ marginTop: '20px', padding: '15px', background: 'rgba(255,255,255,0.02)', borderRadius: '12px', border: '1px dashed rgba(255,255,255,0.1)' }}>
+                                {formData.regType === 'Company' ? (
+                                    <>
+                                        <div style={{ marginBottom: '12px' }}>
+                                            <label style={styles.label}>BUSINESS REGISTRATION CERTIFICATE (BRC) *</label>
+                                            <input type="file" style={styles.input} onChange={(e) => handleFileBase64(e, 'brc')} accept=".pdf,.jpg,.jpeg,.png" required={!fileStrings.brc} />
+                                        </div>
+                                        <div style={{ marginBottom: '12px' }}>
+                                            <label style={styles.label}>VAT REGISTRATION CERTIFICATE (OPTIONAL)</label>
+                                            <input type="file" style={styles.input} onChange={(e) => handleFileBase64(e, 'vat')} accept=".pdf,.jpg,.jpeg,.png" />
+                                        </div>
+                                        <div>
+                                            <label style={styles.label}>UTILITY BILLING PROOF (ADDRESS VERIFICATION) *</label>
+                                            <input type="file" style={styles.input} onChange={(e) => handleFileBase64(e, 'billing')} accept=".pdf,.jpg,.jpeg,.png" required={!fileStrings.billing} />
+                                        </div>
+                                    </>
+                                ) : (
+                                    <div>
+                                        <label style={styles.label}>NIC / PASSPORT SCAN (BOTH SIDES) *</label>
+                                        <input type="file" style={styles.input} onChange={(e) => handleFileBase64(e, 'nic')} accept=".pdf,.jpg,.jpeg,.png" required={!fileStrings.nic} />
+                                    </div>
+                                )}
+                            </div>
                         </div>
                     )}
 
@@ -344,15 +419,15 @@ const WasteRegister = () => {
                         </div>
                     )}
 
-                    {/* Step 5: Operational Role Details (Conditional Render Magic) */}
+                    {/* Step 5: Operational Role Details & Co-Partner Core Logic */}
                     {step === 5 && (
                         <div>
-                            <h3 style={styles.sectionHeader}>Step 5: Operational Role Details (Configuration Specifications)</h3>
+                            <h3 style={styles.sectionHeader}>Step 5: Operational Role Specs & Co-Partner Routing</h3>
                             
                             {/* Collector Sub-form */}
                             {(formData.isCollector || formData.isTotalSolutionProvider) && (
                                 <div style={styles.conditionalBox}>
-                                    <h4 style={{ color: '#f39c12', margin: '0 0 12px 0', fontSize: '15px' }}>📦 Collector Infrastructure Configurations</h4>
+                                    <h4 style={{ color: '#f39c12', margin: '0 0 12px 0', fontSize: '15px' }}>危害 📦 Collector Infrastructure Configurations</h4>
                                     <label style={styles.label}>TYPE OF COLLECTION SYSTEM *</label>
                                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '15px' }}>
                                         {["Door-to-door", "Industrial collection", "Scrap yard / aggregation center", "Municipal contractor", "Informal network"].map(t => (
@@ -369,6 +444,55 @@ const WasteRegister = () => {
                                         <option value="District">District</option>
                                         <option value="National">National</option>
                                     </select>
+
+                                    {/* ========================================================================= */}
+                                    {/* 🛡️ 🟢 CO-PARTNER BLUE BOX SECTION (පරණ RegisterCustomer.js එකෙන් එලෙසම රැකගන්නා ලදී) */}
+                                    {/* ========================================================================= */}
+                                    <div style={{ marginTop: '20px', padding: '20px', background: 'rgba(52, 152, 219, 0.08)', borderRadius: '15px', border: '1px solid rgba(52, 152, 219, 0.3)' }}>
+                                        <label style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer', color: '#3498db', fontWeight: 'bold', fontSize: '14px' }}>
+                                            <input type="checkbox" name="isCoPartner" checked={formData.isCoPartner} onChange={handleChange} style={{ width: '18px', height: '18px', accentColor: '#3498db' }} />
+                                            🤝 Register as a Co-Partner Network Node?
+                                        </label>
+
+                                        {formData.isCoPartner && (
+                                            <div style={{ marginTop: '15px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                                                <div>
+                                                    <label style={styles.label}>CO-PARTNER FULL NAME *</label>
+                                                    <input name="coPartnerFullName" value={formData.coPartnerFullName} type="text" placeholder="Representative Full Name" style={styles.input} onChange={handleChange} required />
+                                                </div>
+                                                <div style={styles.row}>
+                                                    <div style={styles.rowItem}>
+                                                        <label style={styles.label}>CO-PARTNER PHONE *</label>
+                                                        <input name="coPartnerPhone" value={formData.coPartnerPhone} maxLength="10" placeholder="07XXXXXXXX" type="text" style={styles.input} onChange={handleChange} required />
+                                                    </div>
+                                                    <div style={styles.rowItem}>
+                                                        <label style={styles.label}>CO-PARTNER NIC *</label>
+                                                        <input name="coPartnerNic" value={formData.coPartnerNic} type="text" placeholder="NIC Number" style={styles.input} onChange={handleChange} required />
+                                                    </div>
+                                                </div>
+                                                <div>
+                                                    <label style={styles.label}>CO-PARTNER ALTERNATIVE EMAIL *</label>
+                                                    <input name="coPartnerAnotherEmail" value={formData.coPartnerAnotherEmail} type="email" placeholder="alt-email@domain.com" style={styles.input} onChange={handleChange} required />
+                                                </div>
+                                                <div style={styles.row}>
+                                                    <div style={styles.rowItem}>
+                                                        <label style={styles.label}>CO-PARTNER DISTRICT *</label>
+                                                        <select name="coPartnerDistrict" value={formData.coPartnerDistrict} style={styles.selectInput} onChange={handleChange} required>
+                                                            <option value="">-- Select District --</option>
+                                                            {districts.map(d => <option key={d} value={d}>{d}</option>)}
+                                                        </select>
+                                                    </div>
+                                                    <div style={styles.rowItem}>
+                                                        <label style={styles.label}>CO-PARTNER PRADESHIYA SABHA (SEARCH/TYPE) *</label>
+                                                        <input list="copartner_sabhas" name="coPartnerPradeshiyaSabha" value={formData.coPartnerPradeshiyaSabha} placeholder="Type or Select Sabha" style={styles.input} onChange={handleChange} required />
+                                                        <datalist id="copartner_sabhas">
+                                                            {(districtToSabhas[formData.coPartnerDistrict] || []).map(s => <option key={s} value={s} />)}
+                                                        </datalist>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
                                 </div>
                             )}
 
@@ -398,7 +522,7 @@ const WasteRegister = () => {
                                 </div>
                             )}
 
-                            {/* Transporter Sub-form */}
+                            {/* Transporter Sub-form (District Select කළාම ප්‍රාදේශීය සභා Filter වන, ලිස්ට් එකේ නැත්නම් ලියන්න පුළුවන් Writable Datalist ක්‍රමය) */}
                             {(formData.isTransporter || formData.isTotalSolutionProvider) && (
                                 <div style={{ ...styles.conditionalBox, marginTop: '20px' }}>
                                     <h4 style={{ color: '#f39c12', margin: '0 0 12px 0', fontSize: '15px' }}>🚚 Transporter Logistics Fleet Configurations</h4>
@@ -414,22 +538,21 @@ const WasteRegister = () => {
                                     <label style={styles.label}>TRANSPORT SCOPE COVERAGE *</label>
                                     <select name="transportCoverageScope" value={formData.transportCoverageScope} style={styles.selectInput} onChange={handleChange} required>
                                         <option value="">-- Select Coverage --</option>
-                                        <option value="District">District</option>
-                                        <option value="Pradeshiya Sabha">Pradeshiya Sabha Level (Multi-select below)</option>
+                                        <option value="District">District Level</option>
+                                        <option value="Pradeshiya Sabha">Pradeshiya Sabha Level (Filter Dropdown Below)</option>
                                         <option value="National">National Level</option>
                                     </select>
 
                                     {formData.transportCoverageScope === 'Pradeshiya Sabha' && (
                                         <div style={{ marginTop: '15px' }}>
-                                            <label style={styles.label}>SELECT AUTHORIZED PRADESHIYA SABHAS (MULTI-SELECT) *</label>
-                                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', maxHeight: '150px', overflowY: 'auto', background: 'rgba(0,0,0,0.3)', padding: '10px', borderRadius: '10px' }}>
-                                                {pradeshiyaSabhas.map(ps => (
-                                                    <label key={ps} style={{ fontSize: '12px', color: '#ccc', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                                                        <input type="checkbox" checked={formData.transportPradeshiyaSabhas.includes(ps)} onChange={(e) => handleCheckboxGroup(e, 'transportPradeshiyaSabhas', ps)} />
-                                                        {ps}
-                                                    </label>
+                                            <label style={styles.label}>TYPE OR SELECT AUTHORIZED PRADESHIYA SABHA *</label>
+                                            <input list="transporter_sabhas" name="transportPradeshiyaSabhas" value={formData.transportPradeshiyaSabhas} placeholder="Type Pradeshiya Sabha name (Searchable & Writable)" style={styles.input} onChange={handleChange} required />
+                                            <datalist id="transporter_sabhas">
+                                                {/* Step 3 හි තෝරාගන්නා ලද District එක පදනම් කරගෙන auto filter වේ, නැතහොත් මුළු ලංකාවේම සභා ලෝඩ් වේ */}
+                                                {(districtToSabhas[formData.orgDistrict] || Object.values(districtToSabhas).flat()).map((ps, idx) => (
+                                                    <option key={idx} value={ps} />
                                                 ))}
-                                            </div>
+                                            </datalist>
                                         </div>
                                     )}
                                 </div>
@@ -634,7 +757,7 @@ const WasteRegister = () => {
                         </div>
                     )}
 
-                    {/* Navigation Buttons Control Center */}
+                    {/* Navigation Buttons Control Center (Screenshot 3, 5, 6 UI Alignment) */}
                     <div style={{ display: 'flex', gap: '15px', marginTop: '35px' }}>
                         {step > 1 && (
                             <button type="button" onClick={() => setStep(prev => prev - 1)} style={{ ...styles.registerBtn, background: '#444', marginTop: 0 }}>
