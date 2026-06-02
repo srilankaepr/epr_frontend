@@ -427,7 +427,7 @@ const WasteRegister = () => {
                             {/* Collector Sub-form */}
                             {(formData.isCollector || formData.isTotalSolutionProvider) && (
                                 <div style={styles.conditionalBox}>
-                                    <h4 style={{ color: '#f39c12', margin: '0 0 12px 0', fontSize: '15px' }}>危害 📦 Collector Infrastructure Configurations</h4>
+                                    <h4 style={{ color: '#f39c12', margin: '0 0 12px 0', fontSize: '15px' }}> 📦 Collector Infrastructure Configurations</h4>
                                     <label style={styles.label}>TYPE OF COLLECTION SYSTEM *</label>
                                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '15px' }}>
                                         {["Door-to-door", "Industrial collection", "Scrap yard / aggregation center", "Municipal contractor", "Informal network"].map(t => (
