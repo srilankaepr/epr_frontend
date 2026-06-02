@@ -2,7 +2,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Login from './Login';
 import RoleSelection from './RoleSelection';
 import RegisterAdmin from './RegisterAdmin'; 
-//import RegisterCustomer from './RegisterCustomer';    
+import RegisterCustomer from './RegisterCustomer';    
 import Dashboard from './Dashboard';
 import UserManagement from './UserManagement';
 import UserDashboard from './UserDashboard';
