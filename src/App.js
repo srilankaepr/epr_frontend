@@ -25,6 +25,9 @@ import FeedbackPage from './FeedbackPage';
 import ProductRegistration from './ProductRegistration';
 import AdminProductView from './AdminProductView'; 
 import DirectVerify from './DirectVerify';
+import ProRegister from './ProRegister';
+import WasteRegister from './WasteRegister';
+import PiboRegister from './PiboRegister';
 
 function App() {
   return (
@@ -50,6 +53,11 @@ function App() {
         <Route path="/co-partner" element={<ProtectedRoute allowedRole="ADMIN"><CoPartner /></ProtectedRoute>} />
         <Route path="/admin-feedback" element={<ProtectedRoute allowedRole="ADMIN"><FeedbackPage /></ProtectedRoute>} />
         <Route path="/admin-products" element={<ProtectedRoute allowedRole="ADMIN"><AdminProductView /></ProtectedRoute>} />
+
+        {/* NEW MULTI-STEP UNIFIED REGISTRATION LANES */}
+        <Route path="/register-pro" element={<ProRegister />} />
+        <Route path="/register-waste" element={<WasteRegister />} />
+        <Route path="/register-pibo" element={<PiboRegister />} />
 
 
         {/* 2. Customer */}
