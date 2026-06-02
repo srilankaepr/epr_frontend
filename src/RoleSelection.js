@@ -5,7 +5,7 @@ import earthVideo from './assets/earth.mp4';
 
 const RoleSelection = () => {
     const navigate = useNavigate();
-/*
+
 const roles = [
     { name: 'BECOME PRO',  icon: '💎',  desc: 'Producer Responsibility Organization - Enterprise EPR Management',  color: '#f1c40f',  bg: 'rgba(241, 196, 15, 0.15)',  path: '/register-customer', roleType: 'pro' },
     { name: 'PIBO', icon: '👤', desc: 'PIBO (Producer, Importer, Brand Owner and Vendor)', color: '#3498db', bg: 'rgba(52, 152, 219, 0.15)', path: '/register-customer', roleType: 'pibo_parent' }, 
@@ -15,7 +15,7 @@ const roles = [
 
 ];
 
-*/
+
 
 
     return (
