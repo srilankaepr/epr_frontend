@@ -334,7 +334,7 @@ const WasteRegister = () => {
                                 <div style={styles.rowItem}>
                                     {/* 🏢 👤 කරුණ 1: Reg Type එක අනුව ලේබල් එක Dynamic මාරු වීම */}
                                     <label style={styles.label}>
-                                        {formData.regType === 'Company' ? 'BUSINESS REGISTRATION NUMBER *' : 'NATIONAL ID (NIC) NUMBER *'}
+                                        {formData.regType === 'Company' ? 'BUSINESS REGISTRATION NUMBER *' : 'BUSINESS REGISTRATION OR NATIONAL ID NUMBER *'}
                                     </label>
                                     <input name="regNumber" value={formData.regNumber} type="text" placeholder={formData.regType === 'Company' ? "PV-XXXXXX" : "19XXXXXXXXXX"} style={styles.input} onChange={handleChange} required />
                                 </div>
