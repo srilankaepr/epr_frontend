@@ -397,8 +397,8 @@ const WasteRegister = () => {
                             </div>
                         </div>
                     )}
-
-                    {/* Step 4: Contact Person Details */}   
+    
+                    {/* Step 4: Contact Person Details */}      
                     {step === 4 && (
                         <div>
                             <h3 style={styles.sectionHeader}>Step 4: Contact Person Details</h3>  
