@@ -411,7 +411,7 @@ const WasteRegister = () => {
                                     <label style={styles.label}>DESIGNATION *</label>
                                     <input name="contactDesignation" value={formData.contactDesignation} type="text" placeholder="e.g. Operations Manager" style={styles.input} onChange={handleChange} required />
                                 </div>
-                            </div>
+                            </div>   
                             <div style={styles.row}>
                                 <div style={styles.rowItem}>
                                     <label style={styles.label}>MOBILE NUMBER *</label>
