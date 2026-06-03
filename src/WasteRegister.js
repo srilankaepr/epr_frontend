@@ -318,7 +318,7 @@ const WasteRegister = () => {
                         </div>
                     )}
 
-                    {/* Step 3: Organization Details */}
+                    {/* Step 3: Organization Details (Reg Type එක අනුව Inputs සහ Labels වෙනස් වන තැන) */}
                     {step === 3 && (
                         <div>
                             <h3 style={styles.sectionHeader}>Step 3: Organization Details</h3>
@@ -332,12 +332,18 @@ const WasteRegister = () => {
                             </div>
                             <div style={styles.row}>
                                 <div style={styles.rowItem}>
-                                    <label style={styles.label}>BUSINESS REGISTRATION / NIC NUMBER *</label>
-                                    <input name="regNumber" value={formData.regNumber} type="text" placeholder="PV-XXXXXX / NIC" style={styles.input} onChange={handleChange} required />
+                                    {/* 🏢 👤 කරුණ 1: Reg Type එක අනුව ලේබල් එක Dynamic මාරු වීම */}
+                                    <label style={styles.label}>
+                                        {formData.regType === 'Company' ? 'BUSINESS REGISTRATION NUMBER *' : 'NATIONAL ID (NIC) NUMBER *'}
+                                    </label>
+                                    <input name="regNumber" value={formData.regNumber} type="text" placeholder={formData.regType === 'Company' ? "PV-XXXXXX" : "19XXXXXXXXXX"} style={styles.input} onChange={handleChange} required />
                                 </div>
                                 <div style={styles.rowItem}>
-                                    <label style={styles.label}>DATE OF INCORPORATION / BIRTH *</label>
-                                    <input name="dob" value={formData.dob} type="date" style={styles.input} onChange={handleChange} required />
+                                    {/* 🏢 👤 කරුණ 2: Reg Type එක අනුව Incorporation/DOB මාරු වීම සහ required/optional වීම */}
+                                    <label style={styles.label}>
+                                        {formData.regType === 'Company' ? 'DATE OF INCORPORATION *' : 'DATE OF BIRTH (OPTIONAL)'}
+                                    </label>
+                                    <input name="dob" value={formData.dob} type="date" style={styles.input} onChange={handleChange} required={formData.regType === 'Company'} />
                                 </div>
                             </div>
                             <div style={styles.row}>
@@ -446,7 +452,7 @@ const WasteRegister = () => {
                                     </select>
 
                                     {/* ========================================================================= */}
-                                    {/* 🛡️ 🟢 CO-PARTNER BLUE BOX SECTION (පරණ RegisterCustomer.js එකෙන් එලෙසම රැකගන්නා ලදී) */}
+                                    {/* 🛡️ 🟢 CO-PARTNER BLUE BOX SECTION (පරණ RegisterCustomer.js එකෙන් එලෙසම රැකගන්නා ลදී) */}
                                     {/* ========================================================================= */}
                                     <div style={{ marginTop: '20px', padding: '20px', background: 'rgba(52, 152, 219, 0.08)', borderRadius: '15px', border: '1px solid rgba(52, 152, 219, 0.3)' }}>
                                         <label style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer', color: '#3498db', fontWeight: 'bold', fontSize: '14px' }}>
@@ -522,7 +528,7 @@ const WasteRegister = () => {
                                 </div>
                             )}
 
-                            {/* Transporter Sub-form (District Select කළාම ප්‍රාදේශීය සභා Filter වන, ලිස්ට් එකේ නැත්නම් ලියන්න පුළුවන් Writable Datalist ක්‍රමය) */}
+                            {/* Transporter Sub-form */}
                             {(formData.isTransporter || formData.isTotalSolutionProvider) && (
                                 <div style={{ ...styles.conditionalBox, marginTop: '20px' }}>
                                     <h4 style={{ color: '#f39c12', margin: '0 0 12px 0', fontSize: '15px' }}>🚚 Transporter Logistics Fleet Configurations</h4>
@@ -539,7 +545,7 @@ const WasteRegister = () => {
                                     <select name="transportCoverageScope" value={formData.transportCoverageScope} style={styles.selectInput} onChange={handleChange} required>
                                         <option value="">-- Select Coverage --</option>
                                         <option value="District">District Level</option>
-                                        <option value="Pradeshiya Sabha">Pradeshiya Sabha Level (Filter Dropdown Below)</option>
+                                        <option value="Pradeshiya Sabha">Pradeshiya Sabha Level</option>
                                         <option value="National">National Level</option>
                                     </select>
 
@@ -548,7 +554,6 @@ const WasteRegister = () => {
                                             <label style={styles.label}>TYPE OR SELECT AUTHORIZED PRADESHIYA SABHA *</label>
                                             <input list="transporter_sabhas" name="transportPradeshiyaSabhas" value={formData.transportPradeshiyaSabhas} placeholder="Type Pradeshiya Sabha name (Searchable & Writable)" style={styles.input} onChange={handleChange} required />
                                             <datalist id="transporter_sabhas">
-                                                {/* Step 3 හි තෝරාගන්නා ලද District එක පදනම් කරගෙන auto filter වේ, නැතහොත් මුළු ලංකාවේම සභා ලෝඩ් වේ */}
                                                 {(districtToSabhas[formData.orgDistrict] || Object.values(districtToSabhas).flat()).map((ps, idx) => (
                                                     <option key={idx} value={ps} />
                                                 ))}
@@ -653,7 +658,7 @@ const WasteRegister = () => {
                         </div>
                     )}
 
-                    {/* Step 9: Compliance & Licenses */}
+                    {/* Step 9: Compliance & Licenses (Yes/No අනුව Dynamic Hide/Show වෙන කොටස) */}
                     {step === 9 && (
                         <div>
                             <h3 style={styles.sectionHeader}>Step 9: Compliance & Statutory Licenses</h3>
@@ -674,16 +679,25 @@ const WasteRegister = () => {
                                 </div>
                             </div>
 
-                            <div style={{ marginTop: '25px' }}>
-                                <label style={styles.label}>UPLOAD EPL CERTIFICATE (PDF/JPG) *</label>
-                                <input type="file" style={styles.input} onChange={(e) => handleFileBase64(e, 'envLicense')} accept=".pdf,.jpg,.jpeg,.png" required={formData.hasEnvironmentalLicense === 'Yes' && !fileStrings.envLicense} />
-                                {fileStrings.envLicense && <p style={{ color: '#2ecc71', fontSize: '13px' }}>✅ EPL Uploaded</p>}
-                            </div>
-                            <div style={{ marginTop: '15px' }}>
-                                <label style={styles.label}>UPLOAD WASTE HANDLING CERTIFICATE (PDF/JPG) *</label>
-                                <input type="file" style={styles.input} onChange={(e) => handleFileBase64(e, 'wasteLicense')} accept=".pdf,.jpg,.jpeg,.png" required={formData.hasWasteHandlingLicense === 'Yes' && !fileStrings.wasteLicense} />
-                                {fileStrings.wasteLicense && <p style={{ color: '#2ecc71', fontSize: '13px' }}>✅ Waste Handling License Uploaded</p>}
-                            </div>
+                            {/* 📑 කරුණ 3: EPL "Yes" නම් පමණක් පේන සහ required වන field එක */}
+                            {formData.hasEnvironmentalLicense === 'Yes' && (
+                                <div style={{ marginTop: '25px' }}>
+                                    <label style={styles.label}>UPLOAD EPL CERTIFICATE (PDF/JPG) *</label>
+                                    <input type="file" style={styles.input} onChange={(e) => handleFileBase64(e, 'envLicense')} accept=".pdf,.jpg,.jpeg,.png" required={!fileStrings.envLicense} />
+                                    {fileStrings.envLicense && <p style={{ color: '#2ecc71', fontSize: '13px' }}>✅ EPL Uploaded</p>}
+                                </div>
+                            )}
+
+                            {/* 📑 කරුණ 3: Waste Handling "Yes" නම් පමණක් පේන සහ required වන field එක */}
+                            {formData.hasWasteHandlingLicense === 'Yes' && (
+                                <div style={{ marginTop: '15px' }}>
+                                    <label style={styles.label}>UPLOAD WASTE HANDLING CERTIFICATE (PDF/JPG) *</label>
+                                    <input type="file" style={styles.input} onChange={(e) => handleFileBase64(e, 'wasteLicense')} accept=".pdf,.jpg,.jpeg,.png" required={!fileStrings.wasteLicense} />
+                                    {fileStrings.wasteLicense && <p style={{ color: '#2ecc71', fontSize: '13px' }}>✅ Waste Handling License Uploaded</p>}
+                                </div>
+                            )}
+
+                            {/* BOI approval එක හැමවෙලේම පේනවා, හැබැයි optional */}
                             <div style={{ marginTop: '15px' }}>
                                 <label style={styles.label}>UPLOAD BOI / LOCAL AUTHORITY REGULATORY APPROVAL (OPTIONAL)</label>
                                 <input type="file" style={styles.input} onChange={(e) => handleFileBase64(e, 'boiApproval')} accept=".pdf,.jpg,.jpeg,.png" />
@@ -757,7 +771,7 @@ const WasteRegister = () => {
                         </div>
                     )}
 
-                    {/* Navigation Buttons Control Center (Screenshot 3, 5, 6 UI Alignment) */}
+                    {/* Navigation Buttons Control Center */}
                     <div style={{ display: 'flex', gap: '15px', marginTop: '35px' }}>
                         {step > 1 && (
                             <button type="button" onClick={() => setStep(prev => prev - 1)} style={{ ...styles.registerBtn, background: '#444', marginTop: 0 }}>
