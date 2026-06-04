@@ -511,7 +511,7 @@ const PiboRegister = () => {
                             </button>
                         ) : (
                             <button type="submit" style={{ ...styles.registerBtn, background: '#3498db', color: '#fff', boxShadow: '0 10px 30px rgba(52, 152, 219, 0.3)', marginTop: 0 }}>
-                                DEPLOY COMPLIANCE LEDGER PIPELINE
+                                SUBMIT REGISTRATION
                             </button>
                         )}
                     </div>
