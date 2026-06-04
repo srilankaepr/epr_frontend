@@ -8,7 +8,7 @@ const RoleSelection = () => {
 
 const roles = [
     { name: 'BECOME PRO',  icon: '💎',  desc: 'Producer Responsibility Organization - Enterprise EPR Management',  color: '#f1c40f',  bg: 'rgba(241, 196, 15, 0.15)',  path: '/register-pro', roleType: 'pro' },
-    { name: 'PIBO', icon: '👤', desc: 'PIBO (Producer, Importer, Brand Owner and Vendor)', color: '#3498db', bg: 'rgba(52, 152, 219, 0.15)', path: '/register-customer', roleType: 'pibo_parent' }, 
+    { name: 'PIBO', icon: '👤', desc: 'PIBO (Producer, Importer, Brand Owner and Vendor)', color: '#3498db', bg: 'rgba(52, 152, 219, 0.15)', path: '/register-customer', roleType: 'register-pibo' }, 
     { name: 'WASTE MANAGEMENT', icon: '🚚', desc: 'Collector/ Transporter/ Recycler/ Total Solution Provider', color: '#f39c12', bg: 'rgba(243, 156, 18, 0.15)', path: '/register-waste', roleType: 'RECYCLER' }, 
     { name: 'AUTHORITY DATA ACCESS', icon: '🏛️', desc: 'Government & Regulatory Authority Access Portal', color: '#9b59b6', bg: 'rgba(155, 89, 182, 0.15)', path: null, roleType: 'authority' }, 
     { name: 'ADMIN', icon: '🛡️', desc: 'System Governance & Oversight', color: '#2ecc71', bg: 'rgba(46, 204, 113, 0.15)', path: '/register-admin', roleType: 'admin' },
@@ -60,8 +60,8 @@ const roles = [
             <h3 style={{...role.style, color: role.color}}>{role.name}</h3>
             <p style={styles.roleDesc}>{role.desc}</p>
         </div>
-    ))}
-</div>
+                    ))}
+                     </div>
 
                 <div style={styles.footer}>
                     <p style={styles.footerText}>
