@@ -128,31 +128,22 @@ const styles = {
     logoImg: { width: '80%' },
     title: { fontSize: '28px', fontWeight: '900', letterSpacing: '5px', color: '#fff', margin: '0' },
     subText: { fontSize: '12px', color: '#2ecc71', marginTop: '10px', fontWeight: 'bold', letterSpacing: '2px' },
-   buttonContainer: {
-    display: 'flex',
-    gap: '20px',
-    justifyContent: 'center',
-    flexWrap: 'wrap', 
-    marginTop: '20px'
-},
+    buttonContainer: { display: 'flex', gap: '20px', justifyContent: 'center', flexWrap: 'wrap', marginTop: '20px' },
     roleCard: { 
         flex: '1 1 240px', maxWidth: '280px',
         background: 'rgba(255, 255, 255, 0.03)',
         padding: '40px 20px', borderRadius: '30px',
         cursor: 'pointer', transition: 'all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
         border: '1px solid rgba(255, 255, 255, 0.1)',
-        textAlign: 'center'
-    },
+        textAlign: 'center' },
+
     iconWrapper: { fontSize: '50px', marginBottom: '20px' },
     roleNameAdmin: { color: '#2ecc71', fontSize: '20px', fontWeight: '900', letterSpacing: '2px' },
     roleNameCustomer: { color: '#3498db', fontSize: '20px', fontWeight: '900', letterSpacing: '2px' },
     roleDesc: { color: '#aaa', fontSize: '13px', marginTop: '10px', lineHeight: '1.4' },
     footer: { marginTop: '50px', borderTop: '1px solid rgba(255, 255, 255, 0.05)', paddingTop: '25px' },
     footerText: { color: '#777', fontSize: '14px' },
-    loginLink: { 
-        color: '#2ecc71', fontWeight: 'bold', cursor: 'pointer', 
-        textDecoration: 'none', transition: '0.3s'
-    }
+    loginLink: { color: '#2ecc71', fontWeight: 'bold', cursor: 'pointer',  textDecoration: 'none', transition: '0.3s' }
 };
 
 export default RoleSelection;
