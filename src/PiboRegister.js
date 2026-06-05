@@ -331,7 +331,7 @@ const PiboRegister = () => {
                                 </div>
                                 <div style={styles.inputWrapper}><label style={styles.label}>Solar / Renewable Power Assets</label><input name="volumeSolarRenewableUnits" value={formData.volumeSolarRenewableUnits} type="number" style={styles.input} onChange={handleChange} required /></div>
 
-                                <h4 style={styles.streamTitle}>C. Energy & Battery Products (kg or units)</h4>
+                                <h4 style={styles.streamTitle}>C. Energy & Battery Products (kg)</h4>
                                 <div style={styles.row}>
                                     <div style={styles.rowItem}><label style={styles.label}>Batteries </label><input name="volumeBatteriesKg" value={formData.volumeBatteriesKg} type="number" style={styles.input} onChange={handleChange} required /></div>
                                     <div style={styles.rowItem}><label style={styles.label}>EV / Hybrid Batteries</label><input name="volumeEvHybridBatteries" value={formData.volumeEvHybridBatteries} type="number" style={styles.input} onChange={handleChange} required /></div>
