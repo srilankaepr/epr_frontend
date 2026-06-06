@@ -351,17 +351,17 @@ const WasteRegister = () => {
                             </div>
                             <div style={styles.row}>
                                 <div style={styles.rowItem}>
-                                    <label style={styles.label}>DISTRICT *</label>
-                                    <select name="orgDistrict" value={formData.orgDistrict} style={styles.selectInput} onChange={handleChange} required>
-                                        <option value="">-- Select District --</option>
-                                        {districts.map(d => <option key={d} value={d}>{d}</option>)}
-                                    </select>
-                                </div>
-                                <div style={styles.rowItem}>
+                                     <div style={styles.rowItem}>
                                     <label style={styles.label}>PROVINCE *</label>
                                     <select name="orgProvince" value={formData.orgProvince} style={styles.selectInput} onChange={handleChange} required>
                                         <option value="">-- Select Province --</option>
                                         {provinces.map(p => <option key={p} value={p}>{p}</option>)}
+                                    </select>
+                                </div>
+                                    <label style={styles.label}>DISTRICT *</label>
+                                    <select name="orgDistrict" value={formData.orgDistrict} style={styles.selectInput} onChange={handleChange} required>
+                                        <option value="">-- Select District --</option>
+                                        {districts.map(d => <option key={d} value={d}>{d}</option>)}
                                     </select>
                                 </div>
                             </div>
