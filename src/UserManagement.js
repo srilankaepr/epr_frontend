@@ -396,33 +396,97 @@ const UserManagement = () => {
                 <td style={styles.td}>{c.contactPersonMobile}</td>
                 <td style={styles.td}>{`${c.address1 || ''}, ${c.address2 || ''}`}</td>
                 <td style={styles.td}>{c.country || 'Sri Lanka'}</td>
-                <td style={styles.td}>
-                    <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap', flexDirection: 'column' }}>
-                        {c.brcDocument && (
-                            <button onClick={() => handleDownload(c.brcDocument)} style={{...styles.docLink, background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left', color: '#3498db'}}>
-                                <span role="img" aria-label="doc">📄</span> BRC Proof
-                            </button>
-                        )}
-                        {c.vatDocument && (
-                            <button onClick={() => handleDownload(c.vatDocument)} style={{...styles.docLink, background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left', color: '#3498db'}}>
-                                <span role="img" aria-label="doc">📄</span> VAT Proof
-                            </button>
-                        )}
-                        {c.billingDocument && (
-                            <button onClick={() => handleDownload(c.billingDocument)} style={{...styles.docLink, background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left', color: '#3498db'}}>
-                                <span role="img" aria-label="doc">📄</span> Billing Proof
-                            </button>
-                        )}
-                        {c.nic && (
-                            <button onClick={() => handleDownload(c.nic)} style={{...styles.docLink, background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left', color: '#e67e22'}}>
-                                <span role="img" aria-label="doc">🆔</span> NIC Archive
-                            </button>
-                        )}
-                        {!(c.brcDocument || c.vatDocument || c.billingDocument || c.nic) && (
-                            <span style={{ color: 'rgba(255,255,255,0.3)', fontSize: '12px' }}>No Base Docs</span>
-                        )}
-                    </div>
-                </td>
+
+
+          {/* 🆕 🛠️ ඩේටාබේස් එකේ ෆයිල් එක ඇත්නම් පමණක් ස්ක්‍රීන්ෂොට් ස්ටයිල් එකට පෙන්වන Column එක */}
+<td style={styles.td}>
+    <div style={{ display: 'flex', gap: '8px', flexDirection: 'column', alignItems: 'flex-start' }}>
+        
+        {/* 1. පොදු මූලික ලේඛන */}
+        {selectedUser.brcDocument && (
+            <button onClick={() => handleDownload(selectedUser.brcDocument)} style={styles.screenshotDocBtn}>
+                <span style={styles.fileIcon}>📄</span> BRC Proof
+            </button>
+        )}
+        {selectedUser.vatDocument && (
+            <button onClick={() => handleDownload(selectedUser.vatDocument)} style={styles.screenshotDocBtn}>
+                <span style={styles.fileIcon}>📄</span> VAT Proof
+            </button>
+        )}
+        {selectedUser.billingDocument && (
+            <button onClick={() => handleDownload(selectedUser.billingDocument)} style={styles.screenshotDocBtn}>
+                <span style={styles.fileIcon}>📄</span> Billing Proof
+            </button>
+        )}
+        {selectedUser.nic && (
+            <button onClick={() => handleDownload(selectedUser.nic)} style={styles.screenshotDocBtn}>
+                <span style={styles.fileIcon}>📄</span> NIC Copy
+            </button>
+        )}
+
+        {/* 2. PRO විශේෂිත ලේඛන */}
+        {selectedUser.taxCertificateDocument && (
+            <button onClick={() => handleDownload(selectedUser.taxCertificateDocument)} style={styles.screenshotDocBtn}>
+                <span style={styles.fileIcon}>📄</span> TIN Tax Cert Proof
+            </button>
+        )}
+        {selectedUser.companyProfileDocument && (
+            <button onClick={() => handleDownload(selectedUser.companyProfileDocument)} style={styles.screenshotDocBtn}>
+                <span style={styles.fileIcon}>📄</span> Company Profile Brochure
+            </button>
+        )}
+        {selectedUser.operationalExperienceProofDocument && (
+            <button onClick={() => handleDownload(selectedUser.operationalExperienceProofDocument)} style={styles.screenshotDocBtn}>
+                <span style={styles.fileIcon}>📄</span> Operational Experience Proof
+            </button>
+        )}
+        {selectedUser.authorizationLetterDocument && (
+            <button onClick={() => handleDownload(selectedUser.authorizationLetterDocument)} style={styles.screenshotDocBtn}>
+                <span style={styles.fileIcon}>📄</span> Authorization Letter Consent
+            </button>
+        )}
+
+        {/* 3. Waste Management විශේෂිත ලේඛන */}
+        {selectedUser.environmentalLicenseFile && (
+            <button onClick={() => handleDownload(selectedUser.environmentalLicenseFile)} style={styles.screenshotDocBtn}>
+                <span style={styles.fileIcon}>📄</span> EPL License Certificate
+            </button>
+        )}
+        {selectedUser.wasteHandlingLicenseFile && (
+            <button onClick={() => handleDownload(selectedUser.wasteHandlingLicenseFile)} style={styles.screenshotDocBtn}>
+                <span style={styles.fileIcon}>📄</span> Scheduled Waste License
+            </button>
+        )}
+        {selectedUser.boiLocalAuthorityApprovalFile && (
+            <button onClick={() => handleDownload(selectedUser.boiLocalAuthorityApprovalFile)} style={styles.screenshotDocBtn}>
+                <span style={styles.fileIcon}>📄</span> BOI Local Authority Approval
+            </button>
+        )}
+
+        {/* 4. PIBO විශේෂිත ලේඛන */}
+        {selectedUser.piboImportLicenseFile && (
+            <button onClick={() => handleDownload(selectedUser.piboImportLicenseFile)} style={styles.screenshotDocBtn}>
+                <span style={styles.fileIcon}>📄</span> PIBO Import License
+            </button>
+        )}
+        {selectedUser.piboProductCatalogFile && (
+            <button onClick={() => handleDownload(selectedUser.piboProductCatalogFile)} style={styles.screenshotDocBtn}>
+                <span style={styles.fileIcon}>📄</span> Product Catalog Specs
+            </button>
+        )}
+        {selectedUser.piboBrandOwnershipFile && (
+            <button onClick={() => handleDownload(selectedUser.piboBrandOwnershipFile)} style={styles.screenshotDocBtn}>
+                <span style={styles.fileIcon}>📄</span> Trademark Brand Document
+            </button>
+        )}
+
+        {/* ලිපිගොනු කිසිවක් ඩේටාබේස් එකේ නැතිනම් පමණක් පෙන්වයි */}
+        {!(selectedUser.brcDocument || selectedUser.vatDocument || selectedUser.billingDocument || selectedUser.nic || selectedUser.taxCertificateDocument || selectedUser.companyProfileDocument || selectedUser.environmentalLicenseFile || selectedUser.piboImportLicenseFile) && (
+            <span style={{ color: 'rgba(255,255,255,0.25)', fontSize: '12px', fontStyle: 'italic', paddingLeft: '5px' }}>No Vault Documents</span>
+        )}
+    </div>
+</td>
+            
                 <td style={styles.tdLast}>
                     <div style={{ display: 'flex', gap: '6px', flexDirection: 'column' }}>
                         <button 
@@ -685,32 +749,33 @@ const UserManagement = () => {
                             {/* ========================================================================= */}
                              interviewee uploads panel (PRO, Waste, PIBO All secondary files matched)
                             {/* ========================================================================= */}
-                            <div style={{ gridColumn: 'span 2', background: 'rgba(0,0,0,0.4)', padding: '22px', borderRadius: '20px', border: '1px solid rgba(255,255,255,0.06)' }}>
-                                <div style={{ fontSize: '11px', color: '#666', textTransform: 'uppercase', marginBottom: '12px', fontWeight: 'bold' }}>All Dynamic Verification Documents Archive</div>
-                                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
-                                    {selectedUser.brcDocument && <button onClick={() => handleDownload(selectedUser.brcDocument)} style={styles.savePdfBtn}>📄 Core BRC Document</button>}
-                                    {selectedUser.vatDocument && <button onClick={() => handleDownload(selectedUser.vatDocument)} style={styles.savePdfBtn}>📄 VAT Certification</button>}
-                                    {selectedUser.billingDocument && <button onClick={() => handleDownload(selectedUser.billingDocument)} style={styles.savePdfBtn}>📄 Utility Bill Proof</button>}
-                                    {selectedUser.nic && <button onClick={() => handleDownload(selectedUser.nic)} style={{...styles.savePdfBtn, border: '1px solid #e67e22', color: '#e67e22'}}>🆔 NIC Scanner Copy</button>}
-                                    
-                                    {/* PRO Upload Files options */}
-                                    {selectedUser.taxCertificateDocument && <button onClick={() => handleDownload(selectedUser.taxCertificateDocument)} style={{...styles.savePdfBtn, border: '1px solid #f1c40f', color: '#f1c40f'}}>📄 Tax Certificate (TIN)</button>}
-                                    {selectedUser.companyProfileDocument && <button onClick={() => handleDownload(selectedUser.companyProfileDocument)} style={{...styles.savePdfBtn, border: '1px solid #f1c40f', color: '#f1c40f'}}>📄 Company Brochure/Profile</button>}
-                                    {selectedUser.operationalExperienceProofDocument && <button onClick={() => handleDownload(selectedUser.operationalExperienceProofDocument)} style={{...styles.savePdfBtn, border: '1px solid #f1c40f', color: '#f1c40f'}}>📄 Operational Experience Proof</button>}
-                                    {selectedUser.authorizationLetterDocument && <button onClick={() => handleDownload(selectedUser.authorizationLetterDocument)} style={{...styles.savePdfBtn, border: '1px solid #f1c40f', color: '#f1c40f'}}>📄 Power of Attorney Letter</button>}
+                             <div style={{ gridColumn: 'span 2', background: 'rgba(0,0,0,0.4)', padding: '22px', borderRadius: '20px', border: '1px solid rgba(255,255,255,0.06)' }}>
+    <div style={{ fontSize: '11px', color: '#666', textTransform: 'uppercase', marginBottom: '12px', fontWeight: 'bold' }}>All Dynamic Verification Documents Archive</div>
+    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
+        {/* ඩේටාබේස් එකේ දත්ත පැවැත්ම තිබේ නම් පමණක් බටන් එක ඕපන් වේ */}
+        {selectedUser.brcDocument && <button onClick={() => handleDownload(selectedUser.brcDocument)} style={styles.savePdfBtn}>📄 Core BRC Document</button>}
+        {selectedUser.vatDocument && <button onClick={() => handleDownload(selectedUser.vatDocument)} style={styles.savePdfBtn}>📄 VAT Certification</button>}
+        {selectedUser.billingDocument && <button onClick={() => handleDownload(selectedUser.billingDocument)} style={styles.savePdfBtn}>📄 Utility Bill Proof</button>}
+        {selectedUser.nic && <button onClick={() => handleDownload(selectedUser.nic)} style={{...styles.savePdfBtn, border: '1px solid #e67e22', color: '#e67e22'}}>🆔 NIC Scanner Copy</button>}
+        
+        {/* PRO Upload Files */}
+        {selectedUser.taxCertificateDocument && <button onClick={() => handleDownload(selectedUser.taxCertificateDocument)} style={{...styles.savePdfBtn, border: '1px solid #f1c40f', color: '#f1c40f'}}>📄 Tax Certificate (TIN)</button>}
+        {selectedUser.companyProfileDocument && <button onClick={() => handleDownload(selectedUser.companyProfileDocument)} style={{...styles.savePdfBtn, border: '1px solid #f1c40f', color: '#f1c40f'}}>📄 Company Brochure/Profile</button>}
+        {selectedUser.operationalExperienceProofDocument && <button onClick={() => handleDownload(selectedUser.operationalExperienceProofDocument)} style={{...styles.savePdfBtn, border: '1px solid #f1c40f', color: '#f1c40f'}}>📄 Operational Experience Proof</button>}
+        {selectedUser.authorizationLetterDocument && <button onClick={() => handleDownload(selectedUser.authorizationLetterDocument)} style={{...styles.savePdfBtn, border: '1px solid #f1c40f', color: '#f1c40f'}}>📄 Power of Attorney Letter</button>}
 
-                                    {/* Waste Handling Upload Files options */}
-                                    {selectedUser.environmentalLicenseFile && <button onClick={() => handleDownload(selectedUser.environmentalLicenseFile)} style={{...styles.savePdfBtn, border: '1px solid #f39c12', color: '#f39c12'}}>📄 EPL statutory License</button>}
-                                    {selectedUser.wasteHandlingLicenseFile && <button onClick={() => handleDownload(selectedUser.wasteHandlingLicenseFile)} style={{...styles.savePdfBtn, border: '1px solid #f39c12', color: '#f39c12'}}>📄 Scheduled Waste License</button>}
-                                    {selectedUser.boiLocalAuthorityApprovalFile && <button onClick={() => handleDownload(selectedUser.boiLocalAuthorityApprovalFile)} style={{...styles.savePdfBtn, border: '1px solid #f39c12', color: '#f39c12'}}>📄 BOI Local Authority Approval</button>}
+        {/* Waste Handling Upload Files */}
+        {selectedUser.environmentalLicenseFile && <button onClick={() => handleDownload(selectedUser.environmentalLicenseFile)} style={{...styles.savePdfBtn, border: '1px solid #f39c12', color: '#f39c12'}}>📄 EPL statutory License</button>}
+        {selectedUser.wasteHandlingLicenseFile && <button onClick={() => handleDownload(selectedUser.wasteHandlingLicenseFile)} style={{...styles.savePdfBtn, border: '1px solid #f39c12', color: '#f39c12'}}>📄 Scheduled Waste License</button>}
+        {selectedUser.boiLocalAuthorityApprovalFile && <button onClick={() => handleDownload(selectedUser.boiLocalAuthorityApprovalFile)} style={{...styles.savePdfBtn, border: '1px solid #f39c12', color: '#f39c12'}}>📄 BOI Local Authority Approval</button>}
 
-                                    {/* PIBO Upload Files options */}
-                                    {selectedUser.piboImportLicenseFile && <button onClick={() => handleDownload(selectedUser.piboImportLicenseFile)} style={{...styles.savePdfBtn, border: '1px solid #3498db', color: '#3498db'}}>📄 PIBO Import License</button>}
-                                    {selectedUser.piboProductCatalogFile && <button onClick={() => handleDownload(selectedUser.piboProductCatalogFile)} style={{...styles.savePdfBtn, border: '1px solid #3498db', color: '#3498db'}}>📄 Product Catalog Archive</button>}
-                                    {selectedUser.piboBrandOwnershipFile && <button onClick={() => handleDownload(selectedUser.piboBrandOwnershipFile)} style={{...styles.savePdfBtn, border: '1px solid #3498db', color: '#3498db'}}>📄 Trademark Brand Records</button>}
-                                </div>
-                            </div>
-                        </div>
+        {/* PIBO Upload Files */}
+        {selectedUser.piboImportLicenseFile && <button onClick={() => handleDownload(selectedUser.piboImportLicenseFile)} style={{...styles.savePdfBtn, border: '1px solid #3498db', color: '#3498db'}}>📄 PIBO Import License</button>}
+        {selectedUser.piboProductCatalogFile && <button onClick={() => handleDownload(selectedUser.piboProductCatalogFile)} style={{...styles.savePdfBtn, border: '1px solid #3498db', color: '#3498db'}}>📄 Product Catalog Archive</button>}
+        {selectedUser.piboBrandOwnershipFile && <button onClick={() => handleDownload(selectedUser.piboBrandOwnershipFile)} style={{...styles.savePdfBtn, border: '1px solid #3498db', color: '#3498db'}}>📄 Trademark Brand Records</button>}
+    </div>
+        </div>
+             </div>
 
                         {/* Modal Action Controls Footer */}
                         <div style={{ background: '#121212', padding: '20px 40px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid rgba(255,255,255,0.06)' }}>
