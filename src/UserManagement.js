@@ -366,7 +366,7 @@ const UserManagement = () => {
                                     <th style={styles.th}>CP Mobile</th>
                                     <th style={styles.th}>Address</th>
                                     <th style={styles.th}>Country</th>
-                                    <th style={styles.th}>Core Primary Docs</th>
+                                    <th style={{...styles.th, width: '280px'}}>Core Primary Docs</th>
                                     <th style={styles.thLast}>Action</th>
                                 </tr>
                             </thead>
@@ -396,30 +396,92 @@ const UserManagement = () => {
                 <td style={styles.td}>{c.contactPersonMobile}</td>
                 <td style={styles.td}>{`${c.address1 || ''}, ${c.address2 || ''}`}</td>
                 <td style={styles.td}>{c.country || 'Sri Lanka'}</td>
+                
+                {/* 🆕 🛠️ ඩේටාබේස් එකේ ලිපිගොනුව ඇත්නම් පමණක් ස්ක්‍රීන්ෂොට් UI එකේ විදිහට පෙන්වන Column එක */}
                 <td style={styles.td}>
-                    <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap', flexDirection: 'column' }}>
+                    <div style={{ display: 'flex', gap: '8px', flexDirection: 'column', alignItems: 'flex-start' }}>
+                        
+                        {/* Common Documents */}
                         {c.brcDocument && (
-                            <button onClick={() => handleDownload(c.brcDocument)} style={{...styles.docLink, background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left', color: '#3498db'}}>
-                                <span role="img" aria-label="doc">📄</span> BRC Proof
+                            <button onClick={() => handleDownload(c.brcDocument)} style={styles.screenshotDocBtn}>
+                                <span style={styles.fileIcon}>📄</span> BRC Proof
                             </button>
                         )}
                         {c.vatDocument && (
-                            <button onClick={() => handleDownload(c.vatDocument)} style={{...styles.docLink, background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left', color: '#3498db'}}>
-                                <span role="img" aria-label="doc">📄</span> VAT Proof
+                            <button onClick={() => handleDownload(c.vatDocument)} style={styles.screenshotDocBtn}>
+                                <span style={styles.fileIcon}>📄</span> VAT Proof
                             </button>
                         )}
                         {c.billingDocument && (
-                            <button onClick={() => handleDownload(c.billingDocument)} style={{...styles.docLink, background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left', color: '#3498db'}}>
-                                <span role="img" aria-label="doc">📄</span> Billing Proof
+                            <button onClick={() => handleDownload(c.billingDocument)} style={styles.screenshotDocBtn}>
+                                <span style={styles.fileIcon}>📄</span> Billing Proof
                             </button>
                         )}
                         {c.nic && (
-                            <button onClick={() => handleDownload(c.nic)} style={{...styles.docLink, background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left', color: '#e67e22'}}>
-                                <span role="img" aria-label="doc">🆔</span> NIC Archive
+                            <button onClick={() => handleDownload(c.nic)} style={styles.screenshotDocBtn}>
+                                <span style={styles.fileIcon}>📄</span> NIC Copy
                             </button>
                         )}
-                        {!(c.brcDocument || c.vatDocument || c.billingDocument || c.nic) && (
-                            <span style={{ color: 'rgba(255,255,255,0.3)', fontSize: '12px' }}>No Base Docs</span>
+
+                        {/* PRO Upload Files */}
+                        {c.taxCertificateDocument && (
+                            <button onClick={() => handleDownload(c.taxCertificateDocument)} style={styles.screenshotDocBtn}>
+                                <span style={styles.fileIcon}>📄</span> VAT / TIN Cert
+                            </button>
+                        )}
+                        {c.companyProfileDocument && (
+                            <button onClick={() => handleDownload(c.companyProfileDocument)} style={styles.screenshotDocBtn}>
+                                <span style={styles.fileIcon}>📄</span> Company Profile
+                            </button>
+                        )}
+                        {c.operationalExperienceProofDocument && (
+                            <button onClick={() => handleDownload(c.operationalExperienceProofDocument)} style={styles.screenshotDocBtn}>
+                                <span style={styles.fileIcon}>📄</span> Experience Proof
+                            </button>
+                        )}
+                        {c.authorizationLetterDocument && (
+                            <button onClick={() => handleDownload(c.authorizationLetterDocument)} style={styles.screenshotDocBtn}>
+                                <span style={styles.fileIcon}>📄</span> Consent Letter
+                            </button>
+                        )}
+
+                        {/* Waste Management Upload Files */}
+                        {c.environmentalLicenseFile && (
+                            <button onClick={() => handleDownload(c.environmentalLicenseFile)} style={styles.screenshotDocBtn}>
+                                <span style={styles.fileIcon}>📄</span> EPL License
+                            </button>
+                        )}
+                        {c.wasteHandlingLicenseFile && (
+                            <button onClick={() => handleDownload(c.wasteHandlingLicenseFile)} style={styles.screenshotDocBtn}>
+                                <span style={styles.fileIcon}>📄</span> Waste License
+                            </button>
+                        )}
+                        {c.boiLocalAuthorityApprovalFile && (
+                            <button onClick={() => handleDownload(c.boiLocalAuthorityApprovalFile)} style={styles.screenshotDocBtn}>
+                                <span style={styles.fileIcon}>📄</span> Local Authority App
+                            </button>
+                        )}
+
+                        {/* PIBO Upload Files */}
+                        {c.piboImportLicenseFile && (
+                            <button onClick={() => handleDownload(c.piboImportLicenseFile)} style={styles.screenshotDocBtn}>
+                                <span style={styles.fileIcon}>📄</span> Import License
+                            </button>
+                        )}
+                        {c.piboProductCatalogFile && (
+                            <button onClick={() => handleDownload(c.piboProductCatalogFile)} style={styles.screenshotDocBtn}>
+                                <span style={styles.fileIcon}>📄</span> Product Catalog
+                            </button>
+                        )}
+                        {c.piboBrandOwnershipFile && (
+                            <button onClick={() => handleDownload(c.piboBrandOwnershipFile)} style={styles.screenshotDocBtn}>
+                                <span style={styles.fileIcon}>📄</span> Brand Ownership
+                            </button>
+                        )}
+
+                        {/* ලිපිගොනු කිසිවක් ඩේටාබේස් එකේ නැතිනම් */}
+                        {!(c.brcDocument || c.vatDocument || c.billingDocument || c.nic || c.taxCertificateDocument || c.companyProfileDocument || c.environmentalLicenseFile || c.piboImportLicenseFile) && (
+                            <span style={{ color: 'rgba(255,255,255,0.25)', fontSize: '12px', fontStyle: 'italic', paddingLeft: '5px' }}>No Vault Documents</span>
                         )}
                     </div>
                 </td>
@@ -519,14 +581,13 @@ const UserManagement = () => {
             </div>
 
             {/* ============================================================================================ */}
-            {/* 👑 💎 🚚 🏭 AUDIT ENGINE MODAL: PRO, WASTE MANAGEMENT & PIBO ALL MATRIX DATA DETAILED VIEWER */}
+            {/* 👑 💎 🚚 🏭 AUDIT ENGINE MODAL: DATA EXISTENCE-BASED UNLOCKED VIEWER PANEL */}
             {/* ============================================================================================ */}
             {selectedUser && (
                 <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.85)', backdropFilter: 'blur(20px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 10000, padding: '20px' }}>
                     <div style={{ background: '#0c0c0c', borderRadius: '32px', maxWidth: '850px', width: '100%', maxHeight: '90vh', border: selectedUser.orgRole === 'PRO' ? '1px solid rgba(241, 196, 15, 0.3)' : (selectedUser.orgRole === 'RECYCLER' ? '1px solid rgba(243, 156, 18, 0.3)' : '1px solid rgba(52, 152, 219, 0.3)'), boxShadow: '0 50px 120px rgba(0,0,0,0.9)', display: 'flex', flexDirection: 'column', overflow: 'hidden', animation: 'fadeIn 0.4s ease-out' }}>
                         
-                        {/* Dynamic Header Badge styling according to Role Profile */}
-                        <div style={{ padding: '30px', textalign: 'center', background: 'rgba(255,255,255,0.01)', borderBottom: `4px solid ${selectedUser.orgRole === 'PRO' ? '#f1c40f' : (selectedUser.orgRole === 'RECYCLER' ? '#f39c12' : '#3498db')}`, position: 'relative' }}>
+                        <div style={{ padding: '30px', background: 'rgba(255,255,255,0.01)', borderBottom: `4px solid ${selectedUser.orgRole === 'PRO' ? '#f1c40f' : (selectedUser.orgRole === 'RECYCLER' ? '#f39c12' : '#3498db')}`, position: 'relative' }}>
                             <div style={{ fontSize: '42px', marginBottom: '8px', textAlign: 'center' }}>
                                 {selectedUser.orgRole === 'PRO' ? '💎' : (selectedUser.orgRole === 'RECYCLER' ? '🚚' : '🏭')}
                             </div>
@@ -540,10 +601,8 @@ const UserManagement = () => {
                             </div>
                         </div>
 
-                        {/* Modal Dashboard Scroller Core */}
                         <div style={{ padding: '40px', overflowY: 'auto', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '25px', backgroundColor: '#090909' }}>
                             
-                            {/* Legal Identity Frame */}
                             <div style={{ gridColumn: 'span 2', background: 'rgba(255,255,255,0.02)', padding: '22px', borderRadius: '20px', border: '1px solid rgba(255,255,255,0.05)' }}>
                                 <div style={{ fontSize: '11px', color: '#666', textTransform: 'uppercase', fontWeight: 'bold', letterSpacing: '0.5px' }}>Corporate Corporate Title</div>
                                 <div style={{ color: '#fff', fontSize: '22px', fontWeight: '800', marginTop: '6px' }}>{selectedUser.companyName}</div>
@@ -551,7 +610,6 @@ const UserManagement = () => {
                                 {selectedUser.companyWebsite && <div style={{ fontSize: '13px', marginTop: '8px' }}>🌐 Website: <a href={selectedUser.companyWebsite} target="_blank" rel="noreferrer" style={{ color: '#3498db', textDecoration: 'none' }}>{selectedUser.companyWebsite}</a></div>}
                             </div>
 
-                            {/* Representative Contact Column */}
                             <div style={{ background: 'rgba(255,255,255,0.01)', padding: '20px', borderRadius: '18px', border: '1px solid rgba(255,255,255,0.04)' }}>
                                 <div style={{ fontSize: '11px', color: '#666', textTransform: 'uppercase', marginBottom: '10px', fontWeight: 'bold' }}>Primary Focal Representative</div>
                                 <div style={{ color: '#fff', fontSize: '16px', fontWeight: 'bold' }}>{selectedUser.contactPersonName}</div>
@@ -561,7 +619,6 @@ const UserManagement = () => {
                                 {selectedUser.whatsapp && <div style={{ color: '#2ecc71', fontSize: '13px', marginTop: '4px' }}>💬 WhatsApp: {selectedUser.whatsapp}</div>}
                             </div>
 
-                            {/* Geo Location Physical Boundaries Card */}
                             <div style={{ background: 'rgba(255,255,255,0.01)', padding: '20px', borderRadius: '18px', border: '1px solid rgba(255,255,255,0.04)' }}>
                                 <div style={{ fontSize: '11px', color: '#666', textTransform: 'uppercase', marginBottom: '10px', fontWeight: 'bold' }}>Geographic Mapping</div>
                                 <div style={{ fontSize: '13px', color: '#ccc' }}>District boundary: <span style={{ color: '#fff', fontWeight: 'bold' }}>{selectedUser.orgDistrict || 'N/A'}</span></div>
@@ -570,9 +627,7 @@ const UserManagement = () => {
                                 <div style={{ fontSize: '13px', color: '#ccc', marginTop: '4px' }}>Country origin: <span style={{ color: '#fff' }}>{selectedUser.country || 'Sri Lanka'}</span></div>
                             </div>
 
-                            {/* ========================================================================= */}
-                            {/* 💎 PRO DATA SUB-VIEW CONTAINER */}
-                            {/* ========================================================================= */}
+                            {/* --- PRO Data Matrix View --- */}
                             {selectedUser.orgRole === 'PRO' && (
                                 <div style={{ gridColumn: 'span 2', display: 'flex', flexDirection: 'column', gap: '15px' }}>
                                     <div style={{ background: 'rgba(241,196,15,0.02)', padding: '18px', borderRadius: '15px', border: '1px solid rgba(241,196,15,0.1)' }}>
@@ -599,9 +654,7 @@ const UserManagement = () => {
                                 </div>
                             )}
 
-                            {/* ========================================================================= */}
-                            {/* 🚚 WASTE MANAGEMENT SYSTEM SPECIFIC PORTAL SUB-VIEW CONTAINER */}
-                            {/* ========================================================================= */}
+                            {/* --- Waste Management Data Matrix View --- */}
                             {(selectedUser.orgRole === 'RECYCLER' || selectedUser.isCollector || selectedUser.isRecycler || selectedUser.isTransporter || selectedUser.isTotalSolutionProvider) && (
                                 <div style={{ gridColumn: 'span 2', display: 'flex', flexDirection: 'column', gap: '15px' }}>
                                     <div style={{ background: 'rgba(243,156,18,0.02)', padding: '18px', borderRadius: '15px', border: '1px solid rgba(243,156,18,0.1)' }}>
@@ -633,18 +686,10 @@ const UserManagement = () => {
                                         <div><div style={{ fontSize: '11px', color: '#666' }}>Est Monthly Process</div><span style={{ color: '#fff', fontWeight: 'bold' }}>{selectedUser.estimatedMonthlyProcessingVolume || '-'}</span></div>
                                         <div><div style={{ fontSize: '11px', color: '#666' }}>Active Employees</div><span style={{ color: '#fff', fontWeight: 'bold' }}>{selectedUser.employeeCount || 0} Staff</span></div>
                                     </div>
-                                    {selectedUser.equipmentDetailsReport && (
-                                        <div style={{ background: 'rgba(255,255,255,0.02)', padding: '15px', borderRadius: '12px' }}>
-                                            <div style={{ fontSize: '11px', color: '#666', marginBottom: '4px' }}>Machinery Serial Allocations & Automation Report</div>
-                                            <div style={{ fontSize: '13px', color: '#ccc', whiteSpace: 'pre-line' }}>{selectedUser.equipmentDetailsReport}</div>
-                                        </div>
-                                    )}
                                 </div>
                             )}
 
-                            {/* ========================================================================= */}
-                            {/* 🏭 PIBO SMART DATA SYSTEM DECLARATIONS CONTAINER */}
-                            {/* ========================================================================= */}
+                            {/* --- PIBO Smart Data Matrix View --- */}
                             {(selectedUser.orgRole === 'Producer' || selectedUser.piboBusinessType?.length > 0) && (
                                 <div style={{ gridColumn: 'span 2', display: 'flex', flexDirection: 'column', gap: '15px' }}>
                                     <div style={{ background: 'rgba(52,152,219,0.02)', padding: '18px', borderRadius: '15px', border: '1px solid rgba(52,152,219,0.1)' }}>
@@ -654,8 +699,6 @@ const UserManagement = () => {
                                         </div>
                                         <div style={{ fontSize: '13px', color: '#aaa', marginTop: '8px' }}>Tax TIN/VAT Code Reference: <span style={{ color: '#fff', fontWeight: 'bold' }}>{selectedUser.piboTinVatNumber || 'N/A'}</span></div>
                                     </div>
-
-                                    {/* Annual Weights Metrics Metrics block */}
                                     <div style={{ background: 'rgba(255,255,255,0.02)', padding: '20px', borderRadius: '18px' }}>
                                         <div style={{ fontSize: '12px', color: '#2ecc71', fontWeight: 'bold', marginBottom: '12px' }}>DECLARED ANNUAL MASS METRICS (KG/UNITS PER ANNUM)</div>
                                         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '12px', fontSize: '12px' }}>
@@ -670,24 +713,20 @@ const UserManagement = () => {
                                             <div style={{ background: '#00000040', padding: '8px', borderRadius: '6px' }}>Lubricants Fleet: <span style={{ color: '#fff', fontWeight: 'bold' }}>{selectedUser.volumeLubricantsOilsLiters || 0} L</span></div>
                                         </div>
                                     </div>
-
-                                    {/* Calculated System Responsibilities mapping profiles */}
                                     <div style={{ background: 'rgba(46,204,113,0.04)', padding: '18px', borderRadius: '15px', border: '1px dashed rgba(46,204,113,0.2)' }}>
                                         <div style={{ fontSize: '12px', color: '#2ecc71', fontWeight: 'bold', marginBottom: '8px' }}>SYSTEM MAPPED AGGREGATE EPR RESPONSIBILITIES</div>
                                         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
                                             {selectedUser.generatedWasteLiabilityCategories?.map((l, idx) => <span key={idx} style={{ background: 'rgba(46,204,113,0.15)', color: '#2ecc71', fontSize: '11px', padding: '3px 8px', borderRadius: '4px', fontWeight: 'bold' }}>☑️ {l}</span>)}
-                                            {(!selectedUser.generatedWasteLiabilityCategories || selectedUser.generatedWasteLiabilityCategories.length === 0) && <span style={{ color: '#555', fontSize: '12px' }}>No Liabilities Allocated</span>}
                                         </div>
                                     </div>
                                 </div>
                             )}
 
-                            {/* ========================================================================= */}
-                             interviewee uploads panel (PRO, Waste, PIBO All secondary files matched)
-                            {/* ========================================================================= */}
+                            {/* 🆕 🛠️ --- Modal Vault Documents Archive View (100% Unlocked Data-Existence Mode) --- */}
                             <div style={{ gridColumn: 'span 2', background: 'rgba(0,0,0,0.4)', padding: '22px', borderRadius: '20px', border: '1px solid rgba(255,255,255,0.06)' }}>
                                 <div style={{ fontSize: '11px', color: '#666', textTransform: 'uppercase', marginBottom: '12px', fontWeight: 'bold' }}>All Dynamic Verification Documents Archive</div>
                                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
+                                    {/* Base Common Files */}
                                     {selectedUser.brcDocument && <button onClick={() => handleDownload(selectedUser.brcDocument)} style={styles.savePdfBtn}>📄 Core BRC Document</button>}
                                     {selectedUser.vatDocument && <button onClick={() => handleDownload(selectedUser.vatDocument)} style={styles.savePdfBtn}>📄 VAT Certification</button>}
                                     {selectedUser.billingDocument && <button onClick={() => handleDownload(selectedUser.billingDocument)} style={styles.savePdfBtn}>📄 Utility Bill Proof</button>}
@@ -712,7 +751,6 @@ const UserManagement = () => {
                             </div>
                         </div>
 
-                        {/* Modal Action Controls Footer */}
                         <div style={{ background: '#121212', padding: '20px 40px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid rgba(255,255,255,0.06)' }}>
                             <div style={{ fontSize: '12px', color: '#555' }}>
                                 Account Joined Timestamp: {new Date(selectedUser.registeredAt).toLocaleString()}
@@ -775,29 +813,39 @@ const styles = {
     thFirst: { padding: '15px', color: '#2ecc71', textTransform: 'uppercase', fontSize: '11px', fontWeight: 'bold', borderRight: '1px solid rgba(255, 255, 255, 0.1)', width: '50px' },
     thLast: { padding: '15px', color: '#2ecc71', textTransform: 'uppercase', fontSize: '11px', fontWeight: 'bold' },
     row: { borderBottom: '1px solid rgba(255, 255, 255, 0.05)' },
-    td: { padding: '15px', fontSize: '14px', color: '#ddd', borderRight: '1px solid rgba(255, 255, 255, 0.1)' },
-    tdFirst: { padding: '15px', fontSize: '14px', color: '#ddd', borderRight: '1px solid rgba(255, 255, 255, 0.1)', textAlign: 'center' },
-    tdLast: { padding: '15px', fontSize: '14px', color: '#ddd' },
+    td: { padding: '15px', fontSize: '14px', color: '#ddd', borderRight: '1px solid rgba(255, 255, 255, 0.1)', verticalAlign: 'middle' },
+    tdFirst: { padding: '15px', fontSize: '14px', color: '#ddd', borderRight: '1px solid rgba(255, 255, 255, 0.1)', textAlign: 'center', verticalAlign: 'middle' },
+    tdLast: { padding: '15px', fontSize: '14px', color: '#ddd', verticalAlign: 'middle' },
     statsGrid: { display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '20px', marginBottom: '40px' },
-    statCard: {
-        background: 'rgba(255, 255, 255, 0.05)', padding: '25px', borderRadius: '15px',
-        backdropFilter: 'blur(10px)', border: '1px solid rgba(255, 255, 255, 0.1)',
-        textAlign: 'center', transition: '0.3s'
-    },
-    approveBtn: {
-        background: 'rgba(46, 204, 113, 0.15)', color: '#2ecc71', border: '1px solid rgba(46, 204, 113, 0.4)',
-        padding: '8px 16px', borderRadius: '8px', cursor: 'pointer', fontSize: '13px',
-        fontWeight: '600', marginRight: '8px', transition: 'all 0.3s ease',
-        backdropFilter: 'blur(5px)', textTransform: 'uppercase', letterSpacing: '0.5px'
-    },
+    statCard: { background: 'rgba(255, 255, 255, 0.05)', padding: '25px', borderRadius: '15px', backdropFilter: 'blur(10px)', border: '1px solid rgba(255, 255, 255, 0.1)', textAlign: 'center', transition: '0.3s' },
+    approveBtn: { background: 'rgba(46, 204, 113, 0.15)', color: '#2ecc71', border: '1px solid rgba(46, 204, 113, 0.4)', padding: '8px 16px', borderRadius: '8px', cursor: 'pointer', fontSize: '13px', fontWeight: '600', marginRight: '8px', transition: 'all 0.3s ease', textTransform: 'uppercase', letterSpacing: '0.5px' },
     statLabel: { fontSize: '12px', color: '#2ecc71', letterSpacing: '1px', fontWeight: 'bold', textTransform: 'uppercase' },
     statValue: { fontSize: '35px', margin: '10px 0 0', fontWeight: '900', color: '#fff' },
     deleteBtn: { background: 'rgba(231, 76, 60, 0.1)', color: '#e74c3c', border: '1px solid #e74c3c', padding: '6px 12px', borderRadius: '8px', cursor: 'pointer', fontSize: '12px', fontWeight: 'bold' },
-    docLink: {
-        background: 'rgba(52, 152, 219, 0.15)', color: '#3498db', border: '1px solid rgba(52, 152, 219, 0.4)',
-        padding: '5px 10px', borderRadius: '6px', textDecoration: 'none', fontSize: '11px',
-        fontWeight: '600', display: 'inline-flex', alignItems: 'center', gap: '4px', transition: '0.3s'
+    
+    // 🆕 🛠️ ස්ක්‍රීන්ෂොට් එකේ තිබුණු නිල් පාට ප්‍රිමියම් ඩිසයින් එකටම 100%ක්ම ගැලපෙන්න හදපු අලුත්ම Styles Matrix එක
+    screenshotDocBtn: {
+        background: 'none',
+        border: 'none',
+        color: '#3498db',
+        cursor: 'pointer',
+        fontSize: '14px',
+        fontWeight: '600',
+        display: 'inline-flex',
+        alignItems: 'center',
+        gap: '6px',
+        padding: '2px 0',
+        fontFamily: "'Inter', sans-serif",
+        textDecoration: 'none',
+        transition: 'color 0.2s ease-in-out',
+        outline: 'none',
+        textAlign: 'left'
     },
+    fileIcon: {
+        fontSize: '16px',
+        color: '#fff',
+        opacity: 0.85
+    }
 };
 
 export default UserManagement;
