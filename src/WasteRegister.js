@@ -394,7 +394,7 @@ const WasteRegister = () => {
                                             <input type="file" style={styles.input} onChange={(e) => handleFileBase64(e, 'billing')} accept=".pdf,.jpg,.jpeg,.png" required={!fileStrings.billing} />
                                         </div>
                                     </>
-                                ) : (
+                                ) : (  
                                     <div>
                                         <label style={styles.label}>NIC / PASSPORT SCAN (BOTH SIDES) *</label>
                                         <input type="file" style={styles.input} onChange={(e) => handleFileBase64(e, 'nic')} accept=".pdf,.jpg,.jpeg,.png" required={!fileStrings.nic} />
