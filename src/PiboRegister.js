@@ -173,6 +173,7 @@ const PiboRegister = () => {
         } catch (error) {
             console.error("PIBO Registration Error:", error);
             alert("❌ Database Insertion Failed: " + (error.response?.data?.error || "Fatal runtime error."));
+            setIsLoading(false); // 👈 බැක්එන්ඩ් එකෙන් එරර් එකක් ආවොත් බටන් එක ආයෙත් වැඩ කරන්න මෙන්න මේ පේළිය නූලටම සෙට් කළා බෝසා!
         }
     };
 
@@ -515,7 +516,7 @@ const PiboRegister = () => {
                         ) : (
                            <button  type="submit"   disabled={isLoading}   style={{ ...styles.registerBtn, background: '#3498db', color: '#fff', cursor: isLoading ? 'not-allowed' : 'pointer', opacity: isLoading ? 0.6 : 1, marginTop: 0 }}
                           >
-                                   {isLoading ? "TRANSMITTING TO LEDGER PROTOCOL..." : "DEPLOY COMPLIANCE LEDGER PIPELINE"}
+                                    {isLoading ? "TRANSMITTING TO LEDGER PROTOCOL..." : "DEPLOY COMPLIANCE LEDGER PIPELINE"}
                            </button>
                         )}
                     </div>
