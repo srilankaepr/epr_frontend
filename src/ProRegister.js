@@ -7,6 +7,7 @@ import API from './api';
 const ProRegister = () => {
     const navigate = useNavigate();
     const [step, setStep] = useState(1);
+    const [isLoading, setIsLoading] = useState(false);
 
     // --- 100%ක්ම Required & Multi-select වලට සකස් කළ State එක ---
     const [formData, setFormData] = useState({
@@ -143,6 +144,8 @@ const ProRegister = () => {
             operationalExperienceProofDocument: fileStrings.expProof,
             authorizationLetterDocument: fileStrings.authLetter
         };
+        
+        setIsLoading(true);
 
         try {
             const response = await API.post('/customers/register', finalPayload);
@@ -475,8 +478,10 @@ const ProRegister = () => {
                                 NEXT PHASE →
                             </button>
                         ) : (
-                            <button type="submit" style={{ ...styles.registerBtn, background: '#f1c40f', color: '#000', boxShadow: '0 10px 30px rgba(241, 196, 15, 0.3)', marginTop: 0 }}>
-                                EXECUTE SYSTEM PRO PROVISIONING
+                            <button 
+                           type="submit" disabled={isLoading} style={{ ...styles.registerBtn, background: '#f1c40f', color: '#000', cursor: isLoading ? 'not-allowed' : 'pointer', opacity: isLoading ? 0.6 : 1, marginTop: 0 }}
+                           >
+                             {isLoading ? "EXECUTING SYSTEM PROVISIONING..." : "EXECUTE SYSTEM PRO PROVISIONING"}
                             </button>
                         )}
                     </div>

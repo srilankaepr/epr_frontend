@@ -7,6 +7,7 @@ import API from './api';
 const WasteRegister = () => {
     const navigate = useNavigate();
     const [step, setStep] = useState(1);
+    const [isLoading, setIsLoading] = useState(false);
 
     // --- 100%ක්ම Required & Single-Select / Multi-select වලට සකස් කළ State එක ---
     const [formData, setFormData] = useState({
@@ -197,6 +198,8 @@ const WasteRegister = () => {
             alert("❌ You must agree to all declaration and legal terms before submitting!");
             return;
         }
+
+        setIsLoading(true);
 
         const totalWasteCategories = [
             ...formData.generalWasteStreams,
@@ -783,9 +786,11 @@ const WasteRegister = () => {
                                 NEXT PHASE →
                             </button>
                         ) : (
-                            <button type="submit" style={{ ...styles.registerBtn, background: '#f39c12', boxShadow: '0 10px 30px rgba(243, 156, 18, 0.3)', marginTop: 0 }}>
-                                EXECUTE UNIFIED COMPLIANCE DEPLOYMENT
-                            </button>
+                           <button 
+                             type="submit"   disabled={isLoading}  style={{ ...styles.registerBtn, background: '#f39c12', color: '#fff', cursor: isLoading ? 'not-allowed' : 'pointer', opacity: isLoading ? 0.6 : 1, marginTop: 0 }}
+                                        >
+                                  {isLoading ? "INITIALIZING SECURE UPLOADS..." : "INITIALIZE SECURE SYSTEM UPLOADS"}
+                                    </button>
                         )}
                     </div>
                 </form>

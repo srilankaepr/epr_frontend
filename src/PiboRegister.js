@@ -7,6 +7,7 @@ import API from './api';
 const PiboRegister = () => {
     const navigate = useNavigate();
     const [step, setStep] = useState(1);
+    const [isLoading, setIsLoading] = useState(false);
 
     // --- PIBO Form State (Mapped exactly to provided MongoDB Schema fields) ---
     const [formData, setFormData] = useState({
@@ -160,6 +161,8 @@ const PiboRegister = () => {
             piboProductCatalogFile: fileStrings.productCatalog,
             piboBrandOwnershipFile: fileStrings.brandDoc
         };
+
+        setIsLoading(true);
 
         try {
             const response = await API.post('/customers/register', finalPayload);
@@ -510,9 +513,10 @@ const PiboRegister = () => {
                                 NEXT PHASE →
                             </button>
                         ) : (
-                            <button type="submit" style={{ ...styles.registerBtn, background: '#3498db', color: '#fff', boxShadow: '0 10px 30px rgba(52, 152, 219, 0.3)', marginTop: 0 }}>
-                                SUBMIT REGISTRATION
-                            </button>
+                           <button  type="submit"   disabled={isLoading}   style={{ ...styles.registerBtn, background: '#3498db', color: '#fff', cursor: isLoading ? 'not-allowed' : 'pointer', opacity: isLoading ? 0.6 : 1, marginTop: 0 }}
+                          >
+                                   {isLoading ? "TRANSMITTING TO LEDGER PROTOCOL..." : "DEPLOY COMPLIANCE LEDGER PIPELINE"}
+                           </button>
                         )}
                     </div>
                 </form>
