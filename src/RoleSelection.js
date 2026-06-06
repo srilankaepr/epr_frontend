@@ -7,7 +7,7 @@ const RoleSelection = () => {
     const navigate = useNavigate();
 
 const roles = [
-    //{ name: 'BECOME PRO',  icon: '💎',  desc: 'Producer Responsibility Organization - Enterprise EPR Management',  color: '#f1c40f',  bg: 'rgba(241, 196, 15, 0.15)',  path: '/register-pro', roleType: 'pro' },
+    { name: 'BECOME PRO',  icon: '💎',  desc: 'Producer Responsibility Organization - Enterprise EPR Management',  color: '#f1c40f',  bg: 'rgba(241, 196, 15, 0.15)',  path: '/register-pro', roleType: 'pro' },
     { name: 'PIBO', icon: '👤', desc: 'PIBO (Producer, Importer, Brand Owner and Vendor)', color: '#3498db', bg: 'rgba(52, 152, 219, 0.15)', path: '/register-pibo', roleType: 'producer' }, 
     { name: 'WASTE MANAGEMENT', icon: '🚚', desc: 'Collector/ Transporter/ Recycler/ Total Solution Provider', color: '#f39c12', bg: 'rgba(243, 156, 18, 0.15)', path: '/register-waste', roleType: 'RECYCLER' }, 
     { name: 'AUTHORITY DATA ACCESS', icon: '🏛️', desc: 'Government & Regulatory Authority Access Portal', color: '#9b59b6', bg: 'rgba(155, 89, 182, 0.15)', path: null, roleType: 'authority' }, 
