@@ -79,12 +79,6 @@ const PiboRegister = () => {
         brc: "", importLicense: "", productCatalog: "", brandDoc: "",vatDoc: ""
     });
 
-    // Mock PRO Dropdown list for Step 7 (Can be fetched from DB later)
-    const proList = [
-        { id: "PRO-001", name: "Sri Lanka Clean Ocean PRO" },
-        { id: "PRO-002", name: "Unified E-Waste Compliance Consortium" },
-        { id: "PRO-003", name: "Green Ceylon Industrial Association" }
-    ];
 
     const districts = ["Colombo", "Gampaha", "Kalutara", "Kandy", "Matale", "Nuwara Eliya", "Galle", "Matara", "Hambantota", "Jaffna", "Kilinochchi", "Mannar", "Vavuniya", "Mullaitivu", "Batticaloa", "Ampara", "Trincomalee", "Kurunegala", "Puttalam", "Anuradhapura", "Polonnaruwa", "Badulla", "Moneragala", "Ratnapura", "Kegalle"];
     const provinces = ["Western", "Central", "Southern", "Northern", "Eastern", "North Western", "North Central", "Uva", "Sabaragamuwa"];
@@ -416,28 +410,35 @@ const PiboRegister = () => {
                         </div>
                     )}
 
-                    {/* Step 7: PRO Engagement */}
-                    {step === 7 && (
-                        <div>
-                            <h3 style={styles.sectionHeader}>Step 7: PRO Operational Engagement</h3>
-                            <div style={styles.inputWrapper}>
-                                <label style={styles.label}>DO YOU HAVE AN ASSIGNED PRO COMPLIANCE PARTNER? *</label>
-                                <select name="piboHasAssignedPro" value={formData.piboHasAssignedPro} style={styles.selectInput} onChange={handleChange}>
-                                    <option value="No">No (Request System Automated Allocation)</option>
-                                    <option value="Yes">Yes (Map Existing Framework Reference)</option>
-                                </select>
-                            </div>
-                            {formData.piboHasAssignedPro === 'Yes' && (
-                                <div style={{ marginTop: '20px' }}>
-                                    <label style={styles.label}>SELECT AUTHORIZED PRO CONSORTIUM *</label>
-                                    <select name="piboSelectedProId" value={formData.piboSelectedProId} style={styles.selectInput} onChange={handleChange} required>
-                                        <option value="">-- Choose Operator --</option>
-                                        {proList.map(pro => <option key={pro.id} value={pro.id}>{pro.name}</option>)}
-                                    </select>
-                                </div>
-                            )}
-                        </div>
-                    )}
+                  {/* Step 7: PRO Engagement */}
+{step === 7 && (
+    <div>
+        <h3 style={styles.sectionHeader}>Step 7: PRO Operational Engagement</h3>
+        <div style={styles.inputWrapper}>
+            <label style={styles.label}>DO YOU HAVE AN ASSIGNED PRO COMPLIANCE PARTNER? *</label>
+            <select name="piboHasAssignedPro" value={formData.piboHasAssignedPro} style={styles.selectInput} onChange={handleChange}>
+                <option value="No">No (Request System Automated Allocation)</option>
+                <option value="Yes">Yes (Map Existing Framework Reference)</option>
+            </select>
+        </div>
+        
+        {/* 🆕 "Yes" කළොත් ඩ්‍රොප්ඩවුන් එක වෙනුවට ටයිප් කරන්න පුළුවන් Text Input එකක් සෙට් කළා බෝසා */}
+        {formData.piboHasAssignedPro === 'Yes' && (
+            <div style={{ marginTop: '20px' }}>
+                <label style={styles.label}>ENTER AUTHORIZED PRO CONSORTIUM NAME *</label>
+                <input 
+                    name="piboSelectedProId" 
+                    value={formData.piboSelectedProId} 
+                    type="text" 
+                    placeholder="Type your PRO Consortium Name..." 
+                    style={styles.input} 
+                    onChange={handleChange} 
+                    required 
+                />
+            </div>
+        )}
+    </div>
+)}
 
                     {/* Step 8: Compliance Declaration */}
                     {step === 8 && (
