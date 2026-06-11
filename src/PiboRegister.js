@@ -105,7 +105,7 @@ const PiboRegister = () => {
         if (cats.includes("Chemical Products")) mapping.push("Chemical Waste");
         if (cats.includes("Lubricants / Oils / Fuel Products")) mapping.push("Oil Contaminated Waste");
         if (cats.includes("Industrial Raw Materials / Machinery")) mapping.push("Industrial Waste");
-        if (cats.includes("Rubber Products / Tyres")) mapping.push("Rubber Waste");
+        if (cats.includes("Rubber Products")) mapping.push("Rubber Waste");
 
         setFormData(prev => ({ ...prev, generatedWasteLiabilityCategories: mapping }));
     }, [formData.piboSelectedProductCategories]);
@@ -304,7 +304,7 @@ const PiboRegister = () => {
                                     "Metal Packaging Products", "Electronic & Electrical Products (EEE)", "Lighting Products (LED / CFL)",
                                     "Batteries / Energy Storage Products", "Solar / Renewable Energy Equipment", "Automotive / EV Components",
                                     "Chemical Products", "Lubricants / Oils / Fuel Products", "Industrial Raw Materials / Machinery",
-                                    "Rubber Products / Tyres"
+                                    "Rubber Products"
                                 ].map(pCat => (
                                     <label key={pCat} style={styles.checkboxLabelNode}>
                                         <input type="checkbox" checked={formData.piboSelectedProductCategories.includes(pCat)} onChange={(e) => handleCheckboxGroup(e, 'piboSelectedProductCategories', pCat)} />
