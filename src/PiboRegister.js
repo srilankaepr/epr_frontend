@@ -484,7 +484,7 @@ const PiboRegister = () => {
 
                             {/* 🆕 අලුතින් එකතු කළ VAT Document Input එක */}
         <div style={styles.inputWrapper}>
-            <label style={styles.label}>VAT REGISTRATION CERTIFICATEE *</label>
+            <label style={styles.label}>VAT REGISTRATION CERTIFICATE *</label>
             <input type="file" style={styles.input} onChange={(e) => handleFileBase64(e, 'vatDoc')} accept=".pdf,.jpg,.jpeg,.png" required={!fileStrings.vatDoc} />
             {fileStrings.vatDoc && <p style={{ color: '#2ecc71', fontSize: '13px', marginTop: '5px' }}>✅ VAT Document Buffered</p>}
         </div>
