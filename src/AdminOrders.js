@@ -16,10 +16,10 @@ const AdminOrders = () => {
     const [searchTerm, setSearchTerm] = useState(''); 
     const [uploadingId, setUploadingId] = useState(null); 
 
-
+    // 🟢 1. FIXED ENDPOINT: AWS එකේ 403 එක නැති වෙන්න '/admin' කෑල්ල එකතු කරන ලදී
     const fetchOrders = async () => {
         try {
-            const response = await API.get('/orders/all');
+            const response = await API.get('/admin/orders/all');
             setOrders(response.data);
             setLoading(false);
         } catch (error) {
@@ -33,18 +33,18 @@ const AdminOrders = () => {
     }, []);
 
     const filteredOrders = orders.filter(order => {
-    const divisionMatch = filterDivision === 'ALL' ||  (order.division && order.division.toLowerCase().includes(filterDivision.toLowerCase()));
-    const typeMatch = filterType === 'ALL' || order.orderType === filterType;
-    const statusMatch = filterStatus === 'ALL' || order.status === filterStatus;
-    const searchMatch = order.invNum.toLowerCase().includes(searchTerm.toLowerCase());
+        const divisionMatch = filterDivision === 'ALL' ||  (order.division && order.division.toLowerCase().includes(filterDivision.toLowerCase()));
+        const typeMatch = filterType === 'ALL' || order.orderType === filterType;
+        const statusMatch = filterStatus === 'ALL' || order.status === filterStatus;
+        const searchMatch = order.invNum.toLowerCase().includes(searchTerm.toLowerCase());
 
-    return divisionMatch && typeMatch && statusMatch && searchMatch; 
-});
+        return divisionMatch && typeMatch && statusMatch && searchMatch; 
+    });
      
-
+    // 🟢 2. FIXED ENDPOINT: Status Update කරන එකටත් '/admin' කෑල්ල එකතු කරන ලදී
     const handleStatus = async (id, newStatus) => {
         try {
-            await API.put(`/orders/update-status/${id}`, {
+            await API.put(`/admin/orders/update-status/${id}`, {
                 status: newStatus
             });
             setOrders(orders.map(order => order._id === id ? { ...order, status: newStatus } : order));
@@ -55,35 +55,35 @@ const AdminOrders = () => {
         }
     };
 
-  const handleZipUpload = async (e, orderId) => {
-    const file = e.target.files[0];
-    if (!file) return;
+    // 🟢 3. FIXED ENDPOINT: ZIP Upload එකටත් '/admin' කෑල්ල එකතු කරන ලදී
+    const handleZipUpload = async (e, orderId) => {
+        const file = e.target.files[0];
+        if (!file) return;
 
-    const formData = new FormData();
-    formData.append('zipFile', file); 
+        const formData = new FormData();
+        formData.append('zipFile', file); 
 
-    setUploadingId(orderId);
-    try {
-        await API.post(`/orders/upload-zip/${orderId}`, formData);
-        
-        alert("✅ QR ZIP Uploaded Successfully!");
-        setUploadingId(null);
-        fetchOrders(); 
-    } catch (error) {
-          console.error("Upload Error:", error);
-            const errorMsg = error.response?.data?.error || "ZIP Upload Failed!";
-            alert(`❌ ${errorMsg}`);
+        setUploadingId(orderId);
+        try {
+            await API.post(`/admin/orders/upload-zip/${orderId}`, formData);
+            
+            alert("✅ QR ZIP Uploaded Successfully!");
             setUploadingId(null);
-    }
-};
+            fetchOrders(); 
+        } catch (error) {
+              console.error("Upload Error:", error);
+                const errorMsg = error.response?.data?.error || "ZIP Upload Failed!";
+                alert(`❌ ${errorMsg}`);
+                setUploadingId(null);
+        }
+    };
 
-const downloadInvoice = (base64Data, invNum) => {
-    if (!base64Data) {
-        alert("No invoice file found for this order!");
-        return;
-    }
-try {
-            // Base64 PDF එකක් නම්
+    const downloadInvoice = (base64Data, invNum) => {
+        if (!base64Data) {
+            alert("No invoice file found for this order!");
+            return;
+        }
+        try {
             if (base64Data.startsWith('data:application/pdf')) {
                 const link = document.createElement('a');
                 link.href = base64Data; 
@@ -94,15 +94,14 @@ try {
                 return;
             }
 
-            // Cloudinary URL 
             if (base64Data.startsWith('http')) {
-                const downloadUrl = `${BASE_URL}/orders/download-invoice?url=${encodeURIComponent(base64Data)}&fileName=Invoice_${invNum}`;
+                const downloadUrl = `${BASE_URL}/admin/orders/download-invoice?url=${encodeURIComponent(base64Data)}&fileName=Invoice_${invNum}`;
                 window.open(downloadUrl, '_blank');
                 return;
             }
 
-const ROOT_URL = BASE_URL.replace('/api', ''); 
-        window.open(`${ROOT_URL}/invoices/${base64Data}`, '_blank');
+            const ROOT_URL = BASE_URL.replace('/api', ''); 
+            window.open(`${ROOT_URL}/invoices/${base64Data}`, '_blank');
 
         } catch (error) {
             console.error("Download Error:", error);
@@ -110,26 +109,6 @@ const ROOT_URL = BASE_URL.replace('/api', '');
         }
     };
 
-    /* 💡 1. පරණ ලෝකල් ෆයිල් එකක් නම් (String එකක් විදිහට සේව් වෙලා ඇති)
-    if (!base64Data.startsWith('data:application/pdf') && !base64Data.startsWith('http')) {
-        window.open(`https://eprbackend-production.up.railway.app/invoices/${base64Data}`, '_blank');
-        return;
-    }
-
-    // 💡 2. අලුත් Base64 පීඩීඑෆ් එකක් නම් කෙලින්ම ඩවුන්ලෝඩ් කරවනවා
-    try {
-        const link = document.createElement('a');
-        link.href = base64Data; 
-        link.download = `Invoice_${invNum || 'Order'}.pdf`; 
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-    } catch (error) {
-        console.error("Download Error:", error);
-        alert("Could not download the file.");
-    }
-};
-*/
     const handleLogout = () => {
         if (window.confirm("Are you sure you want to logout?")) {
             localStorage.clear();
@@ -242,136 +221,132 @@ const ROOT_URL = BASE_URL.replace('/api', '');
                             </select>
                         </div>
 
-                    <div style={styles.filterItem}>
-        <label>Status: </label>
-        <select value={filterStatus} onChange={(e) => setFilterStatus(e.target.value)} style={styles.dropdown}>
-            <option value="ALL">All Status</option>
-            <option value="Pending">Pending</option>
-            <option value="Approved">Approved</option>
-            <option value="QR Sent">QR Sent</option>
-        </select>
-    </div>
+                        <div style={styles.filterItem}>
+                            <label>Status: </label>
+                            <select value={filterStatus} onChange={(e) => setFilterStatus(e.target.value)} style={styles.dropdown}>
+                                <option value="ALL">All Status</option>
+                                <option value="Pending">Pending</option>
+                                <option value="Approved">Approved</option>
+                                <option value="QR Sent">QR Sent</option>
+                            </select>
+                        </div>
 
-    <div style={styles.statsText}>
-        Orders Found: <span style={{color: '#2ecc71'}}>{filteredOrders.length}</span>
-    </div>
-</div>
-                    <div style={styles.tableContainer}>
-                        <table style={styles.table}>
-                            <thead>
-                                <tr style={styles.theadRow}>
-                                    <th style={styles.th}>Date & Time</th>
-                                    <th style={styles.th}>Invoice No</th>
-                                    <th style={styles.th}>Company</th>
-                                    <th style={styles.th}>Division</th>
-                                    <th style={styles.th}>Type</th>
-                                    <th style={styles.th}>Status</th>
-                                    <th style={styles.th}>File</th>
-                                    <th style={styles.th}>Action (Process)</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {filteredOrders.map((order) => (
-                                    <tr key={order._id} className="order-row" style={styles.tr}>
-                                        <td style={styles.td}>{order.date} | {order.time}</td>
-                                        <td style={{...styles.td, color: '#2ecc71', fontWeight: 'bold'}}>{order.invNum}</td>
-                                        <td style={styles.td}>{order.company}</td>
-                                        <td style={styles.td}><span style={styles.divisionTag}>{order.division || 'N/A'}</span></td>
-                                        <td style={styles.td}>{order.orderType || 'N/A'}</td>
-                                        <td style={{...styles.td, fontWeight: 'bold', color: order.status === 'Approved' ? '#2ecc71' : order.status === 'QR Sent' ? '#3498db' : '#f1c40f'}}>
-                                            {order.status}
-                                        </td>
-                                        <td style={styles.td}>
-<button 
-    style={styles.viewBtn} 
-    onClick={() => downloadInvoice(order.invoiceFile, order.invNum)}
->
-    👁️ View / Download
-</button>                       </td>
-                                        <td style={styles.td}>
-                                            <div style={{display: 'flex', gap: '10px', alignItems: 'center'}}>
-                                                {/* Approve Button (පරණ Apprv බටන් එකේ logic එකමයි) */}
-                                                <button 
-                                                    style={{
-                                                        ...styles.statusBtn, 
-                                                        background: order.status === 'Approve' || order.status === 'Approved' || order.status === 'QR Sent' ? '#2ecc71' : 'transparent', 
-                                                        borderColor: '#2ecc71'
-                                                    }} 
-                                                    onClick={() => handleStatus(order._id, 'Approved')}
-                                                    disabled={order.status === 'Approved' || order.status === 'QR Sent'}
-                                                >
-                                                    {order.status === 'Approved' || order.status === 'QR Sent' ? 'Approved' : 'Approve'}
-                                                </button>
-
-                                                {/* ZIP Upload - Approve වුණාම විතරක් පේනවා */}
-                                                {(order.status === 'Approved' || order.status === 'QR Sent') && (
-                                                    <label className="zip-label" style={{...styles.statusBtn, background: '#3498db', borderColor: '#3498db', cursor: 'pointer', display: 'inline-block', textAlign: 'center'}}>
-                                                        {uploadingId === order._id ? "..." : order.status === 'QR Sent' ? "Update QR" : "Upload QR"}
-                                                        <input 
-                                                            type="file" 
-                                                            accept=".zip" 
-                                                            style={{display: 'none'}} 
-                                                            onChange={(e) => handleZipUpload(e, order._id)}
-                                                        />
-                                                    </label>
-                                                )}
-                                            </div>
-                                        </td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                        {filteredOrders.length === 0 && (
-                            <div style={{textAlign: 'center', padding: '30px', color: '#888'}}>No matches found for "{searchTerm}"</div>
-                        )}
+                        <div style={styles.statsText}>
+                            Orders Found: <span style={{color: '#2ecc71'}}>{filteredOrders.length}</span>
+                        </div>
                     </div>
+
+                    {loading ? (
+                        <div style={{textAlign: 'center', padding: '50px', color: '#2ecc71', fontWeight: 'bold'}}>🔄 Loading System Orders...</div>
+                    ) : (
+                        <div style={styles.tableContainer}>
+                            <table style={styles.table}>
+                                <thead>
+                                    <tr style={styles.theadRow}>
+                                        <th style={styles.th}>Date & Time</th>
+                                        <th style={styles.th}>Invoice No</th>
+                                        <th style={styles.th}>Company</th>
+                                        <th style={styles.th}>Division</th>
+                                        <th style={styles.th}>Type</th>
+                                        <th style={styles.th}>Status</th>
+                                        <th style={styles.th}>File</th>
+                                        <th style={styles.th}>Action (Process)</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {filteredOrders.map((order) => (
+                                        <tr key={order._id} className="order-row" style={styles.tr}>
+                                            <td style={styles.td}>{order.date} | {order.time}</td>
+                                            <td style={{...styles.td, color: '#2ecc71', fontWeight: 'bold'}}>{order.invNum}</td>
+                                            <td style={styles.td}>{order.company}</td>
+                                            <td style={styles.td}><span style={styles.divisionTag}>{order.division || 'N/A'}</span></td>
+                                            <td style={styles.td}>{order.orderType || 'N/A'}</td>
+                                            <td style={{...styles.td, fontWeight: 'bold', color: order.status === 'Approved' ? '#2ecc71' : order.status === 'QR Sent' ? '#3498db' : '#f1c40f'}}>
+                                                {order.status}
+                                            </td>
+                                            <td style={styles.td}>
+                                                <button 
+                                                    style={styles.viewBtn} 
+                                                    onClick={() => downloadInvoice(order.invoiceFile, order.invNum)}
+                                                >
+                                                    👁️ View / Download
+                                                </button>
+                                            </td>
+                                            <td style={styles.td}>
+                                                <div style={{display: 'flex', gap: '10px', alignItems: 'center'}}>
+                                                    <button 
+                                                        style={{
+                                                            ...styles.statusBtn, 
+                                                            background: order.status === 'Approve' || order.status === 'Approved' || order.status === 'QR Sent' ? '#2ecc71' : 'transparent', 
+                                                            borderColor: '#2ecc71'
+                                                        }} 
+                                                        onClick={() => handleStatus(order._id, 'Approved')}
+                                                        disabled={order.status === 'Approved' || order.status === 'QR Sent'}
+                                                    >
+                                                        {order.status === 'Approved' || order.status === 'QR Sent' ? 'Approved' : 'Approve'}
+                                                    </button>
+
+                                                    {(order.status === 'Approved' || order.status === 'QR Sent') && (
+                                                        <label className="zip-label" style={{...styles.statusBtn, background: '#3498db', borderColor: '#3498db', cursor: 'pointer', display: 'inline-block', textAlign: 'center'}}>
+                                                            {uploadingId === order._id ? "..." : order.status === 'QR Sent' ? "Update QR" : "Upload QR"}
+                                                            <input 
+                                                                type="file" 
+                                                                accept=".zip" 
+                                                                style={{display: 'none'}} 
+                                                                onChange={(e) => handleZipUpload(e, order._id)}
+                                                            />
+                                                        </label>
+                                                    )}
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                            {filteredOrders.length === 0 && (
+                                <div style={{textAlign: 'center', padding: '30px', color: '#888'}}>No matches found for "{searchTerm}"</div>
+                            )}
+                        </div>
+                    )}
                 </div>
             </div>
         </div>
     );
 };
 
-// බෝසා මෙන්න ඔයාගේ මුල්ම styles object එක අකුරක්වත් වෙනස් නොකර
 const styles = {
     container: { 
         display: 'flex', minHeight: '100vh', 
         background: `linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&q=80&w=2072')`,
         backgroundSize: 'cover', backgroundPosition: 'center', backgroundAttachment: 'fixed',
         backgroundRepeat: 'no-repeat',
-    color: '#fff', fontFamily: "'Inter', sans-serif" 
+        color: '#fff', fontFamily: "'Inter', sans-serif" 
     },
-
-
-  
-sidebar: { 
-    width: '320px', 
-    position: 'fixed', // 👈 මේක තමයි ප්‍රධානම දේ
-    top: 0,
-    left: 0,
-    bottom: 0,
-    background: 'rgba(10, 10, 10, 0.6)',
-    backdropFilter: 'blur(25px)',
-    borderRight: '1px solid rgba(255, 255, 255, 0.1)', 
-    display: 'flex',
-    flexDirection: 'column',
-    padding: '50px 25px',
-    zIndex: 100 
-},
-
-
-    logoCircle: { width: '100px', height: '100px', background: '#fff', borderRadius: '24px', margin: '0 auto', display: 'flex', justifyContent: 'center', alignItems: 'center', boxShadow: '0 15px 35px rgba(0,0,0,0.5)', overflow: 'hidden' },
+    sidebar: { 
+        width: '320px', 
+        position: 'fixed', 
+        top: 0,
+        left: 0,
+        bottom: 0,
+        background: 'rgba(10, 10, 10, 0.6)',
+        backdropFilter: 'blur(25px)',
+        borderRight: '1px solid rgba(255, 255, 255, 0.1)', 
+        display: 'flex',
+        flexDirection: 'column',
+        padding: '50px 25px',
+        zIndex: 100 
+    },
+    logoCircle: { width: '100px', height: '100px', background: '#fff', borderRadius: '24px', margin: '0 auto', display: 'flex', justifycontent: 'center', alignItems: 'center', boxShadow: '0 15px 35px rgba(0,0,0,0.5)', overflow: 'hidden' },
     logoImg: { width: '85%' },
     logoTitle: { color: '#2ecc71', textAlign: 'center', margin: '20px 0 50px', fontSize: '16px', fontWeight: '900', letterSpacing: '4px' },
     nav: { display: 'flex', flexDirection: 'column', gap: '12px', flex: 1 },
     navBtn: { padding: '16px 20px', background: 'transparent', border: 'none', color: '#bbb', textAlign: 'left', cursor: 'pointer', borderRadius: '15px', transition: 'all 0.4s', fontSize: '15px' },
     navBtnActive: { padding: '16px 20px', background: 'linear-gradient(135deg, #2ecc71 0%, #27ae60 100%)', border: 'none', color: '#fff', textAlign: 'left', borderRadius: '15px', fontWeight: '700', boxShadow: '0 10px 25px rgba(46, 204, 113, 0.3)' },
     logoutBtn: { padding: '15px', border: '1px solid rgba(231, 76, 60, 0.4)', color: '#e74c3c', background: 'rgba(231, 76, 60, 0.05)', borderRadius: '15px', cursor: 'pointer', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '1px', transition: 'all 0.3s' },
-    
-    mainContent: { flex: 1, padding: '60px', marginLeft: '320px',overflowY: 'auto' },
+    mainContent: { flex: 1, padding: '60px', marginLeft: '320px', overflowY: 'auto' },
     header: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '60px' },
     adminTitle: { fontSize: '32px', fontWeight: '900', letterSpacing: '-1px', margin: 0 },
     subTitle: { color: '#888', fontSize: '14px', marginTop: '10px' },
-    
     mainPdfBtn: { 
         background: 'transparent', 
         border: '1.5px solid #2ecc71', 
@@ -384,7 +359,6 @@ sidebar: {
         fontSize: '15px',
         outline: 'none'
     },
-
     filterBar: { display: 'flex', alignItems: 'center', gap: '20px', background: 'rgba(255,255,255,0.03)', padding: '20px 30px', borderRadius: '20px', marginBottom: '30px', border: '1px solid rgba(255,255,255,0.05)' },
     filterItem: { display: 'flex', alignItems: 'center', gap: '10px', fontSize: '14px', color: '#ccc' },
     searchInput: { 
@@ -399,7 +373,6 @@ sidebar: {
     },
     dropdown: { background: '#111', color: '#fff', border: '1px solid #333', padding: '10px 15px', borderRadius: '12px', outline: 'none', cursor: 'pointer' },
     statsText: { marginLeft: 'auto', fontWeight: 'bold', fontSize: '14px' },
-
     tableContainer: { background: 'rgba(255, 255, 255, 0.02)', borderRadius: '25px', padding: '20px', border: '1px solid rgba(255, 255, 255, 0.05)', backdropFilter: 'blur(10px)' },
     table: { width: '100%', borderCollapse: 'collapse' },
     theadRow: { borderBottom: '2px solid rgba(46, 204, 113, 0.2)' },
