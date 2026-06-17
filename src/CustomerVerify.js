@@ -215,7 +215,7 @@ const handleRecycleSubmit = async () => {
                 )}
 
                 {/* 4. Success/Done Page after Registration */}
-             {viewMode === 'SUCCESS_DONE' && (
+                {viewMode === 'SUCCESS_DONE' && (
     <div style={{ textAlign: 'center', padding: '10px' }}>
         <div style={{ fontSize: '50px', marginBottom: '10px' }}>🎉</div>
         <h3 style={{ color: '#2ecc71' }}>Registration Complete!</h3>
@@ -223,13 +223,24 @@ const handleRecycleSubmit = async () => {
             Thank you for registering your product. Your information has been securely saved. 
         </p>
         
-        {/* 🟢 window.location.reload() වෙනුවට window.close() දැම්මා */}
+        {/* 🟢 Done ඔබපු ගමන් viewMode එක THANK_YOU වලට මාරු කරනවා */}
         <button 
-            onClick={() => window.close()} 
+            onClick={() => setViewMode('THANK_YOU')} 
             style={{ ...styles.button, background: '#333', color: '#fff', marginTop: '10px' }}
         >
             Done
         </button>
+    </div>
+)}
+
+{/* 🟢 5. අලුතින්ම එකතු කරපු Thank You ස්ක්‍රීන් එක (මෙතනින් පිටුව නවතිනවා) */}
+{viewMode === 'THANK_YOU' && (
+    <div style={{ textAlign: 'center', padding: '30px 10px' }}>
+        <div style={{ fontSize: '60px', marginBottom: '15px' }}>💚</div>
+        <h2 style={{ color: '#2ecc71', marginBottom: '10px' }}>Thank You!</h2>
+        <p style={{ color: '#aaa', fontSize: '14px', lineHeight: '1.6' }}>
+            You have successfully completed the verification process. You can now close this browser tab safely.
+        </p>
     </div>
 )}
 
