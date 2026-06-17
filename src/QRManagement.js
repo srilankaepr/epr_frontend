@@ -412,15 +412,15 @@ const fetchDashboardCounts = async () => {
             const finalImageBase64 = canvas.toDataURL("image/png");
             const finalImageRaw = finalImageBase64.split(',')[1];
 
-          try {
-    await API.post('/qr/save-qr', {
-        qrId: fullID,
-        qrData: finalImageBase64
-    });  
+       //   try {
+   // await API.post('/qr/save-qr', {
+     //   qrId: fullID,
+      //  qrData: finalImageBase64
+  //  });  
 
-            } catch (saveErr) {
-                console.error(`Backend Save Error for ${fullID}:`, saveErr);
-            }
+  //          } catch (saveErr) {
+        //        console.error(`Backend Save Error for ${fullID}:`, saveErr);
+ //           }
                 currentBatch.push({
                     qrId: fullID, company: comp, brand: brand,
                     product: prod, serialNumber: fullID, mfd: displayMFD,
