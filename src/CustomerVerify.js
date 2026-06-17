@@ -215,18 +215,23 @@ const handleRecycleSubmit = async () => {
                 )}
 
                 {/* 4. Success/Done Page after Registration */}
-                {viewMode === 'SUCCESS_DONE' && (
-                    <div style={{ textAlign: 'center', padding: '10px' }}>
-                        <div style={{ fontSize: '50px', marginBottom: '10px' }}>🎉</div>
-                        <h3 style={{ color: '#2ecc71' }}>Registration Complete!</h3>
-                        <p style={styles.subtitle}>
-                            Thank you for registering your product. Your information has been securely saved. 
-                        </p>
-                        <button onClick={() => window.location.reload()} style={{ ...styles.button, background: '#333', color: '#fff', marginTop: '10px' }}>
-                            Done
-                        </button>
-                    </div>
-                )}
+             {viewMode === 'SUCCESS_DONE' && (
+    <div style={{ textAlign: 'center', padding: '10px' }}>
+        <div style={{ fontSize: '50px', marginBottom: '10px' }}>🎉</div>
+        <h3 style={{ color: '#2ecc71' }}>Registration Complete!</h3>
+        <p style={styles.subtitle}>
+            Thank you for registering your product. Your information has been securely saved. 
+        </p>
+        
+        {/* 🟢 window.location.reload() වෙනුවට window.close() දැම්මා */}
+        <button 
+            onClick={() => window.close()} 
+            style={{ ...styles.button, background: '#333', color: '#fff', marginTop: '10px' }}
+        >
+            Done
+        </button>
+    </div>
+)}
 
                 {/* Success Popup */}
                 {showSuccessPopup && (
