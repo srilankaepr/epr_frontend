@@ -172,6 +172,41 @@ const WasteRegister = () => {
         }
     };
 
+    // --- 🚀 Enterprise-Grade Step Validation Control Center ---
+    const handleNextStep = () => {
+        // 🏢 👤 Step 3: Organization Details වලදී ෆයිල් චෙක් කිරීම
+        if (step === 3) {
+            if (formData.regType === 'Company') {
+                if (!fileStrings.brc) {
+                    alert("❌ Business Registration Certificate (BRC) is required for Company registration!");
+                    return;
+                }
+                if (!fileStrings.billing) {
+                    alert("❌ Utility Billing Proof is required for Company address verification!");
+                    return;
+                }
+            }
+            if (formData.regType === 'Individual' && !fileStrings.nic) {
+                alert("❌ National ID (NIC) or Passport scan is required for Individual registration!");
+                return;
+            }
+        }
+
+        // 📜 Step 9: Licenses & Compliance වලදී "Yes" නම් ෆයිල් චෙක් කිරීම
+        if (step === 9) {
+            if (formData.hasEnvironmentalLicense === 'Yes' && !fileStrings.envLicense) {
+                alert("❌ Since you selected 'Yes', uploading the EPL Certificate is mandatory!");
+                return;
+            }
+            if (formData.hasWasteHandlingLicense === 'Yes' && !fileStrings.wasteLicense) {
+                alert("❌ Since you selected 'Yes', uploading the Scheduled Waste Handling Certificate is mandatory!");
+                return;
+            }
+        }
+
+        setStep(prev => prev + 1);
+    };
+
     const validatePhone = (number) => {
         return /^[0-9]{10}$/.test(number);
     };
@@ -785,9 +820,9 @@ const WasteRegister = () => {
                             </button>
                         )}
                         {step < 11 ? (
-                            <button type="button" onClick={() => setStep(prev => prev + 1)} style={{ ...styles.registerBtn, marginTop: 0 }}>
-                                NEXT PHASE →
-                            </button>
+                            <button type="button" onClick={handleNextStep} style={{ ...styles.registerBtn, marginTop: 0 }}>
+                          NEXT PHASE →
+                           </button>
                         ) : (
                            <button 
                              type="submit"   disabled={isLoading}  style={{ ...styles.registerBtn, background: '#f39c12', color: '#fff', cursor: isLoading ? 'not-allowed' : 'pointer', opacity: isLoading ? 0.6 : 1, marginTop: 0 }}
