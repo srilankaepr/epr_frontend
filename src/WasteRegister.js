@@ -412,30 +412,34 @@ const WasteRegister = () => {
                                 <input name="operationalAddress" value={formData.operationalAddress} type="text" placeholder="Warehouse / Processing Center Location" style={styles.input} onChange={handleChange} />
                             </div>
 
-                            {/* BR / Document Uploads Fields integrated into Org Details based on Type */}
-                            <div style={{ marginTop: '20px', padding: '15px', background: 'rgba(255,255,255,0.02)', borderRadius: '12px', border: '1px dashed rgba(255,255,255,0.1)' }}>
-                                {formData.regType === 'Company' ? (
-                                    <>
-                                        <div style={{ marginBottom: '12px' }}>
-                                            <label style={styles.label}>BUSINESS REGISTRATION CERTIFICATE (BRC) *</label>
-                                            <input type="file" style={styles.input} onChange={(e) => handleFileBase64(e, 'brc')} accept=".pdf,.jpg,.jpeg,.png" required={!fileStrings.brc} />
-                                        </div>
-                                        <div style={{ marginBottom: '12px' }}>
-                                            <label style={styles.label}>VAT REGISTRATION CERTIFICATE (OPTIONAL)</label>
-                                            <input type="file" style={styles.input} onChange={(e) => handleFileBase64(e, 'vat')} accept=".pdf,.jpg,.jpeg,.png" />
-                                        </div>
-                                        <div>
-                                            <label style={styles.label}>UTILITY BILLING PROOF (ADDRESS VERIFICATION) *</label>
-                                            <input type="file" style={styles.input} onChange={(e) => handleFileBase64(e, 'billing')} accept=".pdf,.jpg,.jpeg,.png" required={!fileStrings.billing} />
-                                        </div>
-                                    </>
-                                ) : (  
-                                    <div>
-                                        <label style={styles.label}>NIC / PASSPORT SCAN (BOTH SIDES) *</label>
-                                        <input type="file" style={styles.input} onChange={(e) => handleFileBase64(e, 'nic')} accept=".pdf,.jpg,.jpeg,.png" required={!fileStrings.nic} />
-                                    </div>
-                                )}
-                            </div>
+                         {/* BR / Document Uploads Fields integrated into Org Details based on Type */}
+<div style={{ marginTop: '20px', padding: '15px', background: 'rgba(255,255,255,0.02)', borderRadius: '12px', border: '1px dashed rgba(255,255,255,0.1)' }}>
+    {formData.regType === 'Company' ? (
+        <>
+            <div style={{ marginBottom: '12px' }}>
+                <label style={styles.label}>BUSINESS REGISTRATION CERTIFICATE (BRC) *</label>
+                <input type="file" style={styles.input} onChange={(e) => handleFileBase64(e, 'brc')} accept=".pdf,.jpg,.jpeg,.png" />
+                {fileStrings.brc && <p style={{ color: '#2ecc71', fontSize: '13px', margin: '5px 0 0 0', fontWeight: 'bold' }}>✅ BRC Document Loaded Securely</p>}
+            </div>
+            <div style={{ marginBottom: '12px' }}>
+                <label style={styles.label}>VAT REGISTRATION CERTIFICATE (OPTIONAL)</label>
+                <input type="file" style={styles.input} onChange={(e) => handleFileBase64(e, 'vat')} accept=".pdf,.jpg,.jpeg,.png" />
+                {fileStrings.vat && <p style={{ color: '#2ecc71', fontSize: '13px', margin: '5px 0 0 0', fontWeight: 'bold' }}>✅ VAT Document Loaded Securely</p>}
+            </div>
+            <div>
+                <label style={styles.label}>UTILITY BILLING PROOF (ADDRESS VERIFICATION) *</label>
+                <input type="file" style={styles.input} onChange={(e) => handleFileBase64(e, 'billing')} accept=".pdf,.jpg,.jpeg,.png" />
+                {fileStrings.billing && <p style={{ color: '#2ecc71', fontSize: '13px', margin: '5px 0 0 0', fontWeight: 'bold' }}>✅ Utility Bill Loaded Securely</p>}
+            </div>
+        </>
+    ) : (  
+        <div>
+            <label style={styles.label}>NIC / PASSPORT SCAN (BOTH SIDES) *</label>
+            <input type="file" style={styles.input} onChange={(e) => handleFileBase64(e, 'nic')} accept=".pdf,.jpg,.jpeg,.png" />
+            {fileStrings.nic && <p style={{ color: '#2ecc71', fontSize: '13px', margin: '5px 0 0 0', fontWeight: 'bold' }}>✅ NIC/Passport Document Loaded Securely</p>}
+        </div>
+    )}
+</div>
                         </div>
                     )}
     
@@ -593,7 +597,7 @@ const WasteRegister = () => {
                                     {formData.transportCoverageScope === 'Pradeshiya Sabha' && (
                                         <div style={{ marginTop: '15px' }}>
                                             <label style={styles.label}>TYPE OR SELECT AUTHORIZED PRADESHIYA SABHA *</label>
-                                            <input list="transporter_sabhas" name="transportPradeshiyaSabhas" value={formData.transportPradeshiyaSabhas} placeholder="Type Pradeshiya Sabha name (Searchable & Writable)" style={styles.input} onChange={handleChange} required />
+                                            <input list="transporter_sabhas" name="transportPradeshiyaSabhas" value={typeof formData.transportPradeshiyaSabhas === 'string' ? formData.transportPradeshiyaSabhas : ''} placeholder="Type Pradeshiya Sabha name (Searchable & Writable)" style={styles.input} onChange={handleChange} required />
                                             <datalist id="transporter_sabhas">
                                                 {(districtToSabhas[formData.orgDistrict] || Object.values(districtToSabhas).flat()).map((ps, idx) => (
                                                     <option key={idx} value={ps} />
@@ -720,12 +724,12 @@ const WasteRegister = () => {
                                 </div>
                             </div>
 
-                            {/* 📑 කරුණ 3: EPL "Yes" නම් පමණක් පේන සහ required වන field එක */}
+                           {/* 📑 කරුණ 3: EPL "Yes" නම් පමණක් පේන සහ required වන field එක */}
                             {formData.hasEnvironmentalLicense === 'Yes' && (
                                 <div style={{ marginTop: '25px' }}>
                                     <label style={styles.label}>UPLOAD EPL CERTIFICATE (PDF/JPG) *</label>
-                                    <input type="file" style={styles.input} onChange={(e) => handleFileBase64(e, 'envLicense')} accept=".pdf,.jpg,.jpeg,.png" required={!fileStrings.envLicense} />
-                                    {fileStrings.envLicense && <p style={{ color: '#2ecc71', fontSize: '13px' }}>✅ EPL Uploaded</p>}
+                                    <input type="file" style={styles.input} onChange={(e) => handleFileBase64(e, 'envLicense')} accept=".pdf,.jpg,.jpeg,.png" />
+                                    {fileStrings.envLicense && <p style={{ color: '#2ecc71', fontSize: '13px', margin: '5px 0 0 0', fontWeight: 'bold' }}>✅ EPL Certificate Loaded Securely</p>}
                                 </div>
                             )}
 
@@ -733,8 +737,8 @@ const WasteRegister = () => {
                             {formData.hasWasteHandlingLicense === 'Yes' && (
                                 <div style={{ marginTop: '15px' }}>
                                     <label style={styles.label}>UPLOAD WASTE HANDLING CERTIFICATE (PDF/JPG) *</label>
-                                    <input type="file" style={styles.input} onChange={(e) => handleFileBase64(e, 'wasteLicense')} accept=".pdf,.jpg,.jpeg,.png" required={!fileStrings.wasteLicense} />
-                                    {fileStrings.wasteLicense && <p style={{ color: '#2ecc71', fontSize: '13px' }}>✅ Waste Handling License Uploaded</p>}
+                                    <input type="file" style={styles.input} onChange={(e) => handleFileBase64(e, 'wasteLicense')} accept=".pdf,.jpg,.jpeg,.png" />
+                                    {fileStrings.wasteLicense && <p style={{ color: '#2ecc71', fontSize: '13px', margin: '5px 0 0 0', fontWeight: 'bold' }}>✅ Waste Handling License Loaded Securely</p>}
                                 </div>
                             )}
 
