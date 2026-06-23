@@ -142,10 +142,7 @@ const WasteRegister = () => {
     const handleEntityRoleChange = (selectedRoleField) => {
         setFormData(prev => ({
             ...prev,
-            isCollector: selectedRoleField === 'isCollector',
-            isRecycler: selectedRoleField === 'isRecycler',
-            isTransporter: selectedRoleField === 'isTransporter',
-            isTotalSolutionProvider: selectedRoleField === 'isTotalSolutionProvider'
+            [name]: type === 'checkbox' ? checked : value
         }));
     };
 
@@ -170,6 +167,42 @@ const WasteRegister = () => {
             };
             reader.readAsDataURL(file);
         }
+    };
+
+    // --- 🚀 Enterprise-Grade Step Validation Control Center ---
+    const handleNextStep = () => {
+        // 🏢 👤 Step 3: Organization Details වලදී ෆයිල් චෙක් කිරීම
+        if (step === 3) {
+            if (formData.regType === 'Company') {
+                if (!fileStrings.brc) {
+                    alert("❌ Business Registration Certificate (BRC) is required for Company registration!");
+                    return;
+                }
+                if (!fileStrings.billing) {
+                    alert("❌ Utility Billing Proof is required for Company address verification!");
+                    return;
+                }
+            }
+            if (formData.regType === 'Individual' && !fileStrings.nic) {
+                alert("❌ National ID (NIC) or Passport scan is required for Individual registration!");
+                return;
+            }
+        }
+
+        // 📜 Step 9: Licenses & Compliance වලදී "Yes" නම් ෆයිල් චෙක් කිරීම
+        if (step === 9) {
+            if (formData.hasEnvironmentalLicense === 'Yes' && !fileStrings.envLicense) {
+                alert("❌ Since you selected 'Yes', uploading the EPL Certificate is mandatory!");
+                return;
+            }
+            if (formData.hasWasteHandlingLicense === 'Yes' && !fileStrings.wasteLicense) {
+                alert("❌ Since you selected 'Yes', uploading the Scheduled Waste Handling Certificate is mandatory!");
+                return;
+            }
+        }
+
+        // හැමදේම හරි නම් විතරක් ඊළඟ පියවරට යන්න ඉඩ දෙනවා
+        setStep(prev => prev + 1);
     };
 
     const validatePhone = (number) => {
@@ -321,7 +354,7 @@ const WasteRegister = () => {
                         </div>
                     )}
 
-                    {/* Step 3: Organization Details (Reg Type එක අනුව Inputs සහ Labels වෙනස් වන තැන) */}
+                    {/* Step 3: Organization Details */}
                     {step === 3 && (
                         <div>
                             <h3 style={styles.sectionHeader}>Step 3: Organization Details</h3>
@@ -335,39 +368,34 @@ const WasteRegister = () => {
                             </div>
                             <div style={styles.row}>
                                 <div style={styles.rowItem}>
-                                    {/* 🏢 👤 කරුණ 1: Reg Type එක අනුව ලේබල් එක Dynamic මාරු වීම */}
                                     <label style={styles.label}>
                                         {formData.regType === 'Company' ? 'BUSINESS REGISTRATION NUMBER *' : 'BUSINESS REGISTRATION OR NATIONAL ID NUMBER *'}  
                                     </label>
                                     <input name="regNumber" value={formData.regNumber} type="text" placeholder={formData.regType === 'Company' ? "PV-XXXXXX" : "19XXXXXXXXXX"} style={styles.input} onChange={handleChange} required />
                                 </div>
                                 <div style={styles.rowItem}>
-                                    {/* 🏢 👤 කරුණ 2: Reg Type එක අනුව Incorporation/DOB මාරු වීම සහ required/optional වීම */}
                                     <label style={styles.label}>
                                         {formData.regType === 'Company' ? 'DATE OF INCORPORATION *' : 'DATE OF BIRTH (OPTIONAL)'}
                                     </label>
                                     <input name="dob" value={formData.dob} type="date" style={styles.input} onChange={handleChange} required={formData.regType === 'Company'} />
                                 </div>
                             </div>
-                          <div style={styles.row}>
-    {/* 1. පළමුව පළාත (Province) සඳහා වෙන්වූ කොටස */}
-    <div style={styles.rowItem}>
-        <label style={styles.label}>PROVINCE *</label>
-        <select name="orgProvince" value={formData.orgProvince} style={styles.selectInput} onChange={handleChange} required>
-            <option value="">-- Select Province --</option>
-            {provinces.map(p => <option key={p} value={p}>{p}</option>)}
-        </select>
-    </div>
-
-    {/* 2. දෙවැනුව දිස්ත්‍රික්කය (District) සඳහා වෙන්වූ කොටස */}
-    <div style={styles.rowItem}>
-        <label style={styles.label}>DISTRICT *</label>
-        <select name="orgDistrict" value={formData.orgDistrict} style={styles.selectInput} onChange={handleChange} required>
-            <option value="">-- Select District --</option>
-            {districts.map(d => <option key={d} value={d}>{d}</option>)}
-        </select>
-    </div>
-</div>
+                            <div style={styles.row}>
+                                <div style={styles.rowItem}>
+                                    <label style={styles.label}>PROVINCE *</label>
+                                    <select name="orgProvince" value={formData.orgProvince} style={styles.selectInput} onChange={handleChange} required>
+                                        <option value="">-- Select Province --</option>
+                                        {provinces.map(p => <option key={p} value={p}>{p}</option>)}
+                                    </select>
+                                </div>
+                                <div style={styles.rowItem}>
+                                    <label style={styles.label}>DISTRICT *</label>
+                                    <select name="orgDistrict" value={formData.orgDistrict} style={styles.selectInput} onChange={handleChange} required>
+                                        <option value="">-- Select District --</option>
+                                        {districts.map(d => <option key={d} value={d}>{d}</option>)}
+                                    </select>
+                                </div>
+                            </div>
                             <div style={styles.inputWrapper}>
                                 <label style={styles.label}>REGISTERED ADDRESS (MULTILINE) *</label>
                                 <input name="address1" value={formData.address1} type="text" placeholder="Headquarters Physical Address" style={styles.input} onChange={handleChange} required />
@@ -377,27 +405,30 @@ const WasteRegister = () => {
                                 <input name="operationalAddress" value={formData.operationalAddress} type="text" placeholder="Warehouse / Processing Center Location" style={styles.input} onChange={handleChange} />
                             </div>
 
-                            {/* BR / Document Uploads Fields integrated into Org Details based on Type */}
                             <div style={{ marginTop: '20px', padding: '15px', background: 'rgba(255,255,255,0.02)', borderRadius: '12px', border: '1px dashed rgba(255,255,255,0.1)' }}>
                                 {formData.regType === 'Company' ? (
                                     <>
                                         <div style={{ marginBottom: '12px' }}>
                                             <label style={styles.label}>BUSINESS REGISTRATION CERTIFICATE (BRC) *</label>
-                                            <input type="file" style={styles.input} onChange={(e) => handleFileBase64(e, 'brc')} accept=".pdf,.jpg,.jpeg,.png" required={!fileStrings.brc} />
+                                            <input type="file" style={styles.input} onChange={(e) => handleFileBase64(e, 'brc')} accept=".pdf,.jpg,.jpeg,.png" />
+                                            {fileStrings.brc && <p style={{ color: '#2ecc71', fontSize: '13px', margin: '5px 0 0' }}>✅ BRC Uploaded</p>}
                                         </div>
                                         <div style={{ marginBottom: '12px' }}>
                                             <label style={styles.label}>VAT REGISTRATION CERTIFICATE (OPTIONAL)</label>
                                             <input type="file" style={styles.input} onChange={(e) => handleFileBase64(e, 'vat')} accept=".pdf,.jpg,.jpeg,.png" />
+                                            {fileStrings.vat && <p style={{ color: '#2ecc71', fontSize: '13px', margin: '5px 0 0' }}>✅ VAT Uploaded</p>}
                                         </div>
                                         <div>
                                             <label style={styles.label}>UTILITY BILLING PROOF (ADDRESS VERIFICATION) *</label>
-                                            <input type="file" style={styles.input} onChange={(e) => handleFileBase64(e, 'billing')} accept=".pdf,.jpg,.jpeg,.png" required={!fileStrings.billing} />
+                                            <input type="file" style={styles.input} onChange={(e) => handleFileBase64(e, 'billing')} accept=".pdf,.jpg,.jpeg,.png" />
+                                            {fileStrings.billing && <p style={{ color: '#2ecc71', fontSize: '13px', margin: '5px 0 0' }}>✅ Utility Bill Uploaded</p>}
                                         </div>
                                     </>
                                 ) : (  
                                     <div>
                                         <label style={styles.label}>NIC / PASSPORT SCAN (BOTH SIDES) *</label>
-                                        <input type="file" style={styles.input} onChange={(e) => handleFileBase64(e, 'nic')} accept=".pdf,.jpg,.jpeg,.png" required={!fileStrings.nic} />
+                                        <input type="file" style={styles.input} onChange={(e) => handleFileBase64(e, 'nic')} accept=".pdf,.jpg,.jpeg,.png" />
+                                        {fileStrings.nic && <p style={{ color: '#2ecc71', fontSize: '13px', margin: '5px 0 0' }}>✅ NIC Uploaded</p>}
                                     </div>
                                 )}
                             </div>
@@ -457,9 +488,6 @@ const WasteRegister = () => {
                                         <option value="National">National</option>
                                     </select>
 
-                                    {/* ========================================================================= */}
-                                    {/* 🛡️ 🟢 CO-PARTNER BLUE BOX SECTION (පරණ RegisterCustomer.js එකෙන් එලෙසම රැකගන්නා ลදී) */}
-                                    {/* ========================================================================= */}
                                     <div style={{ marginTop: '20px', padding: '20px', background: 'rgba(52, 152, 219, 0.08)', borderRadius: '15px', border: '1px solid rgba(52, 152, 219, 0.3)' }}>
                                         <label style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer', color: '#3498db', fontWeight: 'bold', fontSize: '14px' }}>
                                             <input type="checkbox" name="isCoPartner" checked={formData.isCoPartner} onChange={handleChange} style={{ width: '18px', height: '18px', accentColor: '#3498db' }} />
@@ -664,7 +692,7 @@ const WasteRegister = () => {
                         </div>
                     )}
 
-                    {/* Step 9: Compliance & Licenses (Yes/No අනුව Dynamic Hide/Show වෙන කොටස) */}
+                    {/* Step 9: Compliance & Licenses */}
                     {step === 9 && (
                         <div>
                             <h3 style={styles.sectionHeader}>Step 9: Compliance & Statutory Licenses</h3>
@@ -685,29 +713,26 @@ const WasteRegister = () => {
                                 </div>
                             </div>
 
-                            {/* 📑 කරුණ 3: EPL "Yes" නම් පමණක් පේන සහ required වන field එක */}
                             {formData.hasEnvironmentalLicense === 'Yes' && (
                                 <div style={{ marginTop: '25px' }}>
                                     <label style={styles.label}>UPLOAD EPL CERTIFICATE (PDF/JPG) *</label>
-                                    <input type="file" style={styles.input} onChange={(e) => handleFileBase64(e, 'envLicense')} accept=".pdf,.jpg,.jpeg,.png" required={!fileStrings.envLicense} />
-                                    {fileStrings.envLicense && <p style={{ color: '#2ecc71', fontSize: '13px' }}>✅ EPL Uploaded</p>}
+                                    <input type="file" style={styles.input} onChange={(e) => handleFileBase64(e, 'envLicense')} accept=".pdf,.jpg,.jpeg,.png" />
+                                    {fileStrings.envLicense && <p style={{ color: '#2ecc71', fontSize: '13px', margin: '5px 0 0' }}>✅ EPL Uploaded</p>}
                                 </div>
                             )}
 
-                            {/* 📑 කරුණ 3: Waste Handling "Yes" නම් පමණක් පේන සහ required වන field එක */}
                             {formData.hasWasteHandlingLicense === 'Yes' && (
                                 <div style={{ marginTop: '15px' }}>
                                     <label style={styles.label}>UPLOAD WASTE HANDLING CERTIFICATE (PDF/JPG) *</label>
-                                    <input type="file" style={styles.input} onChange={(e) => handleFileBase64(e, 'wasteLicense')} accept=".pdf,.jpg,.jpeg,.png" required={!fileStrings.wasteLicense} />
-                                    {fileStrings.wasteLicense && <p style={{ color: '#2ecc71', fontSize: '13px' }}>✅ Waste Handling License Uploaded</p>}
+                                    <input type="file" style={styles.input} onChange={(e) => handleFileBase64(e, 'wasteLicense')} accept=".pdf,.jpg,.jpeg,.png" />
+                                    {fileStrings.wasteLicense && <p style={{ color: '#2ecc71', fontSize: '13px', margin: '5px 0 0' }}>✅ Waste Handling License Uploaded</p>}
                                 </div>
                             )}
 
-                            {/* BOI approval එක හැමවෙලේම පේනවා, හැබැයි optional */}
                             <div style={{ marginTop: '15px' }}>
                                 <label style={styles.label}>UPLOAD BOI / LOCAL AUTHORITY REGULATORY APPROVAL (OPTIONAL)</label>
                                 <input type="file" style={styles.input} onChange={(e) => handleFileBase64(e, 'boiApproval')} accept=".pdf,.jpg,.jpeg,.png" />
-                                {fileStrings.boiApproval && <p style={{ color: '#2ecc71', fontSize: '13px' }}>✅ BOI / Local Authority Approval Uploaded</p>}
+                                {fileStrings.boiApproval && <p style={{ color: '#2ecc71', fontSize: '13px', margin: '5px 0 0' }}>✅ BOI / Local Authority Approval Uploaded</p>}
                             </div>
                         </div>
                     )}
@@ -785,11 +810,11 @@ const WasteRegister = () => {
                             </button>
                         )}
                         {step < 11 ? (
-                            <button type="button" onClick={() => setStep(prev => prev + 1)} style={{ ...styles.registerBtn, marginTop: 0 }}>
+                            <button type="button" onClick={handleNextStep} style={{ ...styles.registerBtn, marginTop: 0 }}>
                                 NEXT PHASE →
                             </button>
                         ) : (
-                           <button 
+                            <button 
                              type="submit"   disabled={isLoading}  style={{ ...styles.registerBtn, background: '#f39c12', color: '#fff', cursor: isLoading ? 'not-allowed' : 'pointer', opacity: isLoading ? 0.6 : 1, marginTop: 0 }}
                                         >
                                   {isLoading ? "INITIALIZING SECURE UPLOADS..." : "INITIALIZE SECURE SYSTEM UPLOADS"}
