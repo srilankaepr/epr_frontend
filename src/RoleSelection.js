@@ -12,7 +12,7 @@ const roles = [
     { name: 'WASTE MANAGEMENT', icon: '🚚', desc: 'Collector/ Transporter/ Recycler/ Total Solution Provider', color: '#f39c12', bg: 'rgba(243, 156, 18, 0.15)', path: '/register-waste', roleType: 'RECYCLER' }, 
     { name: 'AUTHORITY DATA ACCESS', icon: '🏛️', desc: 'Government & Regulatory Authority Access Portal', color: '#9b59b6', bg: 'rgba(155, 89, 182, 0.15)', path: null, roleType: 'authority' }, 
     { name: 'ADMIN', icon: '🛡️', desc: 'System Governance & Oversight', color: '#2ecc71', bg: 'rgba(46, 204, 113, 0.15)', path: '/register-admin', roleType: 'admin' },
-
+     
 ];
 
     return (
