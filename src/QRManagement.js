@@ -409,7 +409,7 @@ const fetchDashboardCounts = async () => {
                 ctx.fillStyle = "#444";
                 ctx.fillText(`MFD: ${displayMFD}`, canvas.width / 2, 1000);
 
-            const finalImageBase64 = canvas.toDataURL("image/png");
+          /*  const finalImageBase64 = canvas.toDataURL("image/png");
             const finalImageRaw = finalImageBase64.split(',')[1];
 
        //   try {
@@ -449,6 +449,65 @@ if (dbResponse.status !== 200 && dbResponse.status !== 201) {
                         throw new Error(`DB Error at item ${i}: ${dbErr.message}`);
                     }
                 }
+
+                */
+
+
+     // ... උඩින් QR එක Canvas එකට අඳින ටික එහෙමම තියෙන්න ...
+
+const finalImageBase64 = canvas.toDataURL("image/png");
+const finalImageRaw = finalImageBase64.split(',')[1];
+
+// 1. පින්තූරේ Backend එකට යවලා S3 URL එක ලබා ගැනීම
+let s3ImageUrl = "";
+try {
+    const saveRes = await API.post('/qr/save-qr', {
+        qrId: fullID,
+        qrData: finalImageBase64
+    });
+    s3ImageUrl = saveRes.data.url; // Backend එකෙන් එන අලුත් S3 ලින්ක් එක
+} catch (saveErr) {
+    console.error(`Backend Save Error for ${fullID}:`, saveErr);
+}
+
+// 2. Batch එකට දත්ත එකතු කිරීම
+currentBatch.push({
+    qrId: fullID, 
+    company: comp, 
+    brand: brand,
+    product: prod, 
+    serialNumber: fullID, 
+    mfd: displayMFD,
+    qrImage: s3ImageUrl, // දැන් මෙතන S3 ලින්ක් එක තියෙනවා
+    tempImageData: finalImageRaw // Zip එක හදන්න මේකත් ඕනේ
+});
+
+// 3. 100ක් පිරුණම Database එකට යැවීම
+if (currentBatch.length === 100 || i === finalQty) {
+    try {
+        // Database එකට යවන දත්ත ටික (S3 URL එකත් එක්ක)
+        const dbData = currentBatch.map(({ tempImageData, ...rest }) => ({
+            ...rest,
+            qrImage: rest.qrImage // මෙතනට දැන් S3 ලින්ක් එක යනවා
+        }));
+
+        const dbResponse = await API.post('/qr/save-qr-batch', { batch: dbData});
+
+        if (dbResponse.status !== 200 && dbResponse.status !== 201) {
+            throw new Error("Database saving failed!");
+        }
+
+        // Zip එකට පින්තූර එකතු කිරීම
+        currentBatch.forEach(item => {
+            zip.file(`QR_${item.qrId}.png`, item.tempImageData, { base64: true });
+            processedInCurrentZip++;
+        });
+
+        currentBatch = [];
+    } catch (dbErr) {
+        throw new Error(`DB Error at item ${i}: ${dbErr.message}`);
+    }
+}           
 
                 if (processedInCurrentZip === MAX_PER_ZIP || (i === finalQty && processedInCurrentZip > 0)) {
                     const content = await zip.generateAsync({ type: "blob" });
