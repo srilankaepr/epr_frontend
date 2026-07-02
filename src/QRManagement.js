@@ -488,7 +488,7 @@ if (currentBatch.length === 100 || i === finalQty) {
         // Database එකට යවන දත්ත ටික (S3 URL එකත් එක්ක)
         const dbData = currentBatch.map(({ tempImageData, ...rest }) => ({
             ...rest,
-            qrImage: rest.qrImage // මෙතනට දැන් S3 ලින්ක් එක යනවා
+            qrImage: rest.qrImage 
         }));
 
         const dbResponse = await API.post('/qr/save-qr-batch', { batch: dbData});
