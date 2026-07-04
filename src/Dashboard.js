@@ -283,24 +283,7 @@ if (topRes.status === 200) {
                         <p style={styles.cardLab}>View & Manage Registered Products</p>
                     </div>
 
-       {/* PDF GENARATOR */}
-            <div 
-        style={{...styles.miniCard, cursor: 'pointer', transition: '0.3s'}} 
-        onClick={() => navigate('/pdf-generator')}
-        onMouseEnter={(e) => {
-            e.currentTarget.style.background = 'rgba(46, 204, 113, 0.1)';
-            e.currentTarget.style.transform = 'translateY(-5px)';
-        }}
-        onMouseLeave={(e) => {
-            e.currentTarget.style.background = 'rgba(255, 255, 255, 0.03)';
-            e.currentTarget.style.transform = 'translateY(0)';
-        }}
-    >
-        <div style={{...styles.cardIcon, color: '#e67e22'}}>📄</div>
-        <h3 style={{ ...styles.cardVal, fontSize: '18px' }}>PDF GENERATOR</h3>
-        <p style={styles.cardLab}>Generate & Download Reports</p>
-         </div>
-
+      
 
 
             {/* CUSTOMER FEEDBACK */}
