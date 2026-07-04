@@ -231,7 +231,7 @@ if (topRes.status === 200) {
         <div style={styles.mainContent}>
             <header style={{...styles.header, animation: 'fadeInDown 0.8s ease-out'}}>
                 <div style={styles.headerText}>
-                    <h1 style={styles.adminTitle}>ADMINISTRATIVE OVERVIEW...</h1>
+                    <h1 style={styles.adminTitle}>ADMINISTRATIVE OVERVIEW</h1>
                     <div style={styles.divider}></div>
                 </div>
 
@@ -282,9 +282,6 @@ if (topRes.status === 200) {
                         <h3 style={{ ...styles.cardVal, fontSize: '18px' }}>PRODUCT REGISTRY</h3>
                         <p style={styles.cardLab}>View & Manage Registered Products</p>
                     </div>
-
-      
-
 
             {/* CUSTOMER FEEDBACK */}
                 <div 
@@ -522,7 +519,6 @@ mainContent: {
         alignItems: 'stretch',
         width: '100%',
         maxWidth: '1250px' 
-        
     },
 
     // --- පොදු කාඩ් Style එක (කාඩ් 3ටම) ---
@@ -538,24 +534,24 @@ mainContent: {
         gap: '15px', 
         transition: 'all 0.5s ease',
         backdropFilter: 'blur(10px)',
-        minHeight: '260px' 
+        minHeight: '260px' // කාඩ් 3ම එකම උසින් තියෙන්න
     },
 
     cardVal: { 
         color: '#2ecc71', 
-        fontSize: '52px', 
+        fontSize: '52px', // අගය තවත් ලොකු කළා
         fontWeight: '900',
         margin: '0',
-        textShadow: '0 0 20px rgba(46, 204, 113, 0.3)' 
+        textShadow: '0 0 20px rgba(46, 204, 113, 0.3)' // පේන ගතිය වැඩි කරන්න
     },
 
     cardLab: { 
-        color: '#FFFFFF', 
+        color: '#FFFFFF', // අකුරු තද සුදු කළා (Brighter White)
         fontSize: '15px', 
         fontWeight: '700', 
         textTransform: 'uppercase', 
         letterSpacing: '2px',
-        opacity: '1' 
+        opacity: '1' // අඳුරු ගතිය අයින් කළා
     },
 
     cardIcon: {
