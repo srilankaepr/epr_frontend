@@ -284,24 +284,6 @@ if (topRes.status === 200) {
                     </div>
 
 
-                    {/* 2. DDF GENERATOR (අලුතින් එකතු කළ කාඩ් එක) */}
-<div 
-    style={{...styles.miniCard, cursor: 'pointer', transition: '0.3s'}} 
-    onClick={() => navigate('/ddf-generator')} // ඔයාගේ පේජ් එකේ path එක මෙතනට දාන්න
-    onMouseEnter={(e) => {
-        e.currentTarget.style.background = 'rgba(52, 152, 219, 0.1)';
-        e.currentTarget.style.transform = 'translateY(-5px)';
-    }}
-    onMouseLeave={(e) => {
-        e.currentTarget.style.background = 'rgba(255, 255, 255, 0.03)';
-        e.currentTarget.style.transform = 'translateY(0)';
-    }}
->
-    <div style={{...styles.cardIcon, color: '#3498db'}}>📄</div>
-    <h3 style={{ ...styles.cardVal, fontSize: '18px' }}>DDF GENERATOR</h3>
-    <p style={styles.cardLab}>Create & Generate DDF Forms</p>
-</div>
-
             {/* CUSTOMER FEEDBACK */}
                 <div 
             style={{...styles.miniCard, cursor: 'pointer', transition: '0.3s'}} 
