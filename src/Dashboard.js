@@ -231,7 +231,7 @@ if (topRes.status === 200) {
         <div style={styles.mainContent}>
             <header style={{...styles.header, animation: 'fadeInDown 0.8s ease-out'}}>
                 <div style={styles.headerText}>
-                    <h1 style={styles.adminTitle}>ADMINISTRATIVE OVERVIEW</h1>
+                    <h1 style={styles.adminTitle}>ADMINISTRATIVE OVERVIEW...</h1>
                     <div style={styles.divider}></div>
                 </div>
 
@@ -555,24 +555,24 @@ mainContent: {
         gap: '15px', 
         transition: 'all 0.5s ease',
         backdropFilter: 'blur(10px)',
-        minHeight: '260px' // කාඩ් 3ම එකම උසින් තියෙන්න
+        minHeight: '260px' 
     },
 
     cardVal: { 
         color: '#2ecc71', 
-        fontSize: '52px', // අගය තවත් ලොකු කළා
+        fontSize: '52px', 
         fontWeight: '900',
         margin: '0',
-        textShadow: '0 0 20px rgba(46, 204, 113, 0.3)' // පේන ගතිය වැඩි කරන්න
+        textShadow: '0 0 20px rgba(46, 204, 113, 0.3)' 
     },
 
     cardLab: { 
-        color: '#FFFFFF', // අකුරු තද සුදු කළා (Brighter White)
+        color: '#FFFFFF', 
         fontSize: '15px', 
         fontWeight: '700', 
         textTransform: 'uppercase', 
         letterSpacing: '2px',
-        opacity: '1' // අඳුරු ගතිය අයින් කළා
+        opacity: '1' 
     },
 
     cardIcon: {
