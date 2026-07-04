@@ -534,12 +534,13 @@ mainContent: {
     // --- Grid එක කාඩ් 3ටම හරියන්න ---
     placeholderGrid: { 
         display: 'grid', 
-        gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+        gridTemplateColumns: 'repeat(3, 1fr)', 
         gap: '20px', 
         alignItems: 'stretch',
         width: '100%',
         maxWidth: '1250px' 
-},
+        
+    },
 
     // --- පොදු කාඩ් Style එක (කාඩ් 3ටම) ---
     miniCard: { 
