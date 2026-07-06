@@ -286,7 +286,7 @@ const ROOT_URL = BASE_URL.replace('/api', '');
     style={styles.viewBtn} 
     onClick={() => downloadInvoice(order.invoiceFile, order.invNum)}
 >
-    👁️ View / Download
+    View and Download
 </button>                       </td>
                                         <td style={styles.td}>
                                             <div style={{display: 'flex', gap: '10px', alignItems: 'center'}}>
