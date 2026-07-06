@@ -28,6 +28,7 @@ import DirectVerify from './DirectVerify';
 import ProRegister from './ProRegister';
 import WasteRegister from './WasteRegister';
 import PiboRegister from './PiboRegister';
+import PDFGenerator from './PDFGenerator';
 
 function App() {
   return (
@@ -53,6 +54,7 @@ function App() {
         <Route path="/co-partner" element={<ProtectedRoute allowedRole="ADMIN"><CoPartner /></ProtectedRoute>} />
         <Route path="/admin-feedback" element={<ProtectedRoute allowedRole="ADMIN"><FeedbackPage /></ProtectedRoute>} />
         <Route path="/admin-products" element={<ProtectedRoute allowedRole="ADMIN"><AdminProductView /></ProtectedRoute>} />
+        <Route path="/Pdf-generator" element={<ProtectedRoute allowedRole="ADMIN"><PDFGenerator /></ProtectedRoute>} />
 
         {/* NEW MULTI-STEP UNIFIED REGISTRATION LANES */}
         <Route path="/register-pro" element={<ProRegister />} />
