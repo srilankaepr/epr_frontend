@@ -298,7 +298,7 @@ if (topRes.status === 200) {
            >
        <div style={{...styles.cardIcon, color: '#3498db'}}>📄</div>
        <h3 style={{ ...styles.cardVal, fontSize: '18px' }}>PDF GENERATOR</h3>
-       <p style={styles.cardLab}>Create & Generate DDF Forms</p>
+       <p style={styles.cardLab}>Create & Generate PDF Forms</p>
 </div>       
              
 

@@ -12,7 +12,7 @@ const PiboRegister = () => {
     // --- PIBO Form State (Mapped exactly to provided MongoDB Schema fields) ---
     const [formData, setFormData] = useState({
         regType: 'Company',
-        orgRole: 'Producer', // Overwritten dynamically if multiple picked, baseline role format
+        orgRole: 'Producer', 
         officialEmail: '',
         password: '',
         confirmPassword: '',
@@ -20,20 +20,21 @@ const PiboRegister = () => {
         whatsapp: '',
 
         // Organization Profile (Step 2)
-        piboBusinessType: [], // Producer, Importer, Brand Owner, Vendor
+        piboBusinessType: [], 
         companyName: '',
         contactPersonName: '',
         contactPersonMobile: '',
-        dob: '', // Company Established Date
+        dob: '', 
         regNumber: '',
         piboTinVatNumber: '',
-        address1: '', // Registered Address
+        address1: '', 
         orgDistrict: '',
         orgProvince: '',
         country: 'Sri Lanka',
 
         // Product Category Selection (Step 3 Array)
         piboSelectedProductCategories: [],
+        otherProductCategory: '',
 
         // Product Volume Declaration (Step 4 Metrics)
         volumePackagingPlastic: 0,
@@ -63,7 +64,7 @@ const PiboRegister = () => {
 
         // PRO Engagement (Step 7 mapping)
         piboHasAssignedPro: 'No',
-        piboSelectedProId: '', // Dropdown reference
+        piboSelectedProId: '',
 
         // Compliance Declarations (Step 8 Checkbox Toggles)
         piboDeclAllVolumesAccurate: false,
@@ -150,7 +151,7 @@ const PiboRegister = () => {
 
         const finalPayload = {
             ...formData,
-            phone: formData.contactPersonMobile, // Cross references base mapping schema required options
+            phone: formData.contactPersonMobile,
             brcDocument: fileStrings.brc,
             piboImportLicenseFile: fileStrings.importLicense,
             piboProductCatalogFile: fileStrings.productCatalog,
@@ -169,7 +170,7 @@ const PiboRegister = () => {
         } catch (error) {
             console.error("PIBO Registration Error:", error);
             alert("❌ Database Insertion Failed: " + (error.response?.data?.error || "Fatal runtime error."));
-            setIsLoading(false); // 👈 බැක්එන්ඩ් එකෙන් එරර් එකක් ආවොත් බටන් එක ආයෙත් වැඩ කරන්න මෙන්න මේ පේළිය නූලටම සෙට් කළා බෝසා!
+            setIsLoading(false); 
         }
     };
 
@@ -305,9 +306,23 @@ const PiboRegister = () => {
                                         {pCat}
                                     </label>
                                 ))}
-                            </div>
-                        </div>
-                    )}
+            <label style={styles.checkboxLabelNode}>
+                <input type="checkbox" checked={formData.piboSelectedProductCategories.includes('Other')} onChange={(e) => handleCheckboxGroup(e, 'piboSelectedProductCategories', 'Other')} />
+                Other
+            </label>
+
+            {formData.piboSelectedProductCategories.includes('Other') && (
+                <input 
+                    type="text" 
+                    placeholder="Type your category here..." 
+                    value={formData.otherProductCategory || ''}
+                    onChange={(e) => setFormData({...formData, otherProductCategory: e.target.value})}
+                    style={{ ...styles.input, marginTop: '10px', border: '1px solid #3498db' }}
+                />
+            )}
+        </div>
+    </div>
+)}
 
                     {/* Step 4: Product Volume Declaration */}
                     {step === 4 && (
