@@ -1015,6 +1015,7 @@ if (currentBatch.length === 100 || i === finalQty) {
                     <th style={{ padding: '15px', color: '#2ecc71', textAlign: 'left' }}>Customer Name</th>
                     <th style={{ padding: '15px', color: '#2ecc71', textAlign: 'left' }}>Phone</th>
                     <th style={{ padding: '15px', color: '#2ecc71', textAlign: 'left' }}>Address</th>
+                    <th style={{ padding: '15px', color: '#2ecc71', textAlign: 'left' }}>Company</th>
                     <th style={{ padding: '15px', color: '#2ecc71', textAlign: 'left' }}>Product</th>
                     <th style={{ padding: '15px', color: '#2ecc71', textAlign: 'left' }}>Brand</th>
                 </tr>
@@ -1053,6 +1054,7 @@ if (currentBatch.length === 100 || i === finalQty) {
                                 <td style={{ padding: '15px', color: '#fff' }}>{reg.cuName || "N/A"}</td>
                                 <td style={{ padding: '15px', color: '#ccc' }}>{reg.cuPhone || "N/A"}</td>
                                 <td style={{ padding: '15px', color: '#ccc', fontSize: '12px' }}>{reg.cuAddress || "N/A"}</td>
+                                <td style={{ padding: '15px', color: '#fff', fontWeight: 'bold' }}> {reg.cuCompany || "N/A"}  </td>
                                 <td style={{ padding: '15px', color: '#ccc' }}>{reg.cuProduct || 'N/A'}</td>
                                 <td style={{ padding: '15px', color: '#ccc' }}>{reg.cuBrand || 'N/A'}</td>
                             </tr>
