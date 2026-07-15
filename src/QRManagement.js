@@ -1013,17 +1013,17 @@ if (currentBatch.length === 100 || i === finalQty) {
 {/* ---අලුත් Advanced Filter Bar එක  --- */}
 <div style={{ marginBottom: '25px', display: 'flex', gap: '15px', flexWrap: 'wrap' }}>
     <input 
-        type="text" placeholder="Filter by Company..." 
+        type="text" placeholder="🔍 Filter by Company..." 
         onChange={(e) => setFilterComp(e.target.value)} 
         style={{...styles.input, width: '200px', padding: '10px'}} 
     />
     <input 
-        type="text" placeholder="Filter by Brand..." 
+        type="text" placeholder="🔍 Filter by Brand..." 
         onChange={(e) => setFilterBrand(e.target.value)} 
         style={{...styles.input, width: '200px', padding: '10px'}} 
     />
     <input 
-        type="text" placeholder="Filter by Product..." 
+        type="text" placeholder="🔍 Filter by Product..." 
         onChange={(e) => setFilterProd(e.target.value)} 
         style={{...styles.input, width: '200px', padding: '10px'}} 
     />
@@ -1044,54 +1044,52 @@ if (currentBatch.length === 100 || i === finalQty) {
                     <th style={{ padding: '15px', color: '#2ecc71', textAlign: 'left' }}>Brand</th>
                 </tr>
             </thead>
-            <tbody>
-                {registeredQRs.length > 0 ? (
-                    (() => {
-                        // 🛠️ Search Logic: Name සහ Serial/ID දෙකෙන්ම Filter කරයි
-                        const filteredData = registeredQRs.filter(reg => {
-                            const name = reg.cuName ? reg.cuName.toLowerCase() : "";
-                            const serial = (reg.cuSerial || reg.qrId || "").toLowerCase();
-                            const term = searchTerm.toLowerCase();
-                            return name.includes(term) || serial.includes(term);
-                        });
+         <tbody>
+            {registeredQRs.length > 0 ? (
+                (() => {
+                    // 1. මේ ලොජික් එක තමයි දැන් අලුතින්ම දාන්නේ
+                    const filteredData = registeredQRs.filter(reg => {
+                        const matchComp = (reg.cuCompany || "").toLowerCase().includes(filterComp.toLowerCase());
+                        const matchBrand = (reg.cuBrand || "").toLowerCase().includes(filterBrand.toLowerCase());
+                        const matchProd = (reg.cuProduct || "").toLowerCase().includes(filterProd.toLowerCase());
+                        const matchSearch = (reg.cuName || "").toLowerCase().includes(searchTerm.toLowerCase());
 
-                        if (filteredData.length === 0) {
-                            return <tr><td colSpan="7" style={{ textAlign: 'center', padding: '30px', color: '#888' }}>No results found for "{searchTerm}"</td></tr>;
-                        }
+                        return matchComp && matchBrand && matchProd && matchSearch;
+                    });
 
-                        return filteredData.map((reg) => (
-                            <tr key={reg._id} style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
-                                <td style={{ padding: '15px', color: '#2ecc71', fontWeight: 'bold' }}>
-                                    {reg.cuSerial || reg.qrId || "N/A"}
-                                </td>
-                                <td style={{ padding: '15px', color: '#ccc' }}>
-                                    {reg.cuDate ? (
-                                        <>
-                                            {new Date(reg.cuDate).toLocaleDateString()}
-                                            <br />
-                                            <span style={{ fontSize: '11px', color: '#2ecc71', opacity: 0.8 }}>
-                                                {new Date(reg.cuDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                                            </span>
-                                        </>
-                                    ) : "No Date"}
-                                </td>
-                                <td style={{ padding: '15px', color: '#fff' }}>{reg.cuName || "N/A"}</td>
-                                <td style={{ padding: '15px', color: '#ccc' }}>{reg.cuPhone || "N/A"}</td>
-                                <td style={{ padding: '15px', color: '#ccc', fontSize: '12px' }}>{reg.cuAddress || "N/A"}</td>
-                                <td style={{ padding: '15px', color: '#fff',}}>{reg.cuCompany || "N/A"}  </td>
-                                <td style={{ padding: '15px', color: '#ccc' }}>{reg.cuProduct || 'N/A'}</td>
-                                <td style={{ padding: '15px', color: '#ccc' }}>{reg.cuBrand || 'N/A'}</td>
-                            </tr>
-                        ));
-                    })()
-                ) : (
-                    <tr>
-                        <td colSpan="7" style={{ textAlign: 'center', padding: '40px', color: '#666' }}>
-                            No registered customers found.
-                        </td>
-                    </tr>
-                )}
-            </tbody>
+                    // 2. මෙතන colSpan="8" කරගන්න (Column 8ක් තියෙන නිසා)
+                    if (filteredData.length === 0) {
+                        return <tr><td colSpan="8" style={{ textAlign: 'center', padding: '30px', color: '#888' }}>No results found!</td></tr>;
+                    }
+
+                    // 3. දැන් මේ filteredData එක පාවිච්චි කරන්න
+                    return filteredData.map((reg) => (
+                        <tr key={reg._id} style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+                            <td style={{ padding: '15px', color: '#2ecc71', fontWeight: 'bold' }}>{reg.cuSerial || reg.qrId || "N/A"}</td>
+                            <td style={{ padding: '15px', color: '#ccc' }}>
+                                {reg.cuDate ? (
+                                    <>
+                                        {new Date(reg.cuDate).toLocaleDateString()}
+                                        <br />
+                                        <span style={{ fontSize: '11px', color: '#2ecc71', opacity: 0.8 }}>
+                                            {new Date(reg.cuDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                        </span>
+                                    </>
+                                ) : "No Date"}
+                            </td>
+                            <td style={{ padding: '15px', color: '#fff' }}>{reg.cuName || "N/A"}</td>
+                            <td style={{ padding: '15px', color: '#ccc' }}>{reg.cuPhone || "N/A"}</td>
+                            <td style={{ padding: '15px', color: '#ccc', fontSize: '12px' }}>{reg.cuAddress || "N/A"}</td>
+                            <td style={{ padding: '15px', color: '#fff' }}>{reg.cuCompany || "N/A"}</td>
+                            <td style={{ padding: '15px', color: '#ccc' }}>{reg.cuProduct || 'N/A'}</td>
+                            <td style={{ padding: '15px', color: '#ccc' }}>{reg.cuBrand || 'N/A'}</td>
+                        </tr>
+                    ));
+                })()
+            ) : (
+                <tr><td colSpan="8" style={{ textAlign: 'center', padding: '40px', color: '#666' }}>No registered customers found.</td></tr>
+            )}
+        </tbody>
         </table>
     </>
 )}
