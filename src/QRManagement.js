@@ -1010,6 +1010,26 @@ if (currentBatch.length === 100 || i === finalQty) {
             </div>
         </div>
 
+{/* ---අලුත් Advanced Filter Bar එක  --- */}
+<div style={{ marginBottom: '25px', display: 'flex', gap: '15px', flexWrap: 'wrap' }}>
+    <input 
+        type="text" placeholder="Filter by Company..." 
+        onChange={(e) => setFilterComp(e.target.value)} 
+        style={{...styles.input, width: '200px', padding: '10px'}} 
+    />
+    <input 
+        type="text" placeholder="Filter by Brand..." 
+        onChange={(e) => setFilterBrand(e.target.value)} 
+        style={{...styles.input, width: '200px', padding: '10px'}} 
+    />
+    <input 
+        type="text" placeholder="Filter by Product..." 
+        onChange={(e) => setFilterProd(e.target.value)} 
+        style={{...styles.input, width: '200px', padding: '10px'}} 
+    />
+</div>
+
+
         {/* --- 📊 Table Section --- */}
         <table style={styles.table}>
             <thead>
@@ -1084,13 +1104,13 @@ if (currentBatch.length === 100 || i === finalQty) {
         {/* Header Section */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '25px' }}>
            <h3 
-    onClick={() => setFilterStatus('All')} // ක්ලික් කළාම 'All' වලට මාරු කරනවා
+    onClick={() => setFilterStatus('All')}
     style={{ 
-        color: filterStatus === 'All' ? '#2ecc71' : '#fff', // All වෙලාවට විතරක් කොළ පාට පෙන්වන්න
+        color: filterStatus === 'All' ? '#2ecc71' : '#fff', 
         margin: 0, 
         fontSize: '22px', 
         fontWeight: '600',
-        cursor: 'pointer', // මවුස් එක ගෙනිච්චම අතක සලකුණ එන්න
+        cursor: 'pointer', 
         transition: '0.3s'
     }}
 >
