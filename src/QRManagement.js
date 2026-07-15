@@ -25,6 +25,10 @@ function QRManagement() {
     const [activeSubTab, setActiveSubTab] = useState('created_companies');
     const [searchTerm, setSearchTerm] = useState('');
 
+const [filterComp, setFilterComp] = useState('');
+const [filterBrand, setFilterBrand] = useState('');
+const [filterProd, setFilterProd] = useState('');
+
     const [qrcompanyName, setQrCompanyName] = useState('');
     const [qrcompanyEmail, setQrCompanyEmail] = useState('');
     const [companiesList, setCompaniesList] = useState([]);
@@ -1054,7 +1058,7 @@ if (currentBatch.length === 100 || i === finalQty) {
                                 <td style={{ padding: '15px', color: '#fff' }}>{reg.cuName || "N/A"}</td>
                                 <td style={{ padding: '15px', color: '#ccc' }}>{reg.cuPhone || "N/A"}</td>
                                 <td style={{ padding: '15px', color: '#ccc', fontSize: '12px' }}>{reg.cuAddress || "N/A"}</td>
-                                <td style={{ padding: '15px', color: '#fff', fontWeight: 'bold' }}> {reg.cuCompany || "N/A"}  </td>
+                                <td style={{ padding: '15px', color: '#fff',}}>{reg.cuCompany || "N/A"}  </td>
                                 <td style={{ padding: '15px', color: '#ccc' }}>{reg.cuProduct || 'N/A'}</td>
                                 <td style={{ padding: '15px', color: '#ccc' }}>{reg.cuBrand || 'N/A'}</td>
                             </tr>
