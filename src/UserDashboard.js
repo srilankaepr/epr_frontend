@@ -10,6 +10,7 @@ import batteryImg from './assets/battery.jpg';
 import oilImg from './assets/oil.jpg';
 import FeedbackPage from './FeedbackPage';
 import ProductRegistration from './ProductRegistration';
+import MapComponent from './MapComponent'; 
 import API from './api'; 
 
 
@@ -215,7 +216,9 @@ const deleteProfilePicture = async () => {
         { id: 'ORDER NOW', label: 'ORDER NOW' },
         { id: 'about', label: 'ABOUT US'},
         { id: 'profile', label: 'MY PROFILE' },
-        { id: 'feedback', label: 'FEEDBACK' }
+        { id: 'feedback', label: 'FEEDBACK' },
+        { id: 'search-map', label: 'SEARCH ON MAP' }
+
     ].map((item) => {
         const isActive = activeTab === item.id;
         return (

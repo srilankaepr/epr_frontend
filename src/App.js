@@ -28,6 +28,7 @@ import DirectVerify from './DirectVerify';
 import ProRegister from './ProRegister';
 import WasteRegister from './WasteRegister';
 import PiboRegister from './PiboRegister';
+import AuthorityRegister from './AuthorityRegister';
 import PDFGenerator from './PDFGenerator';
 
 function App() {
@@ -60,6 +61,7 @@ function App() {
         <Route path="/register-pro" element={<ProRegister />} />
         <Route path="/register-waste" element={<WasteRegister />} />
         <Route path="/register-pibo" element={<PiboRegister />} />
+        <Route path="/register-authority" element={<AuthorityRegister />} />
 
 
         {/* 2. Customer */}
