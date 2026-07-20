@@ -230,4 +230,4 @@ const styles = {
     loginLink: { color: '#9b59b6', fontWeight: 'bold', cursor: 'pointer' }
 };
 
-export default AuthorityRegister;
+export default AuthorityRegister;  

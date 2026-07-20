@@ -58,7 +58,7 @@ function App() {
         <Route path="/Pdf-generator" element={<ProtectedRoute allowedRole="ADMIN"><PDFGenerator /></ProtectedRoute>} />
 
         {/* NEW MULTI-STEP UNIFIED REGISTRATION LANES */}
-        <Route path="/register-pro" element={<ProRegister />} />
+        <Route path="/register-pro" element={<ProRegister />} />     
         <Route path="/register-waste" element={<WasteRegister />} />
         <Route path="/register-pibo" element={<PiboRegister />} />
         <Route path="/register-authority" element={<AuthorityRegister />} />
