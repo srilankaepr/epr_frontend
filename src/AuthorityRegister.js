@@ -15,6 +15,7 @@ const AuthorityRegister = () => {
         password: '',
         confirmPassword: '',
         institutionName: '',
+        institutionWebsite: '',
         designation: '',
         contactMobile: '',
         digitalSignatureName: '',
@@ -138,6 +139,11 @@ const AuthorityRegister = () => {
                     <div style={styles.inputWrapper}>
                         <label style={styles.label}>GOVERNMENT INSTITUTION / DEPARTMENT NAME *</label>
                         <input name="institutionName" value={formData.institutionName} type="text" placeholder="e.g. Central Environmental Authority (CEA)" style={styles.input} onChange={handleChange} required />
+                    </div>
+
+                    <div style={styles.inputWrapper}>
+                      <label style={styles.label}>INSTITUTION WEBSITE (OPTIONAL)</label>
+                      <input name="institutionWebsite" value={formData.institutionWebsite} type="text" placeholder="e.g. https://www.cea.lk" style={styles.input} onChange={handleChange} />
                     </div>
 
                     <h3 style={styles.sectionHeader}>Focal Representative Details</h3>
