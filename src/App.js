@@ -30,6 +30,7 @@ import WasteRegister from './WasteRegister';
 import PiboRegister from './PiboRegister';
 import AuthorityRegister from './AuthorityRegister';
 import PDFGenerator from './PDFGenerator';
+import AuthorityDashboard from './AuthorityDashboard';
 
 function App() {
   return (
@@ -73,6 +74,7 @@ function App() {
         <Route path="/battery-order" element={<ProtectedRoute allowedRole="CUSTOMER"><BatteryOrder /></ProtectedRoute>} />
         <Route path="/oil-order" element={<ProtectedRoute allowedRole="CUSTOMER"><OilOrder /></ProtectedRoute>} />
         <Route path="/product-registration" element={<ProtectedRoute allowedRole="CUSTOMER"><ProductRegistration /></ProtectedRoute>} />
+        <Route path="/authority-dashboard" element={<ProtectedRoute allowedRole="CUSTOMER"><AuthorityDashboard /></ProtectedRoute>} />
 
         {/* 3. Co-partner */}
         <Route path="/partner-dashboard" element={<ProtectedRoute allowedRole="PARTNER"><PartnerDashboard /></ProtectedRoute>} />

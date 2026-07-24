@@ -28,7 +28,7 @@ const handleSubmit = useCallback(async (e) => {
           
 
 const data = response.data;
-
+/*
 if (response.status === 200) {
         console.log("Logged in User Role:", data.user.adminRole);
     login(data.user, data.role, data.token, data.user.adminRole); 
@@ -48,7 +48,43 @@ if (response.status === 200) {
             navigate(targetPath || '/');
         } else {
             alert(`❌ ${data.error || "Login Failed"}`);
+        }  */
+
+if (response.status === 200) {
+            console.log("Logged in User Role:", data.user.adminRole);
+            login(data.user, data.role, data.token, data.user.adminRole); 
+
+            if (data.user && data.user.profilePic) {
+                localStorage.setItem('userPhoto', data.user.profilePic);
+            } else {
+                localStorage.removeItem('userPhoto'); 
+            }
+            
+            // 🆕 අලුත් Routing Logic එක මෙතනින් පටන් ගන්නවා
+            let targetPath = '/';
+            const userRole = data.role.toUpperCase();
+
+            if (userRole === 'ADMIN') {
+                targetPath = '/dashboard';
+            } else if (userRole === 'PARTNER') {
+                targetPath = '/partner-dashboard';
+            } else if (userRole === 'CUSTOMER') {
+                // Database එකෙන් එන orgRole එක අරගෙන ඒක authority ද කියලා බලනවා
+                const orgRole = data.user.orgRole ? data.user.orgRole.toLowerCase() : '';
+                
+                if (orgRole === 'authority') {
+                    targetPath = '/authority-dashboard'; // Authority යූසර් නම් අලුත් Dashboard එකට යවනවා
+                } else {
+                    targetPath = '/user-dashboard'; // අනිත් අයව පරණ එකට යවනවා
+                }
+            }
+
+            navigate(targetPath);
+
+        } else {
+            alert(`❌ ${data.error || "Login Failed"}`);
         }
+
     } catch (error) {
         console.error("Login error:", error);
 
