@@ -8,9 +8,9 @@ const AuthorityRegister = () => {
     const navigate = useNavigate();
     const [isLoading, setIsLoading] = useState(false);
 
+    // 1. username ෆීල්ඩ් එක අයින් කළා 
     const [formData, setFormData] = useState({
         orgRole: 'authority',
-        username: '',
         officialEmail: '',
         password: '',
         confirmPassword: '',
@@ -73,8 +73,10 @@ const AuthorityRegister = () => {
 
         setIsLoading(true);
 
+        // 2. finalPayload එකට username එක විදියට officialEmail එක සෙට් කළා
         const finalPayload = {
             ...formData,
+            username: formData.officialEmail, 
             verificationDocument: fileString
         };
 
@@ -114,15 +116,10 @@ const AuthorityRegister = () => {
 
                     <h3 style={styles.sectionHeader}>Account & Institution Credentials</h3>
                     
-                    <div style={styles.row}>
-                        <div style={styles.rowItem}>
-                            <label style={styles.label}>USERNAME *</label>
-                            <input name="username" value={formData.username} type="text" placeholder="Official Username" style={styles.input} onChange={handleChange} required />
-                        </div>
-                        <div style={styles.rowItem}>
-                            <label style={styles.label}>OFFICIAL EMAIL (LOGIN ID) *</label>
-                            <input name="officialEmail" value={formData.officialEmail} type="email" placeholder="authority@gov.lk" style={styles.input} onChange={handleChange} required />
-                        </div>
+                    {/* 3. Username පෙට්ටිය අයින් කරලා Official Email එක විතරක් දැම්මා */}
+                    <div style={styles.inputWrapper}>
+                        <label style={styles.label}>OFFICIAL EMAIL (LOGIN ID) *</label>
+                        <input name="officialEmail" value={formData.officialEmail} type="email" placeholder="authority@gov.lk" style={styles.input} onChange={handleChange} required />
                     </div>
 
                     <div style={styles.row}>
@@ -236,4 +233,4 @@ const styles = {
     loginLink: { color: '#9b59b6', fontWeight: 'bold', cursor: 'pointer' }
 };
 
-export default AuthorityRegister;  
+export default AuthorityRegister;
