@@ -136,7 +136,7 @@ const AgroOrder = () => {
         }
     };
 
-    const tabs = ["ORDER QR", "VIEW ORDER DETAILS"];
+    const tabs = ["ORDER QR", "ORDER PRODUCTS", "VIEW ORDER DETAILS"];
 
     return (
         <div style={styles.container}>
@@ -197,7 +197,7 @@ const AgroOrder = () => {
                         className="tab-button"
                     >
                         <span style={{ fontSize: '24px', marginBottom: '10px' }}>
-                            {tab === "ORDER QR" ? "📱" : "📋"}
+                            {tab === "ORDER QR" ? "📱" : tab === "ORDER PRODUCTS" ? "🌱" : "📋"}
                         </span>
                         <span style={{ color: activeTab === tab ? '#27ae60' : '#fff', fontWeight: 'bold', fontSize: '13px' }}>
                             {tab}
@@ -228,10 +228,8 @@ const AgroOrder = () => {
                                 <label style={styles.uploadArea} className="upload-area">
                                     <input type="file" style={{display: 'none'}} onChange={handleInvoiceUpload} accept=".pdf,image/*" />
                                     <span style={{fontSize: '30px'}}>📂</span>
-
-                                    <span style={{marginTop: '10px', fontSize: '14px'}}> {invoice ? invoice.name : `Select invoice`}
-                                         </span>
-
+                                    <span style={{marginTop: '10px', fontSize: '14px'}}>
+                                        {invoice ? invoice.name : `Select ${activeTab.toLowerCase()} invoice`}</span>
                                     {invoice && (
                                         <div onClick={removeInvoice} style={{ marginTop: '10px', color: '#e74c3c', fontSize: '12px', cursor: 'pointer', fontWeight: 'bold', textDecoration: 'underline' }}>
                                             Remove Invoice
@@ -241,21 +239,21 @@ const AgroOrder = () => {
                             </div>
                         </div>
 
-                      <div style={{textAlign: 'center', marginTop: '30px'}}>
-    <div style={styles.qrPlaceholder}>
-        <div style={{...styles.qrBox, color: '#27ae60'}}>
-            🔳 Agro QR
-        </div>
-        <p style={{fontSize: '14px', color: '#ccc', marginTop: '10px'}}>
-            Requesting ORDER QR for Agro Division
-        </p>
-    </div>
-    {invoice && (
-        <button style={{...styles.submitBtn, background: '#27ae60'}} onClick={handleSubmit}>
-            Submit ORDER QR
-        </button>
-    )}
-</div>
+                        <div style={{textAlign: 'center', marginTop: '30px'}}>
+                            <div style={styles.qrPlaceholder}>
+                                <div style={{...styles.qrBox, color: '#27ae60'}}>
+                                    {activeTab === 'ORDER QR' ? "🔳 Agro QR" : "🌱 Agro Product"}
+                                </div>
+                                <p style={{fontSize: '14px', color: '#ccc', marginTop: '10px'}}>
+                                    Requesting {activeTab} for Agro Division
+                                </p>
+                            </div>
+                            {invoice && (
+                                <button style={{...styles.submitBtn, background: '#27ae60'}} onClick={handleSubmit}>
+                                    Submit {activeTab}
+                                </button>
+                            )}
+                        </div>
                     </>
                 ) : (
                     <div style={{padding: '10px'}}>
