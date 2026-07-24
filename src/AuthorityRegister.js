@@ -8,7 +8,7 @@ const AuthorityRegister = () => {
     const navigate = useNavigate();
     const [isLoading, setIsLoading] = useState(false);
 
-    // 1. username ෆීල්ඩ් එක අයින් කළා 
+    // 1. Initial State එකට contactPersonName එකතු කළා (UI එකේ තිබුණට මෙතන තිබ්බෙ නෑ)
     const [formData, setFormData] = useState({
         orgRole: 'authority',
         officialEmail: '',
@@ -16,6 +16,7 @@ const AuthorityRegister = () => {
         confirmPassword: '',
         institutionName: '',
         institutionWebsite: '',
+        contactPersonName: '', // <-- අලුතින් එකතු කළා
         designation: '',
         contactMobile: '',
         digitalSignatureName: '',
@@ -73,10 +74,15 @@ const AuthorityRegister = () => {
 
         setIsLoading(true);
 
-        // 2. finalPayload එකට username එක විදියට officialEmail එක සෙට් කළා
+        // 2. 🛠️ Database Schema එකේ අනිවාර්ය (required) fields වලට Data map කිරීම
         const finalPayload = {
             ...formData,
-            username: formData.officialEmail, 
+            username: formData.officialEmail,              // Login ID එක
+            companyName: formData.institutionName,         // Schema requires 'companyName'
+            companyWebsite: formData.institutionWebsite,   // Schema matches 'companyWebsite'
+            phone: formData.contactMobile,                 // Schema requires 'phone'
+            contactPersonMobile: formData.contactMobile,   // Schema requires 'contactPersonMobile'
+            dob: formData.declarationDate,                 // Schema requires 'dob' (setting current date)
             verificationDocument: fileString
         };
 
@@ -116,7 +122,6 @@ const AuthorityRegister = () => {
 
                     <h3 style={styles.sectionHeader}>Account & Institution Credentials</h3>
                     
-                    {/* 3. Username පෙට්ටිය අයින් කරලා Official Email එක විතරක් දැම්මා */}
                     <div style={styles.inputWrapper}>
                         <label style={styles.label}>OFFICIAL EMAIL (LOGIN ID) *</label>
                         <input name="officialEmail" value={formData.officialEmail} type="email" placeholder="authority@gov.lk" style={styles.input} onChange={handleChange} required />
