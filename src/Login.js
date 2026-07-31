@@ -26,9 +26,40 @@ const handleSubmit = useCallback(async (e) => {
             password: loginPassword
         });
           
-        const data = response.data;
 
-        if (response.status === 200) {
+const data = response.data;
+
+
+/*
+
+
+if (response.status === 200) {
+        console.log("Logged in User Role:", data.user.adminRole);
+    login(data.user, data.role, data.token, data.user.adminRole); 
+
+    if (data.user && data.user.profilePic) {
+        localStorage.setItem('userPhoto', data.user.profilePic);
+    } else {
+        localStorage.removeItem('userPhoto'); 
+    }
+            const routes = {
+                'ADMIN': '/dashboard',
+                'CUSTOMER': '/user-dashboard',
+                'PARTNER': '/partner-dashboard'
+            };
+
+            const targetPath = routes[data.role.toUpperCase()];
+            navigate(targetPath || '/');
+        } else {
+            alert(`❌ ${data.error || "Login Failed"}`);
+        } 
+            
+        
+*/
+
+
+
+if (response.status === 200) {
             console.log("Logged in User Role:", data.user.adminRole);
             login(data.user, data.role, data.token, data.user.adminRole); 
 
@@ -46,7 +77,6 @@ const handleSubmit = useCallback(async (e) => {
             } else if (userRole === 'PARTNER') {
                 targetPath = '/partner-dashboard';
             } else if (userRole === 'CUSTOMER') {
-                // Database එකෙන් එන orgRole එක අරගෙන ඒක authority ද කියලා බලනවා
                 const orgRole = data.user.orgRole ? data.user.orgRole.toLowerCase() : '';
                 
                 if (orgRole === 'authority') {
@@ -77,15 +107,15 @@ const handleSubmit = useCallback(async (e) => {
     return (
         <div style={styles.container}>
             <video 
-                autoPlay 
-                loop 
-                muted 
-                playsInline 
-                style={styles.videoBg}
-                preload="none"
-            >
-                <source src={earthVideo} type="video/mp4" />
-            </video>
+    autoPlay 
+    loop 
+    muted 
+    playsInline 
+    style={styles.videoBg}
+    preload="none"
+>
+    <source src={earthVideo} type="video/mp4" />
+</video>
 
             <div style={styles.overlay}></div>
             
@@ -119,6 +149,8 @@ const handleSubmit = useCallback(async (e) => {
                             <span style={styles.forgotBtn} onClick={() => navigate('/forgot-password')}>
                                 Forgot Your Password?
                             </span>
+
+                            
                         </div>
                         <input 
                             type="password" 
@@ -132,17 +164,18 @@ const handleSubmit = useCallback(async (e) => {
                         />
                     </div>
 
-                    <button 
-                        type="submit" 
-                        style={{
-                            ...styles.loginBtn, 
-                            opacity: loading ? 0.7 : 1,                 
-                            cursor: loading ? 'not-allowed' : 'pointer'  
-                        }} 
-                        disabled={loading}
-                    >
-                        {loading ? 'AUTHENTICATING...' : 'LOGIN TO DASHBOARD'}
-                    </button>
+<button 
+    type="submit" 
+    style={{
+        ...styles.loginBtn, 
+        opacity: loading ? 0.7 : 1,                 
+        cursor: loading ? 'not-allowed' : 'pointer'  
+    }} 
+    disabled={loading}
+>
+    {loading ? 'AUTHENTICATING...' : 'LOGIN TO DASHBOARD'}
+</button>
+
                </form>
 
                 <div style={styles.footer}>
@@ -169,7 +202,7 @@ const handleSubmit = useCallback(async (e) => {
             overflow-y: auto !important;
             margin: 0;
             padding: 0;
-            background-color: #000 !important;
+            background-color: #000 !important; /* පසුබිම කළු කර තැබීම */
         }
 
         /* 2.Animations */
@@ -178,7 +211,7 @@ const handleSubmit = useCallback(async (e) => {
             to { opacity: 1; transform: scale(1); }
         }
 
-        /* 3. PC එකේ පෙනුම (Desktop) */
+        /* 3. PC එකේ පෙනුම (Desktop) - ඔයාගේ Original Look එක */
         @media screen and (min-width: 1025px) {
             div[style*="loginContainer"] {
                 height: 100vh !important;
@@ -200,13 +233,13 @@ const handleSubmit = useCallback(async (e) => {
                 min-height: 100vh !important;
                 display: flex !important;
                 flex-direction: column !important;
-                justify-content: flex-start !important;
+                justify-content: flex-start !important; /* උඩ ඉඳන් පටන් ගන්නවා */
                 padding: 30px 0 !important;
                 overflow-y: auto !important;
             }
 
             div[style*="loginCard"] { 
-                transform: scale(0.8) !important;
+                transform: scale(0.8) !important; /* Zoom එක අඩු කළා */
                 transform-origin: top center !important;
                 margin: 20px auto !important;
                 width: 85% !important; 
@@ -238,19 +271,19 @@ const handleSubmit = useCallback(async (e) => {
             }
         }
 
-        /* 5. Landscape Fix */
+        /* 5. Landscape Fix - ෆෝන් එක හරහට හැරෙව්වම Scroll කරන කොටස */
         @media screen and (max-height: 500px) and (orientation: landscape) {
             div[style*="loginContainer"] {
                 height: auto !important;
                 min-height: 100vh !important;
-                display: block !important;
+                display: block !important; /* හිරවීම වළක්වයි */
                 padding: 20px 0 !important;
                 overflow-y: auto !important;
             }
 
             div[style*="loginCard"] {
                 margin: 10px auto !important;
-                transform: scale(0.7) !important;
+                transform: scale(0.7) !important; /* හරහට නිසා තවත් Zoom Out කළා */
                 transform-origin: top center !important;
             }
 
