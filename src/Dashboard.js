@@ -296,10 +296,10 @@ if (topRes.status === 200) {
              e.currentTarget.style.transform = 'translateY(0)';
            }}
            >
-       <div style={{...styles.cardIcon, color: '#3498db'}}>📄</div>
-       <h3 style={{ ...styles.cardVal, fontSize: '18px' }}>PDF GENERATOR</h3>
-       <p style={styles.cardLab}>Create & Generate PDF Forms</p>
-</div>       
+     <div style={{...styles.cardIcon, color: '#3498db'}}>📄</div>
+     <h3 style={{ ...styles.cardVal, fontSize: '18px' }}>PDF GENERATOR</h3>
+     <p style={styles.cardLab}>Create & Generate PDF Forms</p>
+ </div>       
              
 
             {/* CUSTOMER FEEDBACK */}
