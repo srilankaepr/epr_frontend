@@ -57,7 +57,7 @@ const AuthorityDashboard = () => {
 
         const fetchSystemStats = async () => {
             try {
-                const response = await API.get('/authority/stats'); 
+                const response = await API.get('/admin/authority/stats'); 
                 setDashboardStats({
                     pibos: response.data.pibos,
                     pros: response.data.pros,
