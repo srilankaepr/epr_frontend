@@ -10,7 +10,6 @@ const AuthorityDashboard = () => {
     const isMobile = window.innerWidth <= 768; 
     const [activeTab, setActiveTab] = useState('OVERVIEW');
     
-    // Authority User State
     const [formData, setFormData] = useState({
         orgRole: 'Authority',
         institutionName: 'Loading...',
@@ -20,12 +19,16 @@ const AuthorityDashboard = () => {
         contactMobile: 'Loading...'
     });
 
-    // 🆕 Real Data තියාගන්න State එක
     const [dashboardStats, setDashboardStats] = useState({
         pibos: '...',
         pros: '...',
-        recyclers: '...',
-        plasticRecovered: '...'
+        wasteManagement: '...',
+        recoveredMaterials: {
+            plastic: '...',
+            eWaste: '...',
+            glass: '...',
+            paper: '...'
+        }
     });
 
     useEffect(() => {
@@ -52,18 +55,24 @@ const AuthorityDashboard = () => {
             }
         };
 
-        // 🆕 Database එකෙන් ඇත්ත Data ගේන Function එක
         const fetchSystemStats = async () => {
             try {
                 const response = await API.get('/authority/stats'); 
-                setDashboardStats(response.data);
+                setDashboardStats({
+                    pibos: response.data.pibos,
+                    pros: response.data.pros,
+                    wasteManagement: response.data.wasteManagement,
+                    recoveredMaterials: response.data.recoveredMaterials || {
+                        plastic: "0 Kg", eWaste: "0 Units", glass: "0 Kg", paper: "0 Kg"
+                    }
+                });
             } catch (error) {
                 console.error("Error fetching system stats:", error.message);
             }
         };
 
         fetchUserData(); 
-        fetchSystemStats(); // ඒක මෙතනින් Call කරනවා
+        fetchSystemStats(); 
 
         return () => {
             document.head.removeChild(styleSheet);
@@ -166,30 +175,60 @@ const AuthorityDashboard = () => {
 
             <main style={getMainAreaStyles(isMobile, isDrawerOpen)}>
                 
-                {/* 1. OVERVIEW TAB - දැන් මේකේ පෙන්වන්නේ ඇත්ත ඩේටා! */}
                 {activeTab === 'OVERVIEW' && (
                     <div style={{ ...styles.contentPadding, animation: 'fadeInUp 0.6s ease-out forwards' }}>
                         <h1 style={styles.mainTitle}>AUTHORITY DASHBOARD</h1>
                         <p style={styles.subTitle}>National EPR Tracking & Regulatory Overview</p>
                         
                         <div style={styles.grid}>
-                            {[
-                                { title: 'TOTAL PIBOs', count: dashboardStats.pibos, desc: 'Registered Producers & Importers' },
-                                { title: 'ACTIVE PROs', count: dashboardStats.pros, desc: 'Consortiums operating nationwide' },
-                                { title: 'RECYCLERS', count: dashboardStats.recyclers, desc: 'Verified Waste Management Centers' },
-                                { title: 'PLASTIC RECOVERED', count: dashboardStats.plasticRecovered, desc: 'National aggregate for 2026' }
-                            ].map((widget, i) => (
-                                <div key={i} style={styles.statCard}>
-                                    <h3 style={styles.statTitle}>{widget.title}</h3>
-                                    <h1 style={styles.statCount}>{widget.count}</h1>
-                                    <p style={styles.statDesc}>{widget.desc}</p>
+                            {/* PIBOs Box */}
+                            <div style={styles.statCard}>
+                                <h3 style={styles.statTitle}>TOTAL PIBOs</h3>
+                                <h1 style={styles.statCount}>{dashboardStats.pibos}</h1>
+                                <p style={styles.statDesc}>Registered Producers & Importers</p>
+                            </div>
+
+                            {/* PROs Box */}
+                            <div style={styles.statCard}>
+                                <h3 style={styles.statTitle}>ACTIVE PROs</h3>
+                                <h1 style={styles.statCount}>{dashboardStats.pros}</h1>
+                                <p style={styles.statDesc}>Consortiums operating nationwide</p>
+                            </div>
+
+                            {/* Waste Management Box */}
+                            <div style={styles.statCard}>
+                                <h3 style={styles.statTitle}>WASTE MANAGEMENT</h3>
+                                <h1 style={styles.statCount}>{dashboardStats.wasteManagement}</h1>
+                                <p style={styles.statDesc}>Collectors, Transporters & Recyclers</p>
+                            </div>
+
+                            {/* Recovered Materials Box (අලුත් ලැයිස්තුව) */}
+                            <div style={styles.statCard}>
+                                <h3 style={styles.statTitle}>RECOVERED MATERIALS</h3>
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '15px' }}>
+                                    <div style={styles.materialRow}>
+                                        <span style={styles.materialName}>Plastic:</span>
+                                        <span style={styles.materialValue}>{dashboardStats.recoveredMaterials.plastic}</span>
+                                    </div>
+                                    <div style={styles.materialRow}>
+                                        <span style={styles.materialName}>E-Waste:</span>
+                                        <span style={styles.materialValue}>{dashboardStats.recoveredMaterials.eWaste}</span>
+                                    </div>
+                                    <div style={styles.materialRow}>
+                                        <span style={styles.materialName}>Glass:</span>
+                                        <span style={styles.materialValue}>{dashboardStats.recoveredMaterials.glass}</span>
+                                    </div>
+                                    <div style={styles.materialRow}>
+                                        <span style={styles.materialName}>Paper:</span>
+                                        <span style={styles.materialValue}>{dashboardStats.recoveredMaterials.paper}</span>
+                                    </div>
                                 </div>
-                            ))}
+                                <p style={{...styles.statDesc, marginTop: '15px'}}>National aggregate for 2026</p>
+                            </div>
                         </div>
                     </div>
                 )}
 
-                {/* 2. REGISTERED ENTITIES TAB */}
                 {activeTab === 'ENTITIES' && (
                     <div style={{ ...styles.contentPadding, animation: 'fadeInUp 0.6s ease-out forwards' }}>
                         <h1 style={styles.mainTitle}>REGISTERED ENTITIES</h1>
@@ -202,7 +241,6 @@ const AuthorityDashboard = () => {
                     </div>
                 )}
 
-                {/* 3. DOC VERIFICATION TAB */}
                 {activeTab === 'VERIFICATION' && (
                     <div style={{ ...styles.contentPadding, animation: 'fadeInUp 0.6s ease-out forwards' }}>
                         <h1 style={styles.mainTitle}>DOCUMENT VERIFICATION</h1>
@@ -215,7 +253,6 @@ const AuthorityDashboard = () => {
                     </div>
                 )}
 
-                {/* 4. REPORTS TAB */}
                 {activeTab === 'REPORTS' && (
                     <div style={{ ...styles.contentPadding, animation: 'fadeInUp 0.6s ease-out forwards' }}>
                         <h1 style={styles.mainTitle}>SYSTEM REPORTS</h1>
@@ -228,7 +265,6 @@ const AuthorityDashboard = () => {
                     </div>
                 )}
 
-                {/* 5. MY PROFILE TAB */}
                 {activeTab === 'PROFILE' && (
                     <div style={{ ...styles.contentPadding, animation: 'fadeInUp 0.6s ease-out forwards' }}>
                         <h1 style={styles.mainTitle}>AUTHORITY PROFILE</h1>
@@ -295,6 +331,11 @@ const styles = {
     statTitle: { color: '#aaa', fontSize: '14px', letterSpacing: '1px', marginBottom: '15px' },
     statCount: { color: '#9b59b6', fontSize: '40px', margin: '0 0 10px 0', fontWeight: '900' },
     statDesc: { color: '#777', fontSize: '12px' },
+
+    // 4 වෙනි බොක්ස් එක ඇතුලේ ලැයිස්තුව ලස්සනට පෙන්නන්න දාපු අලුත් Styles
+    materialRow: { display: 'flex', justifyContent: 'space-between', padding: '5px 15px', background: 'rgba(255, 255, 255, 0.05)', borderRadius: '8px' },
+    materialName: { color: '#ccc', fontSize: '14px', fontWeight: 'bold' },
+    materialValue: { color: '#fff', fontSize: '14px', fontWeight: '900' },
 
     glassPanel: { background: 'rgba(255, 255, 255, 0.02)', borderRadius: '25px', padding: '40px', border: '1px dashed rgba(155, 89, 182, 0.3)' },
     
