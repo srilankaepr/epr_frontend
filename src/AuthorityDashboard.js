@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import logo from './logo.png'; 
-import bgImage from './assets/customerdashboard.jpg'; // ඔයාට ඕන නම් authority වලට වෙනම bg එකක් දාන්න පුළුවන්
+import bgImage from './assets/customerdashboard.jpg';
 import API from './api'; 
 
 const AuthorityDashboard = () => {
@@ -18,6 +18,14 @@ const AuthorityDashboard = () => {
         contactPersonName: 'Loading...',
         designation: 'Loading...',
         contactMobile: 'Loading...'
+    });
+
+    // 🆕 Real Data තියාගන්න State එක
+    const [dashboardStats, setDashboardStats] = useState({
+        pibos: '...',
+        pros: '...',
+        recyclers: '...',
+        plasticRecovered: '...'
     });
 
     useEffect(() => {
@@ -44,7 +52,18 @@ const AuthorityDashboard = () => {
             }
         };
 
+        // 🆕 Database එකෙන් ඇත්ත Data ගේන Function එක
+        const fetchSystemStats = async () => {
+            try {
+                const response = await API.get('/authority/stats'); 
+                setDashboardStats(response.data);
+            } catch (error) {
+                console.error("Error fetching system stats:", error.message);
+            }
+        };
+
         fetchUserData(); 
+        fetchSystemStats(); // ඒක මෙතනින් Call කරනවා
 
         return () => {
             document.head.removeChild(styleSheet);
@@ -62,7 +81,6 @@ const AuthorityDashboard = () => {
        <div style={{ ...styles.container, backgroundImage: `url(${bgImage})` }}>
        <div style={styles.overlay}></div>
        
-        {/* Mobile Hamburger Menu */}
         {isMobile && (
             <div 
                 onClick={() => setIsDrawerOpen(!isDrawerOpen)}
@@ -88,7 +106,6 @@ const AuthorityDashboard = () => {
             />
         )}
 
-            {/* SIDEBAR */}
             <aside style={getSidebarStyles(isMobile, isDrawerOpen)}>
                 <div style={styles.logoWrapper}>
                     <img src={logo} alt="Logo" style={styles.glowingLogo} />
@@ -131,7 +148,6 @@ const AuthorityDashboard = () => {
                     })}
                 </nav>
 
-                {/* LOGOUT BUTTON */}
                 <div 
                     style={styles.logoutBtn} 
                     onClick={handleLogout}
@@ -148,22 +164,20 @@ const AuthorityDashboard = () => {
                 </div>
             </aside>
 
-            {/* MAIN CONTENT AREA */}
             <main style={getMainAreaStyles(isMobile, isDrawerOpen)}>
                 
-                {/* 1. OVERVIEW TAB */}
+                {/* 1. OVERVIEW TAB - දැන් මේකේ පෙන්වන්නේ ඇත්ත ඩේටා! */}
                 {activeTab === 'OVERVIEW' && (
                     <div style={{ ...styles.contentPadding, animation: 'fadeInUp 0.6s ease-out forwards' }}>
                         <h1 style={styles.mainTitle}>AUTHORITY DASHBOARD</h1>
                         <p style={styles.subTitle}>National EPR Tracking & Regulatory Overview</p>
                         
                         <div style={styles.grid}>
-                            {/* Dummy Data Widgets for UI presentation */}
                             {[
-                                { title: 'TOTAL PIBOs', count: '142', desc: 'Registered Producers & Importers' },
-                                { title: 'ACTIVE PROs', count: '5', desc: 'Consortiums operating nationwide' },
-                                { title: 'RECYCLERS', count: '38', desc: 'Verified Waste Management Centers' },
-                                { title: 'PLASTIC RECOVERED', count: '1,240 Tons', desc: 'National aggregate for 2026' }
+                                { title: 'TOTAL PIBOs', count: dashboardStats.pibos, desc: 'Registered Producers & Importers' },
+                                { title: 'ACTIVE PROs', count: dashboardStats.pros, desc: 'Consortiums operating nationwide' },
+                                { title: 'RECYCLERS', count: dashboardStats.recyclers, desc: 'Verified Waste Management Centers' },
+                                { title: 'PLASTIC RECOVERED', count: dashboardStats.plasticRecovered, desc: 'National aggregate for 2026' }
                             ].map((widget, i) => (
                                 <div key={i} style={styles.statCard}>
                                     <h3 style={styles.statTitle}>{widget.title}</h3>
@@ -247,7 +261,6 @@ const AuthorityDashboard = () => {
     );
 };
 
-// Functions to handle dynamic styles
 const getSidebarStyles = (isMobile, isDrawerOpen) => ({
     width: '280px', backgroundColor: 'rgba(20, 10, 25, 0.98)', borderRight: '1px solid #333', 
     display: 'flex', flexDirection: 'column', padding: '40px 20px', zIndex: 100, position: 'fixed', 
@@ -259,7 +272,6 @@ const getMainAreaStyles = (isMobile, isDrawerOpen) => ({
     flex: 1, marginLeft: isMobile ? '0' : '280px', zIndex: 2, position: 'relative', transition: 'margin-left 0.3s ease'
 });
 
-// Stylesheet
 const styles = {
     container: { display: 'flex', minHeight: '100vh', backgroundSize: 'cover', backgroundPosition: 'center', backgroundAttachment: 'fixed', color: '#fff', fontFamily: 'Poppins, sans-serif' },
     overlay: { position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0, 0, 0, 0.85)', zIndex: 1 },
