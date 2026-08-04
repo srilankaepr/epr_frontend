@@ -122,12 +122,12 @@ const AuthorityDashboard = () => {
                 </div>
                 
                 <nav style={styles.navMenu}>
-                    {[
+                    {[  
+                        { id: 'PROFILE', label: 'MY PROFILE' },
                         { id: 'OVERVIEW', label: 'NATIONAL OVERVIEW' },
-                        { id: 'ENTITIES', label: 'REGISTERED ENTITIES' },
-                        { id: 'VERIFICATION', label: 'DOC VERIFICATION' },
-                        { id: 'REPORTS', label: 'SYSTEM REPORTS' },
-                        { id: 'PROFILE', label: 'MY PROFILE' }
+                        { id: 'ENTITIES', label: 'REGULATED ENTITIES' },
+                        //{ id: 'VERIFICATION', label: 'DOC VERIFICATION' },
+                       // { id: 'REPORTS', label: 'SYSTEM REPORTS' },
                     ].map((item) => {
                         const isActive = activeTab === item.id;
                         return (
