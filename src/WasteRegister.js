@@ -345,7 +345,7 @@ const WasteRegister = () => {
                                     { field: 'isCollector', label: '🚛 Collector', id: 'role_collector' },
                                     { field: 'isRecycler', label: '♻️ Recycler', id: 'role_recycler' },
                                     { field: 'isTransporter', label: '🚚 Transporter', id: 'role_transporter' },
-                                    { field: 'isTotalSolutionProvider', label: '🌐 Total Solution Provider', id: 'role_total' }
+                                    { field: 'isTotalSolutionProvider', label: '🌐 All(Recycler,Collector,Transporter)', id: 'role_total' }
                                 ].map((item) => (
                                     <label key={item.id} style={{ display: 'flex', alignItems: 'center', gap: '15px', cursor: 'pointer', color: formData[item.field] ? '#f39c12' : '#ccc', fontSize: '16px', background: formData[item.field] ? 'rgba(243,156,18,0.04)' : 'rgba(255,255,255,0.02)', padding: '15px', borderRadius: '12px', border: formData[item.field] ? '1px solid #f39c12' : '1px solid rgba(255,255,255,0.05)', transition: '0.2s' }}>
                                         <input type="radio" name="entity_type_selection" checked={formData[item.field]} onChange={() => handleEntityRoleChange(item.field)} style={{ width: '20px', height: '20px', cursor: 'pointer', accentColor: '#f39c12' }} />

@@ -125,9 +125,11 @@ const AuthorityDashboard = () => {
                     {[  
                         { id: 'PROFILE', label: 'MY PROFILE' },
                         { id: 'OVERVIEW', label: 'NATIONAL OVERVIEW' },
-                        { id: 'ENTITIES', label: 'REGULATED ENTITIES' },
+                        { id: 'REPORTS', label: 'SYSTEM REPORTS' },
+                        { id: 'ENTITIES', label: 'VISIT OUR WEBSITE' },
+
                         //{ id: 'VERIFICATION', label: 'DOC VERIFICATION' },
-                       // { id: 'REPORTS', label: 'SYSTEM REPORTS' },
+                        
                     ].map((item) => {
                         const isActive = activeTab === item.id;
                         return (
