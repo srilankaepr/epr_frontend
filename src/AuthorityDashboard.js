@@ -140,6 +140,13 @@ const AuthorityDashboard = () => {
                                     ...styles.navLink, 
                                     ...(isActive ? styles.activeNavLink : {})
                                 }} 
+                                onClick={() => {
+                                    if (item.isExternal) {
+                                        window.open(item.url, '_blank');
+                                    } else {
+                                        setActiveTab(item.id);
+                                    }
+                                }}
                                 onClick={() => setActiveTab(item.id)}
                                 onMouseEnter={(e) => {
                                     if (!isActive) {
