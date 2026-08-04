@@ -126,7 +126,8 @@ const AuthorityDashboard = () => {
                         { id: 'PROFILE', label: 'MY PROFILE' },
                         { id: 'OVERVIEW', label: 'NATIONAL OVERVIEW' },
                         { id: 'REPORTS', label: 'SYSTEM REPORTS' },
-                        { id: 'ENTITIES', label: 'VISIT OUR WEBSITE' },
+                        { id: 'WEBSITE', label: 'VISIT OUR WEBSITE', isExternal: true, url: 'https://www.eprs.lk/' }
+                       // { id: 'ENTITIES', label: 'VISIT OUR WEBSITE' },
 
                         //{ id: 'VERIFICATION', label: 'DOC VERIFICATION' },
                         
