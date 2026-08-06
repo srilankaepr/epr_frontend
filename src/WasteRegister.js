@@ -37,13 +37,9 @@ const WasteRegister = () => {
         contactDesignation: '',
         contactPersonMobile: '',
 
-        isCoPartner: false,
-        coPartnerFullName: '',
-        coPartnerAnotherEmail: '',
-        coPartnerPhone: '',
-        coPartnerNic: '',
-        coPartnerDistrict: '',
-        coPartnerPradeshiyaSabha: '',
+        // අලුතින් එකතු කළ Operator ෆීල්ඩ්ස් (Co-partner වෙනුවට)
+        operatorIdNum: '',
+        operatorPradeshiyaSabha: '',
 
         collectionSystemTypes: [], 
         collectionAreaCoverage: '', 
@@ -209,11 +205,6 @@ const WasteRegister = () => {
             return;
         }
 
-        if (formData.isCoPartner && formData.coPartnerPhone && !validatePhone(formData.coPartnerPhone)) {
-            alert("❌ Please enter a valid 10-digit Co-Partner Phone Number.");
-            return;
-        }
-
         if (!formData.wasteDeclarationConfirmed || !formData.wasteDeclarationPlatformAgreed || !formData.wasteDeclarationReportingAgreed || !formData.wasteDeclarationVerificationAgreed) {
             alert("❌ You must agree to all declaration and legal terms before submitting!");
             return;
@@ -280,7 +271,7 @@ const WasteRegister = () => {
                             step === 2 ? "ACCOUNT CREATION" :
                             step === 3 ? "ORGANIZATION DETAILS" :
                             step === 4 ? "CONTACT PERSON DETAILS" :
-                            step === 5 ? "OPERATIONAL ROLE SPECS & CO-PARTNERS" :
+                            step === 5 ? "OPERATIONAL ROLE SPECS & OPERATOR DETAILS" :
                             step === 6 ? "WASTE CATEGORIES HANDLED" :
                             step === 7 ? "OPERATIONAL CAPACITY" :
                             step === 8 ? "EQUIPMENT & INFRASTRUCTURE" :
@@ -289,7 +280,7 @@ const WasteRegister = () => {
                         }
                     </div>
 
-                    {/* Step 1: Entity Type Selection (Moved from Step 2) */}
+                    {/* Step 1: Entity Type Selection */}
                     {step === 1 && (
                         <div>
                             <h3 style={styles.sectionHeader}>Step 1: Entity Type Selection (Select Only One)</h3>
@@ -316,7 +307,7 @@ const WasteRegister = () => {
                         </div>
                     )}
 
-                    {/* Step 2: Account Creation (Moved from Step 1, Password conditional logic applied) */}
+                    {/* Step 2: Account Creation */}
                     {step === 2 && (
                         <div>
                             <h3 style={styles.sectionHeader}>Step 2: Account Creation</h3>
@@ -325,7 +316,6 @@ const WasteRegister = () => {
                                 <input name="officialEmail" value={formData.officialEmail} type="email" placeholder="partner-login@domain.com" style={styles.input} onChange={handleChange} required />
                             </div>
                             
-                            {/* Password fields only visible for Recycler or Total Solution Provider */}
                             {(formData.isRecycler || formData.isTotalSolutionProvider) && (
                                 <div style={styles.row}>
                                     <div style={styles.rowItem}>
@@ -372,23 +362,22 @@ const WasteRegister = () => {
                                     <input name="dob" value={formData.dob} type="date" style={styles.input} onChange={handleChange} required={formData.regType === 'Company'} />
                                 </div>
                             </div>
-                          <div style={styles.row}>
-    <div style={styles.rowItem}>
-        <label style={styles.label}>PROVINCE *</label>
-        <select name="orgProvince" value={formData.orgProvince} style={styles.selectInput} onChange={handleChange} required>
-            <option value="">-- Select Province --</option>
-            {provinces.map(p => <option key={p} value={p}>{p}</option>)}
-        </select>
-    </div>
-
-    <div style={styles.rowItem}>
-        <label style={styles.label}>DISTRICT *</label>
-        <select name="orgDistrict" value={formData.orgDistrict} style={styles.selectInput} onChange={handleChange} required>
-            <option value="">-- Select District --</option>
-            {districts.map(d => <option key={d} value={d}>{d}</option>)}
-        </select>
-    </div>
-</div>
+                            <div style={styles.row}>
+                                <div style={styles.rowItem}>
+                                    <label style={styles.label}>PROVINCE *</label>
+                                    <select name="orgProvince" value={formData.orgProvince} style={styles.selectInput} onChange={handleChange} required>
+                                        <option value="">-- Select Province --</option>
+                                        {provinces.map(p => <option key={p} value={p}>{p}</option>)}
+                                    </select>
+                                </div>
+                                <div style={styles.rowItem}>
+                                    <label style={styles.label}>DISTRICT *</label>
+                                    <select name="orgDistrict" value={formData.orgDistrict} style={styles.selectInput} onChange={handleChange} required>
+                                        <option value="">-- Select District --</option>
+                                        {districts.map(d => <option key={d} value={d}>{d}</option>)}
+                                    </select>
+                                </div>
+                            </div>
                             <div style={styles.inputWrapper}>
                                 <label style={styles.label}>REGISTERED ADDRESS (MULTILINE) *</label>
                                 <input name="address1" value={formData.address1} type="text" placeholder="Headquarters Physical Address" style={styles.input} onChange={handleChange} required />
@@ -398,33 +387,33 @@ const WasteRegister = () => {
                                 <input name="operationalAddress" value={formData.operationalAddress} type="text" placeholder="Warehouse / Processing Center Location" style={styles.input} onChange={handleChange} />
                             </div>
 
-<div style={{ marginTop: '20px', padding: '15px', background: 'rgba(255,255,255,0.02)', borderRadius: '12px', border: '1px dashed rgba(255,255,255,0.1)' }}>
-    {formData.regType === 'Company' ? (
-        <>
-            <div style={{ marginBottom: '12px' }}>
-                <label style={styles.label}>BUSINESS REGISTRATION CERTIFICATE (BRC) *</label>
-                <input type="file" style={styles.input} onChange={(e) => handleFileBase64(e, 'brc')} accept=".pdf,.jpg,.jpeg,.png" />
-                {fileStrings.brc && <p style={{ color: '#2ecc71', fontSize: '13px', margin: '5px 0 0 0', fontWeight: 'bold' }}>✅ BRC Document Loaded Securely</p>}
-            </div>
-            <div style={{ marginBottom: '12px' }}>
-                <label style={styles.label}>VAT REGISTRATION CERTIFICATE (OPTIONAL)</label>
-                <input type="file" style={styles.input} onChange={(e) => handleFileBase64(e, 'vat')} accept=".pdf,.jpg,.jpeg,.png" />
-                {fileStrings.vat && <p style={{ color: '#2ecc71', fontSize: '13px', margin: '5px 0 0 0', fontWeight: 'bold' }}>✅ VAT Document Loaded Securely</p>}
-            </div>
-            <div>
-                <label style={styles.label}>UTILITY BILLING PROOF (ADDRESS VERIFICATION) *</label>
-                <input type="file" style={styles.input} onChange={(e) => handleFileBase64(e, 'billing')} accept=".pdf,.jpg,.jpeg,.png" />
-                {fileStrings.billing && <p style={{ color: '#2ecc71', fontSize: '13px', margin: '5px 0 0 0', fontWeight: 'bold' }}>✅ Utility Bill Loaded Securely</p>}
-            </div>
-        </>
-    ) : (  
-        <div>
-            <label style={styles.label}>NIC / PASSPORT SCAN (BOTH SIDES) *</label>
-            <input type="file" style={styles.input} onChange={(e) => handleFileBase64(e, 'nic')} accept=".pdf,.jpg,.jpeg,.png" />
-            {fileStrings.nic && <p style={{ color: '#2ecc71', fontSize: '13px', margin: '5px 0 0 0', fontWeight: 'bold' }}>✅ NIC/Passport Document Loaded Securely</p>}
-        </div>
-    )}
-</div>
+                            <div style={{ marginTop: '20px', padding: '15px', background: 'rgba(255,255,255,0.02)', borderRadius: '12px', border: '1px dashed rgba(255,255,255,0.1)' }}>
+                                {formData.regType === 'Company' ? (
+                                    <>
+                                        <div style={{ marginBottom: '12px' }}>
+                                            <label style={styles.label}>BUSINESS REGISTRATION CERTIFICATE (BRC) *</label>
+                                            <input type="file" style={styles.input} onChange={(e) => handleFileBase64(e, 'brc')} accept=".pdf,.jpg,.jpeg,.png" />
+                                            {fileStrings.brc && <p style={{ color: '#2ecc71', fontSize: '13px', margin: '5px 0 0 0', fontWeight: 'bold' }}>✅ BRC Document Loaded Securely</p>}
+                                        </div>
+                                        <div style={{ marginBottom: '12px' }}>
+                                            <label style={styles.label}>VAT REGISTRATION CERTIFICATE (OPTIONAL)</label>
+                                            <input type="file" style={styles.input} onChange={(e) => handleFileBase64(e, 'vat')} accept=".pdf,.jpg,.jpeg,.png" />
+                                            {fileStrings.vat && <p style={{ color: '#2ecc71', fontSize: '13px', margin: '5px 0 0 0', fontWeight: 'bold' }}>✅ VAT Document Loaded Securely</p>}
+                                        </div>
+                                        <div>
+                                            <label style={styles.label}>UTILITY BILLING PROOF (ADDRESS VERIFICATION) *</label>
+                                            <input type="file" style={styles.input} onChange={(e) => handleFileBase64(e, 'billing')} accept=".pdf,.jpg,.jpeg,.png" />
+                                            {fileStrings.billing && <p style={{ color: '#2ecc71', fontSize: '13px', margin: '5px 0 0 0', fontWeight: 'bold' }}>✅ Utility Bill Loaded Securely</p>}
+                                        </div>
+                                    </>
+                                ) : (  
+                                    <div>
+                                        <label style={styles.label}>NIC / PASSPORT SCAN (BOTH SIDES) *</label>
+                                        <input type="file" style={styles.input} onChange={(e) => handleFileBase64(e, 'nic')} accept=".pdf,.jpg,.jpeg,.png" />
+                                        {fileStrings.nic && <p style={{ color: '#2ecc71', fontSize: '13px', margin: '5px 0 0 0', fontWeight: 'bold' }}>✅ NIC/Passport Document Loaded Securely</p>}
+                                    </div>
+                                )}
+                            </div>
                         </div>
                     )}
     
@@ -455,10 +444,10 @@ const WasteRegister = () => {
                         </div>
                     )}
 
-                    {/* Step 5: Operational Role Details & Co-Partner Core Logic */}
+                    {/* Step 5: Operational Role Details & Operator Details */}
                     {step === 5 && (
                         <div>
-                            <h3 style={styles.sectionHeader}>Step 5: Operational Role Specs & Co-Partner Routing</h3>
+                            <h3 style={styles.sectionHeader}>Step 5: Operational Role Specs & Operator Details</h3>
                             
                             {/* Collector Sub-form */}
                             {(formData.isCollector || formData.isTotalSolutionProvider) && (
@@ -480,52 +469,6 @@ const WasteRegister = () => {
                                         <option value="District">District</option>
                                         <option value="National">National</option>
                                     </select>
-
-                                    <div style={{ marginTop: '20px', padding: '20px', background: 'rgba(52, 152, 219, 0.08)', borderRadius: '15px', border: '1px solid rgba(52, 152, 219, 0.3)' }}>
-                                        <label style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer', color: '#3498db', fontWeight: 'bold', fontSize: '14px' }}>
-                                            <input type="checkbox" name="isCoPartner" checked={formData.isCoPartner} onChange={handleChange} style={{ width: '18px', height: '18px', accentColor: '#3498db' }} />
-                                            🤝 Register as a Co-Partner Network Node?
-                                        </label>
-
-                                        {formData.isCoPartner && (
-                                            <div style={{ marginTop: '15px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                                                <div>
-                                                    <label style={styles.label}>CO-PARTNER FULL NAME *</label>
-                                                    <input name="coPartnerFullName" value={formData.coPartnerFullName} type="text" placeholder="Representative Full Name" style={styles.input} onChange={handleChange} required />
-                                                </div>
-                                                <div style={styles.row}>
-                                                    <div style={styles.rowItem}>
-                                                        <label style={styles.label}>CO-PARTNER PHONE *</label>
-                                                        <input name="coPartnerPhone" value={formData.coPartnerPhone} maxLength="10" placeholder="07XXXXXXXX" type="text" style={styles.input} onChange={handleChange} required />
-                                                    </div>
-                                                    <div style={styles.rowItem}>
-                                                        <label style={styles.label}>CO-PARTNER NIC *</label>
-                                                        <input name="coPartnerNic" value={formData.coPartnerNic} type="text" placeholder="NIC Number" style={styles.input} onChange={handleChange} required />
-                                                    </div>
-                                                </div>
-                                                <div>
-                                                    <label style={styles.label}>CO-PARTNER ALTERNATIVE EMAIL *</label>
-                                                    <input name="coPartnerAnotherEmail" value={formData.coPartnerAnotherEmail} type="email" placeholder="alt-email@domain.com" style={styles.input} onChange={handleChange} required />
-                                                </div>
-                                                <div style={styles.row}>
-                                                    <div style={styles.rowItem}>
-                                                        <label style={styles.label}>CO-PARTNER DISTRICT *</label>
-                                                        <select name="coPartnerDistrict" value={formData.coPartnerDistrict} style={styles.selectInput} onChange={handleChange} required>
-                                                            <option value="">-- Select District --</option>
-                                                            {districts.map(d => <option key={d} value={d}>{d}</option>)}
-                                                        </select>
-                                                    </div>
-                                                    <div style={styles.rowItem}>
-                                                        <label style={styles.label}>CO-PARTNER PRADESHIYA SABHA (SEARCH/TYPE) *</label>
-                                                        <input list="copartner_sabhas" name="coPartnerPradeshiyaSabha" value={formData.coPartnerPradeshiyaSabha} placeholder="Type or Select Sabha" style={styles.input} onChange={handleChange} required />
-                                                        <datalist id="copartner_sabhas">
-                                                            {(districtToSabhas[formData.coPartnerDistrict] || []).map(s => <option key={s} value={s} />)}
-                                                        </datalist>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        )}
-                                    </div>
                                 </div>
                             )}
 
@@ -587,6 +530,28 @@ const WasteRegister = () => {
                                             </datalist>
                                         </div>
                                     )}
+                                </div>
+                            )}
+
+                            {/* 👤 අලුත් Operator Details Box (Collector, Transporter, හෝ Total අයට පමණි) */}
+                            {(formData.isCollector || formData.isTransporter || formData.isTotalSolutionProvider) && (
+                                <div style={{ marginTop: '20px', padding: '20px', background: 'rgba(52, 152, 219, 0.08)', borderRadius: '15px', border: '1px solid rgba(52, 152, 219, 0.3)' }}>
+                                    <h4 style={{ color: '#3498db', margin: '0 0 15px 0', fontSize: '15px' }}>👤 Operator / Field Agent Details</h4>
+                                    <div style={styles.row}>
+                                        <div style={styles.rowItem}>
+                                            <label style={styles.label}>OPERATOR ID NUMBER (NIC) *</label>
+                                            <input name="operatorIdNum" value={formData.operatorIdNum} type="text" placeholder="NIC Number" style={styles.input} onChange={handleChange} required />
+                                        </div>
+                                        <div style={styles.rowItem}>
+                                            <label style={styles.label}>OPERATIONAL PRADESHIYA SABHA *</label>
+                                            <input list="operator_sabhas" name="operatorPradeshiyaSabha" value={formData.operatorPradeshiyaSabha} placeholder="Type or Select Sabha" style={styles.input} onChange={handleChange} required />
+                                            <datalist id="operator_sabhas">
+                                                {(districtToSabhas[formData.orgDistrict] || Object.values(districtToSabhas).flat()).map((ps, idx) => (
+                                                    <option key={idx} value={ps} />
+                                                ))}
+                                            </datalist>
+                                        </div>
+                                    </div>
                                 </div>
                             )}
                         </div>
@@ -855,4 +820,4 @@ const styles = {
     loginLink: { color: '#f39c12', fontWeight: 'bold', cursor: 'pointer' }
 };
 
-export default WasteRegister;   
+export default WasteRegister;
