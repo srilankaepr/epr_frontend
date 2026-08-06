@@ -9,23 +9,20 @@ const WasteRegister = () => {
     const [step, setStep] = useState(1);
     const [isLoading, setIsLoading] = useState(false);
 
-    // --- 100%ක්ම Required & Single-Select / Multi-select වලට සකස් කළ State එක ---
     const [formData, setFormData] = useState({
-        regType: 'Company', // Company or Individual
-        orgRole: 'RECYCLER', // Base identifier mapped to customer collection
+        regType: 'Company', 
+        orgRole: 'RECYCLER', 
         officialEmail: '',
         password: '',
         confirmPassword: '',
         phone: '',
         whatsapp: '',
 
-        // Selected Entity Type (Single-Select Radio Logic)
         isCollector: false,
         isRecycler: false,
         isTransporter: false,
         isTotalSolutionProvider: false,
 
-        // Organization Details
         companyName: '',
         companyWebsite: '',
         regNumber: '',
@@ -36,12 +33,10 @@ const WasteRegister = () => {
         orgProvince: '',
         country: 'Sri Lanka',
 
-        // Contact Person Details
         contactPersonName: '',
         contactDesignation: '',
         contactPersonMobile: '',
 
-        // Co-Partner Fields (පරණ RegisterCustomer.js එකෙන් කෙලින්ම ගත්තා - Collector හට පමණි)
         isCoPartner: false,
         coPartnerFullName: '',
         coPartnerAnotherEmail: '',
@@ -50,7 +45,6 @@ const WasteRegister = () => {
         coPartnerDistrict: '',
         coPartnerPradeshiyaSabha: '',
 
-        // Operational Role Details (Conditional Render Specifications)
         collectionSystemTypes: [], 
         collectionAreaCoverage: '', 
         facilityRecyclingType: [], 
@@ -61,7 +55,6 @@ const WasteRegister = () => {
         transportPradeshiyaSabhas: [], 
         hasWasteHandlingLicense: 'No',
 
-        // Waste Categories Handled (Step 6 Arrays)
         generalWasteStreams: [],
         eeWasteStreams: [],
         chemicalHazardousWasteStreams: [],
@@ -69,7 +62,6 @@ const WasteRegister = () => {
         metalIndustrialWasteStreams: [],
         additionalNotes: '',
 
-        // Capacity & Infrastructure (Step 7 & 8)
         estimatedMonthlyCollectionVolume: '',
         estimatedMonthlyProcessingVolume: '',
         storageCapacityAvailable: '',
@@ -77,13 +69,11 @@ const WasteRegister = () => {
         infrastructureEquipmentTypes: [],
         equipmentDetailsReport: '',
 
-        // Network & Compliance Toggles (Step 9 & 10)
         hasEnvironmentalLicense: 'No',
         worksWithPro: 'No',
         linkedProName: '',
         receivesWasteFromPibos: 'No',
 
-        // Declarations (Step 11)
         digitalSignatureName: '',
         declarationDate: new Date().toLocaleDateString(),
         wasteDeclarationConfirmed: false,
@@ -92,13 +82,11 @@ const WasteRegister = () => {
         wasteDeclarationVerificationAgreed: false
     });
 
-    // File Strings Store (Base64)
     const [fileStrings, setFileStrings] = useState({ 
         brc: "", vat: "", billing: "", nic: "",
         envLicense: "", wasteLicense: "", boiApproval: ""
     });
 
-    // --- ලංකාවේ සියලුම දිස්ත්‍රික්ක සහ ඒවාට අදාළ ප්‍රාදේශීය සභා සිතියම (Dynamic Mapping) ---
     const districts = ["Colombo", "Gampaha", "Kalutara", "Kandy", "Matale", "Nuwara Eliya", "Galle", "Matara", "Hambantota", "Jaffna", "Kilinochchi", "Mannar", "Vavuniya", "Mullaitivu", "Batticaloa", "Ampara", "Trincomalee", "Kurunegala", "Puttalam", "Anuradhapura", "Polonnaruwa", "Badulla", "Moneragala", "Ratnapura", "Kegalle"];
     const provinces = ["Western", "Central", "Southern", "Northern", "Eastern", "North Western", "North Central", "Uva", "Sabaragamuwa"];
     
@@ -138,7 +126,6 @@ const WasteRegister = () => {
         }));
     };
 
-    // --- Entity Type එක Single-Select (Radio) විදිහට හැසිරවීම ---
     const handleEntityRoleChange = (selectedRoleField) => {
         setFormData(prev => ({
             ...prev,
@@ -172,9 +159,7 @@ const WasteRegister = () => {
         }
     };
 
-    // --- 🚀 Enterprise-Grade Step Validation Control Center ---
     const handleNextStep = () => {
-        // 🏢 👤 Step 3: Organization Details වලදී ෆයිල් චෙක් කිරීම
         if (step === 3) {
             if (formData.regType === 'Company') {
                 if (!fileStrings.brc) {
@@ -192,7 +177,6 @@ const WasteRegister = () => {
             }
         }
 
-        // 📜 Step 9: Licenses & Compliance වලදී "Yes" නම් ෆයිල් චෙක් කිරීම
         if (step === 9) {
             if (formData.hasEnvironmentalLicense === 'Yes' && !fileStrings.envLicense) {
                 alert("❌ Since you selected 'Yes', uploading the EPL Certificate is mandatory!");
@@ -214,7 +198,8 @@ const WasteRegister = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        if (formData.password !== formData.confirmPassword) {
+        const needsPassword = formData.isRecycler || formData.isTotalSolutionProvider;
+        if (needsPassword && formData.password !== formData.confirmPassword) {
             alert("❌ Passwords do not match!");
             return;
         }
@@ -248,13 +233,11 @@ const WasteRegister = () => {
             ...formData,
             managedWasteCategories: totalWasteCategories,
             
-            // Core Base64 Documents
             brcDocument: formData.regType === 'Company' ? fileStrings.brc : "",
             vatDocument: formData.regType === 'Company' ? fileStrings.vat : "",
             billingDocument: formData.regType === 'Company' ? fileStrings.billing : "",
             nic: formData.regType === 'Individual' ? fileStrings.nic : "",
 
-            // Waste Management Specific Uploads
             environmentalLicenseFile: fileStrings.envLicense,
             wasteHandlingLicenseFile: fileStrings.wasteLicense,
             boiLocalAuthorityApprovalFile: fileStrings.boiApproval
@@ -269,6 +252,8 @@ const WasteRegister = () => {
         } catch (error) {
             console.error("Registration Error:", error);
             alert("❌ Error: " + (error.response?.data?.error || "Registration failed."));
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -291,8 +276,8 @@ const WasteRegister = () => {
                 <form onSubmit={handleSubmit} style={styles.form}>
                     <div style={{ color: '#f39c12', fontSize: '13px', fontWeight: 'bold', textAlign: 'center', marginBottom: '25px', background: 'rgba(243,156,18,0.1)', padding: '12px', borderRadius: '10px', border: '1px solid rgba(243,156,18,0.2)' }}>
                         PROGRESS STEP: {step} OF 11 — {
-                            step === 1 ? "ACCOUNT CREATION" :
-                            step === 2 ? "ENTITY TYPE SELECTION" :
+                            step === 1 ? "ENTITY TYPE SELECTION" :
+                            step === 2 ? "ACCOUNT CREATION" :
                             step === 3 ? "ORGANIZATION DETAILS" :
                             step === 4 ? "CONTACT PERSON DETAILS" :
                             step === 5 ? "OPERATIONAL ROLE SPECS & CO-PARTNERS" :
@@ -304,35 +289,10 @@ const WasteRegister = () => {
                         }
                     </div>
 
-                    {/* Step 1: Account Creation (Mobile OTP block අයින් කර සකස් කරන ලදී) */}
+                    {/* Step 1: Entity Type Selection (Moved from Step 2) */}
                     {step === 1 && (
                         <div>
-                            <h3 style={styles.sectionHeader}>Step 1: Account Creation</h3>
-                            <div style={styles.inputWrapper}>
-                                <label style={styles.label}>EMAIL ADDRESS (LOGIN ID) *</label>
-                                <input name="officialEmail" value={formData.officialEmail} type="email" placeholder="partner-login@domain.com" style={styles.input} onChange={handleChange} required />
-                            </div>
-                            <div style={styles.row}>
-                                <div style={styles.rowItem}>
-                                    <label style={styles.label}>PASSWORD *</label>
-                                    <input name="password" value={formData.password} type="password" placeholder="••••••••" style={styles.input} onChange={handleChange} required />
-                                </div>
-                                <div style={styles.rowItem}>
-                                    <label style={styles.label}>CONFIRM PASSWORD *</label>
-                                    <input name="confirmPassword" value={formData.confirmPassword} type="password" placeholder="••••••••" style={styles.input} onChange={handleChange} required />
-                                </div>
-                            </div>
-                            <div style={styles.inputWrapper}>
-                                <label style={styles.label}>MOBILE NUMBER *</label>
-                                <input name="phone" value={formData.phone} maxLength="10" placeholder="07XXXXXXXX" type="text" style={styles.input} onChange={handleChange} required />
-                            </div>
-                        </div>
-                    )}
-
-                    {/* Step 2: Entity Type Selection (Single-Select Radio Card Style) */}
-                    {step === 2 && (
-                        <div>
-                            <h3 style={styles.sectionHeader}>Step 2: Entity Type Selection (Select Only One)</h3>
+                            <h3 style={styles.sectionHeader}>Step 1: Entity Type Selection (Select Only One)</h3>
                             <div style={{ display: 'flex', gap: '15px', marginBottom: '25px' }}>
                                 {['Company', 'Individual'].map((t) => (
                                     <button key={t} type="button" onClick={() => setFormData({ ...formData, regType: t })} style={{ flex: 1, padding: '14px', borderRadius: '12px', fontWeight: 'bold', cursor: 'pointer', background: formData.regType === t ? 'rgba(243,156,18,0.15)' : 'rgba(255,255,255,0.03)', border: formData.regType === t ? '2px solid #f39c12' : '1px solid rgba(255,255,255,0.1)', color: formData.regType === t ? '#f39c12' : '#aaa', transition: '0.3s' }}>
@@ -345,7 +305,7 @@ const WasteRegister = () => {
                                     { field: 'isCollector', label: '🚛 Collector', id: 'role_collector' },
                                     { field: 'isRecycler', label: '♻️ Recycler', id: 'role_recycler' },
                                     { field: 'isTransporter', label: '🚚 Transporter', id: 'role_transporter' },
-                                    { field: 'isTotalSolutionProvider', label: '🌐 All(Recycler,Collector,Transporter)', id: 'role_total' }
+                                    { field: 'isTotalSolutionProvider', label: '🌐 All (Recycler, Collector, Transporter)', id: 'role_total' }
                                 ].map((item) => (
                                     <label key={item.id} style={{ display: 'flex', alignItems: 'center', gap: '15px', cursor: 'pointer', color: formData[item.field] ? '#f39c12' : '#ccc', fontSize: '16px', background: formData[item.field] ? 'rgba(243,156,18,0.04)' : 'rgba(255,255,255,0.02)', padding: '15px', borderRadius: '12px', border: formData[item.field] ? '1px solid #f39c12' : '1px solid rgba(255,255,255,0.05)', transition: '0.2s' }}>
                                         <input type="radio" name="entity_type_selection" checked={formData[item.field]} onChange={() => handleEntityRoleChange(item.field)} style={{ width: '20px', height: '20px', cursor: 'pointer', accentColor: '#f39c12' }} />
@@ -356,7 +316,37 @@ const WasteRegister = () => {
                         </div>
                     )}
 
-                    {/* Step 3: Organization Details (Reg Type එක අනුව Inputs සහ Labels වෙනස් වන තැන) */}
+                    {/* Step 2: Account Creation (Moved from Step 1, Password conditional logic applied) */}
+                    {step === 2 && (
+                        <div>
+                            <h3 style={styles.sectionHeader}>Step 2: Account Creation</h3>
+                            <div style={styles.inputWrapper}>
+                                <label style={styles.label}>EMAIL ADDRESS (LOGIN ID) *</label>
+                                <input name="officialEmail" value={formData.officialEmail} type="email" placeholder="partner-login@domain.com" style={styles.input} onChange={handleChange} required />
+                            </div>
+                            
+                            {/* Password fields only visible for Recycler or Total Solution Provider */}
+                            {(formData.isRecycler || formData.isTotalSolutionProvider) && (
+                                <div style={styles.row}>
+                                    <div style={styles.rowItem}>
+                                        <label style={styles.label}>PASSWORD *</label>
+                                        <input name="password" value={formData.password} type="password" placeholder="••••••••" style={styles.input} onChange={handleChange} required />
+                                    </div>
+                                    <div style={styles.rowItem}>
+                                        <label style={styles.label}>CONFIRM PASSWORD *</label>
+                                        <input name="confirmPassword" value={formData.confirmPassword} type="password" placeholder="••••••••" style={styles.input} onChange={handleChange} required />
+                                    </div>
+                                </div>
+                            )}
+
+                            <div style={styles.inputWrapper}>
+                                <label style={styles.label}>MOBILE NUMBER *</label>
+                                <input name="phone" value={formData.phone} maxLength="10" placeholder="07XXXXXXXX" type="text" style={styles.input} onChange={handleChange} required />
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Step 3: Organization Details */}
                     {step === 3 && (
                         <div>
                             <h3 style={styles.sectionHeader}>Step 3: Organization Details</h3>
@@ -370,14 +360,12 @@ const WasteRegister = () => {
                             </div>
                             <div style={styles.row}>
                                 <div style={styles.rowItem}>
-                                    {/* 🏢 👤 කරුණ 1: Reg Type එක අනුව ලේබල් එක Dynamic මාරු වීම */}
                                     <label style={styles.label}>
                                         {formData.regType === 'Company' ? 'BUSINESS REGISTRATION NUMBER *' : 'BUSINESS REGISTRATION OR NATIONAL ID NUMBER *'}  
                                     </label>
                                     <input name="regNumber" value={formData.regNumber} type="text" placeholder={formData.regType === 'Company' ? "PV-XXXXXX" : "19XXXXXXXXXX"} style={styles.input} onChange={handleChange} required />
                                 </div>
                                 <div style={styles.rowItem}>
-                                    {/* 🏢 👤 කරුණ 2: Reg Type එක අනුව Incorporation/DOB මාරු වීම සහ required/optional වීම */}
                                     <label style={styles.label}>
                                         {formData.regType === 'Company' ? 'DATE OF INCORPORATION *' : 'DATE OF BIRTH (OPTIONAL)'}
                                     </label>
@@ -385,7 +373,6 @@ const WasteRegister = () => {
                                 </div>
                             </div>
                           <div style={styles.row}>
-    {/* 1. පළමුව පළාත (Province) සඳහා වෙන්වූ කොටස */}
     <div style={styles.rowItem}>
         <label style={styles.label}>PROVINCE *</label>
         <select name="orgProvince" value={formData.orgProvince} style={styles.selectInput} onChange={handleChange} required>
@@ -394,7 +381,6 @@ const WasteRegister = () => {
         </select>
     </div>
 
-    {/* 2. දෙවැනුව දිස්ත්‍රික්කය (District) සඳහා වෙන්වූ කොටස */}
     <div style={styles.rowItem}>
         <label style={styles.label}>DISTRICT *</label>
         <select name="orgDistrict" value={formData.orgDistrict} style={styles.selectInput} onChange={handleChange} required>
@@ -412,7 +398,6 @@ const WasteRegister = () => {
                                 <input name="operationalAddress" value={formData.operationalAddress} type="text" placeholder="Warehouse / Processing Center Location" style={styles.input} onChange={handleChange} />
                             </div>
 
-                         {/* BR / Document Uploads Fields integrated into Org Details based on Type */}
 <div style={{ marginTop: '20px', padding: '15px', background: 'rgba(255,255,255,0.02)', borderRadius: '12px', border: '1px dashed rgba(255,255,255,0.1)' }}>
     {formData.regType === 'Company' ? (
         <>
@@ -496,9 +481,6 @@ const WasteRegister = () => {
                                         <option value="National">National</option>
                                     </select>
 
-                                    {/* ========================================================================= */}
-                                    {/* 🛡️ 🟢 CO-PARTNER BLUE BOX SECTION (පරණ RegisterCustomer.js එකෙන් එලෙසම රැකගන්නා ลදී) */}
-                                    {/* ========================================================================= */}
                                     <div style={{ marginTop: '20px', padding: '20px', background: 'rgba(52, 152, 219, 0.08)', borderRadius: '15px', border: '1px solid rgba(52, 152, 219, 0.3)' }}>
                                         <label style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer', color: '#3498db', fontWeight: 'bold', fontSize: '14px' }}>
                                             <input type="checkbox" name="isCoPartner" checked={formData.isCoPartner} onChange={handleChange} style={{ width: '18px', height: '18px', accentColor: '#3498db' }} />
@@ -703,7 +685,7 @@ const WasteRegister = () => {
                         </div>
                     )}
 
-                    {/* Step 9: Compliance & Licenses (Yes/No අනුව Dynamic Hide/Show වෙන කොටස) */}
+                    {/* Step 9: Compliance & Licenses */}
                     {step === 9 && (
                         <div>
                             <h3 style={styles.sectionHeader}>Step 9: Compliance & Statutory Licenses</h3>
@@ -724,7 +706,6 @@ const WasteRegister = () => {
                                 </div>
                             </div>
 
-                           {/* 📑 කරුණ 3: EPL "Yes" නම් පමණක් පේන සහ required වන field එක */}
                             {formData.hasEnvironmentalLicense === 'Yes' && (
                                 <div style={{ marginTop: '25px' }}>
                                     <label style={styles.label}>UPLOAD EPL CERTIFICATE (PDF/JPG) *</label>
@@ -733,7 +714,6 @@ const WasteRegister = () => {
                                 </div>
                             )}
 
-                            {/* 📑 කරුණ 3: Waste Handling "Yes" නම් පමණක් පේන සහ required වන field එක */}
                             {formData.hasWasteHandlingLicense === 'Yes' && (
                                 <div style={{ marginTop: '15px' }}>
                                     <label style={styles.label}>UPLOAD WASTE HANDLING CERTIFICATE (PDF/JPG) *</label>
@@ -742,7 +722,6 @@ const WasteRegister = () => {
                                 </div>
                             )}
 
-                            {/* BOI approval එක හැමවෙලේම පේනවා, හැබැයි optional */}
                             <div style={{ marginTop: '15px' }}>
                                 <label style={styles.label}>UPLOAD BOI / LOCAL AUTHORITY REGULATORY APPROVAL (OPTIONAL)</label>
                                 <input type="file" style={styles.input} onChange={(e) => handleFileBase64(e, 'boiApproval')} accept=".pdf,.jpg,.jpeg,.png" />
@@ -846,7 +825,6 @@ const WasteRegister = () => {
     );
 };
 
-// Premium Stylesheet Definition for UI Consistency Match
 const styles = {
     container: { minHeight: '100vh', width: '100vw', display: 'flex', justifyContent: 'center', alignItems: 'center', position: 'relative', overflowY: 'auto', backgroundColor: '#000', padding: '60px 20px', fontFamily: "'Inter', sans-serif" },
     videoBg: { position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover', zIndex: 1, filter: 'brightness(0.35)' },
