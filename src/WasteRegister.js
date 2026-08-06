@@ -855,4 +855,4 @@ const styles = {
     loginLink: { color: '#f39c12', fontWeight: 'bold', cursor: 'pointer' }
 };
 
-export default WasteRegister;
+export default WasteRegister;   
