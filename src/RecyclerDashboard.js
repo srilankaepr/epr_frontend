@@ -159,4 +159,4 @@ const styles = {
     processBtn: { padding: '8px 14px', borderRadius: '8px', background: '#2ecc71', color: '#000', border: 'none', fontWeight: 'bold', cursor: 'pointer', fontSize: '12px', boxShadow: '0 0 15px rgba(46, 204, 113, 0.3)' }
 };
 
-export default RecyclerDashboard;
+export default RecyclerDashboard;   
