@@ -38,7 +38,10 @@ const BatteryOrder = () => {
             body: tableRows,
             startY: 55,
             theme: 'striped',
-            headStyles: { fillColor: [230, 126, 34] } // Orange Theme
+            headStyles: { fillColor: [230, 126, 34] } 
+
+
+
         });
 
         doc.save(`Battery_Order_History_${user.companyName}.pdf`);
@@ -83,7 +86,7 @@ useEffect(() => {
     fetchUserData();
 }, []);
 
-      // 3. Invoice Upload and remove Functions
+// 3. Invoice Upload and remove Functions
 const handleInvoiceUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -385,6 +388,6 @@ const styles = {
     qrDownloadBtn: { padding: '5px 12px', background: '#3498db', color: 'white', border: 'none', borderRadius: '6px', fontSize: '11px', fontWeight: 'bold', cursor: 'pointer' },
     typeProduct: { background: 'rgba(52, 152, 219, 0.2)', color: '#3498db', padding: '3px 8px', borderRadius: '5px', fontSize: '11px' }
 };
-//...
+
 
 export default BatteryOrder;
