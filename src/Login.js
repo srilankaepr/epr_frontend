@@ -38,7 +38,7 @@ const handleSubmit = useCallback(async (e) => {
                 localStorage.removeItem('userPhoto'); 
             }
             
-            let targetPath = '/';
+           let targetPath = '/';
             const userRole = data.role.toUpperCase();
 
             if (userRole === 'ADMIN') {
@@ -46,16 +46,16 @@ const handleSubmit = useCallback(async (e) => {
             } else if (userRole === 'PARTNER') {
                 targetPath = '/partner-dashboard';
             } else if (userRole === 'CUSTOMER') {
-                // Database එකෙන් එන orgRole එක අරගෙන ඒක authority ද කියලා බලනවා
                 const orgRole = data.user.orgRole ? data.user.orgRole.toLowerCase() : '';
                 
                 if (orgRole === 'authority') {
                     targetPath = '/authority-dashboard'; 
+                } else if (orgRole === 'recycler' || data.user.isRecycler || data.user.isTotalSolutionProvider) {
+                    targetPath = '/recycler-dashboard'; 
                 } else {
                     targetPath = '/user-dashboard'; 
                 }
             }
-
             navigate(targetPath);
 
         } else {

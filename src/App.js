@@ -31,6 +31,7 @@ import PiboRegister from './PiboRegister';
 import AuthorityRegister from './AuthorityRegister';
 import PDFGenerator from './PDFGenerator';
 import AuthorityDashboard from './AuthorityDashboard';
+import RecyclerDashboard from './RecyclerDashboard';
 
 function App() {
   return (
@@ -79,6 +80,9 @@ function App() {
         {/* 3. Co-partner */}
         <Route path="/partner-dashboard" element={<ProtectedRoute allowedRole="PARTNER"><PartnerDashboard /></ProtectedRoute>} />
         <Route path="/co-partner/scan" element={<ProtectedRoute allowedRole="PARTNER"><CoPartnerScan /></ProtectedRoute>} />
+
+        {/* 4. Recycler Facility */}
+        <Route path="/recycler-dashboard" element={<ProtectedRoute allowedRole="CUSTOMER"><RecyclerDashboard /></ProtectedRoute>} />
          
       </Routes>
     </Router>
