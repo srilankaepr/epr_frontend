@@ -16,7 +16,7 @@ const AuthorityRegister = () => {
         confirmPassword: '',
         institutionName: '',
         institutionWebsite: '',
-        contactPersonName: '', // <-- අලුතින් එකතු කළා
+        contactPersonName: '', 
         designation: '',
         contactMobile: '',
         digitalSignatureName: '',
