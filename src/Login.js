@@ -29,7 +29,7 @@ const handleSubmit = useCallback(async (e) => {
         const data = response.data;
 
         if (response.status === 200) {
-            console.log("Logged in User Role:", data.user.adminRole);
+            console.log("Logged in User Role:", data.user.adminRole || data.user.orgRole || data.role);
             login(data.user, data.role, data.token, data.user.adminRole); 
 
             if (data.user && data.user.profilePic) {
