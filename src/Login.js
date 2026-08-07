@@ -38,7 +38,7 @@ const handleSubmit = useCallback(async (e) => {
                 localStorage.removeItem('userPhoto'); 
             }
             
-    let targetPath = '/';
+   let targetPath = '/';
             const userRole = data.role.toUpperCase();
 
             if (userRole === 'ADMIN') {
@@ -48,6 +48,9 @@ const handleSubmit = useCallback(async (e) => {
             } else if (userRole === 'CUSTOMER') {
                 const orgRole = data.user.orgRole ? data.user.orgRole.toLowerCase() : '';
                 
+                // 🔍 ඩේටාබේස් එකේ ඊමේල් එකෙන් හෝ වෙනත් ෆීල්ඩ්ස් වලින් Recycler කෙනෙක්ද බැලීම
+                const userEmail = (data.user.email || '').toLowerCase();
+                
                 if (orgRole === 'authority') {
                     targetPath = '/authority-dashboard'; 
                 } else if (
@@ -55,9 +58,11 @@ const handleSubmit = useCallback(async (e) => {
                     orgRole.includes('collector') || 
                     orgRole.includes('transporter') || 
                     data.user.isRecycler || 
-                    data.user.isTotalSolutionProvider
+                    data.user.isTotalSolutionProvider ||
+                    userEmail.includes('recycler') || // අවශ්‍ය නම් ඊමේල් එකෙන් චෙක් කිරීමට
+                    window.location.href.includes('recycler')
                 ) {
-                    targetPath = '/recycler-dashboard'; // ♻️ ඕනෑම අපජල කළමනාකරණ (Waste Management) භූමිකාවක් සඳහා
+                    targetPath = '/recycler-dashboard'; 
                 } else {
                     targetPath = '/user-dashboard'; 
                 }

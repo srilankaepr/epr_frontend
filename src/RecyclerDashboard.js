@@ -12,7 +12,7 @@ const RecyclerDashboard = () => {
     const [loading, setLoading] = useState(true);
     const [actionLoading, setActionLoading] = useState(null);
 
-    // Recycler ට අදාළ Request ටික ඩේටාබේස් එකෙන්fetch කරගැනීම
+    // Recycler ට අදාළ Request ටික ඩේටාබේස් එකෙන් fetch කරගැනීම
     useEffect(() => {
         fetchRecycleRequests();
     }, []);
@@ -20,12 +20,13 @@ const RecyclerDashboard = () => {
     const fetchRecycleRequests = async () => {
         try {
             setLoading(true);
-            // Backend එකෙන් Collected ස්ටේටස් එකේ තියෙන හෝ මෙම Recycler ට අදාළ ඉල්ලීම් ගෙන්න ගන්න API Call එකක්
             const response = await API.get('/recycler/requests');
-            setRequests(response.data);
+            // බෑක්එන්ඩ් එකෙන් එන ඩේටා ඇරේ එකක් බවට තහවුරු කරගැනීම
+            setRequests(Array.isArray(response.data) ? response.data : []);
         } catch (error) {
             console.error("Error fetching recycle requests:", error);
             alert("❌ Failed to load recycling requests.");
+            setRequests([]);
         } finally {
             setLoading(false);
         }
@@ -94,7 +95,7 @@ const RecyclerDashboard = () => {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {requests.map((req) => (
+                                    {Array.isArray(requests) && requests.map((req) => (
                                         <tr key={req._id} style={styles.tr}>
                                             <td style={styles.td}><b>{req.qrId}</b></td>
                                             <td style={styles.td}>{req.cuProduct} ({req.cuBrand})</td>
@@ -159,4 +160,4 @@ const styles = {
     processBtn: { padding: '8px 14px', borderRadius: '8px', background: '#2ecc71', color: '#000', border: 'none', fontWeight: 'bold', cursor: 'pointer', fontSize: '12px', boxShadow: '0 0 15px rgba(46, 204, 113, 0.3)' }
 };
 
-export default RecyclerDashboard;   
+export default RecyclerDashboard;
