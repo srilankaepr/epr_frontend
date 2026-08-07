@@ -19,8 +19,8 @@ const RecyclerDashboard = () => {
     const fetchRecycleRequests = async () => {
         try {
             setLoading(true);
-            // 🔄 Admin පැත්තේ තියෙන API එකම පාවිච්චි කර සියලුම රික්වෙස්ට්ස් ලබා ගැනීම
-            const response = await API.get('/recycle-requests/all');
+            // 🔄 අකුරක් නෑර නිවැරදි කළ API ලින්ක් එක (මුලට /qr එකතු කළා)
+            const response = await API.get('/qr/recycle-requests/all');
             setRequests(Array.isArray(response.data) ? response.data : []);
         } catch (error) {
             console.error("Error fetching recycle requests:", error);
@@ -34,7 +34,8 @@ const RecyclerDashboard = () => {
     const handleMarkAsRecycled = async (requestId) => {
         try {
             setActionLoading(requestId);
-            const response = await API.put(`/recycler/complete/${requestId}`, {
+            // 🔄 මුලට /qr එකතු කළා
+            const response = await API.put(`/qr/recycler/complete/${requestId}`, {
                 recycledBy: user?.officialEmail || user?.email,
                 recyclerName: user?.companyName || "Recycler Facility"
             });
