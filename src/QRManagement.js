@@ -1089,13 +1089,12 @@ if (currentBatch.length === 100 || i === finalQty) {
             ) : (
                 <tr><td colSpan="8" style={{ textAlign: 'center', padding: '40px', color: '#666' }}>No registered customers found.</td></tr>
             )}
-        </tbody>
+           </tbody>
         </table>
     </>
 )}
 
-
- {/* ............ recycling_requests...........................................................................................*/}
+ {/* ..................................................... recycling_requests...............................................*/}
 
 {activeSubTab === 'recycling_requests' && (
     <div style={{ marginTop: '30px', animation: 'fadeIn 0.5s ease-in' }}>
@@ -1145,35 +1144,51 @@ if (currentBatch.length === 100 || i === finalQty) {
 
 
         {/* Status Statistics Breakdown */}
-      <div style={{ display: 'flex', gap: '20px', justifyContent: 'center', flexWrap: 'wrap', marginBottom: '30px' }}>
-<div 
-    onClick={() => setFilterStatus(filterStatus === 'Pending' ? 'All' : 'Pending')} 
-    style={{ 
-        background: filterStatus === 'Pending' ? 'rgba(241,196,15,0.2)' : 'rgba(241,196,15,0.1)', 
-        padding: '15px 30px', borderRadius: '15px', border: filterStatus === 'Pending' ? '2px solid #f1c40f' : '1px solid rgba(241,196,15,0.3)', 
-        minWidth: '160px',  textAlign: 'center',  boxShadow: '0 4px 15px rgba(0,0,0,0.2)', cursor: 'pointer',transition: '0.3s'
-    }}
->
-    <div style={{ fontSize: '13px', color: '#f1c40f', marginBottom: '5px', textTransform: 'uppercase', letterSpacing: '1px' }}>Pending</div>
-    <div style={{ fontSize: '28px', fontWeight: 'bold', color: '#f1c40f' }}>
-        {recycleRequests.filter(r => (r.status || 'Pending') === 'Pending').length}
-    </div>
-</div>
+        <div style={{ display: 'flex', gap: '20px', justifyContent: 'center', flexWrap: 'wrap', marginBottom: '30px' }}>
+            {/* Pending Card */}
+            <div 
+                onClick={() => setFilterStatus(filterStatus === 'Pending' ? 'All' : 'Pending')} 
+                style={{ 
+                    background: filterStatus === 'Pending' ? 'rgba(241,196,15,0.2)' : 'rgba(241,196,15,0.1)', 
+                    padding: '15px 25px', borderRadius: '15px', border: filterStatus === 'Pending' ? '2px solid #f1c40f' : '1px solid rgba(241,196,15,0.3)', 
+                    minWidth: '140px', textAlign: 'center', boxShadow: '0 4px 15px rgba(0,0,0,0.2)', cursor: 'pointer', transition: '0.3s'
+                }}
+            >
+                <div style={{ fontSize: '12px', color: '#f1c40f', marginBottom: '5px', textTransform: 'uppercase', letterSpacing: '1px' }}>Pending</div>
+                <div style={{ fontSize: '26px', fontWeight: 'bold', color: '#f1c40f' }}>
+                    {recycleRequests.filter(r => (r.status || 'Pending') === 'Pending').length}
+                </div>
+            </div>
 
-{/* --- COLLECTED CARD / BUTTON --- */}
-<div 
-    onClick={() => setFilterStatus(filterStatus === 'Collected' ? 'All' : 'Collected')} 
-    style={{ 
-        background: filterStatus === 'Collected' ? 'rgba(46,204,113,0.2)' : 'rgba(46,204,113,0.1)', 
-        padding: '15px 30px',  borderRadius: '15px',  border: filterStatus === 'Collected' ? '2px solid #2ecc71' : '1px solid rgba(46,204,113,0.3)', 
-        minWidth: '160px',  textAlign: 'center',  boxShadow: '0 4px 15px rgba(0,0,0,0.2)', cursor: 'pointer',transition: '0.3s'
-    }}
->
-    <div style={{ fontSize: '13px', color: '#2ecc71', marginBottom: '5px', textTransform: 'uppercase', letterSpacing: '1px' }}>Collected</div>
-    <div style={{ fontSize: '28px', fontWeight: 'bold', color: '#2ecc71' }}>
-        {recycleRequests.filter(r => r.status === 'Collected').length}
-    </div>
-</div>
+            {/* Collected Card */}
+            <div 
+                onClick={() => setFilterStatus(filterStatus === 'Collected' ? 'All' : 'Collected')} 
+                style={{ 
+                    background: filterStatus === 'Collected' ? 'rgba(46,204,113,0.2)' : 'rgba(46,204,113,0.1)', 
+                    padding: '15px 25px', borderRadius: '15px', border: filterStatus === 'Collected' ? '2px solid #2ecc71' : '1px solid rgba(46,204,113,0.3)', 
+                    minWidth: '140px', textAlign: 'center', boxShadow: '0 4px 15px rgba(0,0,0,0.2)', cursor: 'pointer', transition: '0.3s'
+                }}
+            >
+                <div style={{ fontSize: '12px', color: '#2ecc71', marginBottom: '5px', textTransform: 'uppercase', letterSpacing: '1px' }}>Collected</div>
+                <div style={{ fontSize: '26px', fontWeight: 'bold', color: '#2ecc71' }}>
+                    {recycleRequests.filter(r => r.status === 'Collected').length}
+                </div>
+            </div>
+
+            {/* ♻️ Recycled (Completed) Card - අලුතින් එකතු කළ කොටස */}
+            <div 
+                onClick={() => setFilterStatus(filterStatus === 'Recycled' ? 'All' : 'Recycled')} 
+                style={{ 
+                    background: filterStatus === 'Recycled' ? 'rgba(52,152,219,0.2)' : 'rgba(52,152,219,0.1)', 
+                    padding: '15px 25px', borderRadius: '15px', border: filterStatus === 'Recycled' ? '2px solid #3498db' : '1px solid rgba(52,152,219,0.3)', 
+                    minWidth: '140px', textAlign: 'center', boxShadow: '0 4px 15px rgba(0,0,0,0.2)', cursor: 'pointer', transition: '0.3s'
+                }}
+            >
+                <div style={{ fontSize: '12px', color: '#3498db', marginBottom: '5px', textTransform: 'uppercase', letterSpacing: '1px' }}>Recycled</div>
+                <div style={{ fontSize: '26px', fontWeight: 'bold', color: '#3498db' }}>
+                    {recycleRequests.filter(r => r.status === 'Recycled').length}
+                </div>
+            </div>
         </div>
 
         {/* Professional Data Table */}
