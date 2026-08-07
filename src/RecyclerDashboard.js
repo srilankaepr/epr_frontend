@@ -19,7 +19,8 @@ const RecyclerDashboard = () => {
     const fetchRecycleRequests = async () => {
         try {
             setLoading(true);
-            const response = await API.get('/recycler/requests');
+            // 🔄 Admin පැත්තේ තියෙන API එකම පාවිච්චි කර සියලුම රික්වෙස්ට්ස් ලබා ගැනීම
+            const response = await API.get('/recycle-requests/all');
             setRequests(Array.isArray(response.data) ? response.data : []);
         } catch (error) {
             console.error("Error fetching recycle requests:", error);
