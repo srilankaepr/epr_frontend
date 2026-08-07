@@ -38,7 +38,7 @@ const handleSubmit = useCallback(async (e) => {
                 localStorage.removeItem('userPhoto'); 
             }
             
-           let targetPath = '/';
+    let targetPath = '/';
             const userRole = data.role.toUpperCase();
 
             if (userRole === 'ADMIN') {
@@ -50,8 +50,14 @@ const handleSubmit = useCallback(async (e) => {
                 
                 if (orgRole === 'authority') {
                     targetPath = '/authority-dashboard'; 
-                } else if (orgRole === 'recycler' || data.user.isRecycler || data.user.isTotalSolutionProvider) {
-                    targetPath = '/recycler-dashboard'; 
+                } else if (
+                    orgRole.includes('recycler') || 
+                    orgRole.includes('collector') || 
+                    orgRole.includes('transporter') || 
+                    data.user.isRecycler || 
+                    data.user.isTotalSolutionProvider
+                ) {
+                    targetPath = '/recycler-dashboard'; // ♻️ ඕනෑම අපජල කළමනාකරණ (Waste Management) භූමිකාවක් සඳහා
                 } else {
                     targetPath = '/user-dashboard'; 
                 }
