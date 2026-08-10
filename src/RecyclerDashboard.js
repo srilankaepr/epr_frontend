@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import logo from './logo.png';
 import earthVideo from './assets/earth.mp4'; 
@@ -11,15 +11,22 @@ const RecyclerDashboard = () => {
     const [requests, setRequests] = useState([]);
     const [loading, setLoading] = useState(true);
     const [actionLoading, setActionLoading] = useState(null);
+    
+    // 📸 අලුතින් එකතු කළ Scanner State සහ Ref
+    const [scanInput, setScanInput] = useState('');
+    const scanInputRef = useRef(null);
 
     useEffect(() => {
         fetchRecycleRequests();
+        // පේජ් එක ලෝඩ් වෙද්දීම ස්කෑනර් බොක්ස් එකට Focus කරනවා (ලේසියට)
+        if (scanInputRef.current) {
+            scanInputRef.current.focus();
+        }
     }, []);
 
     const fetchRecycleRequests = async () => {
         try {
             setLoading(true);
-            // 🔄 අකුරක් නෑර නිවැරදි කළ API ලින්ක් එක (මුලට /qr එකතු කළා)
             const response = await API.get('/qr/recycle-requests/all');
             setRequests(Array.isArray(response.data) ? response.data : []);
         } catch (error) {
@@ -34,7 +41,6 @@ const RecyclerDashboard = () => {
     const handleMarkAsRecycled = async (requestId) => {
         try {
             setActionLoading(requestId);
-            // 🔄 මුලට /qr එකතු කළා
             const response = await API.put(`/qr/recycler/complete/${requestId}`, {
                 recycledBy: user?.officialEmail || user?.email,
                 recyclerName: user?.companyName || "Recycler Facility"
@@ -52,7 +58,43 @@ const RecyclerDashboard = () => {
         }
     };
 
-    // 📊 සංඛ්‍යාලේඛන ගණනය කිරීම (Stats Calculation)
+    // 📸 ස්කෑනර් එක සඳහා ලිවූ අලුත් ලොජික් එක
+    const handleScan = async (e) => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            const scannedId = scanInput.trim();
+            if (!scannedId) return;
+
+            // 1. ලිස්ට් එකෙන් ස්කෑන් කරපු QR එක හොයනවා
+            const targetRequest = requests.find(r => r.qrId === scannedId);
+
+            if (!targetRequest) {
+                alert(`❌ Cannot find QR ID: ${scannedId} in the system!`);
+                setScanInput(''); // බොක්ස් එක ක්ලියර් කරනවා
+                return;
+            }
+
+            // 2. අයිටම් එක කලින්ම රීසයිකල් කරලා නම්
+            if (targetRequest.status === 'Recycled') {
+                alert(`⚠️ This item (${scannedId}) is already marked as Recycled!`);
+                setScanInput('');
+                return;
+            }
+
+            // 3. අයිටම් එක තාම පෙන්ඩින් නම් (කෝ-පාට්නර් එකතු කරලා නැත්නම්)
+            if (targetRequest.status === 'Pending') {
+                alert(`⚠️ This item (${scannedId}) is still Pending. It must be collected by a Co-Partner first!`);
+                setScanInput('');
+                return;
+            }
+
+            // 4. ඔක්කොම හරි නම්, පවතින ෆන්ක්ෂන් එකම කෝල් කරනවා _id එක යවලා
+            await handleMarkAsRecycled(targetRequest._id);
+            setScanInput(''); // ඊළඟ ස්කෑන් එකට ලෑස්ති වෙන්න බොක්ස් එක ක්ලියර් කරනවා
+        }
+    };
+
+    // 📊 සංඛ්‍යාලේඛන ගණනය කිරීම
     const totalRequests = requests.length;
     const pendingCount = requests.filter(r => r.status !== 'Recycled').length;
     const completedCount = requests.filter(r => r.status === 'Recycled').length;
@@ -97,6 +139,25 @@ const RecyclerDashboard = () => {
                 <div style={styles.contentSection}>
                     <h3 style={styles.sectionTitle}>📦 Incoming Waste / QR Recycling Queue</h3>
 
+                    {/* 📸 අලුත් ස්කෑනර් බොක්ස් එක */}
+                    <div style={styles.scannerBox}>
+                        <h4 style={{ color: '#2ecc71', margin: '0 0 10px 0', fontSize: '18px' }}>
+                            📷 Fast Recycle: Scan or Enter QR Code
+                        </h4>
+                        <p style={{ color: '#888', fontSize: '12px', margin: '0 0 15px 0' }}>
+                            Point your barcode/QR scanner here. The system will automatically mark the item as Recycled.
+                        </p>
+                        <input 
+                            ref={scanInputRef}
+                            type="text" 
+                            placeholder="Scan QR or Type ID (EPR-...) and press Enter" 
+                            value={scanInput}
+                            onChange={(e) => setScanInput(e.target.value)}
+                            onKeyDown={handleScan}
+                            style={styles.scannerInput}
+                        />
+                    </div>
+
                     {loading ? (
                         <p style={styles.infoText}>Loading pending recycling requests...</p>
                     ) : requests.length === 0 ? (
@@ -131,6 +192,7 @@ const RecyclerDashboard = () => {
                                                 </span>
                                             </td>
                                             <td style={styles.td}>
+                                                {/* ටේබල් එකේ බටන් එක බැකප් එකක් විදිහට තියාගත්තා */}
                                                 {req.status !== 'Recycled' ? (
                                                     <button 
                                                         onClick={() => handleMarkAsRecycled(req._id)}
@@ -175,6 +237,11 @@ const styles = {
     contentSection: { background: 'rgba(0,0,0,0.3)', padding: '25px', borderRadius: '20px', border: '1px solid rgba(255,255,255,0.05)' },
     sectionTitle: { color: '#2ecc71', fontSize: '16px', marginBottom: '20px', fontWeight: 'bold' },
     infoText: { color: '#aaa', textAlign: 'center', padding: '30px', fontSize: '14px' },
+    
+    // 📸 අලුත් ස්කෑනර් Styles
+    scannerBox: { background: 'rgba(46, 204, 113, 0.05)', border: '2px dashed rgba(46, 204, 113, 0.4)', padding: '25px', borderRadius: '15px', marginBottom: '30px', textAlign: 'center' },
+    scannerInput: { width: '100%', maxWidth: '600px', padding: '18px 20px', fontSize: '16px', borderRadius: '12px', border: '2px solid #2ecc71', background: '#0a0a0a', color: '#2ecc71', outline: 'none', textAlign: 'center', letterSpacing: '1px', fontWeight: 'bold', boxShadow: '0 0 20px rgba(46, 204, 113, 0.2)' },
+    
     tableContainer: { overflowX: 'auto' },
     table: { width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '14px' },
     th: { padding: '12px', borderBottom: '2px solid rgba(255,255,255,0.1)', color: '#aaa', fontSize: '12px', letterSpacing: '1px' },
