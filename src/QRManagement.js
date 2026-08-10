@@ -1260,8 +1260,9 @@ if (currentBatch.length === 100 || i === finalQty) {
                             <span style={{ color: '#555', fontStyle: 'italic' }}>Waiting...</span>
                         )}
                     </td>
-                  <td style={{ padding: '15px' }}>
+                 <td style={{ padding: '15px' }}>
     <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+        {/* 🚛 Collector Details */}
         <span style={{
             fontSize: '13px',
             color: (req.status === 'Collected' || req.status === 'Recycled') ? '#fff' : '#e74c3c',
@@ -1269,10 +1270,27 @@ if (currentBatch.length === 100 || i === finalQty) {
         }}>
             {(req.status === 'Collected' || req.status === 'Recycled') ? (req.collectedBy || "Name Missing!") : "Not Collected Yet"}
         </span>
+        
         {(req.status === 'Collected' || req.status === 'Recycled') && (
             <span style={{ fontSize: '11px', color: '#2ecc71', fontWeight: 'bold' }}>
                 ID: {req.cpId || 'N/A'}
             </span>
+        )}
+
+        {/* ♻️ Recycler Details (Only visible when status is 'Recycled') */}
+        {req.status === 'Recycled' && (
+            <div style={{ 
+                marginTop: '5px', 
+                padding: '4px 6px', 
+                background: 'rgba(52, 152, 219, 0.1)', 
+                borderRadius: '4px', 
+                borderLeft: '2px solid #3498db' 
+            }}>
+                <span style={{ fontSize: '10px', color: '#3498db', display: 'block', fontWeight: 'bold' }}>♻️ RECYCLED BY:</span>
+                <span style={{ fontSize: '11px', color: '#fff', fontWeight: 'bold' }}>
+                    {req.recyclerName || req.recycledBy || 'Recycler Facility'}
+                </span>
+            </div>
         )}
     </div>
 </td>
