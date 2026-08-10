@@ -1260,22 +1260,22 @@ if (currentBatch.length === 100 || i === finalQty) {
                             <span style={{ color: '#555', fontStyle: 'italic' }}>Waiting...</span>
                         )}
                     </td>
-                    <td style={{ padding: '15px' }}>
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
-                            <span style={{
-                                fontSize: '13px',
-                                color: req.status === 'Collected' ? '#fff' : '#e74c3c',
-                                fontWeight: req.status === 'Collected' ? '600' : 'normal'
-                            }}>
-                                {req.status === 'Collected' ? (req.collectedBy || "Name Missing!") : "Not Collected Yet"}
-                            </span>
-                            {req.status === 'Collected' && (
-                                <span style={{ fontSize: '11px', color: '#2ecc71', fontWeight: 'bold' }}>
-                                    ID: {req.cpId || 'N/A'}
-                                </span>
-                            )}
-                        </div>
-                    </td>
+                  <td style={{ padding: '15px' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+        <span style={{
+            fontSize: '13px',
+            color: (req.status === 'Collected' || req.status === 'Recycled') ? '#fff' : '#e74c3c',
+            fontWeight: (req.status === 'Collected' || req.status === 'Recycled') ? '600' : 'normal'
+        }}>
+            {(req.status === 'Collected' || req.status === 'Recycled') ? (req.collectedBy || "Name Missing!") : "Not Collected Yet"}
+        </span>
+        {(req.status === 'Collected' || req.status === 'Recycled') && (
+            <span style={{ fontSize: '11px', color: '#2ecc71', fontWeight: 'bold' }}>
+                ID: {req.cpId || 'N/A'}
+            </span>
+        )}
+    </div>
+</td>
                     <td style={{ padding: '15px', textAlign: 'center' }}>
                         <button 
                             onClick={() => setSelectedRequest(req)}
