@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Scanner } from '@yudiel/react-qr-scanner'; // 📸 කැමරා ස්කෑනර් එක
 import logo from './logo.png';
 import earthVideo from './assets/earth.mp4'; 
 import { useAuth } from './AuthContext';
@@ -12,16 +13,13 @@ const RecyclerDashboard = () => {
     const [loading, setLoading] = useState(true);
     const [actionLoading, setActionLoading] = useState(null);
     
-    // 📸 අලුතින් එකතු කළ Scanner State සහ Ref
+    // 📸 Scanner States
     const [scanInput, setScanInput] = useState('');
+    const [isCameraOpen, setIsCameraOpen] = useState(false);
     const scanInputRef = useRef(null);
 
     useEffect(() => {
         fetchRecycleRequests();
-        // පේජ් එක ලෝඩ් වෙද්දීම ස්කෑනර් බොක්ස් එකට Focus කරනවා (ලේසියට)
-        if (scanInputRef.current) {
-            scanInputRef.current.focus();
-        }
     }, []);
 
     const fetchRecycleRequests = async () => {
@@ -58,39 +56,48 @@ const RecyclerDashboard = () => {
         }
     };
 
-    // 📸 ස්කෑනර් එක සඳහා ලිවූ අලුත් ලොජික් එක
-    const handleScan = async (e) => {
+    // 🧠 පොදු ස්කෑන් ලොජික් එක (කැමරාවෙන් සහ අතින් ගහන දෙකටම වැඩ)
+    const processScannedId = async (rawValue) => {
+        let scannedId = rawValue.trim();
+        
+        // 🔗 QR කෝඩ් එකේ සම්පූර්ණ ලින්ක් එක තිබ්බොත් ඒකෙන් ID එක විතරක් කපාගන්නවා
+        if (scannedId.includes('?id=')) {
+            scannedId = scannedId.split('?id=')[1].split('&')[0];
+        }
+
+        if (!scannedId) return;
+
+        const targetRequest = requests.find(r => r.qrId === scannedId);
+
+        if (!targetRequest) {
+            alert(`❌ Cannot find QR ID: ${scannedId} in the system!`);
+            setScanInput('');
+            return;
+        }
+
+        if (targetRequest.status === 'Recycled') {
+            alert(`⚠️ This item (${scannedId}) is already marked as Recycled!`);
+            setScanInput('');
+            return;
+        }
+
+        if (targetRequest.status === 'Pending') {
+            alert(`⚠️ This item (${scannedId}) is still Pending. It must be collected by a Co-Partner first!`);
+            setScanInput('');
+            return;
+        }
+
+        // ඔක්කොම හරි නම් ඩේටාබේස් එක අප්ඩේට් කරනවා
+        await handleMarkAsRecycled(targetRequest._id);
+        setScanInput(''); 
+        setIsCameraOpen(false); // සාර්ථක වුණාම කැමරාව ඔටෝ වහනවා
+    };
+
+    // අතින් ID එක ගහලා Enter එබුවාම වැඩ කරන ෆන්ක්ෂන් එක
+    const handleManualScan = (e) => {
         if (e.key === 'Enter') {
             e.preventDefault();
-            const scannedId = scanInput.trim();
-            if (!scannedId) return;
-
-            // 1. ලිස්ට් එකෙන් ස්කෑන් කරපු QR එක හොයනවා
-            const targetRequest = requests.find(r => r.qrId === scannedId);
-
-            if (!targetRequest) {
-                alert(`❌ Cannot find QR ID: ${scannedId} in the system!`);
-                setScanInput(''); // බොක්ස් එක ක්ලියර් කරනවා
-                return;
-            }
-
-            // 2. අයිටම් එක කලින්ම රීසයිකල් කරලා නම්
-            if (targetRequest.status === 'Recycled') {
-                alert(`⚠️ This item (${scannedId}) is already marked as Recycled!`);
-                setScanInput('');
-                return;
-            }
-
-            // 3. අයිටම් එක තාම පෙන්ඩින් නම් (කෝ-පාට්නර් එකතු කරලා නැත්නම්)
-            if (targetRequest.status === 'Pending') {
-                alert(`⚠️ This item (${scannedId}) is still Pending. It must be collected by a Co-Partner first!`);
-                setScanInput('');
-                return;
-            }
-
-            // 4. ඔක්කොම හරි නම්, පවතින ෆන්ක්ෂන් එකම කෝල් කරනවා _id එක යවලා
-            await handleMarkAsRecycled(targetRequest._id);
-            setScanInput(''); // ඊළඟ ස්කෑන් එකට ලෑස්ති වෙන්න බොක්ස් එක ක්ලියර් කරනවා
+            processScannedId(scanInput);
         }
     };
 
@@ -139,23 +146,55 @@ const RecyclerDashboard = () => {
                 <div style={styles.contentSection}>
                     <h3 style={styles.sectionTitle}>📦 Incoming Waste / QR Recycling Queue</h3>
 
-                    {/* 📸 අලුත් ස්කෑනර් බොක්ස් එක */}
+                    {/* 📸 අලුත් Phone Camera ස්කෑනර් බොක්ස් එක */}
                     <div style={styles.scannerBox}>
                         <h4 style={{ color: '#2ecc71', margin: '0 0 10px 0', fontSize: '18px' }}>
-                            📷 Fast Recycle: Scan or Enter QR Code
+                            📷 Fast Recycle Scanner
                         </h4>
                         <p style={{ color: '#888', fontSize: '12px', margin: '0 0 15px 0' }}>
-                            Point your barcode/QR scanner here. The system will automatically mark the item as Recycled.
+                            Use your Phone Camera or Type the ID manually.
                         </p>
-                        <input 
-                            ref={scanInputRef}
-                            type="text" 
-                            placeholder="Scan QR or Type ID (EPR-...) and press Enter" 
-                            value={scanInput}
-                            onChange={(e) => setScanInput(e.target.value)}
-                            onKeyDown={handleScan}
-                            style={styles.scannerInput}
-                        />
+                        
+                        <div style={{ display: 'flex', gap: '10px', justifyContent: 'center', marginBottom: '15px' }}>
+                            <button 
+                                onClick={() => setIsCameraOpen(!isCameraOpen)} 
+                                style={{
+                                    ...styles.cameraBtn,
+                                    background: isCameraOpen ? 'rgba(231, 76, 60, 0.2)' : 'rgba(46, 204, 113, 0.2)',
+                                    color: isCameraOpen ? '#e74c3c' : '#2ecc71',
+                                    border: isCameraOpen ? '1px solid #e74c3c' : '1px solid #2ecc71'
+                                }}
+                            >
+                                {isCameraOpen ? '❌ Close Camera' : '📸 Open Phone Camera'}
+                            </button>
+                        </div>
+
+                        {/* 🔴 Camera Component */}
+                        {isCameraOpen && (
+                            <div style={styles.cameraWrapper}>
+                                <Scanner 
+                                    onResult={(text) => processScannedId(text)}
+                                    onError={(error) => console.log(error?.message)}
+                                    options={{
+                                        delayBetweenScanAttempts: 1500, // තත්පර 1.5ක් පරතරය
+                                    }}
+                                />
+                                <p style={{ fontSize: '11px', color: '#f39c12', marginTop: '10px' }}>Hold the QR code steady in front of the camera.</p>
+                            </div>
+                        )}
+
+                        <div style={{ position: 'relative', maxWidth: '600px', margin: '0 auto' }}>
+                            <div style={{ margin: '15px 0', color: '#555', fontSize: '12px' }}>— OR —</div>
+                            <input 
+                                ref={scanInputRef}
+                                type="text" 
+                                placeholder="Type ID (EPR-...) and press Enter" 
+                                value={scanInput}
+                                onChange={(e) => setScanInput(e.target.value)}
+                                onKeyDown={handleManualScan}
+                                style={styles.scannerInput}
+                            />
+                        </div>
                     </div>
 
                     {loading ? (
@@ -238,9 +277,11 @@ const styles = {
     sectionTitle: { color: '#2ecc71', fontSize: '16px', marginBottom: '20px', fontWeight: 'bold' },
     infoText: { color: '#aaa', textAlign: 'center', padding: '30px', fontSize: '14px' },
     
-    // 📸 අලුත් ස්කෑනර් Styles
+    // 📸 අලුත් Camera / Scanner Styles
     scannerBox: { background: 'rgba(46, 204, 113, 0.05)', border: '2px dashed rgba(46, 204, 113, 0.4)', padding: '25px', borderRadius: '15px', marginBottom: '30px', textAlign: 'center' },
-    scannerInput: { width: '100%', maxWidth: '600px', padding: '18px 20px', fontSize: '16px', borderRadius: '12px', border: '2px solid #2ecc71', background: '#0a0a0a', color: '#2ecc71', outline: 'none', textAlign: 'center', letterSpacing: '1px', fontWeight: 'bold', boxShadow: '0 0 20px rgba(46, 204, 113, 0.2)' },
+    cameraBtn: { padding: '12px 25px', borderRadius: '10px', fontWeight: 'bold', cursor: 'pointer', transition: '0.3s', fontSize: '14px', display: 'inline-flex', alignItems: 'center', gap: '8px' },
+    cameraWrapper: { maxWidth: '350px', margin: '0 auto 20px', border: '3px solid #2ecc71', borderRadius: '15px', overflow: 'hidden', background: '#000' },
+    scannerInput: { width: '100%', padding: '15px 20px', fontSize: '15px', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.2)', background: 'rgba(0,0,0,0.6)', color: '#fff', outline: 'none', textAlign: 'center', letterSpacing: '1px' },
     
     tableContainer: { overflowX: 'auto' },
     table: { width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '14px' },
