@@ -41,8 +41,8 @@ const RecyclerDashboard = () => {
             setActionLoading(requestId);
             const response = await API.put(`/qr/recycler/complete/${requestId}`, {
                 recycledBy: user?.officialEmail || user?.email,
-                // 🔄 Backend එක වෙනස් නොකර, එතනින් එවන fullName එකම මෙතන පාවිච්චි කරනවා
-                recyclerName: user?.fullName || "Recycler Facility"
+                // 🔄 AuthContext එක වෙනස් නොකර, ඒකෙන් එන 'name' එක මුලටම ගත්තා
+                recyclerName: user?.name || user?.companyName || user?.fullName || "Recycler Facility"
             });
 
             if (response.status === 200) {
@@ -117,8 +117,8 @@ const RecyclerDashboard = () => {
                         <img src={logo} alt="EPR Logo" style={styles.logoImg} />
                     </div>
                     <h2 style={styles.title}>RECYCLER FACILITY DASHBOARD</h2>
-                    {/* 👇 Welcome මැසේජ් එකෙත් fullName එකම දැම්මා */}
-                    <p style={styles.subText}>Welcome, {user?.fullName || user?.officialEmail || "Recycler Partner"}</p>
+                    {/* 👇 Welcome මැසේජ් එකෙත් user?.name එක මුලටම දැම්මා */}
+                    <p style={styles.subText}>Welcome, {user?.name || user?.companyName || user?.fullName || user?.officialEmail || "Recycler Partner"}</p>
                 </div>
 
                 <div style={styles.actionsBar}>
