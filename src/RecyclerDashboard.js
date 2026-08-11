@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Scanner } from '@yudiel/react-qr-scanner'; // 📸 කැමරා ස්කෑනර් එක
+import { Scanner } from '@yudiel/react-qr-scanner'; 
 import logo from './logo.png';
 import earthVideo from './assets/earth.mp4'; 
 import { useAuth } from './AuthContext';
@@ -41,7 +41,8 @@ const RecyclerDashboard = () => {
             setActionLoading(requestId);
             const response = await API.put(`/qr/recycler/complete/${requestId}`, {
                 recycledBy: user?.officialEmail || user?.email,
-                recyclerName: user?.companyName || "Recycler Facility"
+                // 🔄 Backend එක වෙනස් නොකර, එතනින් එවන fullName එකම මෙතන පාවිච්චි කරනවා
+                recyclerName: user?.fullName || "Recycler Facility"
             });
 
             if (response.status === 200) {
@@ -60,7 +61,6 @@ const RecyclerDashboard = () => {
     const processScannedId = async (rawValue) => {
         let scannedId = rawValue.trim();
         
-        // 🔗 QR කෝඩ් එකේ සම්පූර්ණ ලින්ක් එක තිබ්බොත් ඒකෙන් ID එක විතරක් කපාගන්නවා
         if (scannedId.includes('?id=')) {
             scannedId = scannedId.split('?id=')[1].split('&')[0];
         }
@@ -90,10 +90,9 @@ const RecyclerDashboard = () => {
         // ඔක්කොම හරි නම් ඩේටාබේස් එක අප්ඩේට් කරනවා
         await handleMarkAsRecycled(targetRequest._id);
         setScanInput(''); 
-        setIsCameraOpen(false); // සාර්ථක වුණාම කැමරාව ඔටෝ වහනවා
+        setIsCameraOpen(false); 
     };
 
-    // අතින් ID එක ගහලා Enter එබුවාම වැඩ කරන ෆන්ක්ෂන් එක
     const handleManualScan = (e) => {
         if (e.key === 'Enter') {
             e.preventDefault();
@@ -101,7 +100,6 @@ const RecyclerDashboard = () => {
         }
     };
 
-    // 📊 සංඛ්‍යාලේඛන ගණනය කිරීම
     const totalRequests = requests.length;
     const pendingCount = requests.filter(r => r.status !== 'Recycled').length;
     const completedCount = requests.filter(r => r.status === 'Recycled').length;
@@ -119,7 +117,8 @@ const RecyclerDashboard = () => {
                         <img src={logo} alt="EPR Logo" style={styles.logoImg} />
                     </div>
                     <h2 style={styles.title}>RECYCLER FACILITY DASHBOARD</h2>
-                    <p style={styles.subText}>Welcome, {user?.companyName || user?.officialEmail || "Recycler Partner"}</p>
+                    {/* 👇 Welcome මැසේජ් එකෙත් fullName එකම දැම්මා */}
+                    <p style={styles.subText}>Welcome, {user?.fullName || user?.officialEmail || "Recycler Partner"}</p>
                 </div>
 
                 <div style={styles.actionsBar}>
@@ -127,7 +126,6 @@ const RecyclerDashboard = () => {
                     <button onClick={() => { logout(); navigate('/'); }} style={styles.logoutBtn}>🚪 Secure Logout</button>
                 </div>
 
-                {/* 📊 Summary Cards Grid */}
                 <div style={styles.statsGrid}>
                     <div style={styles.statCard}>
                         <h4 style={styles.statTitle}>Total Queue</h4>
@@ -146,7 +144,6 @@ const RecyclerDashboard = () => {
                 <div style={styles.contentSection}>
                     <h3 style={styles.sectionTitle}>📦 Incoming Waste / QR Recycling Queue</h3>
 
-                    {/* 📸 අලුත් Phone Camera ස්කෑනර් බොක්ස් එක */}
                     <div style={styles.scannerBox}>
                         <h4 style={{ color: '#2ecc71', margin: '0 0 10px 0', fontSize: '18px' }}>
                             📷 Fast Recycle Scanner
@@ -169,15 +166,12 @@ const RecyclerDashboard = () => {
                             </button>
                         </div>
 
-                        {/* 🔴 Camera Component */}
                         {isCameraOpen && (
                             <div style={styles.cameraWrapper}>
                                 <Scanner 
                                     onResult={(text) => processScannedId(text)}
                                     onError={(error) => console.log(error?.message)}
-                                    options={{
-                                        delayBetweenScanAttempts: 1500, // තත්පර 1.5ක් පරතරය
-                                    }}
+                                    options={{ delayBetweenScanAttempts: 1500 }}
                                 />
                                 <p style={{ fontSize: '11px', color: '#f39c12', marginTop: '10px' }}>Hold the QR code steady in front of the camera.</p>
                             </div>
@@ -276,13 +270,10 @@ const styles = {
     contentSection: { background: 'rgba(0,0,0,0.3)', padding: '25px', borderRadius: '20px', border: '1px solid rgba(255,255,255,0.05)' },
     sectionTitle: { color: '#2ecc71', fontSize: '16px', marginBottom: '20px', fontWeight: 'bold' },
     infoText: { color: '#aaa', textAlign: 'center', padding: '30px', fontSize: '14px' },
-    
-    // 📸 අලුත් Camera / Scanner Styles
     scannerBox: { background: 'rgba(46, 204, 113, 0.05)', border: '2px dashed rgba(46, 204, 113, 0.4)', padding: '25px', borderRadius: '15px', marginBottom: '30px', textAlign: 'center' },
     cameraBtn: { padding: '12px 25px', borderRadius: '10px', fontWeight: 'bold', cursor: 'pointer', transition: '0.3s', fontSize: '14px', display: 'inline-flex', alignItems: 'center', gap: '8px' },
     cameraWrapper: { maxWidth: '350px', margin: '0 auto 20px', border: '3px solid #2ecc71', borderRadius: '15px', overflow: 'hidden', background: '#000' },
     scannerInput: { width: '100%', padding: '15px 20px', fontSize: '15px', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.2)', background: 'rgba(0,0,0,0.6)', color: '#fff', outline: 'none', textAlign: 'center', letterSpacing: '1px' },
-    
     tableContainer: { overflowX: 'auto' },
     table: { width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '14px' },
     th: { padding: '12px', borderBottom: '2px solid rgba(255,255,255,0.1)', color: '#aaa', fontSize: '12px', letterSpacing: '1px' },
