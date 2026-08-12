@@ -1257,24 +1257,28 @@ if (currentBatch.length === 100 || i === finalQty) {
                             <span style={{ color: '#555', fontStyle: 'italic' }}>Waiting...</span>
                         )}
                     </td>
-
-<td style={{ padding: '15px' }}>
+                    <td style={{ padding: '15px' }}>
     <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
         
-        {/* 🔥 අලුත් ලොජික් එක: Recycled ටැබ් එකේ නම් රීසයිකලර් විතරක් පෙන්වයි */}
+        {/* ♻️ 1. Recycled ටැබ් එක: කෙලින්ම රීසයිකලර්ගේ නම විතරයි */}
         {filterStatus === 'Recycled' ? (
-            <div style={{ 
-                padding: '6px 10px', 
-                background: 'rgba(52, 152, 219, 0.1)', 
-                borderRadius: '6px', 
-                borderLeft: '3px solid #3498db' 
-            }}>
-                <span style={{ fontSize: '10px', color: '#3498db', display: 'block', fontWeight: 'bold', marginBottom: '2px' }}>♻️ FACILITY / RECYCLER:</span>
-                <span style={{ fontSize: '13px', color: '#fff', fontWeight: 'bold' }}>
-                    {req.recyclerName || req.recycledBy || 'Recycler Facility'}
+            <span style={{ fontSize: '14px', color: '#3498db', fontWeight: 'bold' }}>
+                {req.recyclerName || req.recycledBy || 'Recycler Facility'}
+            </span>
+            
+        ) : filterStatus === 'Collected' ? (
+            /* 🚛 2. Collected ටැබ් එක: Collector ගේ විස්තර විතරයි */
+            <>
+                <span style={{ fontSize: '13px', color: '#fff', fontWeight: '600' }}>
+                    {req.collectedBy || "Name Missing!"}
                 </span>
-            </div>
+                <span style={{ fontSize: '11px', color: '#2ecc71', fontWeight: 'bold' }}>
+                    ID: {req.cpId || 'N/A'}
+                </span>
+            </>
+
         ) : (
+            /* 🌐 3. All / Pending ටැබ් එක: දෙන්නගෙම විස්තර පෙන්වයි (තිබුණොත්) */
             <>
                 <span style={{
                     fontSize: '13px',
@@ -1290,13 +1294,11 @@ if (currentBatch.length === 100 || i === finalQty) {
                     </span>
                 )}
 
-                {filterStatus === 'All' && req.status === 'Recycled' && (
+                {/* Recycled වෙලා නම් යටින් නිල් පාට බැජ් එක පෙන්වයි */}
+                {req.status === 'Recycled' && (
                     <div style={{ 
-                        marginTop: '5px', 
-                        padding: '4px 6px', 
-                        background: 'rgba(52, 152, 219, 0.1)', 
-                        borderRadius: '4px', 
-                        borderLeft: '2px solid #3498db' 
+                        marginTop: '5px', padding: '4px 6px', background: 'rgba(52, 152, 219, 0.1)', 
+                        borderRadius: '4px', borderLeft: '2px solid #3498db' 
                     }}>
                         <span style={{ fontSize: '10px', color: '#3498db', display: 'block', fontWeight: 'bold' }}>♻️ RECYCLED BY:</span>
                         <span style={{ fontSize: '11px', color: '#fff', fontWeight: 'bold' }}>
