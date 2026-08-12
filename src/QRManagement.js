@@ -293,7 +293,6 @@ const fetchDashboardCounts = async () => {
         fetchCompanies();
         fetchProducts();
         fetchRegisteredQRs();
-        fetchCompanies();
         fetchDashboardCounts();
         fetchRecycleRequests();
 
@@ -1201,7 +1200,7 @@ if (currentBatch.length === 100 || i === finalQty) {
                         <th style={{ padding: '18px 15px', textAlign: 'left', fontSize: '14px', fontWeight: '600' }}>Registered</th>
                         <th style={{ padding: '18px 15px', textAlign: 'left', fontSize: '14px', fontWeight: '600' }}>Requested</th>
                         <th style={{ padding: '18px 15px', textAlign: 'left', fontSize: '14px', fontWeight: '600' }}>Collected</th>
-                        <th style={{ padding: '18px 15px', textAlign: 'left', fontSize: '14px', fontWeight: '600' }}>Collected By</th>
+                        <th style={{ padding: '18px 15px', textAlign: 'left', fontSize: '14px', fontWeight: '600' }}> {filterStatus === 'Recycled' ? 'Recycled By' : (filterStatus === 'All' ? 'Handled By' : 'Collected By')}</th>
                         <th style={{ padding: '18px 15px', textAlign: 'center', fontSize: '14px', fontWeight: '600' }}>Action</th>
                     </tr>
                 </thead>
@@ -1217,7 +1216,6 @@ if (currentBatch.length === 100 || i === finalQty) {
                     return qr.includes(term) || collector.includes(term);
                 });
 
-            // සර්ච් එකට මොකුත් නැත්නම් පෙන්වන පණිවිඩය
             if (filteredItems.length === 0) {
                 return (
                     <tr>
@@ -1228,7 +1226,6 @@ if (currentBatch.length === 100 || i === finalQty) {
                 );
             }
 
-            // සර්ච් එකට අහුවෙන දත්ත ටික Map කරනවා
             return filteredItems.map((req) => (
                 <tr key={req._id} style={{ borderBottom: '1px solid rgba(255,255,255,0.05)', transition: 'background 0.3s' }} onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.02)'} onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}>
                     <td style={{ padding: '15px' }}>
@@ -1260,40 +1257,58 @@ if (currentBatch.length === 100 || i === finalQty) {
                             <span style={{ color: '#555', fontStyle: 'italic' }}>Waiting...</span>
                         )}
                     </td>
-                 <td style={{ padding: '15px' }}>
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
-        {/* 🚛 Collector Details */}
-        <span style={{
-            fontSize: '13px',
-            color: (req.status === 'Collected' || req.status === 'Recycled') ? '#fff' : '#e74c3c',
-            fontWeight: (req.status === 'Collected' || req.status === 'Recycled') ? '600' : 'normal'
-        }}>
-            {(req.status === 'Collected' || req.status === 'Recycled') ? (req.collectedBy || "Name Missing!") : "Not Collected Yet"}
-        </span>
-        
-        {(req.status === 'Collected' || req.status === 'Recycled') && (
-            <span style={{ fontSize: '11px', color: '#2ecc71', fontWeight: 'bold' }}>
-                ID: {req.cpId || 'N/A'}
-            </span>
-        )}
 
-        {/* ♻️ Recycler Details (Only visible when status is 'Recycled') */}
-        {req.status === 'Recycled' && (
+<td style={{ padding: '15px' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+        
+        {filterStatus === 'Recycled' ? (
             <div style={{ 
-                marginTop: '5px', 
-                padding: '4px 6px', 
+                padding: '6px 10px', 
                 background: 'rgba(52, 152, 219, 0.1)', 
-                borderRadius: '4px', 
-                borderLeft: '2px solid #3498db' 
+                borderRadius: '6px', 
+                borderLeft: '3px solid #3498db' 
             }}>
-                <span style={{ fontSize: '10px', color: '#3498db', display: 'block', fontWeight: 'bold' }}>♻️ RECYCLED BY:</span>
-                <span style={{ fontSize: '11px', color: '#fff', fontWeight: 'bold' }}>
+                <span style={{ fontSize: '10px', color: '#3498db', display: 'block', fontWeight: 'bold', marginBottom: '2px' }}>♻️ FACILITY / RECYCLER:</span>
+                <span style={{ fontSize: '13px', color: '#fff', fontWeight: 'bold' }}>
                     {req.recyclerName || req.recycledBy || 'Recycler Facility'}
                 </span>
             </div>
+        ) : (
+            <>
+                <span style={{
+                    fontSize: '13px',
+                    color: (req.status === 'Collected' || req.status === 'Recycled') ? '#fff' : '#e74c3c',
+                    fontWeight: (req.status === 'Collected' || req.status === 'Recycled') ? '600' : 'normal'
+                }}>
+                    {(req.status === 'Collected' || req.status === 'Recycled') ? (req.collectedBy || "Name Missing!") : "Not Collected Yet"}
+                </span>
+                
+                {(req.status === 'Collected' || req.status === 'Recycled') && (
+                    <span style={{ fontSize: '11px', color: '#2ecc71', fontWeight: 'bold' }}>
+                        ID: {req.cpId || 'N/A'}
+                    </span>
+                )}
+
+                {filterStatus === 'All' && req.status === 'Recycled' && (
+                    <div style={{ 
+                        marginTop: '5px', 
+                        padding: '4px 6px', 
+                        background: 'rgba(52, 152, 219, 0.1)', 
+                        borderRadius: '4px', 
+                        borderLeft: '2px solid #3498db' 
+                    }}>
+                        <span style={{ fontSize: '10px', color: '#3498db', display: 'block', fontWeight: 'bold' }}>♻️ RECYCLED BY:</span>
+                        <span style={{ fontSize: '11px', color: '#fff', fontWeight: 'bold' }}>
+                            {req.recyclerName || req.recycledBy || 'Recycler Facility'}
+                        </span>
+                    </div>
+                )}
+            </>
         )}
+
     </div>
 </td>
+
                     <td style={{ padding: '15px', textAlign: 'center' }}>
                         <button 
                             onClick={() => setSelectedRequest(req)}
