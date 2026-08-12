@@ -13,7 +13,6 @@ const RecyclerDashboard = () => {
     const [loading, setLoading] = useState(true);
     const [actionLoading, setActionLoading] = useState(null);
     
-    // 📸 Scanner States
     const [scanInput, setScanInput] = useState('');
     const [isCameraOpen, setIsCameraOpen] = useState(false);
     const scanInputRef = useRef(null);
@@ -40,9 +39,9 @@ const RecyclerDashboard = () => {
         try {
             setActionLoading(requestId);
             const response = await API.put(`/qr/recycler/complete/${requestId}`, {
-                recycledBy: user?.officialEmail || user?.email,
-                // 🔄 AuthContext එක වෙනස් නොකර, ඒකෙන් එන 'name' එක මුලටම ගත්තා
-                recyclerName: user?.name || user?.companyName || user?.fullName || "Recycler Facility"
+                recycledBy: user?.officialEmail || user?.email || "Unknown",
+                // 🔥 මෙන්න මෙතැනින් තමයි හරියටම කම්පැනි නම ඩේටාබේස් එකට යන්නේ
+                recyclerName: user?.companyName || user?.name || "Recycler Facility"
             });
 
             if (response.status === 200) {
@@ -57,7 +56,6 @@ const RecyclerDashboard = () => {
         }
     };
 
-    // 🧠 පොදු ස්කෑන් ලොජික් එක (කැමරාවෙන් සහ අතින් ගහන දෙකටම වැඩ)
     const processScannedId = async (rawValue) => {
         let scannedId = rawValue.trim();
         
@@ -87,7 +85,6 @@ const RecyclerDashboard = () => {
             return;
         }
 
-        // ඔක්කොම හරි නම් ඩේටාබේස් එක අප්ඩේට් කරනවා
         await handleMarkAsRecycled(targetRequest._id);
         setScanInput(''); 
         setIsCameraOpen(false); 
@@ -117,8 +114,8 @@ const RecyclerDashboard = () => {
                         <img src={logo} alt="EPR Logo" style={styles.logoImg} />
                     </div>
                     <h2 style={styles.title}>RECYCLER FACILITY DASHBOARD</h2>
-                    {/* 👇 Welcome මැසේජ් එකෙත් user?.name එක මුලටම දැම්මා */}
-                    <p style={styles.subText}>Welcome, {user?.name || user?.companyName || user?.fullName || user?.officialEmail || "Recycler Partner"}</p>
+                    {/* 👇 Welcome මැසේජ් එක දැන් හරියටම companyName එක පෙන්වයි */}
+                    <p style={styles.subText}>Welcome, {user?.companyName || user?.name || "Recycler Partner"}</p>
                 </div>
 
                 <div style={styles.actionsBar}>
@@ -225,7 +222,6 @@ const RecyclerDashboard = () => {
                                                 </span>
                                             </td>
                                             <td style={styles.td}>
-                                                {/* ටේබල් එකේ බටන් එක බැකප් එකක් විදිහට තියාගත්තා */}
                                                 {req.status !== 'Recycled' ? (
                                                     <button 
                                                         onClick={() => handleMarkAsRecycled(req._id)}

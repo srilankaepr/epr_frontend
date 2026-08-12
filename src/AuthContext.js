@@ -9,23 +9,26 @@ export const AuthProvider = ({ children }) => {
     useEffect(() => {
         const role = localStorage.getItem('userRole');
         const name = localStorage.getItem('userName');
+        const companyName = localStorage.getItem('companyName');
         const email = localStorage.getItem('userEmail');
         const token = localStorage.getItem('accessToken');
         const profilePic = localStorage.getItem('userPhoto'); 
 
         if (token && role) {
-            setUser({ role, name, email, token, profilePic });
+            setUser({ role, name, companyName, email, token, profilePic });
         }
         setLoading(false);
     }, []);
 
 
     const login = (userData, role, token, adminRole) => {
+        const resolvedCompany = userData.companyName || userData.fullName || userData.name || 'Recycler Partner';
     setUser({ 
         ...userData, 
         role, 
         token,
         name: userData.fullName || userData.name || '',
+        companyName: resolvedCompany,
         email: userData.email || userData.officialEmail || '',
         profilePic: userData.profilePic || ''
     });
@@ -33,6 +36,7 @@ export const AuthProvider = ({ children }) => {
         localStorage.setItem('accessToken', token); 
         localStorage.setItem('userRole', role);
         localStorage.setItem('userName', userData.fullName || userData.name || '');
+        localStorage.setItem('companyName', resolvedCompany);
         localStorage.setItem('userEmail', userData.email || userData.officialEmail || '');
         localStorage.setItem('userPhoto', userData.profilePic || '');
         localStorage.setItem('adminName', userData.fullName || userData.name || '');
