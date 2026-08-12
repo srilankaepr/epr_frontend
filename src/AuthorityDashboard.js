@@ -121,16 +121,12 @@ const AuthorityDashboard = () => {
                     <p style={styles.ecoMotto}>Regulatory Control Node</p>
                 </div>
                 
-                <nav style={styles.navMenu}>
+              <nav style={styles.navMenu}>
                     {[  
                         { id: 'PROFILE', label: 'MY PROFILE' },
                         { id: 'OVERVIEW', label: 'NATIONAL OVERVIEW' },
                         { id: 'REPORTS', label: 'SYSTEM REPORTS' },
                         { id: 'WEBSITE', label: 'VISIT OUR WEBSITE', isExternal: true, url: 'https://www.eprs.lk/' }
-                       // { id: 'ENTITIES', label: 'VISIT OUR WEBSITE' },
-
-                        //{ id: 'VERIFICATION', label: 'DOC VERIFICATION' },
-                        
                     ].map((item) => {
                         const isActive = activeTab === item.id;
                         return (
@@ -147,7 +143,6 @@ const AuthorityDashboard = () => {
                                         setActiveTab(item.id);
                                     }
                                 }}
-                                onClick={() => setActiveTab(item.id)}
                                 onMouseEnter={(e) => {
                                     if (!isActive) {
                                         e.currentTarget.style.background = 'rgba(255, 255, 255, 0.08)';
@@ -166,7 +161,6 @@ const AuthorityDashboard = () => {
                         );
                     })}
                 </nav>
-
                 <div 
                     style={styles.logoutBtn} 
                     onClick={handleLogout}
