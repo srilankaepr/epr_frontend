@@ -38,10 +38,13 @@ const RecyclerDashboard = () => {
     const handleMarkAsRecycled = async (requestId) => {
         try {
             setActionLoading(requestId);
+            
+            // 👇 නම "1" වුණත් හෝ හිස් වුණත්, ඩේටාබේස් එකට හරියටම වැටෙන විදිහට හැදුවා
+            const currentRecyclerName = user?.companyName || user?.name || "Recycler Facility";
+            
             const response = await API.put(`/qr/recycler/complete/${requestId}`, {
                 recycledBy: user?.officialEmail || user?.email || "Unknown",
-                // 🔥 මෙන්න මෙතැනින් තමයි හරියටම කම්පැනි නම ඩේටාබේස් එකට යන්නේ
-                recyclerName: user?.companyName || user?.name || "Recycler Facility"
+                recyclerName: currentRecyclerName === "1" ? "Eco Recycler Partner" : currentRecyclerName
             });
 
             if (response.status === 200) {
@@ -56,14 +59,28 @@ const RecyclerDashboard = () => {
         }
     };
 
+    // 🔥 කැමරාවෙන් සහ ටයිප් කිරීමෙන් එන ඕනෑම ෆෝමැට් එකක් මෘදුකමින් පාස් කරන ස්කෑන් ලොජික් එක
     const processScannedId = async (rawValue) => {
-        let scannedId = rawValue.trim();
+        let scannedText = '';
         
-        if (scannedId.includes('?id=')) {
-            scannedId = scannedId.split('?id=')[1].split('&')[0];
+        if (typeof rawValue === 'string') {
+            scannedText = rawValue;
+        } else if (Array.isArray(rawValue) && rawValue.length > 0) {
+            scannedText = rawValue[0]?.rawValue || rawValue[0]?.text || '';
+        } else if (rawValue?.target) {
+            scannedText = '';
+        } else {
+            scannedText = rawValue?.rawValue || rawValue?.text || String(rawValue || '');
         }
 
+        let scannedId = scannedText.trim();
         if (!scannedId) return;
+
+        if (scannedId.includes('id=')) {
+            scannedId = scannedId.split('id=')[1].split('&')[0];
+        } else if (scannedId.includes('?id=')) {
+            scannedId = scannedId.split('?id=')[1].split('&')[0];
+        }
 
         const targetRequest = requests.find(r => r.qrId === scannedId);
 
@@ -114,7 +131,6 @@ const RecyclerDashboard = () => {
                         <img src={logo} alt="EPR Logo" style={styles.logoImg} />
                     </div>
                     <h2 style={styles.title}>RECYCLER FACILITY DASHBOARD</h2>
-                    {/* 👇 Welcome මැසේජ් එක දැන් හරියටම companyName එක පෙන්වයි */}
                     <p style={styles.subText}>Welcome, {user?.companyName || user?.name || "Recycler Partner"}</p>
                 </div>
 
@@ -166,7 +182,7 @@ const RecyclerDashboard = () => {
                         {isCameraOpen && (
                             <div style={styles.cameraWrapper}>
                                 <Scanner 
-                                    onResult={(text) => processScannedId(text)}
+                                    onResult={(result) => processScannedId(result)}
                                     onError={(error) => console.log(error?.message)}
                                     options={{ delayBetweenScanAttempts: 1500 }}
                                 />
