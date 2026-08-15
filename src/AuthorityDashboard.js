@@ -23,6 +23,11 @@ const AuthorityDashboard = () => {
         pibos: '...',
         pros: '...',
         wasteManagement: '...',
+        totalCompanies: 0,
+        totalProducts: 0,
+        totalQR: 0,
+        pendingCount: 0,
+        completedCount: 0,
         recoveredMaterials: {
             plastic: '...',
             eWaste: '...',
@@ -58,10 +63,17 @@ const AuthorityDashboard = () => {
         const fetchSystemStats = async () => {
             try {
                 const response = await API.get('/admin/authority/stats'); 
+                const reportRes = await API.get('/qr/national-system-stats'); // 👈 National stats API call
+
                 setDashboardStats({
                     pibos: response.data.pibos,
                     pros: response.data.pros,
                     wasteManagement: response.data.wasteManagement,
+                    totalCompanies: reportRes.data.totalCompanies,
+                    totalProducts: reportRes.data.totalProducts,
+                    totalQR: reportRes.data.totalQR,
+                    pendingCount: reportRes.data.pendingCount,
+                    completedCount: reportRes.data.completedCount,
                     recoveredMaterials: response.data.recoveredMaterials || {
                         plastic: "0 Kg", eWaste: "0 Units", glass: "0 Kg", paper: "0 Kg"
                     }
@@ -206,7 +218,7 @@ const AuthorityDashboard = () => {
                                 <p style={styles.statDesc}>Collectors, Transporters & Recyclers</p>
                             </div>
 
-                            {/* Recovered Materials Box (අලුත් ලැයිස්තුව) */}
+                            {/* Recovered Materials Box */}
                             <div style={styles.statCard}>
                                 <h3 style={styles.statTitle}>RECOVERED MATERIALS</h3>
                                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '15px' }}>
@@ -261,10 +273,56 @@ const AuthorityDashboard = () => {
                     <div style={{ ...styles.contentPadding, animation: 'fadeInUp 0.6s ease-out forwards' }}>
                         <h1 style={styles.mainTitle}>SYSTEM REPORTS</h1>
                         <p style={styles.subTitle}>Generate & Export National Aggregate Compliance Data</p>
+                        
+                        {/* 📊 National Stats Grid Cards */}
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '20px', marginBottom: '35px' }}>
+                            <div style={styles.statCard}>
+                                <h3 style={styles.statTitle}>REGISTERED COMPANIES</h3>
+                                <h1 style={styles.statCount}>{dashboardStats.totalCompanies || 0}</h1>
+                                <p style={styles.statDesc}>Active Producers & Importers</p>
+                            </div>
+                            <div style={styles.statCard}>
+                                <h3 style={styles.statTitle}>PRODUCTS & BRANDS</h3>
+                                <h1 style={styles.statCount}>{dashboardStats.totalProducts || 0}</h1>
+                                <p style={styles.statDesc}>Registered in system</p>
+                            </div>
+                            <div style={styles.statCard}>
+                                <h3 style={styles.statTitle}>QR ISSUED COUNT</h3>
+                                <h1 style={styles.statCount}>{dashboardStats.totalQR || 0}</h1>
+                                <p style={styles.statDesc}>Total batch assets</p>
+                            </div>
+                            <div style={styles.statCard}>
+                                <h3 style={{ ...styles.statTitle, color: '#f1c40f' }}>PENDING COUNT</h3>
+                                <h1 style={{ ...styles.statCount, color: '#f1c40f' }}>{dashboardStats.pendingCount || 0}</h1>
+                                <p style={styles.statDesc}>Awaiting collection / recycling</p>
+                            </div>
+                            <div style={styles.statCard}>
+                                <h3 style={{ ...styles.statTitle, color: '#2ecc71' }}>COMPLETED LOOPS</h3>
+                                <h1 style={{ ...styles.statCount, color: '#2ecc71' }}>{dashboardStats.completedCount || 0}</h1>
+                                <p style={styles.statDesc}>Successfully recycled loops</p>
+                            </div>
+                        </div>
+
+                        {/* 🖨️ Report Engine Box */}
                         <div style={styles.glassPanel}>
-                            <p style={{color: '#ccc', textAlign: 'center', padding: '40px'}}>
-                                📊 Report Generation Engine... <br/><span style={{fontSize: '12px'}}>(Export to Excel / PDF features will be implemented here)</span>
+                            <h3 style={{ color: '#2ecc71', marginBottom: '15px' }}>📊 National Audit & Report Generation Engine</h3>
+                            <p style={{ color: '#ccc', fontSize: '13px', marginBottom: '25px' }}>
+                                Export comprehensive compliance metrics, recycling loops, and producer logs securely for governmental review.
                             </p>
+                            <div style={{ display: 'flex', gap: '15px', flexWrap: 'wrap' }}>
+                                <button 
+                                    onClick={() => alert("📥 Generating National PDF Compliance Report...")}
+                                    style={{ padding: '12px 25px', borderRadius: '12px', background: 'rgba(231, 76, 60, 0.2)', border: '1px solid #e74c3c', color: '#e74c3c', fontWeight: 'bold', cursor: 'pointer' }}
+                                >
+                                    📄 Export PDF Summary
+                                </button>
+                                <button 
+                                    onClick={() => alert("📊 Generating National Excel Compliance Logs...")}
+                                    style={{ padding: '12px 25px', borderRadius: '12px', background: 'rgba(46, 204, 113, 0.2)', border: '1px solid #2ecc71', color: '#2ecc71', fontWeight: 'bold', cursor: 'pointer' }}
+                                >
+                                    📊 Export Excel Logs
+                                </button>
+                            </div>
                         </div>
                     </div>
                 )}
@@ -336,7 +394,6 @@ const styles = {
     statCount: { color: '#9b59b6', fontSize: '40px', margin: '0 0 10px 0', fontWeight: '900' },
     statDesc: { color: '#777', fontSize: '12px' },
 
-    // 4 වෙනි බොක්ස් එක ඇතුලේ ලැයිස්තුව ලස්සනට පෙන්නන්න දාපු අලුත් Styles
     materialRow: { display: 'flex', justifyContent: 'space-between', padding: '5px 15px', background: 'rgba(255, 255, 255, 0.05)', borderRadius: '8px' },
     materialName: { color: '#ccc', fontSize: '14px', fontWeight: 'bold' },
     materialValue: { color: '#fff', fontSize: '14px', fontWeight: '900' },
