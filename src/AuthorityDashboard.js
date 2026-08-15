@@ -62,18 +62,21 @@ const AuthorityDashboard = () => {
 
         const fetchSystemStats = async () => {
             try {
-                const response = await API.get('/admin/authority/stats'); 
-                const reportRes = await API.get('/qr/national-system-stats'); // 👈 National stats API call
+                // 1. Authority stats (PIBOs, PROs, etc.)
+                const response = await API.get('/admin/authority/stats').catch(() => ({ data: {} }));
+                
+                // 2. National System Reports stats (Companies, Products, QR, Pending, Completed)
+                const reportRes = await API.get('/qr/national-system-stats').catch(() => ({ data: {} }));
 
                 setDashboardStats({
-                    pibos: response.data.pibos,
-                    pros: response.data.pros,
-                    wasteManagement: response.data.wasteManagement,
-                    totalCompanies: reportRes.data.totalCompanies,
-                    totalProducts: reportRes.data.totalProducts,
-                    totalQR: reportRes.data.totalQR,
-                    pendingCount: reportRes.data.pendingCount,
-                    completedCount: reportRes.data.completedCount,
+                    pibos: response.data.pibos || '0',
+                    pros: response.data.pros || '0',
+                    wasteManagement: response.data.wasteManagement || '0',
+                    totalCompanies: reportRes.data.totalCompanies || 0,
+                    totalProducts: reportRes.data.totalProducts || 0,
+                    totalQR: reportRes.data.totalQR || 0,
+                    pendingCount: reportRes.data.pendingCount || 0,
+                    completedCount: reportRes.data.completedCount || 0,
                     recoveredMaterials: response.data.recoveredMaterials || {
                         plastic: "0 Kg", eWaste: "0 Units", glass: "0 Kg", paper: "0 Kg"
                     }
@@ -278,27 +281,27 @@ const AuthorityDashboard = () => {
                         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '20px', marginBottom: '35px' }}>
                             <div style={styles.statCard}>
                                 <h3 style={styles.statTitle}>REGISTERED COMPANIES</h3>
-                                <h1 style={styles.statCount}>{dashboardStats.totalCompanies || 0}</h1>
+                                <h1 style={styles.statCount}>{dashboardStats.totalCompanies}</h1>
                                 <p style={styles.statDesc}>Active Producers & Importers</p>
                             </div>
                             <div style={styles.statCard}>
                                 <h3 style={styles.statTitle}>PRODUCTS & BRANDS</h3>
-                                <h1 style={styles.statCount}>{dashboardStats.totalProducts || 0}</h1>
+                                <h1 style={styles.statCount}>{dashboardStats.totalProducts}</h1>
                                 <p style={styles.statDesc}>Registered in system</p>
                             </div>
                             <div style={styles.statCard}>
                                 <h3 style={styles.statTitle}>QR ISSUED COUNT</h3>
-                                <h1 style={styles.statCount}>{dashboardStats.totalQR || 0}</h1>
+                                <h1 style={styles.statCount}>{dashboardStats.totalQR}</h1>
                                 <p style={styles.statDesc}>Total batch assets</p>
                             </div>
                             <div style={styles.statCard}>
                                 <h3 style={{ ...styles.statTitle, color: '#f1c40f' }}>PENDING COUNT</h3>
-                                <h1 style={{ ...styles.statCount, color: '#f1c40f' }}>{dashboardStats.pendingCount || 0}</h1>
+                                <h1 style={{ ...styles.statCount, color: '#f1c40f' }}>{dashboardStats.pendingCount}</h1>
                                 <p style={styles.statDesc}>Awaiting collection / recycling</p>
                             </div>
                             <div style={styles.statCard}>
                                 <h3 style={{ ...styles.statTitle, color: '#2ecc71' }}>COMPLETED LOOPS</h3>
-                                <h1 style={{ ...styles.statCount, color: '#2ecc71' }}>{dashboardStats.completedCount || 0}</h1>
+                                <h1 style={{ ...styles.statCount, color: '#2ecc71' }}>{dashboardStats.completedCount}</h1>
                                 <p style={styles.statDesc}>Successfully recycled loops</p>
                             </div>
                         </div>
