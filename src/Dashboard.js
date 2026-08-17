@@ -607,7 +607,6 @@ mainContent: {
         color: '#3498db'
     },
 
-    // --- Top 5 Section (දැන් මේකත් කාඩ් එකක් ඇතුළේ) ---
     topFiveList: {
         width: '100%',
         display: 'flex',

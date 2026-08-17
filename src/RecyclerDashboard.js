@@ -17,9 +17,17 @@ const RecyclerDashboard = () => {
     const [isCameraOpen, setIsCameraOpen] = useState(false);
     const scanInputRef = useRef(null);
 
+    // 👇 අලුතින් එකතු කළ Ref එක: මේකෙන් තමයි ස්කෑනර් එකට ලයිව් ඩේටා දෙන්නේ
+    const requestsRef = useRef([]);
+
     useEffect(() => {
         fetchRecycleRequests();
     }, []);
+
+    // 👇 requests අප්ඩේට් වෙන හැම වෙලාවකම Ref එකත් අප්ඩේට් කරනවා
+    useEffect(() => {
+        requestsRef.current = requests;
+    }, [requests]);
 
     const fetchRecycleRequests = async () => {
         try {
@@ -39,7 +47,6 @@ const RecyclerDashboard = () => {
         try {
             setActionLoading(requestId);
             
-            // 👇 නම "1" වුණත් හෝ හිස් වුණත්, ඩේටාබේස් එකට හරියටම වැටෙන විදිහට හැදුවා
             const currentRecyclerName = user?.companyName || user?.name || "Recycler Facility";
             
             const response = await API.put(`/qr/recycler/complete/${requestId}`, {
@@ -49,6 +56,7 @@ const RecyclerDashboard = () => {
 
             if (response.status === 200) {
                 alert("✅ Successfully marked as Recycled! Circular loop completed.");
+                setIsCameraOpen(false); // වැඩේ වුණාම කැමරාව ක්ලෝස් කරනවා
                 fetchRecycleRequests(); 
             }
         } catch (error) {
@@ -59,52 +67,57 @@ const RecyclerDashboard = () => {
         }
     };
 
-    // 🔥 කැමරාවෙන් සහ ටයිප් කිරීමෙන් එන ඕනෑම ෆෝමැට් එකක් මෘදුකමින් පාස් කරන ස්කෑන් ලොජික් එක
     const processScannedId = async (rawValue) => {
-        let scannedText = '';
-        
-        if (typeof rawValue === 'string') {
-            scannedText = rawValue;
-        } else if (Array.isArray(rawValue) && rawValue.length > 0) {
-            scannedText = rawValue[0]?.rawValue || rawValue[0]?.text || '';
-        } else if (rawValue?.target) {
-            scannedText = '';
-        } else {
-            scannedText = rawValue?.rawValue || rawValue?.text || String(rawValue || '');
+        try {
+            let scannedText = '';
+            
+            if (typeof rawValue === 'string') {
+                scannedText = rawValue;
+            } else if (Array.isArray(rawValue) && rawValue.length > 0) {
+                scannedText = rawValue[0]?.rawValue || rawValue[0]?.text || '';
+            } else if (rawValue?.target) {
+                scannedText = '';
+            } else {
+                scannedText = rawValue?.rawValue || rawValue?.text || String(rawValue || '');
+            }
+
+            let scannedId = scannedText.trim();
+            if (!scannedId) return;
+
+            if (scannedId.includes('id=')) {
+                scannedId = scannedId.split('id=')[1].split('&')[0];
+            } else if (scannedId.includes('?id=')) {
+                scannedId = scannedId.split('?id=')[1].split('&')[0];
+            }
+
+            // 👇 requests වෙනුවට requestsRef.current පාවිච්චි කරනවා
+            const targetRequest = requestsRef.current.find(r => r.qrId === scannedId);
+
+            if (!targetRequest) {
+                alert(`❌ Cannot find QR ID: ${scannedId} in the system!`);
+                setScanInput('');
+                return;
+            }
+
+            if (targetRequest.status === 'Recycled') {
+                alert(`⚠️ This item (${scannedId}) is already marked as Recycled!`);
+                setScanInput('');
+                return;
+            }
+
+            if (targetRequest.status === 'Pending') {
+                alert(`⚠️ This item (${scannedId}) is still Pending. It must be collected by a Co-Partner first!`);
+                setScanInput('');
+                return;
+            }
+
+            // වැඩේ හරි නම් ඩේටාබේස් එකට යවනවා
+            await handleMarkAsRecycled(targetRequest._id);
+            setScanInput(''); 
+
+        } catch (error) {
+            console.error("Scanning Error:", error);
         }
-
-        let scannedId = scannedText.trim();
-        if (!scannedId) return;
-
-        if (scannedId.includes('id=')) {
-            scannedId = scannedId.split('id=')[1].split('&')[0];
-        } else if (scannedId.includes('?id=')) {
-            scannedId = scannedId.split('?id=')[1].split('&')[0];
-        }
-
-        const targetRequest = requests.find(r => r.qrId === scannedId);
-
-        if (!targetRequest) {
-            alert(`❌ Cannot find QR ID: ${scannedId} in the system!`);
-            setScanInput('');
-            return;
-        }
-
-        if (targetRequest.status === 'Recycled') {
-            alert(`⚠️ This item (${scannedId}) is already marked as Recycled!`);
-            setScanInput('');
-            return;
-        }
-
-        if (targetRequest.status === 'Pending') {
-            alert(`⚠️ This item (${scannedId}) is still Pending. It must be collected by a Co-Partner first!`);
-            setScanInput('');
-            return;
-        }
-
-        await handleMarkAsRecycled(targetRequest._id);
-        setScanInput(''); 
-        setIsCameraOpen(false); 
     };
 
     const handleManualScan = (e) => {
@@ -182,9 +195,14 @@ const RecyclerDashboard = () => {
                         {isCameraOpen && (
                             <div style={styles.cameraWrapper}>
                                 <Scanner 
-                                    onResult={(result) => processScannedId(result)}
+                                    onScan={(result) => {
+                                        if (result) processScannedId(result);
+                                    }}
+                                    onResult={(result) => {
+                                        if (result) processScannedId(result);
+                                    }}
                                     onError={(error) => console.log(error?.message)}
-                                    options={{ delayBetweenScanAttempts: 1500 }}
+                                    options={{ delayBetweenScanAttempts: 2000 }}
                                 />
                                 <p style={{ fontSize: '11px', color: '#f39c12', marginTop: '10px' }}>Hold the QR code steady in front of the camera.</p>
                             </div>
