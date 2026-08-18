@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import jsPDF from 'jspdf'; // 👈 අලුතින් එකතු කළා
+import jsPDF from 'jspdf';
 import logo from './logo.png'; 
 import bgImage from './assets/customerdashboard.jpg';
 import API from './api'; 
@@ -11,6 +11,12 @@ const AuthorityDashboard = () => {
     const isMobile = window.innerWidth <= 768; 
     const [activeTab, setActiveTab] = useState('OVERVIEW');
     
+    // 👇 අලුතින් එකතු කළ Filter States
+    const [selectedCompany, setSelectedCompany] = useState('ALL');
+    const [selectedBrand, setSelectedBrand] = useState('ALL');
+    const [companiesList, setCompaniesList] = useState([]);
+    const [productsList, setProductsList] = useState([]);
+
     const [formData, setFormData] = useState({
         orgRole: 'Authority',
         institutionName: 'Loading...',
@@ -65,6 +71,13 @@ const AuthorityDashboard = () => {
             try {
                 const response = await API.get('/admin/authority/stats').catch(() => ({ data: {} }));
                 const reportRes = await API.get('/qr/national-system-stats').catch(() => ({ data: {} }));
+                
+                // Dropdowns වලට අවශ්‍ය Companies සහ Products දත්ත ලබාගැනීම
+                const compRes = await API.get('/qr/get-companies').catch(() => ({ data: [] }));
+                const prodRes = await API.get('/qr/get-products').catch(() => ({ data: [] }));
+
+                setCompaniesList(compRes.data || []);
+                setProductsList(prodRes.data || []);
 
                 setDashboardStats({
                     pibos: response.data.pibos || '0',
@@ -99,10 +112,10 @@ const AuthorityDashboard = () => {
         }
     };
 
-    // 📄 PDF Export Logic
+    // 📄 Dynamic Filtered PDF Export Logic
     const handleExportPDF = () => {
         const doc = new jsPDF();
-        
+
         doc.setFontSize(20);
         doc.setTextColor(39, 174, 96);
         doc.text("National EPR Compliance Report", 14, 20);
@@ -111,65 +124,45 @@ const AuthorityDashboard = () => {
         doc.setTextColor(100, 100, 100);
         doc.text(`Generated Date: ${new Date().toLocaleDateString()}`, 14, 28);
         
+        // 👇 තෝරපු Filter විස්තර PDF එකට එකතු කිරීම
+        doc.setFontSize(11);
+        doc.setTextColor(40, 40, 40);
+        doc.text(`Filtered Company: ${selectedCompany}`, 14, 38);
+        doc.text(`Filtered Brand/Product: ${selectedBrand}`, 14, 45);
+
         doc.setLineWidth(0.5);
-        doc.line(14, 33, 196, 33);
+        doc.line(14, 50, 196, 50);
 
         doc.setFontSize(14);
         doc.setTextColor(0, 0, 0);
-        doc.text("1. Overall System Analytics", 14, 45);
+        doc.text("1. Overall System Analytics", 14, 60);
 
         doc.setFontSize(11);
-        doc.text(`Total PIBOs: ${dashboardStats.pibos}`, 14, 55);
-        doc.text(`Active PROs: ${dashboardStats.pros}`, 14, 63);
-        doc.text(`Waste Management Entities: ${dashboardStats.wasteManagement}`, 14, 71);
+        doc.text(`Total PIBOs: ${dashboardStats.pibos}`, 14, 70);
+        doc.text(`Active PROs: ${dashboardStats.pros}`, 14, 78);
+        doc.text(`Waste Management Entities: ${dashboardStats.wasteManagement}`, 14, 86);
 
         doc.setFontSize(14);
-        doc.text("2. QR & Recycling Loop Analytics", 14, 90);
+        doc.text("2. QR & Recycling Loop Analytics", 14, 105);
 
         doc.setFontSize(11);
-        doc.text(`Registered Companies: ${dashboardStats.totalCompanies}`, 14, 100);
-        doc.text(`Products & Brands: ${dashboardStats.totalProducts}`, 14, 108);
-        doc.text(`QR Issued Count: ${dashboardStats.totalQR}`, 14, 116);
-        doc.text(`Pending Count: ${dashboardStats.pendingCount}`, 14, 124);
-        doc.text(`Completed Loops: ${dashboardStats.completedCount}`, 14, 132);
+        doc.text(`Registered Companies: ${dashboardStats.totalCompanies}`, 14, 115);
+        doc.text(`Products & Brands: ${dashboardStats.totalProducts}`, 14, 123);
+        doc.text(`QR Issued Count: ${dashboardStats.totalQR}`, 14, 131);
+        doc.text(`Pending Count: ${dashboardStats.pendingCount}`, 14, 139);
+        doc.text(`Completed Loops: ${dashboardStats.completedCount}`, 14, 147);
 
         doc.setFontSize(14);
-        doc.text("3. Recovered Materials", 14, 150);
+        doc.text("3. Recovered Materials", 14, 165);
 
         doc.setFontSize(11);
-        doc.text(`Plastic: ${dashboardStats.recoveredMaterials.plastic}`, 14, 160);
-        doc.text(`E-Waste: ${dashboardStats.recoveredMaterials.eWaste}`, 14, 168);
-        doc.text(`Glass: ${dashboardStats.recoveredMaterials.glass}`, 14, 176);
-        doc.text(`Paper: ${dashboardStats.recoveredMaterials.paper}`, 14, 184);
+        doc.text(`Plastic: ${dashboardStats.recoveredMaterials.plastic}`, 14, 175);
+        doc.text(`E-Waste: ${dashboardStats.recoveredMaterials.eWaste}`, 14, 183);
+        doc.text(`Glass: ${dashboardStats.recoveredMaterials.glass}`, 14, 191);
+        doc.text(`Paper: ${dashboardStats.recoveredMaterials.paper}`, 14, 199);
 
-        doc.save(`National_EPR_Report_${new Date().toISOString().split('T')[0]}.pdf`);
-    };
-
-    // 📊 Excel (CSV) Export Logic
-    const handleExportExcel = () => {
-        const csvRows = [];
-        csvRows.push(["Metric", "Value"]);
-        csvRows.push(["Total PIBOs", dashboardStats.pibos]);
-        csvRows.push(["Active PROs", dashboardStats.pros]);
-        csvRows.push(["Waste Management Entities", dashboardStats.wasteManagement]);
-        csvRows.push(["Registered Companies", dashboardStats.totalCompanies]);
-        csvRows.push(["Products & Brands", dashboardStats.totalProducts]);
-        csvRows.push(["QR Issued Count", dashboardStats.totalQR]);
-        csvRows.push(["Pending Count", dashboardStats.pendingCount]);
-        csvRows.push(["Completed Loops", dashboardStats.completedCount]);
-        csvRows.push(["Recovered Plastic", dashboardStats.recoveredMaterials.plastic]);
-        csvRows.push(["Recovered E-Waste", dashboardStats.recoveredMaterials.eWaste]);
-        csvRows.push(["Recovered Glass", dashboardStats.recoveredMaterials.glass]);
-        csvRows.push(["Recovered Paper", dashboardStats.recoveredMaterials.paper]);
-
-        const csvContent = "data:text/csv;charset=utf-8," + csvRows.map(e => e.join(",")).join("\n");
-        const encodedUri = encodeURI(csvContent);
-        const link = document.createElement("a");
-        link.setAttribute("href", encodedUri);
-        link.setAttribute("download", `EPR_Logs_${new Date().toISOString().split('T')[0]}.csv`);
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+        const fileName = `EPR_Report_${selectedCompany !== 'ALL' ? selectedCompany : 'National'}_${new Date().toISOString().split('T')[0]}.pdf`;
+        doc.save(fileName);
     };
 
     return (
@@ -372,17 +365,52 @@ const AuthorityDashboard = () => {
                             </div>
                         </div>
 
-                     <div style={styles.glassPanel}>
+                        {/* 🖨️ Report Engine Box with Filters */}
+                        <div style={styles.glassPanel}>
                             <h3 style={{ color: '#2ecc71', marginBottom: '15px' }}>📊 National Audit & Report Generation Engine</h3>
-                            <p style={{ color: '#ccc', fontSize: '13px', marginBottom: '25px' }}>
+                            <p style={{ color: '#ccc', fontSize: '13px', marginBottom: '20px' }}>
                                 Export comprehensive compliance metrics, recycling loops, and producer logs securely for governmental review.
                             </p>
+                            
+                            {/* 👇 Company සහ Brand/Product Dropdown 2 එකතු කළ තැන */}
+                            <div style={{ display: 'flex', gap: '20px', marginBottom: '25px', flexWrap: 'wrap' }}>
+                                <div style={{ flex: 1, minWidth: '220px' }}>
+                                    <label style={{ fontSize: '12px', color: '#aaa', display: 'block', marginBottom: '8px', fontWeight: 'bold' }}>Filter by Company:</label>
+                                    <select 
+                                        value={selectedCompany} 
+                                        onChange={(e) => setSelectedCompany(e.target.value)}
+                                        style={{ width: '100%', padding: '12px', borderRadius: '12px', background: 'rgba(0,0,0,0.6)', color: '#fff', border: '1px solid rgba(255,255,255,0.2)', outline: 'none', cursor: 'pointer' }}
+                                    >
+                                        <option value="ALL">🌐 All Companies (National Summary)</option>
+                                        {companiesList.map((c, idx) => (
+                                            <option key={idx} value={c.name}>{c.name}</option>
+                                        ))}
+                                    </select>
+                                </div>
+
+                                <div style={{ flex: 1, minWidth: '220px' }}>
+                                    <label style={{ fontSize: '12px', color: '#aaa', display: 'block', marginBottom: '8px', fontWeight: 'bold' }}>Filter by Brand / Product:</label>
+                                    <select 
+                                        value={selectedBrand} 
+                                        onChange={(e) => setSelectedBrand(e.target.value)}
+                                        style={{ width: '100%', padding: '12px', borderRadius: '12px', background: 'rgba(0,0,0,0.6)', color: '#fff', border: '1px solid rgba(255,255,255,0.2)', outline: 'none', cursor: 'pointer' }}
+                                    >
+                                        <option value="ALL">📦 All Brands & Products</option>
+                                        {productsList.map((p, idx) => (
+                                            <option key={idx} value={`${p.category} - ${p.brand}`}>{p.category} ({p.brand})</option>
+                                        ))}
+                                    </select>
+                                </div>
+                            </div>
+
                             <div style={{ display: 'flex', gap: '15px', flexWrap: 'wrap' }}>
                                 <button 
                                     onClick={handleExportPDF}
-                                    style={{ padding: '12px 25px', borderRadius: '12px', background: 'rgba(231, 76, 60, 0.2)', border: '1px solid #e74c3c', color: '#e74c3c', fontWeight: 'bold', cursor: 'pointer' }}
+                                    style={{ padding: '14px 30px', borderRadius: '12px', background: 'rgba(231, 76, 60, 0.2)', border: '1px solid #e74c3c', color: '#e74c3c', fontWeight: 'bold', cursor: 'pointer', transition: '0.3s' }}
+                                    onMouseOver={(e) => e.target.style.background = 'rgba(231, 76, 60, 0.4)'}
+                                    onMouseOut={(e) => e.target.style.background = 'rgba(231, 76, 60, 0.2)'}
                                 >
-                                    📄 Export PDF Summary
+                                    📄 Export Filtered PDF Summary
                                 </button>
                             </div>
                         </div>
