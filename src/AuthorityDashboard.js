@@ -372,23 +372,17 @@ const AuthorityDashboard = () => {
                             </div>
                         </div>
 
-                        <div style={styles.glassPanel}>
+                     <div style={styles.glassPanel}>
                             <h3 style={{ color: '#2ecc71', marginBottom: '15px' }}>📊 National Audit & Report Generation Engine</h3>
                             <p style={{ color: '#ccc', fontSize: '13px', marginBottom: '25px' }}>
                                 Export comprehensive compliance metrics, recycling loops, and producer logs securely for governmental review.
                             </p>
                             <div style={{ display: 'flex', gap: '15px', flexWrap: 'wrap' }}>
                                 <button 
-                                    onClick={handleExportPDF} // 👈 දැන් මේකෙන් හරියටම PDF ඩවුන්ලෝඩ් වෙනවා
+                                    onClick={handleExportPDF}
                                     style={{ padding: '12px 25px', borderRadius: '12px', background: 'rgba(231, 76, 60, 0.2)', border: '1px solid #e74c3c', color: '#e74c3c', fontWeight: 'bold', cursor: 'pointer' }}
                                 >
                                     📄 Export PDF Summary
-                                </button>
-                                <button 
-                                    onClick={handleExportExcel} // 👈 දැන් මේකෙන් හරියටම Excel (CSV) ඩවුන්ලෝඩ් වෙනවා
-                                    style={{ padding: '12px 25px', borderRadius: '12px', background: 'rgba(46, 204, 113, 0.2)', border: '1px solid #2ecc71', color: '#2ecc71', fontWeight: 'bold', cursor: 'pointer' }}
-                                >
-                                    📊 Export Excel Logs
                                 </button>
                             </div>
                         </div>
