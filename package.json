@@ -17,7 +17,7 @@
     "dgram-browserify": "^0.0.13",
     "file-saver": "^2.0.5",
     "html5-qrcode": "^2.3.8",
-    "jspdf": "^4.2.0",
+    "jspdf": "^4.2.1",
     "jspdf-autotable": "^5.0.7",
     "jszip": "^3.10.1",
     "net-browserify": "^0.2.4",

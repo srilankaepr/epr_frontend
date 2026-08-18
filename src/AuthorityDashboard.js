@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import jsPDF from 'jspdf'; // 👈 අලුතින් එකතු කළා
 import logo from './logo.png'; 
 import bgImage from './assets/customerdashboard.jpg';
 import API from './api'; 
@@ -62,10 +63,7 @@ const AuthorityDashboard = () => {
 
         const fetchSystemStats = async () => {
             try {
-                // 1. Authority stats (PIBOs, PROs, etc.)
                 const response = await API.get('/admin/authority/stats').catch(() => ({ data: {} }));
-                
-                // 2. National System Reports stats (Companies, Products, QR, Pending, Completed)
                 const reportRes = await API.get('/qr/national-system-stats').catch(() => ({ data: {} }));
 
                 setDashboardStats({
@@ -99,6 +97,79 @@ const AuthorityDashboard = () => {
             localStorage.clear(); 
             navigate('/'); 
         }
+    };
+
+    // 📄 PDF Export Logic
+    const handleExportPDF = () => {
+        const doc = new jsPDF();
+        
+        doc.setFontSize(20);
+        doc.setTextColor(39, 174, 96);
+        doc.text("National EPR Compliance Report", 14, 20);
+
+        doc.setFontSize(10);
+        doc.setTextColor(100, 100, 100);
+        doc.text(`Generated Date: ${new Date().toLocaleDateString()}`, 14, 28);
+        
+        doc.setLineWidth(0.5);
+        doc.line(14, 33, 196, 33);
+
+        doc.setFontSize(14);
+        doc.setTextColor(0, 0, 0);
+        doc.text("1. Overall System Analytics", 14, 45);
+
+        doc.setFontSize(11);
+        doc.text(`Total PIBOs: ${dashboardStats.pibos}`, 14, 55);
+        doc.text(`Active PROs: ${dashboardStats.pros}`, 14, 63);
+        doc.text(`Waste Management Entities: ${dashboardStats.wasteManagement}`, 14, 71);
+
+        doc.setFontSize(14);
+        doc.text("2. QR & Recycling Loop Analytics", 14, 90);
+
+        doc.setFontSize(11);
+        doc.text(`Registered Companies: ${dashboardStats.totalCompanies}`, 14, 100);
+        doc.text(`Products & Brands: ${dashboardStats.totalProducts}`, 14, 108);
+        doc.text(`QR Issued Count: ${dashboardStats.totalQR}`, 14, 116);
+        doc.text(`Pending Count: ${dashboardStats.pendingCount}`, 14, 124);
+        doc.text(`Completed Loops: ${dashboardStats.completedCount}`, 14, 132);
+
+        doc.setFontSize(14);
+        doc.text("3. Recovered Materials", 14, 150);
+
+        doc.setFontSize(11);
+        doc.text(`Plastic: ${dashboardStats.recoveredMaterials.plastic}`, 14, 160);
+        doc.text(`E-Waste: ${dashboardStats.recoveredMaterials.eWaste}`, 14, 168);
+        doc.text(`Glass: ${dashboardStats.recoveredMaterials.glass}`, 14, 176);
+        doc.text(`Paper: ${dashboardStats.recoveredMaterials.paper}`, 14, 184);
+
+        doc.save(`National_EPR_Report_${new Date().toISOString().split('T')[0]}.pdf`);
+    };
+
+    // 📊 Excel (CSV) Export Logic
+    const handleExportExcel = () => {
+        const csvRows = [];
+        csvRows.push(["Metric", "Value"]);
+        csvRows.push(["Total PIBOs", dashboardStats.pibos]);
+        csvRows.push(["Active PROs", dashboardStats.pros]);
+        csvRows.push(["Waste Management Entities", dashboardStats.wasteManagement]);
+        csvRows.push(["Registered Companies", dashboardStats.totalCompanies]);
+        csvRows.push(["Products & Brands", dashboardStats.totalProducts]);
+        csvRows.push(["QR Issued Count", dashboardStats.totalQR]);
+        csvRows.push(["Pending Count", dashboardStats.pendingCount]);
+        csvRows.push(["Completed Loops", dashboardStats.completedCount]);
+        csvRows.push(["Recovered Plastic", dashboardStats.recoveredMaterials.plastic]);
+        csvRows.push(["Recovered E-Waste", dashboardStats.recoveredMaterials.eWaste]);
+        csvRows.push(["Recovered Glass", dashboardStats.recoveredMaterials.glass]);
+        csvRows.push(["Recovered Paper", dashboardStats.recoveredMaterials.paper]);
+
+        const csvContent = "data:text/csv;charset=utf-8," + csvRows.map(e => e.join(",")).join("\n");
+        const encodedUri = encodeURI(csvContent);
+        const link = document.createElement("a");
+        link.setAttribute("href", encodedUri);
+        link.setAttribute("download", `EPR_Logs_${new Date().toISOString().split('T')[0]}.csv`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
     };
 
     return (
@@ -200,28 +271,24 @@ const AuthorityDashboard = () => {
                         <p style={styles.subTitle}>National EPR Tracking & Regulatory Overview</p>
                         
                         <div style={styles.grid}>
-                            {/* PIBOs Box */}
                             <div style={styles.statCard}>
                                 <h3 style={styles.statTitle}>TOTAL PIBOs</h3>
                                 <h1 style={styles.statCount}>{dashboardStats.pibos}</h1>
                                 <p style={styles.statDesc}>Registered Producers & Importers</p>
                             </div>
 
-                            {/* PROs Box */}
                             <div style={styles.statCard}>
                                 <h3 style={styles.statTitle}>ACTIVE PROs</h3>
                                 <h1 style={styles.statCount}>{dashboardStats.pros}</h1>
                                 <p style={styles.statDesc}>Consortiums operating nationwide</p>
                             </div>
 
-                            {/* Waste Management Box */}
                             <div style={styles.statCard}>
                                 <h3 style={styles.statTitle}>WASTE MANAGEMENT</h3>
                                 <h1 style={styles.statCount}>{dashboardStats.wasteManagement}</h1>
                                 <p style={styles.statDesc}>Collectors, Transporters & Recyclers</p>
                             </div>
 
-                            {/* Recovered Materials Box */}
                             <div style={styles.statCard}>
                                 <h3 style={styles.statTitle}>RECOVERED MATERIALS</h3>
                                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '15px' }}>
@@ -277,7 +344,6 @@ const AuthorityDashboard = () => {
                         <h1 style={styles.mainTitle}>SYSTEM REPORTS</h1>
                         <p style={styles.subTitle}>Generate & Export National Aggregate Compliance Data</p>
                         
-                        {/* 📊 National Stats Grid Cards */}
                         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '20px', marginBottom: '35px' }}>
                             <div style={styles.statCard}>
                                 <h3 style={styles.statTitle}>REGISTERED COMPANIES</h3>
@@ -306,7 +372,6 @@ const AuthorityDashboard = () => {
                             </div>
                         </div>
 
-                        {/* 🖨️ Report Engine Box */}
                         <div style={styles.glassPanel}>
                             <h3 style={{ color: '#2ecc71', marginBottom: '15px' }}>📊 National Audit & Report Generation Engine</h3>
                             <p style={{ color: '#ccc', fontSize: '13px', marginBottom: '25px' }}>
@@ -314,13 +379,13 @@ const AuthorityDashboard = () => {
                             </p>
                             <div style={{ display: 'flex', gap: '15px', flexWrap: 'wrap' }}>
                                 <button 
-                                    onClick={() => alert("📥 Generating National PDF Compliance Report...")}
+                                    onClick={handleExportPDF} // 👈 දැන් මේකෙන් හරියටම PDF ඩවුන්ලෝඩ් වෙනවා
                                     style={{ padding: '12px 25px', borderRadius: '12px', background: 'rgba(231, 76, 60, 0.2)', border: '1px solid #e74c3c', color: '#e74c3c', fontWeight: 'bold', cursor: 'pointer' }}
                                 >
                                     📄 Export PDF Summary
                                 </button>
                                 <button 
-                                    onClick={() => alert("📊 Generating National Excel Compliance Logs...")}
+                                    onClick={handleExportExcel} // 👈 දැන් මේකෙන් හරියටම Excel (CSV) ඩවුන්ලෝඩ් වෙනවා
                                     style={{ padding: '12px 25px', borderRadius: '12px', background: 'rgba(46, 204, 113, 0.2)', border: '1px solid #2ecc71', color: '#2ecc71', fontWeight: 'bold', cursor: 'pointer' }}
                                 >
                                     📊 Export Excel Logs
@@ -358,7 +423,7 @@ const AuthorityDashboard = () => {
                     </div>
                 )}
             </main>
-        </div>
+       </div>
     );
 };
 

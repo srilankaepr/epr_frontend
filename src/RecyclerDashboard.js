@@ -15,16 +15,16 @@ const RecyclerDashboard = () => {
     
     const [scanInput, setScanInput] = useState('');
     const [isCameraOpen, setIsCameraOpen] = useState(false);
+    
     const scanInputRef = useRef(null);
-
-    // 👇 අලුතින් එකතු කළ Ref එක: මේකෙන් තමයි ස්කෑනර් එකට ලයිව් ඩේටා දෙන්නේ
     const requestsRef = useRef([]);
+    
+    const isProcessingRef = useRef(false);
 
     useEffect(() => {
         fetchRecycleRequests();
     }, []);
 
-    // 👇 requests අප්ඩේට් වෙන හැම වෙලාවකම Ref එකත් අප්ඩේට් කරනවා
     useEffect(() => {
         requestsRef.current = requests;
     }, [requests]);
@@ -56,7 +56,7 @@ const RecyclerDashboard = () => {
 
             if (response.status === 200) {
                 alert("✅ Successfully marked as Recycled! Circular loop completed.");
-                setIsCameraOpen(false); // වැඩේ වුණාම කැමරාව ක්ලෝස් කරනවා
+                setIsCameraOpen(false); 
                 fetchRecycleRequests(); 
             }
         } catch (error) {
@@ -64,10 +64,14 @@ const RecyclerDashboard = () => {
             alert("❌ Failed to update status.");
         } finally {
             setActionLoading(null);
+            setTimeout(() => { isProcessingRef.current = false; }, 1500);
         }
     };
 
     const processScannedId = async (rawValue) => {
+        if (isProcessingRef.current) return;
+        isProcessingRef.current = true; 
+
         try {
             let scannedText = '';
             
@@ -82,7 +86,10 @@ const RecyclerDashboard = () => {
             }
 
             let scannedId = scannedText.trim();
-            if (!scannedId) return;
+            if (!scannedId) {
+                isProcessingRef.current = false;
+                return;
+            }
 
             if (scannedId.includes('id=')) {
                 scannedId = scannedId.split('id=')[1].split('&')[0];
@@ -90,33 +97,35 @@ const RecyclerDashboard = () => {
                 scannedId = scannedId.split('?id=')[1].split('&')[0];
             }
 
-            // 👇 requests වෙනුවට requestsRef.current පාවිච්චි කරනවා
             const targetRequest = requestsRef.current.find(r => r.qrId === scannedId);
 
             if (!targetRequest) {
                 alert(`❌ Cannot find QR ID: ${scannedId} in the system!`);
                 setScanInput('');
+                setTimeout(() => { isProcessingRef.current = false; }, 2000);
                 return;
             }
 
             if (targetRequest.status === 'Recycled') {
                 alert(`⚠️ This item (${scannedId}) is already marked as Recycled!`);
                 setScanInput('');
+                setTimeout(() => { isProcessingRef.current = false; }, 2000);
                 return;
             }
 
             if (targetRequest.status === 'Pending') {
                 alert(`⚠️ This item (${scannedId}) is still Pending. It must be collected by a Co-Partner first!`);
                 setScanInput('');
+                setTimeout(() => { isProcessingRef.current = false; }, 2000);
                 return;
             }
 
-            // වැඩේ හරි නම් ඩේටාබේස් එකට යවනවා
             await handleMarkAsRecycled(targetRequest._id);
             setScanInput(''); 
 
         } catch (error) {
             console.error("Scanning Error:", error);
+            isProcessingRef.current = false;
         }
     };
 
@@ -196,9 +205,6 @@ const RecyclerDashboard = () => {
                             <div style={styles.cameraWrapper}>
                                 <Scanner 
                                     onScan={(result) => {
-                                        if (result) processScannedId(result);
-                                    }}
-                                    onResult={(result) => {
                                         if (result) processScannedId(result);
                                     }}
                                     onError={(error) => console.log(error?.message)}
@@ -296,7 +302,7 @@ const styles = {
     statsGrid: { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '15px', marginBottom: '25px' },
     statCard: { background: 'rgba(255, 255, 255, 0.03)', border: '1px solid rgba(255, 255, 255, 0.08)', padding: '20px', borderRadius: '15px', textAlign: 'center' },
     statTitle: { fontSize: '12px', color: '#aaa', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '8px' },
-    statValue: { fontSize: '24px', fontWeight: '900', color: '#fff', margin: 0 },
+    statValue: { fontSize: '24px', fontWeight: '900', color: 'rgb(255, 255, 255)', margin: 0 },
     contentSection: { background: 'rgba(0,0,0,0.3)', padding: '25px', borderRadius: '20px', border: '1px solid rgba(255,255,255,0.05)' },
     sectionTitle: { color: '#2ecc71', fontSize: '16px', marginBottom: '20px', fontWeight: 'bold' },
     infoText: { color: '#aaa', textAlign: 'center', padding: '30px', fontSize: '14px' },
