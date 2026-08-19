@@ -32,6 +32,8 @@ import AuthorityRegister from './AuthorityRegister';
 import PDFGenerator from './PDFGenerator';
 import AuthorityDashboard from './AuthorityDashboard';
 import RecyclerDashboard from './RecyclerDashboard';
+import MapComponent from './MapComponent';
+
 
 function App() {
   return (
@@ -83,6 +85,9 @@ function App() {
 
         {/* 4. Recycler Facility */}
         <Route path="/recycler-dashboard" element={<ProtectedRoute allowedRole="CUSTOMER"><RecyclerDashboard /></ProtectedRoute>} />
+
+
+        <Route path="/search-on-map" element={<MapComponent />} />
          
       </Routes>
     </Router>
