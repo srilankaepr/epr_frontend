@@ -210,7 +210,7 @@ const deleteProfilePicture = async () => {
 
                 
                 
-              <nav style={getStyles(isMobile, isDrawerOpen).navMenu}>
+           <nav style={getStyles(isMobile, isDrawerOpen).navMenu}>
     {[
         { id: 'REGISTER PRODUCT', label: 'REGISTER YOUR PRODUCT' },
         { id: 'ORDER NOW', label: 'ORDER NOW' },
@@ -232,11 +232,12 @@ const deleteProfilePicture = async () => {
               onClick={() => {
                     if (item.id === 'about') {
                         window.open('https://eprs.lk', '_blank');
+                    } else if (item.id === 'search-map') {  // 👈 මෙන්න මේ පේළිය අලුතින් ආවා
+                        navigate('/search-on-map');         // 👈 මේකෙන් කෙලින්ම මැප් එකට යනවා
                     } else {
                         setActiveTab(item.id);
                     }
                 }}
-
 
                 onMouseEnter={(e) => {
                     if (!isActive) {
@@ -296,7 +297,6 @@ const deleteProfilePicture = async () => {
 )}
 
     {activeTab === 'ORDER NOW' && (
-        /* මෙන්න මෙතනටයි animation එකයි contentPadding එකයි දෙන්නම දාන්න ඕනේ */
         <div style={{ 
             ...getStyles(isMobile, isDrawerOpen).contentPadding, 
             animation: 'fadeInUp 0.6s ease-out forwards' 
