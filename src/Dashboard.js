@@ -201,7 +201,7 @@ if (topRes.status === 200) {
                     Summary
                 </button>
 
-              {['User Management', 'Co-Partner', 'Orders', 'QR Management', 'Search on Map'].map((item) => (
+                {['User Management', 'Co-Partner', 'Orders', 'QR Management'].map((item) => (
                     <button 
                         key={item} 
                         className="nav-item"
@@ -211,7 +211,6 @@ if (topRes.status === 200) {
                             else if (item === 'Co-Partner') navigate('/co-partner');
                             else if (item === 'Orders') navigate('/admin-orders');
                             else if (item === 'QR Management') navigate('/qr-management');
-                            else if (item === 'Search on Map') navigate('/search-on-map');
                         }}
                     >
                         {item}
@@ -221,7 +220,7 @@ if (topRes.status === 200) {
 
             <button 
                 onClick={handleLogout} 
-                className="logout-glow"
+                className="logout-glow"  
                 style={styles.logoutBtn}
             >
                 Logout System
