@@ -8,7 +8,6 @@ import API from './api';
 const Login = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [showPassword, setShowPassword] = useState(false); // 👁️ Password Show/Hide State
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
     const { login } = useAuth(); 
@@ -39,7 +38,7 @@ const handleSubmit = useCallback(async (e) => {
                 localStorage.removeItem('userPhoto'); 
             }
             
-            let targetPath = '/';
+   let targetPath = '/';
             const userRole = data.role.toUpperCase();
 
             if (userRole === 'ADMIN') {
@@ -60,7 +59,7 @@ const handleSubmit = useCallback(async (e) => {
                     orgRole.includes('transporter') || 
                     data.user.isRecycler || 
                     data.user.isTotalSolutionProvider ||
-                    userEmail.includes('recycler') || 
+                    userEmail.includes('recycler') || // අවශ්‍ය නම් ඊමේල් එකෙන් චෙක් කිරීමට
                     window.location.href.includes('recycler')
                 ) {
                     targetPath = '/recycler-dashboard'; 
@@ -76,13 +75,16 @@ const handleSubmit = useCallback(async (e) => {
 
     } catch (error) {
         console.error("Login error:", error);
+
         const errorMsg = error.response?.data?.error || "⚠️ Login Failed! Please check your connection.";
+        
         alert(`❌ ${errorMsg}`);
     } finally {
         setLoading(false); 
     }
 }, [navigate, login]); 
 
+//......................................................................................................................
     return (
         <div style={styles.container}>
             <video 
@@ -99,12 +101,6 @@ const handleSubmit = useCallback(async (e) => {
             <div style={styles.overlay}></div>
             
             <div style={styles.loginCard}>
-                
-                {/* 🌐 Language Switcher */}
-                <div style={styles.langSwitcher}>
-                    <span style={styles.langActive}>EN</span> | <span style={styles.langText}>සිං</span> | <span style={styles.langText}>தமி</span>
-                </div>
-
                 <div style={styles.headerArea}>
                     <div style={styles.logoFrame}>
                         <img src={logo} alt="EPR Logo" style={styles.logoImg} />
@@ -114,26 +110,20 @@ const handleSubmit = useCallback(async (e) => {
                 </div>
 
                 <form onSubmit={handleSubmit} style={styles.form}>
-                    
-                    {/* ✉️ Corporate Email Field with Icon */}
                     <div style={styles.inputWrapper}>
                         <label style={styles.label}>CORPORATE EMAIL</label>
-                        <div className="input-focus-glow" style={styles.inputContainer}>
-                            <span style={styles.inputIcon}>✉️</span>
-                            <input 
-                                type="email" 
-                                name="email"
-                                autoComplete="email"
-                                style={styles.inputWithIcon} 
-                                placeholder="name@company.com"
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
-                                required 
-                            />
-                        </div>
+                        <input 
+                            type="email" 
+                            name="email"
+                            autoComplete="email"
+                            style={styles.input} 
+                            placeholder="name@company.com"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            required 
+                        />
                     </div>
 
-                    {/* 🔒 Password Field with Icon and 👁️ Toggle */}
                     <div style={styles.inputWrapper}>
                         <div style={styles.passwordHeader}>
                             <label style={styles.label}>PASSWORD</label>
@@ -141,26 +131,16 @@ const handleSubmit = useCallback(async (e) => {
                                 Forgot Your Password?
                             </span>
                         </div>
-                        <div className="input-focus-glow" style={styles.inputContainer}>
-                            <span style={styles.inputIcon}>🔒</span>
-                            <input 
-                                type={showPassword ? "text" : "password"} 
-                                name="password"
-                                autoComplete="current-password"
-                                style={styles.inputWithIcon} 
-                                placeholder="••••••••"
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                                required 
-                            />
-                            {/* 👁️ Eye Icon for Toggle */}
-                            <span 
-                                style={styles.eyeIcon} 
-                                onClick={() => setShowPassword(!showPassword)}
-                            >
-                                {showPassword ? '🙈' : '👁️'}
-                            </span>
-                        </div>
+                        <input 
+                            type="password" 
+                            name="password"
+                            autoComplete="current-password"
+                            style={styles.input} 
+                            placeholder="••••••••"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            required 
+                        />
                     </div>
 
                     <button 
@@ -187,13 +167,6 @@ const handleSubmit = useCallback(async (e) => {
                         </p>
                         <p style={styles.rights}>SECURED GOVERNANCE INTERFACE</p>
                     </div>
-
-                    {/* ⚖️ Help & Legal Links */}
-                    <div style={styles.legalLinksWrapper}>
-                        <span style={styles.legalLink}>Terms of Service</span> • 
-                        <span style={styles.legalLink}> Privacy Policy</span> • 
-                        <span style={styles.legalLink}> Need Help?</span>
-                    </div>
                 </div>
             </div>
 
@@ -210,7 +183,7 @@ const handleSubmit = useCallback(async (e) => {
             background-color: #000 !important;
         }
 
-        /* 2. Animations */
+        /* 2.Animations */
         @keyframes cardFadeIn {
             from { opacity: 0; transform: scale(0.95); }
             to { opacity: 1; transform: scale(1); }
@@ -268,6 +241,12 @@ const handleSubmit = useCallback(async (e) => {
                 width: auto !important;
                 z-index: -1;
             }
+
+            input {
+                background-color: rgba(255, 255, 255, 0.05) !important;
+                color: white !important;
+                -webkit-text-fill-color: white !important;
+            }
         }
 
         /* 5. Landscape Fix */
@@ -298,36 +277,11 @@ const handleSubmit = useCallback(async (e) => {
             color-scheme: light only !important;
         }
 
-        input {
-            background-color: transparent !important;
-            color: white !important;
-            -webkit-text-fill-color: white !important;
-        }
-
         input:focus {
-            outline: none !important;
-        }
-        
-        /* 7. Chrome/Edge Auto-fill සුදු පාට කොටුව නැති කිරීම (The Fix) */
-        input:-webkit-autofill,
-        input:-webkit-autofill:hover, 
-        input:-webkit-autofill:focus, 
-        input:-webkit-autofill:active {
-            -webkit-box-shadow: 0 0 0 50px #1a1b1a inset !important; 
-            -webkit-text-fill-color: white !important;
-            caret-color: white !important;
-            border-radius: 0px !important;
-            transition: background-color 5000s ease-in-out 0s;
-        }
-
-        /* 8. Input Focus Outline Fix */
-        .input-focus-glow {
-            transition: 0.3s;
-        }
-        .input-focus-glow:focus-within {
             border-color: #2ecc71 !important;
-            box-shadow: 0 0 15px rgba(46, 204, 113, 0.2);
             background: rgba(255, 255, 255, 0.05) !important;
+            outline: none;
+            box-shadow: 0 0 15px rgba(46, 204, 113, 0.2);
         }
     `}
 </style>
@@ -362,20 +316,10 @@ const styles = {
         boxShadow: '0 40px 100px rgba(0,0,0,0.7)',
         animation: 'cardFadeIn 0.8s ease-out forwards'
     },
-    
-    // --- 🌐 Language Switcher Styles ---
-    langSwitcher: {
-        position: 'absolute', top: '15px', right: '25px',
-        fontSize: '11px', color: '#666', fontWeight: 'bold',
-        cursor: 'pointer', letterSpacing: '1px'
-    },
-    langActive: { color: '#2ecc71' },
-    langText: { transition: '0.3s' },
-    
-    headerArea: { marginBottom: '35px', textAlign: 'center', marginTop: '10px' },
+    headerArea: { marginBottom: '35px', textAlign: 'center' },
     logoFrame: {
         width: '110px', height: '110px',
-        background: 'transparent',
+        background: '#fff',
         borderRadius: '50%',
         margin: '0 auto 15px',
         display: 'flex', justifyContent: 'center', alignItems: 'center',
@@ -390,29 +334,18 @@ const styles = {
     passwordHeader: { display: 'flex', justifyContent: 'space-between', alignItems: 'center' },
     label: { display: 'block', fontSize: '13px', color: '#ccc', marginBottom: '10px', letterSpacing: '1.5px', fontWeight: 'bold' },
     forgotBtn: { color: '#2b9456', fontSize: '13px', fontWeight: 'bold', cursor: 'pointer', marginBottom: '8px' },
-    
-    // --- ✉️/🔒 Input Container Styles for Icons ---
-    inputContainer: {
-        display: 'flex', alignItems: 'center',
-        width: '100%', padding: '0 16px',
+    input: {
+        width: '100%', padding: '16px',
         borderRadius: '12px', border: '1px solid rgba(255,255,255,0.1)',
-        background: 'rgba(255, 255, 255, 0.03)', 
-        transition: '0.3s', boxSizing: 'border-box'
+        background: 'rgba(255, 255, 255, 0.03)', color: '#fff', fontSize: '15px', transition: '0.3s'
     },
-    inputIcon: { fontSize: '16px', marginRight: '10px', opacity: 0.7 },
-    eyeIcon: { fontSize: '16px', marginLeft: '10px', cursor: 'pointer', opacity: 0.7 },
-    inputWithIcon: {
-        flex: 1, padding: '16px 0', border: 'none',
-        background: 'transparent', color: '#fff', fontSize: '15px', outline: 'none'
-    },
-
     loginBtn: {
         width: '100%', padding: '18px',
         borderRadius: '12px', border: 'none',
         background: '#32c56f', color: '#fff',
         fontWeight: '900', fontSize: '15px', letterSpacing: '2px',
         boxShadow: '0 10px 30px rgba(46, 204, 113, 0.4)', 
-        transition: '0.3s'
+    transition: '0.3s'
     },
     footer: { marginTop: '30px', textAlign: 'center', borderTop: '1px solid rgba(248, 243, 243, 0.05)', paddingTop: '20px' },
     signupText: { fontSize: '19px', color: '#aaa', marginBottom: '15px' },
@@ -420,11 +353,7 @@ const styles = {
     copyrightBox: { marginTop: '10px' },
     copyrightText: { fontSize: '12px', color: '#fef9f9', margin: 0 },
     brand: { color: '#2ecc71', fontWeight: 'bold' },
-    rights: { fontSize: '9px', letterSpacing: '2px', color: '#f9f7f7', marginTop: '5px' },
-    
-    // --- ⚖️ Legal Links Styles ---
-    legalLinksWrapper: { marginTop: '20px', fontSize: '11px', color: '#555' },
-    legalLink: { cursor: 'pointer', padding: '0 5px', transition: '0.3s' }
+    rights: { fontSize: '9px', letterSpacing: '2px', color: '#f9f7f7', marginTop: '5px' }
 };
 
 export default Login;
