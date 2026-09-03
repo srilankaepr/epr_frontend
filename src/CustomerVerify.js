@@ -233,7 +233,6 @@ const handleRecycleSubmit = async () => {
     </div>
 )}
 
-{/* 🟢 5. අලුතින්ම එකතු කරපු Thank You ස්ක්‍රීන් එක (මෙතනින් පිටුව නවතිනවා) */}
 {viewMode === 'THANK_YOU' && (
     <div style={{ textAlign: 'center', padding: '30px 10px' }}>
         <div style={{ fontSize: '60px', marginBottom: '15px' }}>💚</div>

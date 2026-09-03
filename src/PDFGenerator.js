@@ -60,7 +60,11 @@ const styles = {
     brandName: { color: '#fff', fontSize: '24px', fontWeight: 'bold', margin: 0 },
     subTitle: { fontSize: '13px' },
     divider: { border: '0', borderTop: '1px solid rgba(255, 255, 255, 0.1)', margin: '20px 0' },
-    content: { background: 'rgba(20, 20, 20, 0.8)', padding: '30px', borderRadius: '25px', border: '1px solid rgba(255, 255, 255, 0.1)', backdropFilter: 'blur(10px)', textAlign: 'center' },
+
+    content: { background: 'rgba(20, 20, 20, 0.8)',
+         padding: '30px', 
+         borderRadius: '25px',
+         border: '1px solid rgba(255, 255, 255, 0.1)', backdropFilter: 'blur(10px)', textAlign: 'center' },
     cardTitle: { fontSize: '20px', color: '#3498db', marginBottom: '20px', borderBottom: '1px solid rgba(255, 255, 255, 0.1)', paddingBottom: '10px' },
     placeholderBox: { padding: '50px', border: '2px dashed rgba(255, 255, 255, 0.1)', borderRadius: '20px', marginTop: '20px' },
     footer: { marginTop: '40px', textAlign: 'center' },

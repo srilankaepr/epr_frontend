@@ -531,7 +531,7 @@ const getStyles = (isMobile, isDrawerOpen) => ({
     cardTitle: { color: '#2ecc71', margin: '0 0 12px 0', fontSize: '20px' },
     cardDesc: { fontSize: '14px', color: '#bbb', lineHeight: '1.6' },
 
-    // --- Feedback & Comments Styles (මෙන්න මගහැරුණු ටික) ---
+
     feedbackContainer: { maxWidth: '900px', margin: '0 auto', padding: isMobile ? '20px' : '50px' },
     feedbackForm: { background: 'rgba(255,255,255,0.05)', padding: '30px', borderRadius: '25px', border: '1px solid #444', marginBottom: '40px' },
     starRow: { fontSize: '30px', marginBottom: '20px', cursor: 'pointer' },
