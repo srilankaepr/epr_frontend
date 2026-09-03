@@ -60,7 +60,7 @@ const handleSubmit = useCallback(async (e) => {
                     orgRole.includes('transporter') || 
                     data.user.isRecycler || 
                     data.user.isTotalSolutionProvider ||
-                    userEmail.includes('recycler') || // අවශ්‍ය නම් ඊමේල් එකෙන් චෙක් කිරීමට
+                    userEmail.includes('recycler') || 
                     window.location.href.includes('recycler')
                 ) {
                     targetPath = '/recycler-dashboard'; 
@@ -76,16 +76,13 @@ const handleSubmit = useCallback(async (e) => {
 
     } catch (error) {
         console.error("Login error:", error);
-
         const errorMsg = error.response?.data?.error || "⚠️ Login Failed! Please check your connection.";
-        
         alert(`❌ ${errorMsg}`);
     } finally {
         setLoading(false); 
     }
 }, [navigate, login]); 
 
-//......................................................................................................................
     return (
         <div style={styles.container}>
             <video 
@@ -103,7 +100,7 @@ const handleSubmit = useCallback(async (e) => {
             
             <div style={styles.loginCard}>
                 
-                {/* 🌐 Language Switcher (New Pro Touch) */}
+                {/* 🌐 Language Switcher */}
                 <div style={styles.langSwitcher}>
                     <span style={styles.langActive}>EN</span> | <span style={styles.langText}>සිං</span> | <span style={styles.langText}>தமி</span>
                 </div>
@@ -121,7 +118,7 @@ const handleSubmit = useCallback(async (e) => {
                     {/* ✉️ Corporate Email Field with Icon */}
                     <div style={styles.inputWrapper}>
                         <label style={styles.label}>CORPORATE EMAIL</label>
-                        <div style={styles.inputContainer}>
+                        <div className="input-focus-glow" style={styles.inputContainer}>
                             <span style={styles.inputIcon}>✉️</span>
                             <input 
                                 type="email" 
@@ -144,7 +141,7 @@ const handleSubmit = useCallback(async (e) => {
                                 Forgot Your Password?
                             </span>
                         </div>
-                        <div style={styles.inputContainer}>
+                        <div className="input-focus-glow" style={styles.inputContainer}>
                             <span style={styles.inputIcon}>🔒</span>
                             <input 
                                 type={showPassword ? "text" : "password"} 
@@ -191,7 +188,7 @@ const handleSubmit = useCallback(async (e) => {
                         <p style={styles.rights}>SECURED GOVERNANCE INTERFACE</p>
                     </div>
 
-                    {/* ⚖️ Help & Legal Links (New Pro Touch) */}
+                    {/* ⚖️ Help & Legal Links */}
                     <div style={styles.legalLinksWrapper}>
                         <span style={styles.legalLink}>Terms of Service</span> • 
                         <span style={styles.legalLink}> Privacy Policy</span> • 
@@ -213,7 +210,7 @@ const handleSubmit = useCallback(async (e) => {
             background-color: #000 !important;
         }
 
-        /* 2.Animations */
+        /* 2. Animations */
         @keyframes cardFadeIn {
             from { opacity: 0; transform: scale(0.95); }
             to { opacity: 1; transform: scale(1); }
@@ -271,12 +268,6 @@ const handleSubmit = useCallback(async (e) => {
                 width: auto !important;
                 z-index: -1;
             }
-
-            input {
-                background-color: transparent !important;
-                color: white !important;
-                -webkit-text-fill-color: white !important;
-            }
         }
 
         /* 5. Landscape Fix */
@@ -307,11 +298,32 @@ const handleSubmit = useCallback(async (e) => {
             color-scheme: light only !important;
         }
 
+        input {
+            background-color: transparent !important;
+            color: white !important;
+            -webkit-text-fill-color: white !important;
+        }
+
         input:focus {
-            outline: none;
+            outline: none !important;
         }
         
-        /* New Box Shadow for the Container on Focus */
+        /* 7. Chrome/Edge Auto-fill සුදු පාට කොටුව නැති කිරීම (The Fix) */
+        input:-webkit-autofill,
+        input:-webkit-autofill:hover, 
+        input:-webkit-autofill:focus, 
+        input:-webkit-autofill:active {
+            -webkit-box-shadow: 0 0 0 50px #1a1b1a inset !important; 
+            -webkit-text-fill-color: white !important;
+            caret-color: white !important;
+            border-radius: 0px !important;
+            transition: background-color 5000s ease-in-out 0s;
+        }
+
+        /* 8. Input Focus Outline Fix */
+        .input-focus-glow {
+            transition: 0.3s;
+        }
         .input-focus-glow:focus-within {
             border-color: #2ecc71 !important;
             box-shadow: 0 0 15px rgba(46, 204, 113, 0.2);
@@ -351,7 +363,7 @@ const styles = {
         animation: 'cardFadeIn 0.8s ease-out forwards'
     },
     
-    // --- 🌐 New Language Switcher Styles ---
+    // --- 🌐 Language Switcher Styles ---
     langSwitcher: {
         position: 'absolute', top: '15px', right: '25px',
         fontSize: '11px', color: '#666', fontWeight: 'bold',
@@ -363,7 +375,7 @@ const styles = {
     headerArea: { marginBottom: '35px', textAlign: 'center', marginTop: '10px' },
     logoFrame: {
         width: '110px', height: '110px',
-        background: 'transparent', // 👈 Transparent Logo Background for Pro Look
+        background: 'transparent',
         borderRadius: '50%',
         margin: '0 auto 15px',
         display: 'flex', justifyContent: 'center', alignItems: 'center',
@@ -379,7 +391,7 @@ const styles = {
     label: { display: 'block', fontSize: '13px', color: '#ccc', marginBottom: '10px', letterSpacing: '1.5px', fontWeight: 'bold' },
     forgotBtn: { color: '#2b9456', fontSize: '13px', fontWeight: 'bold', cursor: 'pointer', marginBottom: '8px' },
     
-    // --- ✉️/🔒 New Input Container Styles for Icons ---
+    // --- ✉️/🔒 Input Container Styles for Icons ---
     inputContainer: {
         display: 'flex', alignItems: 'center',
         width: '100%', padding: '0 16px',
@@ -391,7 +403,7 @@ const styles = {
     eyeIcon: { fontSize: '16px', marginLeft: '10px', cursor: 'pointer', opacity: 0.7 },
     inputWithIcon: {
         flex: 1, padding: '16px 0', border: 'none',
-        background: 'transparent', color: '#fff', fontSize: '15px',
+        background: 'transparent', color: '#fff', fontSize: '15px', outline: 'none'
     },
 
     loginBtn: {
@@ -410,7 +422,7 @@ const styles = {
     brand: { color: '#2ecc71', fontWeight: 'bold' },
     rights: { fontSize: '9px', letterSpacing: '2px', color: '#f9f7f7', marginTop: '5px' },
     
-    // --- ⚖️ New Legal Links Styles ---
+    // --- ⚖️ Legal Links Styles ---
     legalLinksWrapper: { marginTop: '20px', fontSize: '11px', color: '#555' },
     legalLink: { cursor: 'pointer', padding: '0 5px', transition: '0.3s' }
 };
