@@ -37,7 +37,6 @@ const WasteRegister = () => {
         contactDesignation: '',
         contactPersonMobile: '',
 
-        // අලුතින් එකතු කළ Operator ෆීල්ඩ්ස් (Co-partner වෙනුවට)
         operatorIdNum: '',
         operatorPradeshiyaSabha: '',
 
@@ -235,7 +234,8 @@ const WasteRegister = () => {
         };
 
         try {
-            const response = await API.post('/customers/register', finalPayload);
+            //const response = await API.post('/customers/register', finalPayload);
+            const response = await API.post('/api/waste/register', finalPayload);
             if (response.status === 201 || response.status === 200) {
                 alert("✅ Waste Management Registration Request Submitted Successfully!");
                 navigate('/'); 

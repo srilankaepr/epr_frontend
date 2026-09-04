@@ -162,7 +162,8 @@ const PiboRegister = () => {
         setIsLoading(true);
 
         try {
-            const response = await API.post('/customers/register', finalPayload);
+            //const response = await API.post('/customers/register', finalPayload);
+            const response = await API.post('/api/pibo/register', finalPayload);
             if (response.status === 201 || response.status === 200) {
                 alert("✅ PIBO Smart Registration Protocol Transmitted and Executed Successfully!");
                 navigate('/');
