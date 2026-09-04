@@ -59,11 +59,6 @@ const ProRegister = () => {
         proDeclarationVerificationAgreed: false
     });
 
-    // File Strings Store (Base64 for Step 8)
-    const [fileStrings, setFileStrings] = useState({ 
-        brc: "", taxCert: "", compProfile: "", expProof: "", authLetter: "" 
-    });
-
     // Static Dropdown Data Lists
     const districts = ["Colombo", "Gampaha", "Kalutara", "Kandy", "Matale", "Nuwara Eliya", "Galle", "Matara", "Hambantota", "Jaffna", "Kilinochchi", "Mannar", "Vavuniya",
          "Mullaitivu", "Batticaloa", "Ampara", "Trincomalee", "Kurunegala", "Puttalam", "Anuradhapura", "Polonnaruwa", "Badulla", "Moneragala", "Ratnapura", "Kegalle"];
@@ -102,17 +97,6 @@ const ProRegister = () => {
         });
     };
 
-    const handleFileBase64 = (e, type) => {
-        const file = e.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                setFileStrings(prev => ({ ...prev, [type]: reader.result }));
-            };
-            reader.readAsDataURL(file);
-        }
-    };
-
     const validatePhone = (number) => {
         return /^[0-9]{10}$/.test(number);
     };
@@ -135,20 +119,19 @@ const ProRegister = () => {
             return;
         }
 
-        // Payload එක සකස් කිරීම
+        // 🚀 ලියකියවිලි ඉවත් කර, 504 Timeout එක සම්පූර්ණයෙන්ම වළක්වා ගැනීමට සකස් කළ Payload එක
         const finalPayload = {
             ...formData,
-            brcDocument: fileStrings.brc, 
-            taxCertificateDocument: fileStrings.taxCert,
-            companyProfileDocument: fileStrings.compProfile,
-            operationalExperienceProofDocument: fileStrings.expProof,
-            authorizationLetterDocument: fileStrings.authLetter
+            brcDocument: { url: "", public_id: "" }, 
+            taxCertificateDocument: { url: "", public_id: "" },
+            companyProfileDocument: { url: "", public_id: "" },
+            operationalExperienceProofDocument: { url: "", public_id: "" },
+            authorizationLetterDocument: { url: "", public_id: "" }
         };
         
         setIsLoading(true);
 
         try {
-            //const response = await API.post('/customers/register', finalPayload);
             const response = await API.post('/api/pro/register', finalPayload);
             if (response.status === 201 || response.status === 200) {
                 alert("✅ PRO Registration Request Submitted Successfully!");
@@ -157,6 +140,8 @@ const ProRegister = () => {
         } catch (error) {
             console.error("Registration Error:", error);
             alert("❌ Error: " + (error.response?.data?.error || "Registration failed."));
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -186,7 +171,7 @@ const ProRegister = () => {
                             step === 5 ? "PRO SERVICE CAPABILITY" :
                             step === 6 ? "OPERATIONAL COVERAGE" :
                             step === 7 ? "WASTE CATEGORIES MANAGED" :
-                            step === 8 ? "DOCUMENT UPLOADS" : "DECLARATION & CONSENT"
+                            step === 8 ? "DOCUMENT UPLOADS (SKIPPED)" : "DECLARATION & CONSENT"
                         }
                     </div>
 
@@ -233,22 +218,24 @@ const ProRegister = () => {
                                     <input name="dob" value={formData.dob} type="date" style={styles.input} onChange={handleChange} required />
                                 </div>
                             </div>
-                          <div style={styles.rowItem}>
-    <label style={styles.label}>COUNTRY OF REGISTRATION *</label>
-    <input 
-        list="country_list" 
-        name="country" 
-        value={formData.country} 
-        placeholder="Type or Search Country..." 
-        style={styles.input} 
-        onChange={handleChange} 
-        required 
-    />
-    <datalist id="country_list">
-    {countries && countries.map((c, idx) => (
-        <option key={idx} value={c} />
-    ))}
-</datalist>
+                            <div style={styles.inputWrapper}>
+                                <label style={styles.label}>COUNTRY OF REGISTRATION *</label>
+                                <input 
+                                    list="country_list" 
+                                    name="country" 
+                                    value={formData.country} 
+                                    placeholder="Type or Search Country..." 
+                                    style={styles.input} 
+                                    onChange={handleChange} 
+                                    required 
+                                />
+                                <datalist id="country_list">
+                                    {countries && countries.map((c, idx) => (
+                                        <option key={idx} value={c} />
+                                    ))}
+                                </datalist>
+                            </div>
+                            <div style={styles.row}>
                                 <div style={styles.rowItem}>
                                     <label style={styles.label}>DISTRICT *</label>
                                     <select name="orgDistrict" value={formData.orgDistrict} style={styles.selectInput} onChange={handleChange} required>
@@ -256,13 +243,13 @@ const ProRegister = () => {
                                         {districts.map(d => <option key={d} value={d}>{d}</option>)}
                                     </select>
                                 </div>
-                            </div>
-                            <div style={styles.inputWrapper}>
-                                <label style={styles.label}>PROVINCE *</label>
-                                <select name="orgProvince" value={formData.orgProvince} style={styles.selectInput} onChange={handleChange} required>
-                                    <option value="">-- Select Province --</option>
-                                    {provinces.map(p => <option key={p} value={p}>{p}</option>)}
-                                </select>
+                                <div style={styles.rowItem}>
+                                    <label style={styles.label}>PROVINCE *</label>
+                                    <select name="orgProvince" value={formData.orgProvince} style={styles.selectInput} onChange={handleChange} required>
+                                        <option value="">-- Select Province --</option>
+                                        {provinces.map(p => <option key={p} value={p}>{p}</option>)}
+                                    </select>
+                                </div>
                             </div>
                             <div style={styles.inputWrapper}>
                                 <label style={styles.label}>REGISTERED ADDRESS (LINE 01) *</label>
@@ -404,35 +391,13 @@ const ProRegister = () => {
                         </div>
                     )}
 
-                    {/* Step 8: Document Uploads */}
+                    {/* Step 8: Document Uploads (Bypassed) */}
                     {step === 8 && (
                         <div>
                             <h3 style={styles.sectionHeader}>Step 8: Statutory Document Uploads</h3>
-                            <div style={styles.inputWrapper}>
-                                <label style={styles.label}>BUSINESS REGISTRATION CERTIFICATE (BRC) *</label>
-                                <input type="file" style={styles.input} onChange={(e) => handleFileBase64(e, 'brc')} accept=".pdf,.jpg,.jpeg,.png" required={!fileStrings.brc} />
-                                {fileStrings.brc && <p style={{ color: '#2ecc71', fontSize: '13px', marginTop: '5px' }}>✅ BRC Selected</p>}
-                            </div>
-                            <div style={styles.inputWrapper}>
-                                <label style={styles.label}>TAX REGISTRATION CERTIFICATE (OPTIONAL)</label>
-                                <input type="file" style={styles.input} onChange={(e) => handleFileBase64(e, 'taxCert')} accept=".pdf,.jpg,.jpeg,.png" />
-                                {fileStrings.taxCert && <p style={{ color: '#2ecc71', fontSize: '13px', marginTop: '5px' }}>✅ Tax Certificate Selected</p>}
-                            </div>
-                            <div style={styles.inputWrapper}>
-                                <label style={styles.label}>COMPANY PROFILE / RECOGNIZED BROCHURE (PDF) *</label>
-                                <input type="file" style={styles.input} onChange={(e) => handleFileBase64(e, 'compProfile')} accept=".pdf" required={!fileStrings.compProfile} />
-                                {fileStrings.compProfile && <p style={{ color: '#2ecc71', fontSize: '13px', marginTop: '5px' }}>✅ Profile Report Selected</p>}
-                            </div>
-                            <div style={styles.inputWrapper}>
-                                <label style={styles.label}>PROOF OF OPERATIONAL EXPERIENCE *</label>
-                                <input type="file" style={styles.input} onChange={(e) => handleFileBase64(e, 'expProof')} accept=".pdf,.jpg,.jpeg,.png" required={!fileStrings.expProof} />
-                                {fileStrings.expProof && <p style={{ color: '#2ecc71', fontSize: '13px', marginTop: '5px' }}>✅ Experience Matrix Selected</p>}
-                            </div>
-                            <div style={styles.inputWrapper}>
-                                <label style={styles.label}>CONSENT LETTER / POWER OF ATTORNEY (IF APPLICABLE)</label>
-                                <input type="file" style={styles.input} onChange={(e) => handleFileBase64(e, 'authLetter')} accept=".pdf,.jpg,.jpeg,.png" />
-                                {fileStrings.authLetter && <p style={{ color: '#2ecc71', fontSize: '13px', marginTop: '5px' }}>✅ Consent Authorization Uploaded</p>}
-                            </div>
+                            <p style={{ color: '#aaa', fontSize: '14px', lineHeight: '1.6' }}>
+                                ℹ️ Document upload is temporarily bypassed to ensure smooth submission and prevent server timeouts. You can submit your registration details directly.
+                            </p>
                         </div>
                     )}
 
@@ -480,9 +445,11 @@ const ProRegister = () => {
                             </button>
                         ) : (
                             <button 
-                           type="submit" disabled={isLoading} style={{ ...styles.registerBtn, background: '#f1c40f', color: '#000', cursor: isLoading ? 'not-allowed' : 'pointer', opacity: isLoading ? 0.6 : 1, marginTop: 0 }}
-                           >
-                             {isLoading ? "EXECUTING SYSTEM PROVISIONING..." : "EXECUTE SYSTEM PRO PROVISIONING"}
+                                type="submit" 
+                                disabled={isLoading} 
+                                style={{ ...styles.registerBtn, background: '#f1c40f', color: '#000', cursor: isLoading ? 'not-allowed' : 'pointer', opacity: isLoading ? 0.6 : 1, marginTop: 0 }}
+                            >
+                                {isLoading ? "EXECUTING SYSTEM PROVISIONING..." : "EXECUTE SYSTEM PRO PROVISIONING"}
                             </button>
                         )}
                     </div>
