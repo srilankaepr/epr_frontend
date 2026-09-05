@@ -75,12 +75,6 @@ const PiboRegister = () => {
         declarationDate: new Date().toLocaleDateString()
     });
 
-    // Step 9 Base64 File Buffers Store
-    const [fileStrings, setFileStrings] = useState({ 
-        brc: "", importLicense: "", productCatalog: "", brandDoc: "",vatDoc: ""
-    });
-
-
     const districts = ["Colombo", "Gampaha", "Kalutara", "Kandy", "Matale", "Nuwara Eliya", "Galle", "Matara", "Hambantota", "Jaffna", "Kilinochchi", "Mannar", "Vavuniya", "Mullaitivu", "Batticaloa", "Ampara", "Trincomalee", "Kurunegala", "Puttalam", "Anuradhapura", "Polonnaruwa", "Badulla", "Moneragala", "Ratnapura", "Kegalle"];
     const provinces = ["Western", "Central", "Southern", "Northern", "Eastern", "North Western", "North Central", "Uva", "Sabaragamuwa"];
 
@@ -125,17 +119,6 @@ const PiboRegister = () => {
         });
     };
 
-    const handleFileBase64 = (e, type) => {
-        const file = e.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                setFileStrings(prev => ({ ...prev, [type]: reader.result }));
-            };
-            reader.readAsDataURL(file);
-        }
-    };
-
     const handleSubmit = async (e) => {
         e.preventDefault();
 
@@ -151,12 +134,7 @@ const PiboRegister = () => {
 
         const finalPayload = {
             ...formData,
-            phone: formData.contactPersonMobile,
-            brcDocument: fileStrings.brc,
-            piboImportLicenseFile: fileStrings.importLicense,
-            piboProductCatalogFile: fileStrings.productCatalog,
-            piboBrandOwnershipFile: fileStrings.brandDoc,
-            vatDocument: fileStrings.vatDoc
+            phone: formData.contactPersonMobile
         };
 
         setIsLoading(true);
@@ -192,15 +170,14 @@ const PiboRegister = () => {
 
                 <form onSubmit={handleSubmit} style={styles.form}>
                     <div style={{ color: '#3498db', fontSize: '13px', fontWeight: 'bold', textAlign: 'center', marginBottom: '25px', background: 'rgba(52,152,219,0.1)', padding: '12px', borderRadius: '10px', border: '1px solid rgba(52,152,219,0.2)' }}>
-                        PROGRESS STEP: {step} OF 9 — {
+                        PROGRESS STEP: {step} OF 8 — {
                             step === 1 ? "ACCOUNT CREATION" :
                             step === 2 ? "ORGANIZATION PROFILE" :
                             step === 3 ? "PRODUCT CATEGORY SELECTION" :
                             step === 4 ? "ANNUAL QUANTITY DECLARATION" :
                             step === 5 ? "AUTOMATED WASTE LIABILITY MAPPING" :
                             step === 6 ? "MARKET ACTIVITY MODEL" :
-                            step === 7 ? "PRO ALLOCATIONS" :
-                            step === 8 ? "LEGAL COMPLIANCE DECLARATION" : "SUPPORTING ARCHIVE UPLOADS"
+                            step === 7 ? "PRO ALLOCATIONS" : "LEGAL COMPLIANCE DECLARATION"
                         }
                     </div>
 
@@ -306,23 +283,23 @@ const PiboRegister = () => {
                                         {pCat}
                                     </label>
                                 ))}
-            <label style={styles.checkboxLabelNode}>
-                <input type="checkbox" checked={formData.piboSelectedProductCategories.includes('Other')} onChange={(e) => handleCheckboxGroup(e, 'piboSelectedProductCategories', 'Other')} />
-                Other
-            </label>
+                                <label style={styles.checkboxLabelNode}>
+                                    <input type="checkbox" checked={formData.piboSelectedProductCategories.includes('Other')} onChange={(e) => handleCheckboxGroup(e, 'piboSelectedProductCategories', 'Other')} />
+                                    Other
+                                </label>
 
-            {formData.piboSelectedProductCategories.includes('Other') && (
-                <input 
-                    type="text" 
-                    placeholder="Type your category here..." 
-                    value={formData.otherProductCategory || ''}
-                    onChange={(e) => setFormData({...formData, otherProductCategory: e.target.value})}
-                    style={{ ...styles.input, marginTop: '10px', border: '1px solid #3498db' }}
-                />
-            )}
-        </div>
-    </div>
-)}
+                                {formData.piboSelectedProductCategories.includes('Other') && (
+                                    <input 
+                                        type="text" 
+                                        placeholder="Type your category here..." 
+                                        value={formData.otherProductCategory || ''}
+                                        onChange={(e) => setFormData({...formData, otherProductCategory: e.target.value})}
+                                        style={{ ...styles.input, marginTop: '10px', border: '1px solid #3498db' }}
+                                    />
+                                )}
+                            </div>
+                        </div>
+                    )}
 
                     {/* Step 4: Product Volume Declaration */}
                     {step === 4 && (
@@ -425,37 +402,36 @@ const PiboRegister = () => {
                         </div>
                     )}
 
-                  {/* Step 7: PRO Engagement */}
-{step === 7 && (
-    <div>
-        <h3 style={styles.sectionHeader}>Step 7: PRO Operational Engagement</h3>
-        <div style={styles.inputWrapper}>
-            <label style={styles.label}>DO YOU HAVE AN ASSIGNED PRO COMPLIANCE PARTNER? *</label>
-            <select name="piboHasAssignedPro" value={formData.piboHasAssignedPro} style={styles.selectInput} onChange={handleChange}>
-                <option value="No">No (Request System Automated Allocation)</option>
-                <option value="Yes">Yes (Map Existing Framework Reference)</option>
-            </select>
-        </div>
-        
-        {/* 🆕 "Yes" කළොත් ඩ්‍රොප්ඩවුන් එක වෙනුවට ටයිප් කරන්න පුළුවන් Text Input එකක් සෙට් කළා බෝසා */}
-        {formData.piboHasAssignedPro === 'Yes' && (
-            <div style={{ marginTop: '20px' }}>
-                <label style={styles.label}>ENTER AUTHORIZED PRO CONSORTIUM NAME *</label>
-                <input 
-                    name="piboSelectedProId" 
-                    value={formData.piboSelectedProId} 
-                    type="text" 
-                    placeholder="Type your PRO Consortium Name..." 
-                    style={styles.input} 
-                    onChange={handleChange} 
-                    required 
-                />
-            </div>
-        )}
-    </div>
-)}
+                    {/* Step 7: PRO Engagement */}
+                    {step === 7 && (
+                        <div>
+                            <h3 style={styles.sectionHeader}>Step 7: PRO Operational Engagement</h3>
+                            <div style={styles.inputWrapper}>
+                                <label style={styles.label}>DO YOU HAVE AN ASSIGNED PRO COMPLIANCE PARTNER? *</label>
+                                <select name="piboHasAssignedPro" value={formData.piboHasAssignedPro} style={styles.selectInput} onChange={handleChange}>
+                                    <option value="No">No (Request System Automated Allocation)</option>
+                                    <option value="Yes">Yes (Map Existing Framework Reference)</option>
+                                </select>
+                            </div>
 
-                    {/* Step 8: Compliance Declaration */}
+                            {formData.piboHasAssignedPro === 'Yes' && (
+                                <div style={{ marginTop: '20px' }}>
+                                    <label style={styles.label}>ENTER AUTHORIZED PRO CONSORTIUM NAME *</label>
+                                    <input 
+                                        name="piboSelectedProId" 
+                                        value={formData.piboSelectedProId} 
+                                        type="text" 
+                                        placeholder="Type your PRO Consortium Name..." 
+                                        style={styles.input} 
+                                        onChange={handleChange} 
+                                        required 
+                                    />
+                                </div>
+                            )}
+                        </div>
+                    )}
+
+                    {/* Step 8: Compliance Declaration (Final Submission Step) */}
                     {step === 8 && (
                         <div>
                             <h3 style={styles.sectionHeader}>Step 8: Statutory Regulatory Declarations</h3>
@@ -490,44 +466,6 @@ const PiboRegister = () => {
                         </div>
                     )}
 
-                    {/* Step 9: Supporting Documents */}
-                    {step === 9 && (
-                        <div>
-                            <h3 style={styles.sectionHeader}>Step 9: Supporting Compliance Document Archive Uploads</h3>
-                            <div style={styles.inputWrapper}>
-                                <label style={styles.label}>BUSINESS REGISTRATION CERTIFICATE (BRC) *</label>
-                                <input type="file" style={styles.input} onChange={(e) => handleFileBase64(e, 'brc')} accept=".pdf,.jpg,.jpeg,.png" required={!fileStrings.brc} />
-                                {fileStrings.brc && <p style={{ color: '#2ecc71', fontSize: '13px', marginTop: '5px' }}>✅ BRC Document Buffered</p>}
-                            </div>
-
-                            {/* 🆕 අලුතින් එකතු කළ VAT Document Input එක */}
-        <div style={styles.inputWrapper}>
-            <label style={styles.label}>VAT REGISTRATION CERTIFICATE *</label>
-            <input type="file" style={styles.input} onChange={(e) => handleFileBase64(e, 'vatDoc')} accept=".pdf,.jpg,.jpeg,.png" required={!fileStrings.vatDoc} />
-            {fileStrings.vatDoc && <p style={{ color: '#2ecc71', fontSize: '13px', marginTop: '5px' }}>✅ VAT Document Buffered</p>}
-        </div>
-                            
-                            {formData.marketIsImporter === 'Yes' && (
-                                <div style={styles.inputWrapper}>
-                                    <label style={styles.label}>IMPORT LICENSE FROM CONTROLLER GENERAL *</label>
-                                    <input type="file" style={styles.input} onChange={(e) => handleFileBase64(e, 'importLicense')} accept=".pdf,.jpg,.jpeg,.png" required={!fileStrings.importLicense} />
-                                    {fileStrings.importLicense && <p style={{ color: '#2ecc71', fontSize: '13px', marginTop: '5px' }}>✅ Operational Import License Buffered</p>}
-                                </div>
-                            )}
-
-                            <div style={styles.inputWrapper}>
-                                <label style={styles.label}>PRODUCT MODEL CATALOG REPORT (OPTIONAL)</label>
-                                <input type="file" style={styles.input} onChange={(e) => handleFileBase64(e, 'productCatalog')} accept=".pdf,.jpg,.jpeg,.png" />
-                                {fileStrings.productCatalog && <p style={{ color: '#2ecc71', fontSize: '13px', marginTop: '5px' }}>✅ Specification Catalog Bound</p>}
-                            </div>
-                            <div style={styles.inputWrapper}>
-                                <label style={styles.label}>BRAND OWNERSHIP TRADEMARK COPIES (OPTIONAL)</label>
-                                <input type="file" style={styles.input} onChange={(e) => handleFileBase64(e, 'brandDoc')} accept=".pdf,.jpg,.jpeg,.png" />
-                                {fileStrings.brandDoc && <p style={{ color: '#2ecc71', fontSize: '13px', marginTop: '5px' }}>✅ Intellectual Brand Ownership Document Bound</p>}
-                            </div>
-                        </div>
-                    )}
-
                     {/* Navigation Control Center System Panel */}
                     <div style={{ display: 'flex', gap: '15px', marginTop: '35px' }}>
                         {step > 1 && (
@@ -535,15 +473,14 @@ const PiboRegister = () => {
                                 PREVIOUS PHASE
                             </button>
                         )}
-                        {step < 9 ? (
+                        {step < 8 ? (
                             <button type="button" onClick={() => setStep(prev => prev + 1)} style={{ ...styles.registerBtn, marginTop: 0 }}>
                                 NEXT PHASE →
                             </button>
                         ) : (
-                           <button  type="submit"   disabled={isLoading}   style={{ ...styles.registerBtn, background: '#3498db', color: '#fff', cursor: isLoading ? 'not-allowed' : 'pointer', opacity: isLoading ? 0.6 : 1, marginTop: 0 }}
-                          >
-                                    {isLoading ? "TRANSMITTING TO LEDGER PROTOCOL..." : "DEPLOY COMPLIANCE LEDGER PIPELINE"}
-                           </button>
+                            <button type="submit" disabled={isLoading} style={{ ...styles.registerBtn, background: '#3498db', color: '#fff', cursor: isLoading ? 'not-allowed' : 'pointer', opacity: isLoading ? 0.6 : 1, marginTop: 0 }}>
+                                {isLoading ? "TRANSMITTING TO LEDGER PROTOCOL..." : "DEPLOY COMPLIANCE LEDGER PIPELINE"}
+                            </button>
                         )}
                     </div>
                 </form>
