@@ -36,57 +36,39 @@ const PiboRegister = () => {
         piboSelectedProductCategories: [],
         otherProductCategory: '',
 
-        // Product Volume Declaration (Step 4 Metrics)
-        volumePackagingPlastic: 0,
-        volumePackagingPaperCardboard: 0,
-        volumePackagingGlass: 0,
-        volumePackagingMetal: 0,
-        volumeEeeUnits: 0,
-        volumeLedCflLightingUnits: 0,
-        volumeSolarRenewableUnits: 0,
-        volumeBatteriesKg: 0,
-        volumeEvHybridBatteries: 0,
-        volumeEnergyStorageSystems: 0,
-        volumeChemicalsLiters: 0,
-        volumeLubricantsOilsLiters: 0,
-        volumeFuelIndustrialOilsLiters: 0,
-        volumeIndustrialMaterialsKg: 0,
-        volumeMachineryEquipmentUnits: 0,
-
-        // Auto-Generated Liability (Step 5 System Profile Array)
+        // Auto-Generated Liability (Step 4 System Profile Array - පැරණි Step 5)
         generatedWasteLiabilityCategories: [],
 
-        // Market Activity Profile (Step 6 Queries)
+        // Market Activity Profile (Step 5 Queries - පැරණි Step 6)
         marketIsImporter: 'No',
         marketIsLocalManufacturer: 'No',
         marketIsOwnBrandDistributor: 'No',
-        marketEstimatedAnnualTurnover: '',
+        // Estimated Annual Turnover ඉවත් කරන ලදී
 
-        // PRO Engagement (Step 7 mapping)
+        // PRO Engagement (Step 6 mapping - පැරණි Step 7)
         piboHasAssignedPro: 'No',
-        piboSelectedProId: '',
+        piboSelectedProId: '', // මෙහි දැන් PRO Registration Number එක ගබඩා වේ
 
-        // Compliance Declarations (Step 8 Checkbox Toggles)
-        piboDeclAllVolumesAccurate: false,
+        // Compliance Declarations (Step 7 Checkbox Toggles - පැරණි Step 8)
+        // පළමු checkbox එක (piboDeclAllVolumesAccurate) ඉවත් කරන ලදී
         piboDeclAcceptEprResponsibility: false,
         piboDeclAgreePeriodicAudits: false,
         piboDeclConnectWithPro: false,
-        digitalSignatureName: '',
         declarationDate: new Date().toLocaleDateString()
     });
 
     const districts = ["Colombo", "Gampaha", "Kalutara", "Kandy", "Matale", "Nuwara Eliya", "Galle", "Matara", "Hambantota", "Jaffna", "Kilinochchi", "Mannar", "Vavuniya", "Mullaitivu", "Batticaloa", "Ampara", "Trincomalee", "Kurunegala", "Puttalam", "Anuradhapura", "Polonnaruwa", "Badulla", "Moneragala", "Ratnapura", "Kegalle"];
     const provinces = ["Western", "Central", "Southern", "Northern", "Eastern", "North Western", "North Central", "Uva", "Sabaragamuwa"];
 
-    // 🧠 Automatic Waste Liability Mapping Engine (Step 5 Logic Matrix)
+    // 🧠 Automatic Waste Liability Mapping Engine (Step 4 Logic Matrix)
     useEffect(() => {
         const mapping = [];
         const cats = formData.piboSelectedProductCategories;
 
-        if (cats.includes("Plastic Packaging Products")) mapping.push("Plastic Waste");
+        if (cats.includes("Plastic Base Products")) mapping.push("Plastic Waste");
         if (cats.includes("Paper & Cardboard Packaging")) mapping.push("Paper & Cardboard Waste");
-        if (cats.includes("Glass Packaging / Products")) mapping.push("Glass Waste");
-        if (cats.includes("Metal Packaging Products")) mapping.push("Metal Sludge / Residues");
+        if (cats.includes("Glass Base Products")) mapping.push("Glass Waste");
+        if (cats.includes("Metal Base Products")) mapping.push("Metal Sludge / Residues");
         if (cats.includes("Electronic & Electrical Products (EEE)")) mapping.push("E-Waste");
         if (cats.includes("Lighting Products (LED / CFL)")) mapping.push("Mercury / LED Hazardous Waste");
         if (cats.includes("Batteries / Energy Storage Products")) mapping.push("Battery Waste (Hazardous)");
@@ -127,7 +109,7 @@ const PiboRegister = () => {
             return;
         }
 
-        if (!formData.piboDeclAllVolumesAccurate || !formData.piboDeclAcceptEprResponsibility || !formData.piboDeclAgreePeriodicAudits || !formData.piboDeclConnectWithPro) {
+        if (!formData.piboDeclAcceptEprResponsibility || !formData.piboDeclAgreePeriodicAudits || !formData.piboDeclConnectWithPro) {
             alert("❌ You must agree to all operational compliance declaration points before database deployment!");
             return;
         }
@@ -170,14 +152,13 @@ const PiboRegister = () => {
 
                 <form onSubmit={handleSubmit} style={styles.form}>
                     <div style={{ color: '#3498db', fontSize: '13px', fontWeight: 'bold', textAlign: 'center', marginBottom: '25px', background: 'rgba(52,152,219,0.1)', padding: '12px', borderRadius: '10px', border: '1px solid rgba(52,152,219,0.2)' }}>
-                        PROGRESS STEP: {step} OF 8 — {
+                        PROGRESS STEP: {step} OF 7 — {
                             step === 1 ? "ACCOUNT CREATION" :
                             step === 2 ? "ORGANIZATION PROFILE" :
                             step === 3 ? "PRODUCT CATEGORY SELECTION" :
-                            step === 4 ? "ANNUAL QUANTITY DECLARATION" :
-                            step === 5 ? "AUTOMATED WASTE LIABILITY MAPPING" :
-                            step === 6 ? "MARKET ACTIVITY MODEL" :
-                            step === 7 ? "PRO ALLOCATIONS" : "LEGAL COMPLIANCE DECLARATION"
+                            step === 4 ? "AUTOMATED WASTE LIABILITY MAPPING" :
+                            step === 5 ? "MARKET ACTIVITY MODEL" :
+                            step === 6 ? "PRO ALLOCATIONS" : "LEGAL COMPLIANCE DECLARATION"
                         }
                     </div>
 
@@ -208,7 +189,7 @@ const PiboRegister = () => {
                             <h3 style={styles.sectionHeader}>Step 2: Organization Profile</h3>
                             <label style={styles.label}>TYPE OF BUSINESS (SELECT APPLICABLE MATRIX) *</label>
                             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '18px' }}>
-                                {["Producer", "Importer", "Brand Owner", "Vendor"].map(bType => (
+                                {["Producer/Manufacturer", "Importer", "Brand Owner", "Seller/Agent"].map(bType => (
                                     <label key={bType} style={styles.checkboxLabelNode}>
                                         <input type="checkbox" checked={formData.piboBusinessType.includes(bType)} onChange={(e) => handleCheckboxGroup(e, 'piboBusinessType', bType)} />
                                         {bType}
@@ -272,8 +253,8 @@ const PiboRegister = () => {
                             <h3 style={styles.sectionHeader}>Step 3: Product Category Selection (Multi-Select Array)</h3>
                             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', maxHeight: '350px', overflowY: 'auto', background: 'rgba(0,0,0,0.2)', padding: '15px', borderRadius: '15px' }}>
                                 {[
-                                    "Plastic Packaging Products", "Paper & Cardboard Packaging", "Glass Packaging / Products",
-                                    "Metal Packaging Products", "Electronic & Electrical Products (EEE)", "Lighting Products (LED / CFL)",
+                                    "Plastic Base Products", "Paper & Cardboard Packaging", "Glass Base Products",
+                                    "Metal Base Products", "Electronic & Electrical Products (EEE)", "Lighting Products (LED / CFL)",
                                     "Batteries / Energy Storage Products", "Solar / Renewable Energy Equipment", "Automotive / EV Components",
                                     "Chemical Products", "Lubricants / Oils / Fuel Products", "Industrial Raw Materials / Machinery",
                                     "Rubber Products"
@@ -301,56 +282,10 @@ const PiboRegister = () => {
                         </div>
                     )}
 
-                    {/* Step 4: Product Volume Declaration */}
+                    {/* Step 4: Automatic Waste Liability Mapping (ਪැරණි Step 5) */}
                     {step === 4 && (
                         <div>
-                            <h3 style={styles.sectionHeader}>Step 4: Product Volume Declaration (Estimated Annual Metric)</h3>
-                            <div style={{ maxHeight: '400px', overflowY: 'auto', paddingRight: '10px' }}>
-                                
-                                <h4 style={styles.streamTitle}>A. Packaging Materials (kg / year)</h4>
-                                <div style={styles.row}>
-                                    <div style={styles.rowItem}><label style={styles.label}>Plastic Packaging</label><input name="volumePackagingPlastic" value={formData.volumePackagingPlastic} type="number" style={styles.input} onChange={handleChange} required /></div>
-                                    <div style={styles.rowItem}><label style={styles.label}>Paper & Cardboard</label><input name="volumePackagingPaperCardboard" value={formData.volumePackagingPaperCardboard} type="number" style={styles.input} onChange={handleChange} required /></div>
-                                </div>
-                                <div style={styles.row}>
-                                    <div style={styles.rowItem}><label style={styles.label}>Glass Packaging</label><input name="volumePackagingGlass" value={formData.volumePackagingGlass} type="number" style={styles.input} onChange={handleChange} required /></div>
-                                    <div style={styles.rowItem}><label style={styles.label}>Metal Packaging</label><input name="volumePackagingMetal" value={formData.volumePackagingMetal} type="number" style={styles.input} onChange={handleChange} required /></div>
-                                </div>
-
-                                <h4 style={styles.streamTitle}>B. Electronics & Electrical Products (units / year)</h4>
-                                <div style={styles.row}>
-                                    <div style={styles.rowItem}><label style={styles.label}>EEE Units</label><input name="volumeEeeUnits" value={formData.volumeEeeUnits} type="number" style={styles.input} onChange={handleChange} required /></div>
-                                    <div style={styles.rowItem}><label style={styles.label}>LED / CFL Units</label><input name="volumeLedCflLightingUnits" value={formData.volumeLedCflLightingUnits} type="number" style={styles.input} onChange={handleChange} required /></div>
-                                </div>
-                                <div style={styles.inputWrapper}><label style={styles.label}>Solar / Renewable Power Assets</label><input name="volumeSolarRenewableUnits" value={formData.volumeSolarRenewableUnits} type="number" style={styles.input} onChange={handleChange} required /></div>
-
-                                <h4 style={styles.streamTitle}>C. Energy & Battery Products (kg)</h4>
-                                <div style={styles.row}>
-                                    <div style={styles.rowItem}><label style={styles.label}>Batteries </label><input name="volumeBatteriesKg" value={formData.volumeBatteriesKg} type="number" style={styles.input} onChange={handleChange} required /></div>
-                                    <div style={styles.rowItem}><label style={styles.label}>EV / Hybrid Batteries</label><input name="volumeEvHybridBatteries" value={formData.volumeEvHybridBatteries} type="number" style={styles.input} onChange={handleChange} required /></div>
-                                </div>
-                                <div style={styles.inputWrapper}><label style={styles.label}>Energy Storage Systems (ESS)</label><input name="volumeEnergyStorageSystems" value={formData.volumeEnergyStorageSystems} type="number" style={styles.input} onChange={handleChange} required /></div>
-
-                                <h4 style={styles.streamTitle}>D. Chemical / Oil-Based Products (liters or kg)</h4>
-                                <div style={styles.row}>
-                                    <div style={styles.rowItem}><label style={styles.label}>Chemicals</label><input name="volumeChemicalsLiters" value={formData.volumeChemicalsLiters} type="number" style={styles.input} onChange={handleChange} required /></div>
-                                    <div style={styles.rowItem}><label style={styles.label}>Lubricants / Oils</label><input name="volumeLubricantsOilsLiters" value={formData.volumeLubricantsOilsLiters} type="number" style={styles.input} onChange={handleChange} required /></div>
-                                </div>
-                                <div style={styles.inputWrapper}><label style={styles.label}>Fuel / Industrial Liquids</label><input name="volumeFuelIndustrialOilsLiters" value={formData.volumeFuelIndustrialOilsLiters} type="number" style={styles.input} onChange={handleChange} required /></div>
-
-                                <h4 style={styles.streamTitle}>E. Industrial Equipment Assets</h4>
-                                <div style={styles.row}>
-                                    <div style={styles.rowItem}><label style={styles.label}>Industrial Raw Materials (kg)</label><input name="volumeIndustrialMaterialsKg" value={formData.volumeIndustrialMaterialsKg} type="number" style={styles.input} onChange={handleChange} required /></div>
-                                    <div style={styles.rowItem}><label style={styles.label}>Heavy Machinery (units)</label><input name="volumeMachineryEquipmentUnits" value={formData.volumeMachineryEquipmentUnits} type="number" style={styles.input} onChange={handleChange} required /></div>
-                                </div>
-                            </div>
-                        </div>
-                    )}
-
-                    {/* Step 5: Automatic Waste Liability Mapping */}
-                    {step === 5 && (
-                        <div>
-                            <h3 style={styles.sectionHeader}>Step 5: Automatic Waste Liability Mapping (System Generated)</h3>
+                            <h3 style={styles.sectionHeader}>Step 4: Automatic Waste Liability Mapping (System Generated)</h3>
                             <p style={{ fontSize: '13px', color: '#aaa', marginBottom: '20px' }}>Based on your dynamic product array mapping profile, your organizational EPR tracking liabilities are allocated below:</p>
                             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', background: 'rgba(46,204,113,0.05)', border: '1px dashed rgba(46,204,113,0.3)', padding: '20px', borderRadius: '15px' }}>
                                 {formData.generatedWasteLiabilityCategories.length > 0 ? (
@@ -368,10 +303,10 @@ const PiboRegister = () => {
                         </div>
                     )}
 
-                    {/* Step 6: Market Activity Profile */}
-                    {step === 6 && (
+                    {/* Step 5: Market Activity Profile (ਪැරණි Step 6 - Estimated Annual Turnover ඉවත් කරන ලදී) */}
+                    {step === 5 && (
                         <div>
-                            <h3 style={styles.sectionHeader}>Step 6: Market Activity Profile</h3>
+                            <h3 style={styles.sectionHeader}>Step 5: Market Activity Profile</h3>
                             <div style={styles.row}>
                                 <div style={styles.rowItem}>
                                     <label style={styles.label}>DO YOU IMPORT PRODUCTS? *</label>
@@ -395,17 +330,13 @@ const PiboRegister = () => {
                                     <option value="Yes">Yes</option>
                                 </select>
                             </div>
-                            <div style={styles.inputWrapper}>
-                                <label style={styles.label}>ESTIMATED ANNUAL TURNOVER (LKR - OPTIONAL)</label>
-                                <input name="marketEstimatedAnnualTurnover" value={formData.marketEstimatedAnnualTurnover} type="text" placeholder="e.g. 50 Million" style={styles.input} onChange={handleChange} />
-                            </div>
                         </div>
                     )}
 
-                    {/* Step 7: PRO Engagement */}
-                    {step === 7 && (
+                    {/* Step 6: PRO Engagement (ਪැරණි Step 7 - PRO Registration Number ඇතුළත් කිරීමට වෙනස් කර ඇත) */}
+                    {step === 6 && (
                         <div>
-                            <h3 style={styles.sectionHeader}>Step 7: PRO Operational Engagement</h3>
+                            <h3 style={styles.sectionHeader}>Step 6: PRO Operational Engagement</h3>
                             <div style={styles.inputWrapper}>
                                 <label style={styles.label}>DO YOU HAVE AN ASSIGNED PRO COMPLIANCE PARTNER? *</label>
                                 <select name="piboHasAssignedPro" value={formData.piboHasAssignedPro} style={styles.selectInput} onChange={handleChange}>
@@ -416,12 +347,12 @@ const PiboRegister = () => {
 
                             {formData.piboHasAssignedPro === 'Yes' && (
                                 <div style={{ marginTop: '20px' }}>
-                                    <label style={styles.label}>ENTER AUTHORIZED PRO CONSORTIUM NAME *</label>
+                                    <label style={styles.label}>ENTER PRO REGISTRATION NUMBER *</label>
                                     <input 
                                         name="piboSelectedProId" 
                                         value={formData.piboSelectedProId} 
                                         type="text" 
-                                        placeholder="Type your PRO Consortium Name..." 
+                                        placeholder="Type PRO Registration Number..." 
                                         style={styles.input} 
                                         onChange={handleChange} 
                                         required 
@@ -431,15 +362,11 @@ const PiboRegister = () => {
                         </div>
                     )}
 
-                    {/* Step 8: Compliance Declaration (Final Submission Step) */}
-                    {step === 8 && (
+                    {/* Step 7: Compliance Declaration (ਪැරණි Step 8 - Authorized Representative Person Name සහ පළමු Checkbox එක ඉවත් කර ඇත) */}
+                    {step === 7 && (
                         <div>
-                            <h3 style={styles.sectionHeader}>Step 8: Statutory Regulatory Declarations</h3>
+                            <h3 style={styles.sectionHeader}>Step 7: Statutory Regulatory Declarations</h3>
                             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '25px' }}>
-                                <label style={styles.declarationCheckNode}>
-                                    <input type="checkbox" name="piboDeclAllVolumesAccurate" checked={formData.piboDeclAllVolumesAccurate} onChange={handleChange} required />
-                                    I confirm that all declared product volumes are estimated accurately.
-                                </label>
                                 <label style={styles.declarationCheckNode}>
                                     <input type="checkbox" name="piboDeclAcceptEprResponsibility" checked={formData.piboDeclAcceptEprResponsibility} onChange={handleChange} required />
                                     I accept responsibility under Sri Lanka EPR regulations framework.
@@ -455,10 +382,6 @@ const PiboRegister = () => {
                             </div>
                             <div style={styles.row}>
                                 <div style={styles.rowItem}>
-                                    <label style={styles.label}>AUTHORIZED REPRESENTATIVE PERSON NAME *</label>
-                                    <input name="digitalSignatureName" value={formData.digitalSignatureName} type="text" placeholder="Legal Full Name" style={styles.input} onChange={handleChange} required />
-                                </div>
-                                <div style={styles.rowItem}>
                                     <label style={styles.label}>SYSTEM LOGICAL STAMP DATE</label>
                                     <input type="text" value={formData.declarationDate} style={{ ...styles.input, opacity: 0.5, cursor: 'not-allowed' }} readOnly />
                                 </div>
@@ -473,13 +396,13 @@ const PiboRegister = () => {
                                 PREVIOUS PHASE
                             </button>
                         )}
-                        {step < 8 ? (
+                        {step < 7 ? (
                             <button type="button" onClick={() => setStep(prev => prev + 1)} style={{ ...styles.registerBtn, marginTop: 0 }}>
                                 NEXT PHASE →
                             </button>
                         ) : (
                             <button type="submit" disabled={isLoading} style={{ ...styles.registerBtn, background: '#3498db', color: '#fff', cursor: isLoading ? 'not-allowed' : 'pointer', opacity: isLoading ? 0.6 : 1, marginTop: 0 }}>
-                                {isLoading ? "TRANSMITTING TO LEDGER PROTOCOL..." : "DEPLOY COMPLIANCE LEDGER PIPELINE"}
+                                {isLoading ? "TRANSMITTING TO LEDGER PROTOCOL..." : "REGISTER"}
                             </button>
                         )}
                     </div>
