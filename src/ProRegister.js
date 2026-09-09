@@ -9,21 +9,21 @@ const ProRegister = () => {
     const [step, setStep] = useState(1);
     const [isLoading, setIsLoading] = useState(false);
 
-    // --- 100%ක්ම Required & Multi-select වලට සකස් කළ State එක ---
+    // --- State එක සකස් කිරීම ---
     const [formData, setFormData] = useState({
-        regType: 'Company', // PRO සඳහා Default Company වේ
-        orgRole: 'PRO', // Base identifier mapped to customer collection
+        regType: 'Company', 
+        orgRole: 'PRO', 
         officialEmail: '',
         password: '',
         confirmPassword: '',
         phone: '',
         whatsapp: '',
 
-        // Organization Details (Step 2)
+        // Organization Details (Step 2 - Default Country: Sri Lanka)
         companyName: '',
         regNumber: '',
         dob: '', 
-        country: '',
+        country: 'Sri Lanka',
         address1: '', 
         address2: '', 
         operationalAddress: '',
@@ -35,36 +35,32 @@ const ProRegister = () => {
         contactDesignation: '',
         contactPersonMobile: '',
 
-        // Organization Types (Step 4 Array)
-        organizationTypes: [],
-        organizationTypesOther: '',
-
-        // PRO Service Capabilities (Step 5 Array)
+        // PRO Services Specific (Step 4 Array)
         serviceCapabilities: [],
 
-        // Operational Coverage (Step 6)
+        // Operational Coverage (Step 5)
         operationalCoverageAreas: [],
         managedPibosCount: '',
         networkCollectorsCount: '',
 
-        // Waste Categories Managed (Step 7 Array)
+        // Waste Categories Managed (Step 6 Array)
         managedWasteCategories: [],
         managedWasteCategoriesOther: '',
 
-        // Declarations & Consent (Step 9 Toggles)
-        digitalSignatureName: '',
+        // Document Uploads & Portfolio (Step 7)
+        portfolioText: '',
+
+        // Declarations & Consent (Step 8 Toggles)
         declarationDate: new Date().toLocaleDateString(),
         isDeclarationAgreed: false, 
-        proDeclarationRulesAgreed: false,
-        proDeclarationVerificationAgreed: false
+        proDeclarationRulesAgreed: false
     });
 
-    // File Strings Store (Base64 for Step 8)
+    // File Strings Store (Base64 for Step 7 Document Uploads)
     const [fileStrings, setFileStrings] = useState({ 
-        brc: "", taxCert: "", compProfile: "", expProof: "", authLetter: "" 
+        portfolioFile: "", authLetter: "" 
     });
 
-    // Static Dropdown Data Lists
     const districts = ["Colombo", "Gampaha", "Kalutara", "Kandy", "Matale", "Nuwara Eliya", "Galle", "Matara", "Hambantota", "Jaffna", "Kilinochchi", "Mannar", "Vavuniya",
          "Mullaitivu", "Batticaloa", "Ampara", "Trincomalee", "Kurunegala", "Puttalam", "Anuradhapura", "Polonnaruwa", "Badulla", "Moneragala", "Ratnapura", "Kegalle"];
     const provinces = ["Western", "Central", "Southern", "Northern", "Eastern", "North Western", "North Central", "Uva", "Sabaragamuwa"];
@@ -89,7 +85,6 @@ const ProRegister = () => {
         }));
     };
 
-    // Multi-select Checkbox Groups Handling Function
     const handleCheckboxGroup = (e, fieldName, value) => {
         const isChecked = e.target.checked;
         setFormData(prev => {
@@ -130,18 +125,14 @@ const ProRegister = () => {
             return;
         }
 
-        if (!formData.isDeclarationAgreed || !formData.proDeclarationRulesAgreed || !formData.proDeclarationVerificationAgreed) {
+        if (!formData.isDeclarationAgreed || !formData.proDeclarationRulesAgreed) {
             alert("❌ You must agree to all declaration and legal terms before submitting!");
             return;
         }
 
-        // Payload එක සකස් කිරීම
         const finalPayload = {
             ...formData,
-            brcDocument: fileStrings.brc, 
-            taxCertificateDocument: fileStrings.taxCert,
-            companyProfileDocument: fileStrings.compProfile,
-            operationalExperienceProofDocument: fileStrings.expProof,
+            portfolioDocument: fileStrings.portfolioFile,
             authorizationLetterDocument: fileStrings.authLetter
         };
         
@@ -177,15 +168,14 @@ const ProRegister = () => {
 
                 <form onSubmit={handleSubmit} style={styles.form}>
                     <div style={{ color: '#f1c40f', fontSize: '13px', fontWeight: 'bold', textAlign: 'center', marginBottom: '25px', background: 'rgba(241,196,15,0.1)', padding: '12px', borderRadius: '10px', border: '1px solid rgba(241,196,15,0.2)' }}>
-                        PROGRESS PHASE: {step} OF 9 — {
+                        PROGRESS PHASE: {step} OF 8 — {
                             step === 1 ? "ACCOUNT CREATION" :
                             step === 2 ? "ORGANIZATION INFORMATION" :
                             step === 3 ? "CONTACT PERSON DETAILS" :
-                            step === 4 ? "ORGANIZATION TYPE" :
-                            step === 5 ? "PRO SERVICE CAPABILITY" :
-                            step === 6 ? "OPERATIONAL COVERAGE" :
-                            step === 7 ? "WASTE CATEGORIES MANAGED" :
-                            step === 8 ? "DOCUMENT UPLOADS" : "DECLARATION & CONSENT"
+                            step === 4 ? "PRO SERVICES SPECIFIC" :
+                            step === 5 ? "OPERATIONAL COVERAGE" :
+                            step === 6 ? "WASTE CATEGORIES MANAGED" :
+                            step === 7 ? "PORTFOLIO & DOCUMENTS" : "DECLARATION & CONSENT"
                         }
                     </div>
 
@@ -232,22 +222,24 @@ const ProRegister = () => {
                                     <input name="dob" value={formData.dob} type="date" style={styles.input} onChange={handleChange} required />
                                 </div>
                             </div>
-                          <div style={styles.rowItem}>
-    <label style={styles.label}>COUNTRY OF REGISTRATION *</label>
-    <input 
-        list="country_list" 
-        name="country" 
-        value={formData.country} 
-        placeholder="Type or Search Country..." 
-        style={styles.input} 
-        onChange={handleChange} 
-        required 
-    />
-    <datalist id="country_list">
-    {countries && countries.map((c, idx) => (
-        <option key={idx} value={c} />
-    ))}
-</datalist>
+                            <div style={styles.row}>
+                                <div style={styles.rowItem}>
+                                    <label style={styles.label}>COUNTRY OF REGISTRATION *</label>
+                                    <input 
+                                        list="country_list" 
+                                        name="country" 
+                                        value={formData.country} 
+                                        placeholder="Type or Search Country..." 
+                                        style={styles.input} 
+                                        onChange={handleChange} 
+                                        required 
+                                    />
+                                    <datalist id="country_list">
+                                        {countries && countries.map((c, idx) => (
+                                            <option key={idx} value={c} />
+                                        ))}
+                                    </datalist>
+                                </div>
                                 <div style={styles.rowItem}>
                                     <label style={styles.label}>DISTRICT *</label>
                                     <select name="orgDistrict" value={formData.orgDistrict} style={styles.selectInput} onChange={handleChange} required>
@@ -305,43 +297,24 @@ const ProRegister = () => {
                         </div>
                     )}
 
-                    {/* Step 4: Organization Type */}
+                    {/* Step 4: PRO Services Specific */}
                     {step === 4 && (
                         <div>
-                            <h3 style={styles.sectionHeader}>Step 4: Organization Type</h3>
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                                {[
-                                    "Waste Management Company",
-                                    "Environmental Service Provider",
-                                    "Industry Association",
-                                    "Sustainability / Compliance Firm",
-                                    "NGO / Cooperative / Consortium"
-                                ].map((type) => (
-                                    <label key={type} style={styles.checkboxLabelNode}>
-                                        <input type="checkbox" checked={formData.organizationTypes.includes(type)} onChange={(e) => handleCheckboxGroup(e, 'organizationTypes', type)} style={{ width: '18px', height: '18px' }} />
-                                        {type}
-                                    </label>
-                                ))}
-                            </div>
-                            <div style={{ marginTop: '20px' }}>
-                                <label style={styles.label}>OTHER SPECIFICATION (IF NOT IN LIST)</label>
-                                <input name="organizationTypesOther" value={formData.organizationTypesOther} type="text" placeholder="Please specify your organization structural model..." style={styles.input} onChange={handleChange} />
-                            </div>
-                        </div>
-                    )}
-
-                    {/* Step 5: PRO Service Capability */}
-                    {step === 5 && (
-                        <div>
-                            <h3 style={styles.sectionHeader}>Step 5: PRO Service Capability Specs</h3>
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                            <h3 style={styles.sectionHeader}>Step 4: PRO Services Specific</h3>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', maxHeight: '350px', overflowY: 'auto' }}>
                                 {[
                                     "EPR compliance management for PIBOs",
                                     "Waste collection system coordination",
                                     "Recycler network management",
                                     "Data reporting & digital submissions",
                                     "Environmental compliance monitoring",
-                                    "National or regional operations capability"
+                                    "National or regional operations capability",
+                                    "Legal advice",
+                                    "Audit",
+                                    "Awareness",
+                                    "EPR education",
+                                    "Recycling Technologies",
+                                    "Environment Social Governance"
                                 ].map((cap) => (
                                     <label key={cap} style={styles.checkboxLabelNode}>
                                         <input type="checkbox" checked={formData.serviceCapabilities.includes(cap)} onChange={(e) => handleCheckboxGroup(e, 'serviceCapabilities', cap)} style={{ width: '18px', height: '18px' }} />
@@ -352,13 +325,13 @@ const ProRegister = () => {
                         </div>
                     )}
 
-                    {/* Step 6: Operational Coverage */}
-                    {step === 6 && (
+                    {/* Step 5: Operational Coverage */}
+                    {step === 5 && (
                         <div>
-                            <h3 style={styles.sectionHeader}>Step 6: Operational Coverage</h3>
+                            <h3 style={styles.sectionHeader}>Step 5: Operational Coverage</h3>
                             <label style={styles.label}>COVERAGE AREA *</label>
                             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '25px' }}>
-                                {["Local", "District Level", "Provincial Level", "National Level"].map(area => (
+                                {["National level", "Provincial level", "District level", "Local"].map(area => (
                                     <label key={area} style={styles.checkboxLabelNode}>
                                         <input type="checkbox" checked={formData.operationalCoverageAreas.includes(area)} onChange={(e) => handleCheckboxGroup(e, 'operationalCoverageAreas', area)} />
                                         {area}
@@ -378,10 +351,10 @@ const ProRegister = () => {
                         </div>
                     )}
 
-                    {/* Step 7: Waste Categories Managed */}
-                    {step === 7 && (
+                    {/* Step 6: Waste Categories Managed */}
+                    {step === 6 && (
                         <div>
-                            <h3 style={styles.sectionHeader}>Step 7: Waste Categories Managed</h3>
+                            <h3 style={styles.sectionHeader}>Step 6: Waste Categories Managed</h3>
                             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', background: 'rgba(0,0,0,0.2)', padding: '15px', borderRadius: '15px', maxHeight: '300px', overflowY: 'auto' }}>
                                 {[
                                     "Plastic", "Paper & Cardboard", "E-waste", "CFL Bulbs & Mercury contaminated",
@@ -403,65 +376,49 @@ const ProRegister = () => {
                         </div>
                     )}
 
-                    {/* Step 8: Document Uploads */}
-                    {step === 8 && (
+                    {/* Step 7: Portfolio & Documents */}
+                    {step === 7 && (
                         <div>
-                            <h3 style={styles.sectionHeader}>Step 8: Statutory Document Uploads</h3>
+                            <h3 style={styles.sectionHeader}>Step 7: Portfolio & Documents</h3>
                             <div style={styles.inputWrapper}>
-                                <label style={styles.label}>BUSINESS REGISTRATION CERTIFICATE (BRC) *</label>
-                                <input type="file" style={styles.input} onChange={(e) => handleFileBase64(e, 'brc')} accept=".pdf,.jpg,.jpeg,.png" required={!fileStrings.brc} />
-                                {fileStrings.brc && <p style={{ color: '#2ecc71', fontSize: '13px', marginTop: '5px' }}>✅ BRC Selected</p>}
+                                <label style={styles.label}>PORTFOLIO DESCRIPTION / TEXT *</label>
+                                <textarea name="portfolioText" value={formData.portfolioText} placeholder="Describe your corporate portfolio, past projects, and capabilities..." style={{ ...styles.input, height: '120px', resize: 'vertical' }} onChange={handleChange} required />
                             </div>
                             <div style={styles.inputWrapper}>
-                                <label style={styles.label}>TAX REGISTRATION CERTIFICATE (OPTIONAL)</label>
-                                <input type="file" style={styles.input} onChange={(e) => handleFileBase64(e, 'taxCert')} accept=".pdf,.jpg,.jpeg,.png" />
-                                {fileStrings.taxCert && <p style={{ color: '#2ecc71', fontSize: '13px', marginTop: '5px' }}>✅ Tax Certificate Selected</p>}
-                            </div>
-                            <div style={styles.inputWrapper}>
-                                <label style={styles.label}>COMPANY PROFILE / RECOGNIZED BROCHURE (PDF) *</label>
-                                <input type="file" style={styles.input} onChange={(e) => handleFileBase64(e, 'compProfile')} accept=".pdf" required={!fileStrings.compProfile} />
-                                {fileStrings.compProfile && <p style={{ color: '#2ecc71', fontSize: '13px', marginTop: '5px' }}>✅ Profile Report Selected</p>}
-                            </div>
-                            <div style={styles.inputWrapper}>
-                                <label style={styles.label}>PROOF OF OPERATIONAL EXPERIENCE *</label>
-                                <input type="file" style={styles.input} onChange={(e) => handleFileBase64(e, 'expProof')} accept=".pdf,.jpg,.jpeg,.png" required={!fileStrings.expProof} />
-                                {fileStrings.expProof && <p style={{ color: '#2ecc71', fontSize: '13px', marginTop: '5px' }}>✅ Experience Matrix Selected</p>}
+                                <label style={styles.label}>PORTFOLIO DOCUMENT UPLOAD (PDF/DOC)</label>
+                                <input type="file" style={styles.input} onChange={(e) => handleFileBase64(e, 'portfolioFile')} accept=".pdf,.doc,.docx" />
+                                {fileStrings.portfolioFile && <p style={{ color: '#2ecc71', fontSize: '13px', marginTop: '5px' }}>✅ Portfolio Document Selected</p>}
                             </div>
                             <div style={styles.inputWrapper}>
                                 <label style={styles.label}>CONSENT LETTER / POWER OF ATTORNEY (IF APPLICABLE)</label>
                                 <input type="file" style={styles.input} onChange={(e) => handleFileBase64(e, 'authLetter')} accept=".pdf,.jpg,.jpeg,.png" />
-                                {fileStrings.authLetter && <p style={{ color: '#2ecc71', fontSize: '13px', marginTop: '5px' }}>✅ Consent Authorization Uploaded</p>}
+                                {fileStrings.authLetter && <p style={{ color: '#2ecc71', fontSize: '13px', marginTop: '5px' }}>✅ Consent Letter Uploaded</p>}
                             </div>
                         </div>
                     )}
 
-                    {/* Step 9: Declaration & Consent */}
-                    {step === 9 && (
+                    {/* Step 8: Declaration & Consent */}
+                    {step === 8 && (
                         <div>
-                            <h3 style={styles.sectionHeader}>Step 9: Statutory Digital Declaration</h3>
+                            <h3 style={styles.sectionHeader}>Step 8: Declaration & Consent</h3>
                             <div style={{ display: 'flex', flexDirection: 'column', gap: '15px', marginBottom: '25px' }}>
                                 <label style={styles.declarationCheckNode}>
                                     <input type="checkbox" name="isDeclarationAgreed" checked={formData.isDeclarationAgreed} onChange={handleChange} required />
                                     I confirm that all information provided is accurate
                                 </label>
-                                <label style={styles.declarationCheckNode}>
-                                    <input type="checkbox" name="proDeclarationRulesAgreed" checked={formData.proDeclarationRulesAgreed} onChange={handleChange} required />
-                                    I agree to comply with EPR Digital Platform rules and national regulations
-                                </label>
-                                <label style={styles.declarationCheckNode}>
-                                    <input type="checkbox" name="proDeclarationVerificationAgreed" checked={formData.proDeclarationVerificationAgreed} onChange={handleChange} required />
-                                    I understand my registration is subject to verification and approval
-                                </label>
+                                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'rgba(255,255,255,0.01)', padding: '10px', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.03)' }}>
+                                    <label style={{ ...styles.declarationCheckNode, border: 'none', background: 'transparent', padding: 0, margin: 0 }}>
+                                        <input type="checkbox" name="proDeclarationRulesAgreed" checked={formData.proDeclarationRulesAgreed} onChange={handleChange} required />
+                                        I agree to comply with EPR digital platform rules and national regulations
+                                    </label>
+                                    <button type="button" onClick={() => alert("Platform rules will be displayed here.")} style={{ padding: '6px 12px', background: '#3498db', color: '#fff', border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '12px', fontWeight: 'bold' }}>
+                                        View Rules
+                                    </button>
+                                </div>
                             </div>
-                            <div style={styles.row}>
-                                <div style={styles.rowItem}>
-                                    <label style={styles.label}>DIGITAL SIGNATURE / Name *</label>
-                                    <input name="digitalSignatureName" type="text" placeholder="Type Representative Official Full Name" style={styles.input} onChange={handleChange} required />
-                                </div>
-                                <div style={styles.rowItem}>
-                                    <label style={styles.label}>Date (auto-filled)</label>
-                                    <input type="text" value={formData.declarationDate} style={{ ...styles.input, opacity: 0.5, cursor: 'not-allowed' }} readOnly />
-                                </div>
+                            <div style={styles.inputWrapper}>
+                                <label style={styles.label}>DATE (AUTO-FILLED)</label>
+                                <input type="text" value={formData.declarationDate} style={{ ...styles.input, opacity: 0.5, cursor: 'not-allowed' }} readOnly />
                             </div>
                         </div>
                     )}
@@ -473,15 +430,15 @@ const ProRegister = () => {
                                 PREVIOUS PHASE
                             </button>
                         )}
-                        {step < 9 ? (
+                        {step < 8 ? (
                             <button type="button" onClick={() => setStep(prev => prev + 1)} style={{ ...styles.registerBtn, marginTop: 0 }}>
                                 NEXT PHASE →
                             </button>
                         ) : (
                             <button 
-                           type="submit" disabled={isLoading} style={{ ...styles.registerBtn, background: '#f1c40f', color: '#000', cursor: isLoading ? 'not-allowed' : 'pointer', opacity: isLoading ? 0.6 : 1, marginTop: 0 }}
-                           >
-                             {isLoading ? "EXECUTING SYSTEM PROVISIONING..." : "EXECUTE SYSTEM PRO PROVISIONING"}
+                                type="submit" disabled={isLoading} style={{ ...styles.registerBtn, background: '#f1c40f', color: '#000', cursor: isLoading ? 'not-allowed' : 'pointer', opacity: isLoading ? 0.6 : 1, marginTop: 0 }}
+                            >
+                                {isLoading ? "REGISTERING..." : "REGISTER"}
                             </button>
                         )}
                     </div>
@@ -496,7 +453,7 @@ const ProRegister = () => {
     );
 };
 
-// Premium Stylesheet Definition for PRO Matrix
+// Stylesheet Definition
 const styles = {
     container: { minHeight: '100vh', width: '100vw', display: 'flex', justifyContent: 'center', alignItems: 'center', position: 'relative', overflowY: 'auto', backgroundColor: '#000', padding: '60px 20px', fontFamily: "'Inter', sans-serif" },
     videoBg: { position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover', zIndex: 1, filter: 'brightness(0.35)' },
