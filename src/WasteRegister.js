@@ -37,7 +37,6 @@ const WasteRegister = () => {
         contactDesignation: '',
         contactPersonMobile: '',
 
-        // අලුතින් එකතු කළ Operator ෆීල්ඩ්ස් (Co-partner වෙනුවට)
         operatorIdNum: '',
         operatorPradeshiyaSabha: '',
 
@@ -70,7 +69,6 @@ const WasteRegister = () => {
         linkedProName: '',
         receivesWasteFromPibos: 'No',
 
-        digitalSignatureName: '',
         declarationDate: new Date().toLocaleDateString(),
         wasteDeclarationConfirmed: false,
         wasteDeclarationPlatformAgreed: false,
@@ -79,7 +77,7 @@ const WasteRegister = () => {
     });
 
     const [fileStrings, setFileStrings] = useState({ 
-        brc: "", vat: "", billing: "", nic: "",
+        nic: "",
         envLicense: "", wasteLicense: "", boiApproval: ""
     });
 
@@ -157,16 +155,6 @@ const WasteRegister = () => {
 
     const handleNextStep = () => {
         if (step === 3) {
-            if (formData.regType === 'Company') {
-                if (!fileStrings.brc) {
-                    alert("❌ Business Registration Certificate (BRC) is required for Company registration!");
-                    return;
-                }
-                if (!fileStrings.billing) {
-                    alert("❌ Utility Billing Proof is required for Company address verification!");
-                    return;
-                }
-            }
             if (formData.regType === 'Individual' && !fileStrings.nic) {
                 alert("❌ National ID (NIC) or Passport scan is required for Individual registration!");
                 return;
@@ -224,9 +212,6 @@ const WasteRegister = () => {
             ...formData,
             managedWasteCategories: totalWasteCategories,
             
-            brcDocument: formData.regType === 'Company' ? fileStrings.brc : "",
-            vatDocument: formData.regType === 'Company' ? fileStrings.vat : "",
-            billingDocument: formData.regType === 'Company' ? fileStrings.billing : "",
             nic: formData.regType === 'Individual' ? fileStrings.nic : "",
 
             environmentalLicenseFile: fileStrings.envLicense,
@@ -387,33 +372,15 @@ const WasteRegister = () => {
                                 <input name="operationalAddress" value={formData.operationalAddress} type="text" placeholder="Warehouse / Processing Center Location" style={styles.input} onChange={handleChange} />
                             </div>
 
-                            <div style={{ marginTop: '20px', padding: '15px', background: 'rgba(255,255,255,0.02)', borderRadius: '12px', border: '1px dashed rgba(255,255,255,0.1)' }}>
-                                {formData.regType === 'Company' ? (
-                                    <>
-                                        <div style={{ marginBottom: '12px' }}>
-                                            <label style={styles.label}>BUSINESS REGISTRATION CERTIFICATE (BRC) *</label>
-                                            <input type="file" style={styles.input} onChange={(e) => handleFileBase64(e, 'brc')} accept=".pdf,.jpg,.jpeg,.png" />
-                                            {fileStrings.brc && <p style={{ color: '#2ecc71', fontSize: '13px', margin: '5px 0 0 0', fontWeight: 'bold' }}>✅ BRC Document Loaded Securely</p>}
-                                        </div>
-                                        <div style={{ marginBottom: '12px' }}>
-                                            <label style={styles.label}>VAT REGISTRATION CERTIFICATE (OPTIONAL)</label>
-                                            <input type="file" style={styles.input} onChange={(e) => handleFileBase64(e, 'vat')} accept=".pdf,.jpg,.jpeg,.png" />
-                                            {fileStrings.vat && <p style={{ color: '#2ecc71', fontSize: '13px', margin: '5px 0 0 0', fontWeight: 'bold' }}>✅ VAT Document Loaded Securely</p>}
-                                        </div>
-                                        <div>
-                                            <label style={styles.label}>UTILITY BILLING PROOF (ADDRESS VERIFICATION) *</label>
-                                            <input type="file" style={styles.input} onChange={(e) => handleFileBase64(e, 'billing')} accept=".pdf,.jpg,.jpeg,.png" />
-                                            {fileStrings.billing && <p style={{ color: '#2ecc71', fontSize: '13px', margin: '5px 0 0 0', fontWeight: 'bold' }}>✅ Utility Bill Loaded Securely</p>}
-                                        </div>
-                                    </>
-                                ) : (  
+                            {formData.regType === 'Individual' && (
+                                <div style={{ marginTop: '20px', padding: '15px', background: 'rgba(255,255,255,0.02)', borderRadius: '12px', border: '1px dashed rgba(255,255,255,0.1)' }}>
                                     <div>
                                         <label style={styles.label}>NIC / PASSPORT SCAN (BOTH SIDES) *</label>
                                         <input type="file" style={styles.input} onChange={(e) => handleFileBase64(e, 'nic')} accept=".pdf,.jpg,.jpeg,.png" />
                                         {fileStrings.nic && <p style={{ color: '#2ecc71', fontSize: '13px', margin: '5px 0 0 0', fontWeight: 'bold' }}>✅ NIC/Passport Document Loaded Securely</p>}
                                     </div>
-                                )}
-                            </div>
+                                </div>
+                            )}
                         </div>
                     )}
     
@@ -533,7 +500,7 @@ const WasteRegister = () => {
                                 </div>
                             )}
 
-                            {/* 👤 අලුත් Operator Details Box (Collector, Transporter, හෝ Total අයට පමණි) */}
+                            {/* Operator Details Box */}
                             {(formData.isCollector || formData.isTransporter || formData.isTotalSolutionProvider) && (
                                 <div style={{ marginTop: '20px', padding: '20px', background: 'rgba(52, 152, 219, 0.08)', borderRadius: '15px', border: '1px solid rgba(52, 152, 219, 0.3)' }}>
                                     <h4 style={{ color: '#3498db', margin: '0 0 15px 0', fontSize: '15px' }}>👤 Operator / Field Agent Details</h4>
@@ -747,15 +714,9 @@ const WasteRegister = () => {
                                     I understand my structural ecosystem parameters will be deployed for national aggregate reporting.
                                 </label>
                             </div>
-                            <div style={styles.row}>
-                                <div style={styles.rowItem}>
-                                    <label style={styles.label}>DIGITAL SIGNATURE / RECOGNIZED AUTHORIZED NAME *</label>
-                                    <input name="digitalSignatureName" type="text" placeholder="Type Representative Official Full Name" style={styles.input} onChange={handleChange} required />
-                                </div>
-                                <div style={styles.rowItem}>
-                                    <label style={styles.label}>SYSTEM AUTOMATED GENERATION DATE</label>
-                                    <input type="text" value={formData.declarationDate} style={{ ...styles.input, opacity: 0.5, cursor: 'not-allowed' }} readOnly />
-                                </div>
+                            <div style={styles.inputWrapper}>
+                                <label style={styles.label}>SYSTEM AUTOMATED GENERATION DATE</label>
+                                <input type="text" value={formData.declarationDate} style={{ ...styles.input, opacity: 0.5, cursor: 'not-allowed' }} readOnly />
                             </div>
                         </div>
                     )}
@@ -769,14 +730,14 @@ const WasteRegister = () => {
                         )}
                         {step < 11 ? (
                             <button type="button" onClick={handleNextStep} style={{ ...styles.registerBtn, marginTop: 0 }}>
-                          NEXT PHASE →
-                           </button>
+                                NEXT PHASE →
+                            </button>
                         ) : (
-                           <button 
-                             type="submit"   disabled={isLoading}  style={{ ...styles.registerBtn, background: '#f39c12', color: '#fff', cursor: isLoading ? 'not-allowed' : 'pointer', opacity: isLoading ? 0.6 : 1, marginTop: 0 }}
-                                        >
-                                  {isLoading ? "INITIALIZING SECURE UPLOADS..." : "INITIALIZE SECURE SYSTEM UPLOADS"}
-                                    </button>
+                            <button 
+                                type="submit" disabled={isLoading} style={{ ...styles.registerBtn, background: '#f39c12', color: '#fff', cursor: isLoading ? 'not-allowed' : 'pointer', opacity: isLoading ? 0.6 : 1, marginTop: 0 }}
+                            >
+                                {isLoading ? "REGISTERING..." : "REGISTER"}
+                            </button>
                         )}
                     </div>
                 </form>
@@ -815,7 +776,7 @@ const styles = {
     declarationCheck: { display: 'flex', alignItems: 'flex-start', gap: '12px', cursor: 'pointer', color: '#ccc', fontSize: '13px', background: 'rgba(255,255,255,0.01)', padding: '10px', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.03)' },
     registerBtn: { width: '100%', padding: '18px', borderRadius: '12px', border: 'none', background: '#f39c12', color: '#fff', fontWeight: '900', fontSize: '16px', letterSpacing: '2px', cursor: 'pointer', boxShadow: '0 10px 30px rgba(243, 156, 18, 0.3)', marginTop: '25px', transition: '0.3s' },
     footer: { marginTop: '40px', borderTop: '1px solid rgba(255,255,255,0.05)', paddingTop: '25px', textAlign: 'center' },
-    backLink: { color: '#888', cursor: 'pointer', fontSize: '14px', marginBottom: '15px', transition: '0.3s' },
+    backLink: { color: '#888', cursor: 'pointer', fontSize: '14px',marginBottom: '15px', transition: '0.3s' },
     footerText: { color: '#aaa', fontSize: '15px' },
     loginLink: { color: '#f39c12', fontWeight: 'bold', cursor: 'pointer' }
 };
