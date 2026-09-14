@@ -69,27 +69,30 @@ const AuthorityDashboard = () => {
 
         const fetchSystemStats = async () => {
             try {
-                const response = await API.get('/admin/authority/stats').catch(() => ({ data: {} }));
-                const reportRes = await API.get('/qr/national-system-stats').catch(() => ({ data: {} }));
-                
                 // Dropdowns වලට අවශ්‍ය Companies සහ Products දත්ත ලබාගැනීම
+                // Keeping these API calls so dropdowns still populate if needed
                 const compRes = await API.get('/qr/get-companies').catch(() => ({ data: [] }));
                 const prodRes = await API.get('/qr/get-products').catch(() => ({ data: [] }));
 
                 setCompaniesList(compRes.data || []);
                 setProductsList(prodRes.data || []);
 
+                // 🚀 --- DEMO DATA FOR GOVERNMENT PRESENTATION --- 🚀
+                // Replaced API data with hardcoded values matching Dashboard.js
                 setDashboardStats({
-                    pibos: response.data.pibos || '0',
-                    pros: response.data.pros || '0',
-                    wasteManagement: response.data.wasteManagement || '0',
-                    totalCompanies: reportRes.data.totalCompanies || 0,
-                    totalProducts: reportRes.data.totalProducts || 0,
-                    totalQR: reportRes.data.totalQR || 0,
-                    pendingCount: reportRes.data.pendingCount || 0,
-                    completedCount: reportRes.data.completedCount || 0,
-                    recoveredMaterials: response.data.recoveredMaterials || {
-                        plastic: "0 Kg", eWaste: "0 Units", glass: "0 Kg", paper: "0 Kg"
+                    pibos: "150+",
+                    pros: "10", 
+                    wasteManagement: "45+", // Recyclers count from Dashboard.js
+                    totalCompanies: "120", 
+                    totalProducts: "85", 
+                    totalQR: "78,200", 
+                    pendingCount: "12", 
+                    completedCount: "54,300", 
+                    recoveredMaterials: {
+                        plastic: "12,500 Kg", 
+                        eWaste: "4,200 Units", 
+                        glass: "8,900 Kg", 
+                        paper: "15,000 Kg"
                     }
                 });
             } catch (error) {
