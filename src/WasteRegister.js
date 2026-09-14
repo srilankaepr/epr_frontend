@@ -220,7 +220,8 @@ const WasteRegister = () => {
         };
 
         try {
-            const response = await API.post('/customers/register', finalPayload);
+          //  const response = await API.post('/customers/register', finalPayload);
+            const response = await API.post('/waste/register', finalPayload);
             if (response.status === 201 || response.status === 200) {
                 alert("✅ Waste Management Registration Request Submitted Successfully!");
                 navigate('/'); 

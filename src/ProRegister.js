@@ -139,7 +139,8 @@ const ProRegister = () => {
         setIsLoading(true);
 
         try {
-            const response = await API.post('/customers/register', finalPayload);
+          //  const response = await API.post('/customers/register', finalPayload);
+            const response = await API.post('/pro/register', finalPayload);
             if (response.status === 201 || response.status === 200) {
                 alert("✅ PRO Registration Request Submitted Successfully!");
                 navigate('/'); 
