@@ -70,6 +70,7 @@ const handleSubmit = async (e) => {
         }
     }
 };
+
     const styles = {
         formContainer: { background: 'rgba(255, 255, 255, 0.03)', padding: '40px', borderRadius: '20px', border: '1px solid rgba(255, 255, 255, 0.1)', maxWidth: '900px', margin: '0 auto', color: '#fff', fontFamily: 'Segoe UI, sans-serif' },
         sectionTitle: { fontSize: '24px', color: '#2ecc71', marginBottom: '30px', fontWeight: 'bold', textAlign: 'center' },
@@ -90,7 +91,15 @@ const handleSubmit = async (e) => {
             <div style={styles.grid}>
                 <div style={styles.inputGroup}>
                     <label style={styles.label}>Product Type</label>
-                    <input name="productType" style={styles.input} type="text" placeholder="e.g. Electronics" onChange={handleChange} />
+                    <select name="productType" style={styles.selectInput} onChange={handleChange}>
+                        <option value="" style={{background: '#222'}}>Select Product Type</option>
+                        <option value="Electronic and Electrical" style={{background: '#222', color: '#fff'}}>Electronic and Electrical</option>
+                        <option value="Plastic" style={{background: '#222', color: '#fff'}}>Plastic</option>
+                        <option value="Solar" style={{background: '#222', color: '#fff'}}>Solar</option>
+                        <option value="Agro" style={{background: '#222', color: '#fff'}}>Agro</option>
+                        <option value="Battery" style={{background: '#222', color: '#fff'}}>Battery</option>
+                        <option value="Oil" style={{background: '#222', color: '#fff'}}>Oil</option>
+                    </select>
                 </div>
                 <div style={styles.inputGroup}>
                     <label style={styles.label}>Brand Name</label>
