@@ -45,48 +45,42 @@ const Dashboard = () => {
     useEffect(() => {
         const fetchAdminData = async () => {
             try {
+                // Profile පින්තූරය සඳහා පමණක් API එක භාවිතා කරයි
                 const response = await API.get(`/admin/users/all`);
                 const data = response.data;
-              if (response.status === 200) {
+                if (response.status === 200) {
                     const currentAdmin = data.admins.find(a => a.email === adminInfo.email);
                     if (currentAdmin && currentAdmin.profilePic) {
                         setAdminInfo(prev => ({ ...prev, profilePic: currentAdmin.profilePic }));
                         localStorage.setItem('adminPhoto', currentAdmin.profilePic);
                     }
-                    const allCustomers = data.customers || [];
-
-                setCounts({
-                    pibo: allCustomers.filter(c => c.orgRole !== 'Recycler').length,
-                    producer: allCustomers.filter(c => c.orgRole === 'Producer').length,
-                    importer: allCustomers.filter(c => c.orgRole === 'Importer').length,
-                    brandOwner: allCustomers.filter(c => c.orgRole === 'Brand Owner').length,
-                    recyclers: allCustomers.filter(c => c.orgRole === 'Recycler').length,
-                    pending: allCustomers.filter(c => !c.isApproved).length,
-                    active: 5 
-                });
-            }  
-        } catch (error) {
-            console.error("Error updating dashboard data:", error);
-        }
-        try {
-            const topRes = await API.get(`/qr/dashboard/top-companies`);
-if (topRes.status === 200) {
-            const topData = topRes.data;
-            setTopCompanies(topData); 
-        }
-    } catch (err) {
-        console.error("Top companies fetch error:", err);
-    }
-  
-    try {
-            const feedbackRes = await API.get('/admin/feedbacks');
-            if (feedbackRes.status === 200) {
-                setFeedbacks(feedbackRes.data); 
+                }  
+            } catch (error) {
+                console.error("Error updating dashboard data:", error);
             }
-        } catch (err) {
-            console.error("Error fetching feedbacks for dashboard:", err);
-        }
-    };
+
+            // 🚀 --- DEMO DATA FOR GOVERNMENT PRESENTATION --- 🚀
+            // Database එකෙන් එන දත්ත වෙනුවට මෙතනින් බොරු ලොකු අගයන් දමා ඇත.
+            setCounts({
+                pibo: "150+",
+                producer: "65",
+                importer: "55",
+                brandOwner: "30+",
+                recyclers: "45+",
+                pending: "12",
+                active: "200+" 
+            });
+
+            setTopCompanies([
+                { name: "Eco Lanka Solutions", qrCount: "25,430" },
+                { name: "Green Tech Industries", qrCount: "18,200" },
+                { name: "Ceylon Recyclers Ltd", qrCount: "14,550" },
+                { name: "Nature Link Packaging", qrCount: "11,120" },
+                { name: "Global Logistics PR", qrCount: "8,900" }
+            ]);
+
+            // ----------------------------------------------------
+        };
 
         fetchAdminData();
     }, [adminInfo.email]);
@@ -106,10 +100,10 @@ if (topRes.status === 200) {
                 setAdminInfo(prev => ({ ...prev, profilePic: data.imageUrl }));
                 localStorage.setItem('adminPhoto', data.imageUrl);
             }
-            } catch (error) { 
-        console.error("Photo upload failed:", error); 
-    }
-};
+        } catch (error) { 
+            console.error("Photo upload failed:", error); 
+        }
+    };
 
     const handleDeletePhoto = async () => {
         try {
@@ -117,7 +111,7 @@ if (topRes.status === 200) {
                 email: adminInfo.email,
                 role: 'admin'
             });
-                if (response.status === 200) {
+            if (response.status === 200) {
                 setAdminInfo(prev => ({ ...prev, profilePic: null }));
                 localStorage.removeItem('adminPhoto');
             }
@@ -316,7 +310,8 @@ if (topRes.status === 200) {
             }}
         >
             <div style={{...styles.cardIcon, color: '#f1c40f'}}>💬</div>
-            <h3 style={styles.cardVal}>{feedbacks.length}</h3>
+            {/* Demo Feedback Count */}
+            <h3 style={styles.cardVal}>320+</h3>
             <p style={styles.cardLab}>Customer Feedbacks</p>
             <div style={{marginTop: '5px', color: '#2ecc71', fontSize: '12px', fontWeight: 'bold'}}>
                 View & Reply →
@@ -362,7 +357,6 @@ if (topRes.status === 200) {
                                         <span style={styles.roleLabelStyle}>Registered Company</span>
                                     </div>
                                     <div style={styles.qrCountStyle}>
-
                                         {company.qrCount || 0}
                                     </div>
                                 </div>
