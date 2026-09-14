@@ -53,7 +53,8 @@ const RoleSelection = () => {
             shortDesc: 'Government & Regulatory Authorities',
             who: 'National and local institutions responsible for environmental policy and EPR enforcement.',
             examples: ['Central Environmental Authority (CEA)', 'Local Government Bodies'],
-            responsibilities: ['Define EPR policies & targets', 'Monitor environmental performance', 'Enforce compliance frameworks', 'Access digital dashboards'],
+            // මෙතන තමයි අපි අලුතින් හදාගත්තු සරල වාක්‍ය ටික දැම්මේ
+            responsibilities: ['View system reports and data', 'Ensure companies follow the rules', 'Track recycling progress', 'Set rules and targets'],
             color: '#9b59b6', 
             bg: 'rgba(155, 89, 182, 0.05)', 
             glow: 'rgba(155, 89, 182, 0.4)',
