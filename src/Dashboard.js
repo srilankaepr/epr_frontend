@@ -195,21 +195,22 @@ const Dashboard = () => {
                     Summary
                 </button>
 
-                {['User Management', 'Co-Partner', 'Orders', 'QR Management'].map((item) => (
-                    <button 
-                        key={item} 
-                        className="nav-item"
-                        style={styles.navBtn}
-                        onClick={() => { 
-                            if (item === 'User Management') navigate('/user-management');
-                            else if (item === 'Co-Partner') navigate('/co-partner');
-                            else if (item === 'Orders') navigate('/admin-orders');
-                            else if (item === 'QR Management') navigate('/qr-management');
-                        }}
-                    >
-                        {item}
-                    </button>
-                ))}
+             {['User Management', 'Unified Users', 'Co-Partner', 'Orders', 'QR Management'].map((item) => (
+    <button 
+        key={item} 
+        className="nav-item"
+        style={styles.navBtn}
+        onClick={() => { 
+            if (item === 'User Management') navigate('/user-management');
+            else if (item === 'Unified Users') navigate('/unified-users');
+            else if (item === 'Co-Partner') navigate('/co-partner');
+            else if (item === 'Orders') navigate('/admin-orders');
+            else if (item === 'QR Management') navigate('/qr-management');
+        }}
+    >
+        {item}
+    </button>
+))}
             </nav>
 
             <button 
