@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import API from './api'; // ඔයාගේ API instance එක ඇති තැනට අදාළව මෙය වෙනස් කරගන්න
+import API from './api';
 
 const UnifiedUserManagement = () => {
     const navigate = useNavigate();
@@ -43,6 +43,34 @@ const UnifiedUserManagement = () => {
     const handleCloseModal = () => {
         setSelectedUser(null);
         setIsModalOpen(false);
+    };
+
+    // 🟢 APPROVE USER FUNCTION
+    const handleApproveUser = async (userId, category) => {
+        if (!window.confirm("Are you sure you want to approve this user?")) return;
+        try {
+            await API.put(`/admin/user/approve`, { userId, category });
+            alert("User approved successfully!");
+            fetchAllUnifiedData();
+            handleCloseModal();
+        } catch (error) {
+            console.error("Approval error:", error);
+            alert("Failed to approve user.");
+        }
+    };
+
+    // 🔴 DELETE USER FUNCTION
+    const handleDeleteUser = async (userId, category) => {
+        if (!window.confirm("Are you sure you want to delete this user permanently?")) return;
+        try {
+            await API.delete(`/admin/user/${userId}`, { data: { category } });
+            alert("User deleted successfully!");
+            fetchAllUnifiedData();
+            handleCloseModal();
+        } catch (error) {
+            console.error("Deletion error:", error);
+            alert("Failed to delete user.");
+        }
     };
 
     // Filter Logic
@@ -192,7 +220,7 @@ const UnifiedUserManagement = () => {
                 </div>
             </div>
 
-            {/* 🔍 DETAILED MODAL FOR EVERY DATA FIELD & DOCUMENTS */}
+            {/* 🔍 DETAILED MODAL WITH APPROVE & DELETE BUTTONS */}
             {isModalOpen && selectedUser && (
                 <div style={styles.modalOverlay}>
                     <div style={styles.modalCard}>
@@ -213,9 +241,10 @@ const UnifiedUserManagement = () => {
                                 <div style={styles.infoItem}><span>Mobile Phone:</span> <b>{selectedUser.phone || selectedUser.contactMobile || 'N/A'}</b></div>
                                 <div style={styles.infoItem}><span>Org Role / Type:</span> <b>{selectedUser.orgRole || selectedUser.designation || 'N/A'}</b></div>
                                 <div style={styles.infoItem}><span>Registered Date:</span> <b>{new Date(selectedUser.registeredAt || selectedUser.createdAt).toLocaleDateString()}</b></div>
+                                <div style={styles.infoItem}><span>Account Status:</span> <b style={{ color: selectedUser.status === 'Approved' ? '#2ecc71' : '#f1c40f' }}>{selectedUser.status || 'Pending'}</b></div>
                             </div>
 
-                            {/* DYNAMIC EXTRA FIELDS BASED ON CATEGORY */}
+                            {/* DYNAMIC EXTRA FIELDS */}
                             <h4 style={{ color: '#2ecc71', marginTop: '20px', borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: '5px' }}>
                                 Category Specific Details & Documents
                             </h4>
@@ -232,26 +261,22 @@ const UnifiedUserManagement = () => {
                                     <div>
                                         <p><b>District / Province:</b> {selectedUser.orgDistrict} / {selectedUser.orgProvince}</p>
                                         <p><b>Managed PIBOS Count:</b> {selectedUser.managedPibosCount}</p>
-                                        <p><b>Service Capabilities:</b> {selectedUser.serviceCapabilities?.join(', ') || 'None'}</p>
                                     </div>
                                 )}
 
                                 {selectedUser.accountCategory === 'WASTE' && (
                                     <div>
                                         <p><b>Facility Location:</b> {selectedUser.facilityLocation || 'N/A'}</p>
-                                        <p><b>Has Environmental License:</b> {selectedUser.hasEnvironmentalLicense}</p>
-                                        <p><b>Has Waste Handling License:</b> {selectedUser.hasWasteHandlingLicense}</p>
                                     </div>
                                 )}
 
                                 {selectedUser.accountCategory === 'PIBO' && (
                                     <div>
-                                        <p><b>Business Type:</b> {selectedUser.piboBusinessType?.join(', ') || 'N/A'}</p>
                                         <p><b>TIN / VAT Number:</b> {selectedUser.piboTinVatNumber || 'N/A'}</p>
                                     </div>
                                 )}
 
-                                {/* DOCUMENT LINKS PREVIEW */}
+                                {/* DOCUMENT LINKS */}
                                 <div style={{ marginTop: '15px' }}>
                                     <p style={{ color: '#aaa', fontSize: '13px', marginBottom: '8px' }}><b>Uploaded Supporting Documents:</b></p>
                                     <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
@@ -265,30 +290,34 @@ const UnifiedUserManagement = () => {
                                                 📄 BRC Document
                                             </a>
                                         )}
-                                        {selectedUser.vatDocument?.url && (
-                                            <a href={selectedUser.vatDocument.url} target="_blank" rel="noreferrer" style={styles.docLink}>
-                                                📄 VAT Document
-                                            </a>
-                                        )}
                                         {selectedUser.environmentalLicenseFile?.url && (
                                             <a href={selectedUser.environmentalLicenseFile.url} target="_blank" rel="noreferrer" style={styles.docLink}>
                                                 📄 Environmental License
                                             </a>
-                                        )}
-                                        {selectedUser.piboImportLicenseFile?.url && (
-                                            <a href={selectedUser.piboImportLicenseFile.url} target="_blank" rel="noreferrer" style={styles.docLink}>
-                                                📄 Import License
-                                            </a>
-                                        )}
-                                        {(!selectedUser.verificationDocument?.url && !selectedUser.brcDocument?.url && !selectedUser.vatDocument?.url) && (
-                                            <span style={{ color: '#666', fontSize: '13px' }}>No direct documents attached or legacy record.</span>
                                         )}
                                     </div>
                                 </div>
                             </div>
                         </div>
 
+                        {/* 🛠️ ADMIN ACTION BUTTONS IN MODAL FOOTER */}
                         <div style={styles.modalFooter}>
+                            <div style={{ display: 'flex', gap: '10px' }}>
+                                {selectedUser.status !== 'Approved' && (
+                                    <button 
+                                        style={styles.approveBtn} 
+                                        onClick={() => handleApproveUser(selectedUser._id, selectedUser.accountCategory)}
+                                    >
+                                        Approve User
+                                    </button>
+                                )}
+                                <button 
+                                    style={styles.deleteBtn} 
+                                    onClick={() => handleDeleteUser(selectedUser._id, selectedUser.accountCategory)}
+                                >
+                                    Delete User
+                                </button>
+                            </div>
                             <button style={styles.closeBtn} onClick={handleCloseModal}>Close Profile</button>
                         </div>
                     </div>
@@ -298,7 +327,6 @@ const UnifiedUserManagement = () => {
     );
 };
 
-// Category Badge Color Helpers
 const getCategoryBadgeStyle = (cat) => {
     switch (cat) {
         case 'PRO': return { background: 'rgba(52, 152, 219, 0.2)', color: '#3498db', padding: '4px 10px', borderRadius: '6px', fontSize: '11px', fontWeight: 'bold', border: '1px solid #3498db' };
@@ -317,7 +345,7 @@ const styles = {
     subText: { color: '#888', fontSize: '14px', margin: '0' },
     
     statsContainer: { display: 'flex', gap: '20px', marginBottom: '30px', flexWrap: 'wrap' },
-    statCard: { flex: '1 1 250px', background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '16px', padding: '20px', textAlign: 'center', backdropFilter: 'blur(10px)' },
+    statCard: { flex: '1 1 250px', background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '16px', padding: '20px', textAlign: 'center' },
     statTitle: { fontSize: '12px', color: '#aaa', fontWeight: 'bold', letterSpacing: '1px', margin: '0 0 10px 0' },
     statValue: { fontSize: '32px', fontWeight: '900', color: '#fff', margin: '0' },
 
@@ -333,14 +361,14 @@ const styles = {
     table: { width: '100%', borderCollapse: 'collapse', textAlign: 'left' },
     trHead: { borderBottom: '2px solid rgba(255,255,255,0.1)' },
     th: { padding: '14px', fontSize: '12px', color: '#aaa', letterSpacing: '1px' },
-    trBody: { borderBottom: '1px solid rgba(255,255,255,0.05)', transition: '0.2s' },
+    trBody: { borderBottom: '1px solid rgba(255,255,255,0.05)' },
     td: { padding: '14px', fontSize: '14px', color: '#ddd' },
 
     badgeAdmin: { background: 'rgba(231, 76, 60, 0.2)', color: '#e74c3c', padding: '4px 10px', borderRadius: '6px', fontSize: '11px', fontWeight: 'bold', border: '1px solid #e74c3c' },
     badgeApproved: { background: 'rgba(46, 204, 113, 0.2)', color: '#2ecc71', padding: '4px 10px', borderRadius: '6px', fontSize: '11px', fontWeight: 'bold' },
     badgePending: { background: 'rgba(241, 196, 15, 0.2)', color: '#f1c40f', padding: '4px 10px', borderRadius: '6px', fontSize: '11px', fontWeight: 'bold' },
     
-    viewBtn: { background: '#2ecc71', color: '#000', border: 'none', padding: '8px 14px', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer', fontSize: '12px', transition: '0.3s' },
+    viewBtn: { background: '#2ecc71', color: '#000', border: 'none', padding: '8px 14px', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer', fontSize: '12px' },
 
     // Modal Styles
     modalOverlay: { position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.8)', zIndex: 1000, display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '20px', backdropFilter: 'blur(8px)' },
@@ -351,8 +379,11 @@ const styles = {
     infoItem: { display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid rgba(255,255,255,0.03)', paddingBottom: '8px' },
     docSection: { marginTop: '15px', background: 'rgba(0,0,0,0.2)', padding: '15px', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)' },
     docLink: { display: 'inline-block', background: 'rgba(52, 152, 219, 0.2)', color: '#3498db', padding: '8px 12px', borderRadius: '8px', textDecoration: 'none', fontSize: '12px', fontWeight: 'bold', border: '1px solid #3498db' },
-    modalFooter: { marginTop: '25px', textAlign: 'right', borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: '15px' },
-    closeBtn: { background: '#e74c3c', color: '#fff', border: 'none', padding: '10px 20px', borderRadius: '10px', fontWeight: 'bold', cursor: 'pointer' }
+    
+    modalFooter: { marginTop: '25px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: '15px' },
+    approveBtn: { background: '#2ecc71', color: '#000', border: 'none', padding: '10px 18px', borderRadius: '10px', fontWeight: 'bold', cursor: 'pointer' },
+    deleteBtn: { background: '#e74c3c', color: '#fff', border: 'none', padding: '10px 18px', borderRadius: '10px', fontWeight: 'bold', cursor: 'pointer' },
+    closeBtn: { background: 'rgba(255,255,255,0.1)', color: '#fff', border: 'none', padding: '10px 18px', borderRadius: '10px', fontWeight: 'bold', cursor: 'pointer' }
 };
 
 export default UnifiedUserManagement;
