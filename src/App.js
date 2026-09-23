@@ -33,7 +33,6 @@ import PDFGenerator from './PDFGenerator';
 import AuthorityDashboard from './AuthorityDashboard';
 import RecyclerDashboard from './RecyclerDashboard';
 import MapComponent from './MapComponent';
-import UnifiedUserManagement from './UnifiedUserManagement';
 
 
 function App() {
@@ -61,8 +60,6 @@ function App() {
         <Route path="/admin-feedback" element={<ProtectedRoute allowedRole="ADMIN"><FeedbackPage /></ProtectedRoute>} />
         <Route path="/admin-products" element={<ProtectedRoute allowedRole="ADMIN"><AdminProductView /></ProtectedRoute>} />
         <Route path="/Pdf-generator" element={<ProtectedRoute allowedRole="ADMIN"><PDFGenerator /></ProtectedRoute>} />
-        <Route path="/unified-users" element={<ProtectedRoute allowedRole="ADMIN"><UnifiedUserManagement /></ProtectedRoute>} />
-        
 
         {/* NEW MULTI-STEP UNIFIED REGISTRATION LANES */}
         <Route path="/register-pro" element={<ProRegister />} />     
