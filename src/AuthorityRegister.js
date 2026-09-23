@@ -87,7 +87,8 @@ const AuthorityRegister = () => {
         };
 
         try {
-            const response = await API.post('/customers/register', finalPayload);
+           // const response = await API.post('/customers/register', finalPayload);
+           const response = await API.post('/authority/register', finalPayload);
             if (response.status === 201 || response.status === 200) {
                 alert("✅ Government Authority Registration Request Submitted Successfully!");
                 navigate('/'); 
