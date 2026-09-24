@@ -323,30 +323,61 @@ const UserManagement = () => {
                     </div>
 
                     <div style={{ marginBottom: '20px', display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: '15px' }}>
-                    <label style={{ color: '#2ecc71', fontSize: '14px', fontWeight: 'bold' }}>FILTER BY ROLE:</label>
-                       <select 
-                                value={filterRole} 
-                                onChange={(e) => { setFilterRole(e.target.value); setCurrentPage(1); }}
+                        <label style={{ color: '#2ecc71', fontSize: '14px', fontWeight: 'bold' }}>FILTER BY ROLE:</label>
+                        <select 
+                            value={filterRole} 
+                            onChange={(e) => { setFilterRole(e.target.value); setCurrentPage(1); }}
+                            style={{
+                                background: 'rgba(255, 255, 255, 0.05)',
+                                color: '#fff',
+                                border: '1px solid rgba(46, 204, 113, 0.4)',
+                                padding: '10px 15px',
+                                borderRadius: '10px',
+                                outline: 'none',
+                                cursor: 'pointer',
+                                fontSize: '14px'
+                            }}
+                        >
+                            <option value="All" style={{ background: '#111', color: '#fff' }}>All Roles</option>
+                            <option value="Producer" style={{ background: '#111', color: '#fff' }}>Producer</option>
+                            <option value="Importer" style={{ background: '#111', color: '#fff' }}>Importer</option>
+                            <option value="Brand Owner" style={{ background: '#111', color: '#fff' }}>Brand Owner</option>
+                            <option value="Collector" style={{ background: '#111', color: '#fff' }}>Collector</option>
+                            <option value="Transporter" style={{ background: '#111', color: '#fff' }}>Transporter</option>
+                            <option value="Recycler" style={{ background: '#111', color: '#fff' }}>Recycler</option>
+                            <option value="PRO" style={{ background: '#111', color: '#fff' }}>PRO</option>
+                            <option value="authority" style={{ background: '#111', color: '#fff' }}>Authority</option>
+                        </select>
+                    </div>
+
+                    {/* 🚀 NEW: Quick Role-Based Filter Buttons Set (බටන් 4 ක් මෙහි එකතු කරන ලදී) */}
+                    <div style={{ marginBottom: '25px', display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+                        {[
+                            { label: 'All Roles', value: 'All' },
+                            { label: '🏭 PIBO Hub', value: 'Producer' }, // Producer/Importer/Brand Owner සමුදාය
+                            { label: '💎 PRO Compliance', value: 'PRO' },
+                            { label: '♻️ Waste Management', value: 'RECYCLER' }, // Recycler/Collector/Transporter
+                            { label: '🏛️ Authorities', value: 'authority' }
+                        ].map((btn) => (
+                            <button
+                                key={btn.value}
+                                onClick={() => { setFilterRole(btn.value); setCurrentPage(1); }}
                                 style={{
-                                     background: 'rgba(255, 255, 255, 0.05)',
-                                     color: '#fff',
-                                     border: '1px solid rgba(46, 204, 113, 0.4)',
-                                     padding: '10px 15px',
-                                     borderRadius: '10px',
-                                     outline: 'none',
-                                     cursor: 'pointer',
-                                     fontSize: '14px'
-                                     }}
-                                  >
-                          <option value="All" style={{ background: '#111', color: '#fff' }}>All Roles</option>
-                          <option value="Producer" style={{ background: '#111', color: '#fff' }}>Producer</option>
-                          <option value="Importer" style={{ background: '#111', color: '#fff' }}>Importer</option>
-                          <option value="Brand Owner" style={{ background: '#111', color: '#fff' }}>Brand Owner</option>
-                          <option value="Collector" style={{ background: '#111', color: '#fff' }}>Collector</option>
-                          <option value="Transporter" style={{ background: '#111', color: '#fff' }}>Transporter</option>
-                          <option value="Recycler" style={{ background: '#111', color: '#fff' }}>Recycler</option>
-                          <option value="PRO" style={{ background: '#111', color: '#fff' }}>PRO</option>
-                       </select>
+                                    padding: '10px 20px',
+                                    borderRadius: '12px',
+                                    fontWeight: 'bold',
+                                    fontSize: '13px',
+                                    cursor: 'pointer',
+                                    transition: '0.3s',
+                                    background: filterRole === btn.value ? 'linear-gradient(135deg, #2ecc71 0%, #27ae60 100%)' : 'rgba(255, 255, 255, 0.05)',
+                                    color: filterRole === btn.value ? '#fff' : '#aaa',
+                                    border: filterRole === btn.value ? '1px solid #2ecc71' : '1px solid rgba(255, 255, 255, 0.1)',
+                                    boxShadow: filterRole === btn.value ? '0 5px 15px rgba(46, 204, 113, 0.3)' : 'none'
+                                }}
+                            >
+                                {btn.label}
+                            </button>
+                        ))}
                     </div>
 
                     <div className="glass-table-wrapper" style={styles.tableWrapper}>
@@ -374,7 +405,16 @@ const UserManagement = () => {
     {(() => {
         const filteredCustomers = data.customers
             .filter(c => filterStatus === 'All' ? true : (c.status === filterStatus))
-            .filter(c => filterRole === 'All' ? true : (c.orgRole === filterRole || (c.orgRole === 'RECYCLER' && filterRole === 'Recycler')));
+            .filter(c => {
+                if (filterRole === 'All') return true;
+                if (filterRole === 'Producer') {
+                    return c.orgRole === 'Producer' || c.orgRole === 'Importer' || c.orgRole === 'Brand Owner' || (c.piboBusinessType && c.piboBusinessType.length > 0);
+                }
+                if (filterRole === 'RECYCLER') {
+                    return c.orgRole === 'RECYCLER' || c.isCollector || c.isRecycler || c.isTransporter || c.isTotalSolutionProvider;
+                }
+                return c.orgRole === filterRole;
+            });
 
         const indexOfLastCustomer = currentPage * customersPerPage;
         const indexOfFirstCustomer = indexOfLastCustomer - customersPerPage;
@@ -452,7 +492,16 @@ const UserManagement = () => {
                     {(() => {
                         const filteredCustomersCount = data.customers
                             .filter(c => filterStatus === 'All' ? true : (c.status === filterStatus))
-                            .filter(c => filterRole === 'All' ? true : (c.orgRole === filterRole || (c.orgRole === 'RECYCLER' && filterRole === 'Recycler'))).length;
+                            .filter(c => {
+                                if (filterRole === 'All') return true;
+                                if (filterRole === 'Producer') {
+                                    return c.orgRole === 'Producer' || c.orgRole === 'Importer' || c.orgRole === 'Brand Owner' || (c.piboBusinessType && c.piboBusinessType.length > 0);
+                                }
+                                if (filterRole === 'RECYCLER') {
+                                    return c.orgRole === 'RECYCLER' || c.isCollector || c.isRecycler || c.isTransporter || c.isTotalSolutionProvider;
+                                }
+                                return c.orgRole === filterRole;
+                            }).length;
 
                         const totalPages = Math.ceil(filteredCustomersCount / customersPerPage);
 
