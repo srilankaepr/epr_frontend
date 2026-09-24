@@ -9,11 +9,10 @@ const UserManagement = () => {
     const [data, setData] = useState({ admins: [], customers: [] });
     const [stats, setStats] = useState({ total: 0, pending: 0, approved: 0 });
     const [filterStatus, setFilterStatus] = useState('All');
-    const [filterRole, setFilterRole] = useState('All'); 
+    const [selectedRoleCategory, setSelectedRoleCategory] = useState('All'); // 🚀 New Dynamic Role Category Filter
     const [currentPage, setCurrentPage] = useState(1); 
     const customersPerPage = 5; 
 
-    // ඇඩ්මින් ක්ලික් කරන යූසර්ගේ දත්ත මතක තියාගන්නා ස්ටේට් එක
     const [selectedUser, setSelectedUser] = useState(null);
 
     const fetchStats = async () => {
@@ -26,7 +25,6 @@ const UserManagement = () => {
     };
 
     const navigate = useNavigate();
-    console.log("Current Admin Role from LocalStorage:", localStorage.getItem('adminRole'));
 
     const fetchUsers = async () => {
         try {
@@ -42,7 +40,6 @@ const UserManagement = () => {
 
         try {
             const response = await API.put(`/admin/approve-customer/${id}`);
-            
             if (response.status === 200) {
                 alert("✅ Customer Approved Successfully!");
                 fetchUsers(); 
@@ -63,7 +60,6 @@ const UserManagement = () => {
             .catch(err => console.error("Error loading initial data:", err));
     }, []);
 
-    // --- DELETE LOGIC ---
     const deleteUser = async (id, type) => {
         if (localStorage.getItem('adminRole') !== 'SuperAdmin') {
             alert(`🚨 Unauthorized Access! Only SuperAdmin is allowed to delete an ${type}.`);
@@ -72,10 +68,7 @@ const UserManagement = () => {
 
         if (window.confirm(`Are you sure you want to delete this ${type}?`)) {
             try {
-                const endpoint = type === 'Admin' 
-                    ? `/admin/admin/${id}` 
-                    : `/admin/customer/${id}`;
-                
+                const endpoint = type === 'Admin' ? `/admin/admin/${id}` : `/admin/customer/${id}`;
                 const response = await API.delete(endpoint);
                 
                 if (response.status === 200) {
@@ -92,7 +85,6 @@ const UserManagement = () => {
         }
     };
 
-    // --- LOGOUT LOGIC ---
     const handleLogout = () => {
         if (window.confirm("Are you sure you want to logout?")) {
             localStorage.clear();
@@ -100,14 +92,12 @@ const UserManagement = () => {
         }
     };
 
-    // --- 📄 PDF EXPORT ENGINE (PRO, WASTE & PIBO ALL DATA INCLUDED) ---
     const downloadPDF = () => {
         const doc = new jsPDF('l', 'pt', 'a4');
         doc.setFontSize(20);
         doc.setTextColor(46, 204, 113); 
         doc.text("User Management Full Report", 40, 40);
         
-        // 1. ඇඩ්මින්ලාගේ ටේබල් එක
         const adminRows = data.admins.map((admin, i) => [i + 1, admin.fullName, admin.email]);
         autoTable(doc, {
             startY: 90,
@@ -119,76 +109,39 @@ const UserManagement = () => {
 
         let finalY = doc.lastAutoTable.finalY;
 
-        // 2. කස්ටමර්ලාගේ ටේබල් එක (සියලුම Dynamic Fields පිරිසිදුවට PDF එකට එකතු කරන ලදී)
-        const customerRows = data.customers.map((c, i) => {
-            let roleSpecificString = '-';
-            
-            if (c.orgRole === 'PRO') {
-                roleSpecificString = `Types: ${c.organizationTypes?.join(", ") || '-'}\nCaps: ${c.serviceCapabilities?.join(", ") || '-'}\nWaste: ${c.managedWasteCategories?.join(", ") || '-'}\nPIBOs: ${c.managedPibosCount || 0} | Coll: ${c.networkCollectorsCount || 0}`;
-            } else if (c.orgRole === 'RECYCLER' || c.isCollector || c.isRecycler || c.isTransporter || c.isTotalSolutionProvider) {
-                roleSpecificString = `WM Type: ${c.isCollector ? 'Collector ' : ''}${c.isRecycler ? 'Recycler ' : ''}${c.isTransporter ? 'Transporter ' : ''}${c.isTotalSolutionProvider ? 'TotalSolution' : ''}\nSystems: ${c.collectionSystemTypes?.join(", ") || '-'}\nProcessing Cap: ${c.installedProcessingCapacity || '-'}\nStaff: ${c.employeeCount || 0}`;
-            } else {
-                roleSpecificString = `PIBO Types: ${c.piboBusinessType?.join(", ") || '-'}\nCategories: ${c.piboSelectedProductCategories?.join(", ") || '-'}\nLiabilities: ${c.generatedWasteLiabilityCategories?.join(", ") || '-'}`;
-            }
-
-            return [
-                i + 1,
-                c.regNumber || '-', 
-                c.companyName, 
-                c.orgRole, 
-                c.companyWebsite || '-', 
-                c.officialEmail, 
-                c.phone, 
-                c.whatsapp || '-', 
-                c.dob || '-', 
-                c.contactPersonName, 
-                c.contactPersonMobile, 
-                `${c.address1 || ''}, ${c.address2 || ''}`, 
-                c.country || 'Sri Lanka',
-                roleSpecificString
-            ];
-        });
+        const customerRows = data.customers.map((c, i) => [
+            i + 1,
+            c.regNumber || '-', 
+            c.companyName || c.institutionName || '-', 
+            c.orgRole || 'PIBO', 
+            c.officialEmail, 
+            c.phone || c.contactMobile, 
+            c.contactPersonName || '-', 
+            c.orgDistrict || '-', 
+            c.country || 'Sri Lanka'
+        ]);
 
         autoTable(doc, {
             startY: finalY + 50,
-            head: [['#', 'Reg Number','Company', 'Role', 'Website', 'Email', 'Phone', 'WhatsApp', 'DOB', 'Contact Person', 'CP Mobile', 'Address', 'Country', 'Role Matrix Specific Extra Data']],
+            head: [['#', 'Reg Number', 'Company / Institution', 'Role', 'Email', 'Phone', 'Contact Person', 'District', 'Country']],
             body: customerRows,
             theme: 'striped',
             headStyles: { fillColor: [52, 152, 219] },
-            styles: { fontSize: 5, cellPadding: 2, overflow: 'linebreak' }, 
-            columnStyles: { 
-                0: { cellWidth: 15 }, 
-                1: { cellWidth: 45 }, 
-                2: { cellWidth: 65 },
-                11: { cellWidth: 70 },
-                13: { cellWidth: 160, fontStyle: 'italic' } 
-            }
+            styles: { fontSize: 8, cellPadding: 4, overflow: 'linebreak' }
         });
 
         doc.save("Full_User_Management_Report.pdf");
     };
 
-    // Global Document Handler Tool (Cloudinary Object Format සහ Base64 String 2කම සපෝට් කරයි)
     const handleDownload = (docData) => {
         if (!docData) return;
-        
-        // 1. එකී දත්තය Cloudinary Object එකක් නම් (url සහ public_id තිබේ නම්)
         if (typeof docData === 'object' && docData.url) {
             const cleanUrl = docData.url.replace('/fl_attachment/', '/');
             window.open(cleanUrl, '_blank');
             return;
         }
-
-        // 2. එකී දත්තය Frontend Base64 String එකක් නම්
         if (typeof docData === 'string') {
-            if (docData.startsWith('data:application/pdf') || docData.startsWith('data:image')) {
-                const newWindow = window.open();
-                newWindow.document.write(
-                    `<iframe src="${docData}" frameborder="0" style="border:0; top:0px; left:0px; bottom:0px; right:0px; width:100%; height:100%;" allowfullscreen></iframe>`
-                );
-            } else {
-                window.open(docData, '_blank');
-            }
+            window.open(docData, '_blank');
         }
     };
 
@@ -197,21 +150,11 @@ const UserManagement = () => {
         styleSheet.innerText = `
             @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
             @keyframes slideInLeft { from { opacity: 0; transform: translateX(-50px); } to { opacity: 1; transform: translateX(0); } }
-            @keyframes pulseGlow {
-                0% { box-shadow: 0 0 5px rgba(231, 76, 60, 0.2); }
-                50% { box-shadow: 0 0 20px rgba(231, 76, 60, 0.6); }
-                100% { box-shadow: 0 0 5px rgba(231, 76, 60, 0.2); }
-            }
             .nav-item:hover { background: rgba(46, 204, 113, 0.15) !important; color: #2ecc71 !important; padding-left: 28px !important; }
-            .logout-glow:hover {
-                background: rgba(231, 76, 60, 0.2) !important;
-                transform: scale(1.02);
-                animation: pulseGlow 1.5s infinite;
-            }
             .glass-table-wrapper::-webkit-scrollbar { height: 8px; width: 6px; }
             .glass-table-wrapper::-webkit-scrollbar-thumb { background: #2ecc71; border-radius: 10px; }
-            .glass-table-wrapper::-webkit-scrollbar-track { background: rgba(255,255,255,0.02); }
             .table-row:hover { background: rgba(46, 204, 113, 0.1) !important; transition: 0.3s; }
+            .role-card:hover { transform: translateY(-5px); border-color: #2ecc71 !important; background: rgba(46, 204, 113, 0.08) !important; }
         `;
         document.head.appendChild(styleSheet);
     }, []);
@@ -235,14 +178,14 @@ const UserManagement = () => {
 
             <div style={styles.mainContent}>
                 <header style={styles.header}>
-                    <div style={{animation: 'fadeIn 1s ease-in'}}>
+                    <div>
                         <h1 style={styles.pageTitle}>USER MANAGEMENT SYSTEM</h1>
                         <p style={styles.subTitle}>Manage and monitor all system administrators and customers</p>
                     </div>
                     <button onClick={downloadPDF} style={styles.savePdfBtn}>Export PDF Report</button>
                 </header>
 
-                <div style={{animation: 'fadeIn 1.2s ease-in'}}>
+                <div>
                     <h3 style={styles.sectionTitle}>REGISTERED ADMINISTRATORS</h3>
                     <div className="glass-table-wrapper" style={styles.tableWrapper}>
                         <table style={styles.table}>
@@ -262,11 +205,11 @@ const UserManagement = () => {
                                        <td style={styles.td}>{admin.email}</td>
                                        <td style={styles.tdLast}>
                                      {localStorage.getItem('adminRole') === 'SuperAdmin' && (
-                                <button onClick={() => deleteUser(admin._id, 'Admin')} style={styles.deleteBtn}>Remove</button>
-                            )}
-                            {localStorage.getItem('adminRole') !== 'SuperAdmin' && (
-                                <span style={{ color: '#bdc3c7', fontSize: '12px', fontStyle: 'italic' }}>No Actions</span>
-                            )}
+                                         <button onClick={() => deleteUser(admin._id, 'Admin')} style={styles.deleteBtn}>Remove</button>
+                                     )}
+                                     {localStorage.getItem('adminRole') !== 'SuperAdmin' && (
+                                         <span style={{ color: '#bdc3c7', fontSize: '12px', fontStyle: 'italic' }}>No Actions</span>
+                                     )}
                                     </td>
                                   </tr>
                                ))}
@@ -274,7 +217,7 @@ const UserManagement = () => {
                         </table>
                     </div>
 
-                    <h3 style={{...styles.sectionTitle, marginTop: '50px'}}>REGISTERED CUSTOMERS</h3>
+                    <h3 style={{...styles.sectionTitle, marginTop: '50px'}}>REGISTERED CUSTOMERS STATUS OVERVIEW</h3>
 
                     <div style={styles.statsGrid}>
                         <div 
@@ -282,8 +225,7 @@ const UserManagement = () => {
                                 ...styles.statCard, 
                                 cursor: 'pointer', 
                                 border: filterStatus === 'All' ? '2px solid #fff' : '1px solid rgba(255,255,255,0.1)',
-                                transform: filterStatus === 'All' ? 'scale(1.05)' : 'scale(1)',
-                                transition: '0.3s'
+                                transform: filterStatus === 'All' ? 'scale(1.03)' : 'scale(1)',
                             }} 
                             onClick={() => { setFilterStatus('All'); setCurrentPage(1); }}
                         >
@@ -297,8 +239,7 @@ const UserManagement = () => {
                                 cursor: 'pointer', 
                                 borderLeft: '4px solid #f1c40f',
                                 border: filterStatus === 'Pending' ? '2px solid #f1c40f' : '1px solid rgba(255,255,255,0.1)',
-                                transform: filterStatus === 'Pending' ? 'scale(1.05)' : 'scale(1)',
-                                transition: '0.3s'
+                                transform: filterStatus === 'Pending' ? 'scale(1.03)' : 'scale(1)',
                             }} 
                             onClick={() => { setFilterStatus('Pending'); setCurrentPage(1); }}
                         >
@@ -312,8 +253,7 @@ const UserManagement = () => {
                                 cursor: 'pointer', 
                                 borderLeft: '4px solid #2ecc71',
                                 border: filterStatus === 'Approved' ? '2px solid #2ecc71' : '1px solid rgba(255,255,255,0.1)',
-                                transform: filterStatus === 'Approved' ? 'scale(1.05)' : 'scale(1)',
-                                transition: '0.3s'
+                                transform: filterStatus === 'Approved' ? 'scale(1.03)' : 'scale(1)',
                             }} 
                             onClick={() => { setFilterStatus('Approved'); setCurrentPage(1); }}
                         >
@@ -322,82 +262,46 @@ const UserManagement = () => {
                         </div>
                     </div>
 
-                    <div style={{ marginBottom: '20px', display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: '15px' }}>
-                        <label style={{ color: '#2ecc71', fontSize: '14px', fontWeight: 'bold' }}>FILTER BY ROLE:</label>
-                        <select 
-                            value={filterRole} 
-                            onChange={(e) => { setFilterRole(e.target.value); setCurrentPage(1); }}
-                            style={{
-                                background: 'rgba(255, 255, 255, 0.05)',
-                                color: '#fff',
-                                border: '1px solid rgba(46, 204, 113, 0.4)',
-                                padding: '10px 15px',
-                                borderRadius: '10px',
-                                outline: 'none',
-                                cursor: 'pointer',
-                                fontSize: '14px'
-                            }}
-                        >
-                            <option value="All" style={{ background: '#111', color: '#fff' }}>All Roles</option>
-                            <option value="Producer" style={{ background: '#111', color: '#fff' }}>Producer</option>
-                            <option value="Importer" style={{ background: '#111', color: '#fff' }}>Importer</option>
-                            <option value="Brand Owner" style={{ background: '#111', color: '#fff' }}>Brand Owner</option>
-                            <option value="Collector" style={{ background: '#111', color: '#fff' }}>Collector</option>
-                            <option value="Transporter" style={{ background: '#111', color: '#fff' }}>Transporter</option>
-                            <option value="Recycler" style={{ background: '#111', color: '#fff' }}>Recycler</option>
-                            <option value="PRO" style={{ background: '#111', color: '#fff' }}>PRO</option>
-                            <option value="authority" style={{ background: '#111', color: '#fff' }}>Authority</option>
-                        </select>
-                    </div>
-
-                    {/* 🚀 NEW: Quick Role-Based Filter Buttons Set (බටන් 4 ක් මෙහි එකතු කරන ලදී) */}
-                    <div style={{ marginBottom: '25px', display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+                    {/* 🚀 NEW LARGE BUTTON SET FOR ROLE CATEGORIES (PIBO, PRO, Waste, Authority) */}
+                    <h3 style={{...styles.sectionTitle, marginTop: '30px'}}>FILTER BY SYSTEM ROLE CATEGORIES</h3>
+                    <div style={styles.roleButtonsGrid}>
                         {[
-                            { label: 'All Roles', value: 'All' },
-                            { label: '🏭 PIBO Hub', value: 'Producer' }, // Producer/Importer/Brand Owner සමුදාය
-                            { label: '💎 PRO Compliance', value: 'PRO' },
-                            { label: '♻️ Waste Management', value: 'RECYCLER' }, // Recycler/Collector/Transporter
-                            { label: '🏛️ Authorities', value: 'authority' }
-                        ].map((btn) => (
-                            <button
-                                key={btn.value}
-                                onClick={() => { setFilterRole(btn.value); setCurrentPage(1); }}
+                            { label: 'ALL ROLES', value: 'All', icon: '🌐', color: '#2ecc71' },
+                            { label: 'PIBO HUB', value: 'PIBO', icon: '🏭', color: '#3498db' },
+                            { label: 'PRO COMPLIANCE', value: 'PRO', icon: '💎', color: '#f1c40f' },
+                            { label: 'WASTE MANAGEMENT', value: 'WASTE', icon: '♻️', color: '#f39c12' },
+                            { label: 'GOV AUTHORITIES', value: 'AUTHORITY', icon: '🏛️', color: '#9b59b6' }
+                        ].map((roleCard) => (
+                            <div
+                                key={roleCard.value}
+                                className="role-card"
+                                onClick={() => { setSelectedRoleCategory(roleCard.value); setCurrentPage(1); }}
                                 style={{
-                                    padding: '10px 20px',
-                                    borderRadius: '12px',
-                                    fontWeight: 'bold',
-                                    fontSize: '13px',
-                                    cursor: 'pointer',
-                                    transition: '0.3s',
-                                    background: filterRole === btn.value ? 'linear-gradient(135deg, #2ecc71 0%, #27ae60 100%)' : 'rgba(255, 255, 255, 0.05)',
-                                    color: filterRole === btn.value ? '#fff' : '#aaa',
-                                    border: filterRole === btn.value ? '1px solid #2ecc71' : '1px solid rgba(255, 255, 255, 0.1)',
-                                    boxShadow: filterRole === btn.value ? '0 5px 15px rgba(46, 204, 113, 0.3)' : 'none'
+                                    ...styles.roleCardBox,
+                                    borderColor: selectedRoleCategory === roleCard.value ? roleCard.color : 'rgba(255,255,255,0.1)',
+                                    background: selectedRoleCategory === roleCard.value ? `rgba(46, 204, 113, 0.12)` : 'rgba(255, 255, 255, 0.04)',
+                                    boxShadow: selectedRoleCategory === roleCard.value ? `0 0 20px ${roleCard.color}40` : 'none'
                                 }}
                             >
-                                {btn.label}
-                            </button>
+                                <span style={{ fontSize: '28px' }}>{roleCard.icon}</span>
+                                <h4 style={{ color: '#fff', fontSize: '15px', fontWeight: '800', margin: '8px 0 0 0', letterSpacing: '1px' }}>{roleCard.label}</h4>
+                            </div>
                         ))}
                     </div>
 
-                    <div className="glass-table-wrapper" style={styles.tableWrapper}>
-                        <table style={{...styles.table, minWidth: '2200px'}}>
+                    <div className="glass-table-wrapper" style={{...styles.tableWrapper, marginTop: '20px'}}>
+                        <table style={{...styles.table, minWidth: '1600px'}}>
                             <thead>
                                 <tr style={styles.headerRow}>
                                     <th style={styles.thFirst}>#</th>
                                     <th style={styles.th}>Reg Number</th>
-                                    <th style={styles.th}>Company Name</th>
-                                    <th style={styles.th}>Role</th>
-                                    <th style={styles.th}>Website</th>
+                                    <th style={styles.th}>Company / Institution Name</th>
+                                    <th style={styles.th}>Role Category</th>
                                     <th style={styles.th}>Official Email</th>
-                                    <th style={styles.th}>Phone</th>
-                                    <th style={styles.th}>WhatsApp</th>
-                                    <th style={styles.th}>DOB</th>
+                                    <th style={styles.th}>Phone / Mobile</th>
                                     <th style={styles.th}>Contact Person</th>
-                                    <th style={styles.th}>CP Mobile</th>
-                                    <th style={styles.th}>Address</th>
-                                    <th style={styles.th}>Country</th>
-                                    <th style={styles.th}>Core Primary Docs</th>
+                                    <th style={styles.th}>District</th>
+                                    <th style={styles.th}>Status</th>
                                     <th style={styles.thLast}>Action</th>
                                 </tr>
                             </thead>
@@ -406,65 +310,53 @@ const UserManagement = () => {
         const filteredCustomers = data.customers
             .filter(c => filterStatus === 'All' ? true : (c.status === filterStatus))
             .filter(c => {
-                if (filterRole === 'All') return true;
-                if (filterRole === 'Producer') {
-                    return c.orgRole === 'Producer' || c.orgRole === 'Importer' || c.orgRole === 'Brand Owner' || (c.piboBusinessType && c.piboBusinessType.length > 0);
+                if (selectedRoleCategory === 'All') return true;
+                const role = (c.orgRole || '').toUpperCase();
+                
+                if (selectedRoleCategory === 'PIBO') {
+                    return role === 'PRODUCER' || role === 'IMPORTER' || role === 'BRAND OWNER' || (c.piboBusinessType && c.piboBusinessType.length > 0);
                 }
-                if (filterRole === 'RECYCLER') {
-                    return c.orgRole === 'RECYCLER' || c.isCollector || c.isRecycler || c.isTransporter || c.isTotalSolutionProvider;
+                if (selectedRoleCategory === 'PRO') {
+                    return role === 'PRO';
                 }
-                return c.orgRole === filterRole;
+                if (selectedRoleCategory === 'WASTE') {
+                    return role === 'RECYCLER' || c.isCollector || c.isRecycler || c.isTransporter || c.isTotalSolutionProvider;
+                }
+                if (selectedRoleCategory === 'AUTHORITY') {
+                    return role === 'AUTHORITY' || c.institutionName;
+                }
+                return true;
             });
 
         const indexOfLastCustomer = currentPage * customersPerPage;
         const indexOfFirstCustomer = indexOfLastCustomer - customersPerPage;
-        
         const currentCustomers = filteredCustomers.slice(indexOfFirstCustomer, indexOfLastCustomer);
+
+        if (currentCustomers.length === 0) {
+            return (
+                <tr>
+                    <td colSpan="10" style={{ textAlign: 'center', padding: '40px', color: '#888', fontSize: '15px' }}>
+                        No records found matching this category.
+                    </td>
+                </tr>
+            );
+        }
 
         return currentCustomers.map((c, i) => (
             <tr key={i} className="table-row" style={styles.row}>
                 <td style={styles.tdFirst}>{indexOfFirstCustomer + i + 1}</td>
-                <td style={{...styles.td, fontWeight: 'bold', color: '#2ecc71'}}> {c.regNumber || 'N/A'}</td>
-                <td style={styles.td}>{c.companyName}</td>
-                <td style={styles.td}>{c.orgRole}</td>
-                <td style={styles.td}>{c.companyWebsite || '-'}</td>
-                <td style={styles.td}>{c.officialEmail}</td>
-                <td style={styles.td}>{c.phone}</td>
-                <td style={styles.td}>{c.whatsapp || '-'}</td>
-                <td style={styles.td}>{c.dob}</td>
-                <td style={styles.td}>{c.contactPersonName}</td>
-                <td style={styles.td}>{c.contactPersonMobile}</td>
-                <td style={styles.td}>{`${c.address1 || ''}, ${c.address2 || ''}`}</td>
-                <td style={styles.td}>{c.country || 'Sri Lanka'}</td>
-
-
-                 <td style={styles.td}>
-                    <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap', flexDirection: 'column' }}>
-                        {c.brcDocument && (
-                            <button onClick={() => handleDownload(c.brcDocument)} style={{...styles.docLink, background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left', color: '#3498db'}}>
-                                <span role="img" aria-label="doc">📄</span> BRC Proof
-                            </button>
-                        )}
-                        {c.vatDocument && (
-                            <button onClick={() => handleDownload(c.vatDocument)} style={{...styles.docLink, background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left', color: '#3498db'}}>
-                                <span role="img" aria-label="doc">📄</span> VAT Proof
-                            </button>
-                        )}
-                        {c.billingDocument && (
-                            <button onClick={() => handleDownload(c.billingDocument)} style={{...styles.docLink, background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left', color: '#3498db'}}>
-                                <span role="img" aria-label="doc">📄</span> Billing Proof
-                            </button>
-                        )}
-                        {c.nic && (
-                            <button onClick={() => handleDownload(c.nic)} style={{...styles.docLink, background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left', color: '#e67e22'}}>
-                                <span role="img" aria-label="doc">🆔</span> NIC Archive
-                            </button>
-                        )}
-                        {!(c.brcDocument || c.vatDocument || c.billingDocument || c.nic) && (
-                            <span style={{ color: 'rgba(255,255,255,0.3)', fontSize: '12px' }}>No Base Docs</span>
-                        )}
-                    </div>
-                </td>   
+                <td style={{...styles.td, fontWeight: 'bold', color: '#2ecc71'}}>{c.regNumber || 'N/A'}</td>
+                <td style={styles.td}>{c.companyName || c.institutionName || '-'}</td>
+                <td style={styles.td}><span style={{ padding: '4px 10px', borderRadius: '6px', background: 'rgba(255,255,255,0.06)', fontWeight: 'bold' }}>{c.orgRole || 'PIBO'}</span></td>
+                <td style={styles.td}>{c.officialEmail || c.username}</td>
+                <td style={styles.td}>{c.phone || c.contactMobile}</td>
+                <td style={styles.td}>{c.contactPersonName || '-'}</td>
+                <td style={styles.td}>{c.orgDistrict || '-'}</td>
+                <td style={styles.td}>
+                    <span style={{ color: c.status === 'Approved' ? '#2ecc71' : '#f1c40f', fontWeight: 'bold' }}>
+                        {c.status || 'Pending'}
+                    </span>
+                </td>
                 <td style={styles.tdLast}>
                     <div style={{ display: 'flex', gap: '6px', flexDirection: 'column' }}>
                         <button 
@@ -489,332 +381,147 @@ const UserManagement = () => {
                         </table>
                     </div>
 
+                    {/* Pagination */}
                     {(() => {
                         const filteredCustomersCount = data.customers
                             .filter(c => filterStatus === 'All' ? true : (c.status === filterStatus))
                             .filter(c => {
-                                if (filterRole === 'All') return true;
-                                if (filterRole === 'Producer') {
-                                    return c.orgRole === 'Producer' || c.orgRole === 'Importer' || c.orgRole === 'Brand Owner' || (c.piboBusinessType && c.piboBusinessType.length > 0);
-                                }
-                                if (filterRole === 'RECYCLER') {
-                                    return c.orgRole === 'RECYCLER' || c.isCollector || c.isRecycler || c.isTransporter || c.isTotalSolutionProvider;
-                                }
-                                return c.orgRole === filterRole;
+                                if (selectedRoleCategory === 'All') return true;
+                                const role = (c.orgRole || '').toUpperCase();
+                                if (selectedRoleCategory === 'PIBO') return role === 'PRODUCER' || role === 'IMPORTER' || role === 'BRAND OWNER' || (c.piboBusinessType?.length > 0);
+                                if (selectedRoleCategory === 'PRO') return role === 'PRO';
+                                if (selectedRoleCategory === 'WASTE') return role === 'RECYCLER' || c.isCollector || c.isRecycler || c.isTransporter || c.isTotalSolutionProvider;
+                                if (selectedRoleCategory === 'AUTHORITY') return role === 'AUTHORITY' || c.institutionName;
+                                return true;
                             }).length;
 
                         const totalPages = Math.ceil(filteredCustomersCount / customersPerPage);
-
                         if (totalPages <= 1) return null;
 
                         return (
-                            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '10px', marginTop: '30px', animation: 'fadeIn 1s ease-in' }}>
+                            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '10px', marginTop: '30px' }}>
                                 <button 
                                     onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
                                     disabled={currentPage === 1}
-                                    style={{
-                                        padding: '10px 18px',
-                                        background: currentPage === 1 ? 'rgba(255,255,255,0.02)' : 'rgba(46, 204, 113, 0.1)',
-                                        border: '1px solid rgba(46, 204, 113, 0.3)',
-                                        color: currentPage === 1 ? '#666' : '#2ecc71',
-                                        borderRadius: '10px',
-                                        cursor: 'pointer',
-                                        fontWeight: 'bold',
-                                        transition: '0.3s'
-                                    }}
+                                    style={styles.pageBtn}
                                 >
                                     Previous
                                 </button>
-
                                 {Array.from({ length: totalPages }, (_, index) => (
                                     <button
                                         key={index + 1}
                                         onClick={() => setCurrentPage(index + 1)}
                                         style={{
-                                            width: '40px',
-                                            height: '40px',
-                                            background: currentPage === index + 1 ? 'linear-gradient(135deg, #2ecc71 0%, #2ecc71 100%)' : 'rgba(255,255,255,0.05)',
-                                            border: 'none',
-                                            color: '#fff',
-                                            borderRadius: '10px',
-                                            cursor: 'pointer',
-                                            fontWeight: 'bold',
-                                            transition: '0.3s'
+                                            ...styles.pageBtn,
+                                            background: currentPage === index + 1 ? '#2ecc71' : 'rgba(255,255,255,0.05)',
+                                            color: '#fff'
                                         }}
                                     >
                                         {index + 1}
                                     </button>
                                 ))}
-
                                 <button 
                                     onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
                                     disabled={currentPage === totalPages}
-                                    style={{
-                                        padding: '10px 18px',
-                                        background: currentPage === totalPages ? 'rgba(255,255,255,0.02)' : 'rgba(46, 204, 113, 0.1)',
-                                        border: '1px solid rgba(46, 204, 113, 0.3)',
-                                        color: currentPage === totalPages ? '#666' : '#2ecc71',
-                                        borderRadius: '10px',
-                                        cursor: 'pointer',
-                                        fontWeight: 'bold',
-                                        transition: '0.3s'
-                                    }}
+                                    style={styles.pageBtn}
                                 >
                                     Next
                                 </button>
                             </div>
                         );
                     })()}
-
                 </div>
             </div>
 
-            {/* ============================================================================================ */}
-            {/* 👑 💎 🚚 🏭 AUDIT ENGINE MODAL: PRO, WASTE MANAGEMENT & PIBO ALL MATRIX DATA DETAILED VIEWER */}
-            {/* ============================================================================================ */}
+            {/* AUDIT MODAL VIEWER */}
             {selectedUser && (
                 <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.85)', backdropFilter: 'blur(20px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 10000, padding: '20px' }}>
-                    <div style={{ background: '#0c0c0c', borderRadius: '32px', maxWidth: '850px', width: '100%', maxHeight: '90vh', border: selectedUser.orgRole === 'PRO' ? '1px solid rgba(241, 196, 15, 0.3)' : (selectedUser.orgRole === 'RECYCLER' ? '1px solid rgba(243, 156, 18, 0.3)' : '1px solid rgba(52, 152, 219, 0.3)'), boxShadow: '0 50px 120px rgba(0,0,0,0.9)', display: 'flex', flexDirection: 'column', overflow: 'hidden', animation: 'fadeIn 0.4s ease-out' }}>
+                    <div style={{ background: '#0c0c0c', borderRadius: '32px', maxWidth: '850px', width: '100%', maxHeight: '90vh', border: '1px solid rgba(46, 204, 113, 0.3)', boxShadow: '0 50px 120px rgba(0,0,0,0.9)', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
                         
-                        {/* Dynamic Header Badge styling according to Role Profile */}
-                        <div style={{ padding: '30px', textalign: 'center', background: 'rgba(255,255,255,0.01)', borderBottom: `4px solid ${selectedUser.orgRole === 'PRO' ? '#f1c40f' : (selectedUser.orgRole === 'RECYCLER' ? '#f39c12' : '#3498db')}`, position: 'relative' }}>
-                            <div style={{ fontSize: '42px', marginBottom: '8px', textAlign: 'center' }}>
-                                {selectedUser.orgRole === 'PRO' ? '💎' : (selectedUser.orgRole === 'RECYCLER' ? '🚚' : '🏭')}
-                            </div>
-                            <h2 style={{ color: '#fff', fontSize: '22px', fontWeight: '900', letterSpacing: '1px', textTransform: 'uppercase', margin: '0 0 10px 0', textAlign: 'center' }}>
-                                [{selectedUser.orgRole}] Unified Compliance Account Profile
+                        <div style={{ padding: '30px', background: 'rgba(255,255,255,0.01)', borderBottom: '4px solid #2ecc71', textAlign: 'center' }}>
+                            <h2 style={{ color: '#fff', fontSize: '20px', fontWeight: '900', textTransform: 'uppercase', margin: '0 0 10px 0' }}>
+                                [{selectedUser.orgRole || 'Compliance Account'}] Audit Profile Details
                             </h2>
-                            <div style={{ textAlign: 'center' }}>
-                                <span style={{ padding: '5px 16px', borderRadius: '20px', fontSize: '11px', fontWeight: 'bold', background: selectedUser.status === 'Pending' ? 'rgba(241,196,15,0.12)' : 'rgba(46,204,113,0.12)', color: selectedUser.status === 'Pending' ? '#f1c40f' : '#2ecc71', border: `1px solid ${selectedUser.status === 'Pending' ? 'rgba(241,196,15,0.2)' : 'rgba(46,204,113,0.2)'}` }}>
-                                    ACCOUNT STATUS: {selectedUser.status}
-                                </span>
-                            </div>
+                            <span style={{ padding: '5px 16px', borderRadius: '20px', fontSize: '11px', fontWeight: 'bold', background: selectedUser.status === 'Pending' ? 'rgba(241,196,15,0.12)' : 'rgba(46,204,113,0.12)', color: selectedUser.status === 'Pending' ? '#f1c40f' : '#2ecc71' }}>
+                                STATUS: {selectedUser.status}
+                            </span>
                         </div>
 
-                        {/* Modal Dashboard Scroller Core */}
                         <div style={{ padding: '40px', overflowY: 'auto', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '25px', backgroundColor: '#090909' }}>
-                            
-                            {/* Legal Identity Frame */}
-                            <div style={{ gridColumn: 'span 2', background: 'rgba(255,255,255,0.02)', padding: '22px', borderRadius: '20px', border: '1px solid rgba(255,255,255,0.05)' }}>
-                                <div style={{ fontSize: '11px', color: '#666', textTransform: 'uppercase', fontWeight: 'bold', letterSpacing: '0.5px' }}>Corporate Corporate Title</div>
-                                <div style={{ color: '#fff', fontSize: '22px', fontWeight: '800', marginTop: '6px' }}>{selectedUser.companyName}</div>
-                                <div style={{ fontSize: '13px', color: '#888', marginTop: '4px' }}>Registration String (BRN / NIC): <span style={{ color: '#2ecc71', fontWeight: 'bold' }}>{selectedUser.regNumber || 'N/A'}</span></div>
-                                {selectedUser.companyWebsite && <div style={{ fontSize: '13px', marginTop: '8px' }}>🌐 Website: <a href={selectedUser.companyWebsite} target="_blank" rel="noreferrer" style={{ color: '#3498db', textDecoration: 'none' }}>{selectedUser.companyWebsite}</a></div>}
+                            <div style={{ gridColumn: 'span 2', background: 'rgba(255,255,255,0.02)', padding: '20px', borderRadius: '15px' }}>
+                                <div style={{ fontSize: '11px', color: '#666', textTransform: 'uppercase', fontWeight: 'bold' }}>Entity Name</div>
+                                <div style={{ color: '#fff', fontSize: '20px', fontWeight: '800', marginTop: '4px' }}>{selectedUser.companyName || selectedUser.institutionName}</div>
+                                <div style={{ fontSize: '13px', color: '#888', marginTop: '4px' }}>Reg Number: <span style={{ color: '#2ecc71', fontWeight: 'bold' }}>{selectedUser.regNumber || 'N/A'}</span></div>
                             </div>
 
-                            {/* Representative Contact Column */}
-                            <div style={{ background: 'rgba(255,255,255,0.01)', padding: '20px', borderRadius: '18px', border: '1px solid rgba(255,255,255,0.04)' }}>
-                                <div style={{ fontSize: '11px', color: '#666', textTransform: 'uppercase', marginBottom: '10px', fontWeight: 'bold' }}>Primary Focal Representative</div>
-                                <div style={{ color: '#fff', fontSize: '16px', fontWeight: 'bold' }}>{selectedUser.contactPersonName}</div>
-                                {selectedUser.contactDesignation && <div style={{ color: '#999', fontSize: '13px', marginTop: '2px' }}>Designation: {selectedUser.contactDesignation}</div>}
-                                <div style={{ color: '#aaa', fontSize: '13px', marginTop: '8px' }}>📱 Mobile Line: {selectedUser.contactPersonMobile}</div>
-                                <div style={{ color: '#aaa', fontSize: '13px' }}>📞 Landline: {selectedUser.phone}</div>
-                                {selectedUser.whatsapp && <div style={{ color: '#2ecc71', fontSize: '13px', marginTop: '4px' }}>💬 WhatsApp: {selectedUser.whatsapp}</div>}
+                            <div style={{ background: 'rgba(255,255,255,0.01)', padding: '18px', borderRadius: '15px' }}>
+                                <div style={{ fontSize: '11px', color: '#666', textTransform: 'uppercase', fontWeight: 'bold' }}>Contact Representative</div>
+                                <div style={{ color: '#fff', fontSize: '15px', fontWeight: 'bold', marginTop: '6px' }}>{selectedUser.contactPersonName || 'N/A'}</div>
+                                <div style={{ color: '#aaa', fontSize: '13px', marginTop: '4px' }}>Mobile: {selectedUser.phone || selectedUser.contactMobile}</div>
+                                <div style={{ color: '#aaa', fontSize: '13px' }}>Email: {selectedUser.officialEmail || selectedUser.username}</div>
                             </div>
 
-                            {/* Geo Location Physical Boundaries Card */}
-                            <div style={{ background: 'rgba(255,255,255,0.01)', padding: '20px', borderRadius: '18px', border: '1px solid rgba(255,255,255,0.04)' }}>
-                                <div style={{ fontSize: '11px', color: '#666', textTransform: 'uppercase', marginBottom: '10px', fontWeight: 'bold' }}>Geographic Mapping</div>
-                                <div style={{ fontSize: '13px', color: '#ccc' }}>District boundary: <span style={{ color: '#fff', fontWeight: 'bold' }}>{selectedUser.orgDistrict || 'N/A'}</span></div>
-                                <div style={{ fontSize: '13px', color: '#ccc', marginTop: '4px' }}>Province mapping: <span style={{ color: '#fff', fontWeight: 'bold' }}>{selectedUser.orgProvince || 'N/A'}</span></div>
-                                <div style={{ fontSize: '13px', color: '#ccc', marginTop: '4px' }}>Physical Address: <span style={{ color: '#fff' }}>{selectedUser.address1 || '-'}, {selectedUser.address2 || ''}</span></div>
-                                <div style={{ fontSize: '13px', color: '#ccc', marginTop: '4px' }}>Country origin: <span style={{ color: '#fff' }}>{selectedUser.country || 'Sri Lanka'}</span></div>
+                            <div style={{ background: 'rgba(255,255,255,0.01)', padding: '18px', borderRadius: '15px' }}>
+                                <div style={{ fontSize: '11px', color: '#666', textTransform: 'uppercase', fontWeight: 'bold' }}>Location Information</div>
+                                <div style={{ fontSize: '13px', color: '#ccc', marginTop: '6px' }}>District: <span style={{ color: '#fff', fontWeight: 'bold' }}>{selectedUser.orgDistrict || 'N/A'}</span></div>
+                                <div style={{ fontSize: '13px', color: '#ccc', marginTop: '4px' }}>Province: <span style={{ color: '#fff', fontWeight: 'bold' }}>{selectedUser.orgProvince || 'N/A'}</span></div>
+                                <div style={{ fontSize: '13px', color: '#ccc', marginTop: '4px' }}>Address: {selectedUser.address1 || '-'}</div>
                             </div>
 
-                            {/* ========================================================================= */}
-                            {/* 💎 PRO DATA SUB-VIEW CONTAINER */}
-                            {/* ========================================================================= */}
-                            {selectedUser.orgRole === 'PRO' && (
-                                <div style={{ gridColumn: 'span 2', display: 'flex', flexDirection: 'column', gap: '15px' }}>
-                                    <div style={{ background: 'rgba(241,196,15,0.02)', padding: '18px', borderRadius: '15px', border: '1px solid rgba(241,196,15,0.1)' }}>
-                                        <div style={{ fontSize: '12px', color: '#f1c40f', fontWeight: 'bold', marginBottom: '8px' }}>PRO MATRIX STRUCTURAL MODELS</div>
-                                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
-                                            {selectedUser.organizationTypes?.map((t, idx) => <span key={idx} style={{ background: 'rgba(255,255,255,0.05)', fontSize: '12px', padding: '4px 10px', borderRadius: '6px' }}>🔹 {t}</span>)}
-                                            {selectedUser.organizationTypesOther && <span style={{ background: 'rgba(255,255,255,0.05)', fontSize: '12px', padding: '4px 10px', borderRadius: '6px', color: '#f1c40f' }}>Other: {selectedUser.organizationTypesOther}</span>}
-                                        </div>
-                                    </div>
-                                    <div style={{ background: 'rgba(241,196,15,0.02)', padding: '18px', borderRadius: '15px', border: '1px solid rgba(241,196,15,0.1)' }}>
-                                        <div style={{ fontSize: '12px', color: '#f1c40f', fontWeight: 'bold', marginBottom: '8px' }}>PRO CAPABILITY SCOPE TARGETS</div>
-                                        {selectedUser.serviceCapabilities?.map((c, idx) => <div key={idx} style={{ fontSize: '13px', marginTop: '4px', color: '#ddd' }}>⚡ {c}</div>)}
-                                    </div>
-                                    <div style={{ background: 'rgba(241,196,15,0.02)', padding: '18px', borderRadius: '15px', border: '1px solid rgba(241,196,15,0.1)' }}>
-                                        <div style={{ fontSize: '12px', color: '#f1c40f', fontWeight: 'bold', marginBottom: '8px' }}>MANAGED WASTE RECOVERY STREAM PORTFOLIO</div>
-                                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
-                                            {selectedUser.managedWasteCategories?.map((w, idx) => <span key={idx} style={{ background: 'rgba(243,156,18,0.1)', color: '#f39c12', fontSize: '12px', padding: '4px 10px', borderRadius: '6px', border: '1px solid rgba(243,156,18,0.2)' }}>♻️ {w}</span>)}
-                                        </div>
-                                    </div>
-                                    <div style={{ background: 'rgba(241,196,15,0.02)', padding: '15px', borderRadius: '15px', display: 'flex', gap: '20px' }}>
-                                        <div>Managed PIBO Footprint: <span style={{ color: '#fff', fontWeight: 'bold' }}>{selectedUser.managedPibosCount || 0} Entities</span></div>
-                                        <div>Collector Pipeline Nodes: <span style={{ color: '#fff', fontWeight: 'bold' }}>{selectedUser.networkCollectorsCount || 0} Active</span></div>
-                                    </div>
-                                </div>
-                            )}
-
-                            {/* ========================================================================= */}
-                            {/* 🚚 WASTE MANAGEMENT SYSTEM SPECIFIC PORTAL SUB-VIEW CONTAINER */}
-                            {/* ========================================================================= */}
-                            {(selectedUser.orgRole === 'RECYCLER' || selectedUser.isCollector || selectedUser.isRecycler || selectedUser.isTransporter || selectedUser.isTotalSolutionProvider) && (
-                                <div style={{ gridColumn: 'span 2', display: 'flex', flexDirection: 'column', gap: '15px' }}>
-                                    <div style={{ background: 'rgba(243,156,18,0.02)', padding: '18px', borderRadius: '15px', border: '1px solid rgba(243,156,18,0.1)' }}>
-                                        <div style={{ fontSize: '12px', color: '#f39c12', fontWeight: 'bold', marginBottom: '8px' }}>AUTHORIZED OPERATIONAL SYSTEM ROLES</div>
-                                        <div style={{ display: 'flex', gap: '10px' }}>
-                                            {selectedUser.isCollector && <span style={{ background: 'rgba(243,156,18,0.15)', color: '#f39c12', padding: '4px 10px', borderRadius: '6px', fontSize: '12px' }}>🚛 Collector</span>}
-                                            {selectedUser.isRecycler && <span style={{ background: 'rgba(243,156,18,0.15)', color: '#f39c12', padding: '4px 10px', borderRadius: '6px', fontSize: '12px' }}>♻️ Recycler</span>}
-                                            {selectedUser.isTransporter && <span style={{ background: 'rgba(243,156,18,0.15)', color: '#f39c12', padding: '4px 10px', borderRadius: '6px', fontSize: '12px' }}>🚚 Transporter</span>}
-                                            {selectedUser.isTotalSolutionProvider && <span style={{ background: 'rgba(46,204,113,0.15)', color: '#2ecc71', padding: '4px 10px', borderRadius: '6px', fontSize: '12px', fontWeight: 'bold' }}>🌐 Total Solution Provider</span>}
-                                        </div>
-                                    </div>
-                                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px' }}>
-                                        <div style={{ background: 'rgba(255,255,255,0.02)', padding: '15px', borderRadius: '12px' }}>
-                                            <div style={{ fontSize: '11px', color: '#666' }}>Collection Methods Mapping</div>
-                                            <div style={{ color: '#fff', fontSize: '13px', marginTop: '4px' }}>{selectedUser.collectionSystemTypes?.join(", ") || 'N/A'}</div>
-                                            <div style={{ fontSize: '11px', color: '#666', marginTop: '8px' }}>Collection Scope Matrix</div>
-                                            <div style={{ color: '#fff', fontSize: '13px' }}>{selectedUser.collectionAreaCoverage || 'N/A'}</div>
-                                        </div>
-                                        <div style={{ background: 'rgba(255,255,255,0.02)', padding: '15px', borderRadius: '12px' }}>
-                                            <div style={{ fontSize: '11px', color: '#666' }}>Installed Machinery Capacity</div>
-                                            <div style={{ color: '#fff', fontSize: '13px', marginTop: '4px' }}>{selectedUser.installedProcessingCapacity || 'N/A'}</div>
-                                            <div style={{ fontSize: '11px', color: '#666', marginTop: '8px' }}>Logistics Fleet Scope</div>
-                                            <div style={{ color: '#fff', fontSize: '13px' }}>{selectedUser.transportCoverageScope || 'N/A'}</div>
-                                            {selectedUser.transportPradeshiyaSabhas && selectedUser.transportPradeshiyaSabhas.length > 0 && <div style={{ fontSize: '11px', color: '#3498db', marginTop: '4px' }}>Sabhas: {selectedUser.transportPradeshiyaSabhas.join(", ")}</div>}
-                                        </div>
-                                    </div>
-                                    <div style={{ background: 'rgba(255,255,255,0.02)', padding: '15px', borderRadius: '15px', display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '10px', textAlign: 'center' }}>
-                                        <div><div style={{ fontSize: '11px', color: '#666' }}>Est Monthly Collect</div><span style={{ color: '#fff', fontWeight: 'bold' }}>{selectedUser.estimatedMonthlyCollectionVolume || '-'}</span></div>
-                                        <div><div style={{ fontSize: '11px', color: '#666' }}>Est Monthly Process</div><span style={{ color: '#fff', fontWeight: 'bold' }}>{selectedUser.estimatedMonthlyProcessingVolume || '-'}</span></div>
-                                        <div><div style={{ fontSize: '11px', color: '#666' }}>Active Employees</div><span style={{ color: '#fff', fontWeight: 'bold' }}>{selectedUser.employeeCount || 0} Staff</span></div>
-                                    </div>
-                                    {selectedUser.equipmentDetailsReport && (
-                                        <div style={{ background: 'rgba(255,255,255,0.02)', padding: '15px', borderRadius: '12px' }}>
-                                            <div style={{ fontSize: '11px', color: '#666', marginBottom: '4px' }}>Machinery Serial Allocations & Automation Report</div>
-                                            <div style={{ fontSize: '13px', color: '#ccc', whiteSpace: 'pre-line' }}>{selectedUser.equipmentDetailsReport}</div>
-                                        </div>
+                            {/* Documents Section */}
+                            <div style={{ gridColumn: 'span 2', background: 'rgba(0,0,0,0.4)', padding: '20px', borderRadius: '15px' }}>
+                                <div style={{ fontSize: '11px', color: '#666', textTransform: 'uppercase', marginBottom: '12px', fontWeight: 'bold' }}>Available Uploaded Documents</div>
+                                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
+                                    {selectedUser.verificationDocument && selectedUser.verificationDocument.url && (
+                                        <button onClick={() => handleDownload(selectedUser.verificationDocument)} style={styles.docButton}>📄 Authority Verification Doc</button>
+                                    )}
+                                    {selectedUser.environmentalLicenseFile && selectedUser.environmentalLicenseFile.url && (
+                                        <button onClick={() => handleDownload(selectedUser.environmentalLicenseFile)} style={styles.docButton}>📄 EPL License</button>
+                                    )}
+                                    {selectedUser.wasteHandlingLicenseFile && selectedUser.wasteHandlingLicenseFile.url && (
+                                        <button onClick={() => handleDownload(selectedUser.wasteHandlingLicenseFile)} style={styles.docButton}>📄 Waste Handling License</button>
+                                    )}
+                                    {selectedUser.portfolioDocument && selectedUser.portfolioDocument.url && (
+                                        <button onClick={() => handleDownload(selectedUser.portfolioDocument)} style={styles.docButton}>📄 PRO Portfolio Document</button>
+                                    )}
+                                    {(!selectedUser.verificationDocument?.url && !selectedUser.environmentalLicenseFile?.url && !selectedUser.portfolioDocument?.url) && (
+                                        <span style={{ color: '#666', fontSize: '13px' }}>No separate verification documents attached.</span>
                                     )}
                                 </div>
-                            )}
-
-                            {/* ========================================================================= */}
-                            {/* 🏭 PIBO SMART DATA SYSTEM DECLARATIONS CONTAINER */}
-                            {/* ========================================================================= */}
-                            {(selectedUser.orgRole === 'Producer' || selectedUser.piboBusinessType?.length > 0) && (
-                                <div style={{ gridColumn: 'span 2', display: 'flex', flexDirection: 'column', gap: '15px' }}>
-                                    <div style={{ background: 'rgba(52,152,219,0.02)', padding: '18px', borderRadius: '15px', border: '1px solid rgba(52,152,219,0.1)' }}>
-                                        <div style={{ fontSize: '12px', color: '#3498db', fontWeight: 'bold', marginBottom: '8px' }}>PIBO ENGAGED BUSINESS PORTFOLIOS</div>
-                                        <div style={{ display: 'flex', gap: '8px' }}>
-                                            {selectedUser.piboBusinessType?.map((b, idx) => <span key={idx} style={{ background: 'rgba(52,152,219,0.15)', color: '#3498db', padding: '4px 10px', borderRadius: '6px', fontSize: '12px' }}>⚙️ {b}</span>)}
-                                        </div>
-                                        <div style={{ fontSize: '13px', color: '#aaa', marginTop: '8px' }}>Tax TIN/VAT Code Reference: <span style={{ color: '#fff', fontWeight: 'bold' }}>{selectedUser.piboTinVatNumber || 'N/A'}</span></div>
-                                    </div>
-
-                                    {/* Annual Weights Metrics Metrics block */}
-                                    <div style={{ background: 'rgba(255,255,255,0.02)', padding: '20px', borderRadius: '18px' }}>
-                                        <div style={{ fontSize: '12px', color: '#2ecc71', fontWeight: 'bold', marginBottom: '12px' }}>DECLARED ANNUAL MASS METRICS (KG/UNITS PER ANNUM)</div>
-                                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '12px', fontSize: '12px' }}>
-                                            <div style={{ background: '#00000040', padding: '8px', borderRadius: '6px' }}>Plastic Pkg: <span style={{ color: '#fff', fontWeight: 'bold' }}>{selectedUser.volumePackagingPlastic || 0} kg</span></div>
-                                            <div style={{ background: '#00000040', padding: '8px', borderRadius: '6px' }}>Paper Pkg: <span style={{ color: '#fff', fontWeight: 'bold' }}>{selectedUser.volumePackagingPaperCardboard || 0} kg</span></div>
-                                            <div style={{ background: '#00000040', padding: '8px', borderRadius: '6px' }}>Glass Pkg: <span style={{ color: '#fff', fontWeight: 'bold' }}>{selectedUser.volumePackagingGlass || 0} kg</span></div>
-                                            <div style={{ background: '#00000040', padding: '8px', borderRadius: '6px' }}>Metal Pkg: <span style={{ color: '#fff', fontWeight: 'bold' }}>{selectedUser.volumePackagingMetal || 0} kg</span></div>
-                                            <div style={{ background: '#00000040', padding: '8px', borderRadius: '6px' }}>EEE Assets: <span style={{ color: '#fff', fontWeight: 'bold' }}>{selectedUser.volumeEeeUnits || 0} u</span></div>
-                                            <div style={{ background: '#00000040', padding: '8px', borderRadius: '6px' }}>LED/CFL bulbs: <span style={{ color: '#fff', fontWeight: 'bold' }}>{selectedUser.volumeLedCflLightingUnits || 0} u</span></div>
-                                            <div style={{ background: '#00000040', padding: '8px', borderRadius: '6px' }}>Batteries Mass: <span style={{ color: '#fff', fontWeight: 'bold' }}>{selectedUser.volumeBatteriesKg || 0} units/kg</span></div>
-                                            <div style={{ background: '#00000040', padding: '8px', borderRadius: '6px' }}>Chemical fluids: <span style={{ color: '#fff', fontWeight: 'bold' }}>{selectedUser.volumeChemicalsLiters || 0} L/kg</span></div>
-                                            <div style={{ background: '#00000040', padding: '8px', borderRadius: '6px' }}>Lubricants Fleet: <span style={{ color: '#fff', fontWeight: 'bold' }}>{selectedUser.volumeLubricantsOilsLiters || 0} L</span></div>
-                                        </div>
-                                    </div>
-
-                                    {/* Calculated System Responsibilities mapping profiles */}
-                                    <div style={{ background: 'rgba(46,204,113,0.04)', padding: '18px', borderRadius: '15px', border: '1px dashed rgba(46,204,113,0.2)' }}>
-                                        <div style={{ fontSize: '12px', color: '#2ecc71', fontWeight: 'bold', marginBottom: '8px' }}>SYSTEM MAPPED AGGREGATE EPR RESPONSIBILITIES</div>
-                                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
-                                            {selectedUser.generatedWasteLiabilityCategories?.map((l, idx) => <span key={idx} style={{ background: 'rgba(46,204,113,0.15)', color: '#2ecc71', fontSize: '11px', padding: '3px 8px', borderRadius: '4px', fontWeight: 'bold' }}>☑️ {l}</span>)}
-                                            {(!selectedUser.generatedWasteLiabilityCategories || selectedUser.generatedWasteLiabilityCategories.length === 0) && <span style={{ color: '#555', fontSize: '12px' }}>No Liabilities Allocated</span>}
-                                        </div>
-                                    </div>
-                                </div>
-                            )}
-
-                            {/* ========================================================================= */}
-                             interviewee uploads panel (PRO, Waste, PIBO All secondary files matched)
-                            {/* ========================================================================= */}
-                            <div style={{ gridColumn: 'span 2', background: 'rgba(0,0,0,0.4)', padding: '22px', borderRadius: '20px', border: '1px solid rgba(255,255,255,0.06)' }}>
-                                <div style={{ fontSize: '11px', color: '#666', textTransform: 'uppercase', marginBottom: '12px', fontWeight: 'bold' }}>All Dynamic Verification Documents Archive</div>
-                                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
-                                    {selectedUser.brcDocument && <button onClick={() => handleDownload(selectedUser.brcDocument)} style={styles.savePdfBtn}>📄 Core BRC Document</button>}
-                                    {selectedUser.vatDocument && <button onClick={() => handleDownload(selectedUser.vatDocument)} style={styles.savePdfBtn}>📄 VAT Certification</button>}
-                                    {selectedUser.billingDocument && <button onClick={() => handleDownload(selectedUser.billingDocument)} style={styles.savePdfBtn}>📄 Utility Bill Proof</button>}
-                                    {selectedUser.nic && <button onClick={() => handleDownload(selectedUser.nic)} style={{...styles.savePdfBtn, border: '1px solid #e67e22', color: '#e67e22'}}>🆔 NIC Scanner Copy</button>}
-                                    
-                                    {/* PRO Upload Files options */}
-                                    {selectedUser.taxCertificateDocument && <button onClick={() => handleDownload(selectedUser.taxCertificateDocument)} style={{...styles.savePdfBtn, border: '1px solid #f1c40f', color: '#f1c40f'}}>📄 Tax Certificate (TIN)</button>}
-                                    {selectedUser.companyProfileDocument && <button onClick={() => handleDownload(selectedUser.companyProfileDocument)} style={{...styles.savePdfBtn, border: '1px solid #f1c40f', color: '#f1c40f'}}>📄 Company Brochure/Profile</button>}
-                                    {selectedUser.operationalExperienceProofDocument && <button onClick={() => handleDownload(selectedUser.operationalExperienceProofDocument)} style={{...styles.savePdfBtn, border: '1px solid #f1c40f', color: '#f1c40f'}}>📄 Operational Experience Proof</button>}
-                                    {selectedUser.authorizationLetterDocument && <button onClick={() => handleDownload(selectedUser.authorizationLetterDocument)} style={{...styles.savePdfBtn, border: '1px solid #f1c40f', color: '#f1c40f'}}>📄 Power of Attorney Letter</button>}
-
-                                    {/* Waste Handling Upload Files options */}
-                                    {selectedUser.environmentalLicenseFile && <button onClick={() => handleDownload(selectedUser.environmentalLicenseFile)} style={{...styles.savePdfBtn, border: '1px solid #f39c12', color: '#f39c12'}}>📄 EPL statutory License</button>}
-                                    {selectedUser.wasteHandlingLicenseFile && <button onClick={() => handleDownload(selectedUser.wasteHandlingLicenseFile)} style={{...styles.savePdfBtn, border: '1px solid #f39c12', color: '#f39c12'}}>📄 Scheduled Waste License</button>}
-                                    {selectedUser.boiLocalAuthorityApprovalFile && <button onClick={() => handleDownload(selectedUser.boiLocalAuthorityApprovalFile)} style={{...styles.savePdfBtn, border: '1px solid #f39c12', color: '#f39c12'}}>📄 BOI Local Authority Approval</button>}
-
-                                    {/* PIBO Upload Files options */}
-                                    {selectedUser.piboImportLicenseFile && <button onClick={() => handleDownload(selectedUser.piboImportLicenseFile)} style={{...styles.savePdfBtn, border: '1px solid #3498db', color: '#3498db'}}>📄 PIBO Import License</button>}
-                                    {selectedUser.piboProductCatalogFile && <button onClick={() => handleDownload(selectedUser.piboProductCatalogFile)} style={{...styles.savePdfBtn, border: '1px solid #3498db', color: '#3498db'}}>📄 Product Catalog Archive</button>}
-                                    {selectedUser.piboBrandOwnershipFile && <button onClick={() => handleDownload(selectedUser.piboBrandOwnershipFile)} style={{...styles.savePdfBtn, border: '1px solid #3498db', color: '#3498db'}}>📄 Trademark Brand Records</button>}
-                                </div>
                             </div>
                         </div>
 
-                        {/* Modal Action Controls Footer */}
                         <div style={{ background: '#121212', padding: '20px 40px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid rgba(255,255,255,0.06)' }}>
                             <div style={{ fontSize: '12px', color: '#555' }}>
-                                Account Joined Timestamp: {new Date(selectedUser.registeredAt).toLocaleString()}
-                                {selectedUser.digitalSignatureName && <div style={{ color: '#2ecc71', marginTop: '2px', fontWeight: 'bold' }}>✍️ Signed Corporate Oath: {selectedUser.digitalSignatureName}</div>}
+                                Registered Timestamp: {new Date(selectedUser.registeredAt).toLocaleString()}
                             </div>
                             <div style={{ display: 'flex', gap: '12px' }}>
                                 {selectedUser.status === 'Pending' && (
-                                    <button onClick={() => approveCustomer(selectedUser._id)} style={{ ...styles.approveBtn, marginRight: 0, padding: '12px 25px', borderRadius: '10px' }}>Approve Framework Activation</button>
+                                    <button onClick={() => approveCustomer(selectedUser._id)} style={{ ...styles.approveBtn, padding: '10px 20px' }}>Approve Account</button>
                                 )}
-                                <button onClick={() => setSelectedUser(null)} style={{ background: selectedUser.orgRole === 'PRO' ? '#f1c40f' : (selectedUser.orgRole === 'RECYCLER' ? '#f39c12' : '#3498db'), color: '#000', border: 'none', padding: '12px 30px', borderRadius: '10px', fontWeight: '900', cursor: 'pointer', textTransform: 'uppercase', fontSize: '12px', letterSpacing: '0.5px' }}>Exit Log Audit</button>
+                                <button onClick={() => setSelectedUser(null)} style={{ background: '#2ecc71', color: '#000', border: 'none', padding: '10px 25px', borderRadius: '8px', fontWeight: '900', cursor: 'pointer', textTransform: 'uppercase', fontSize: '12px' }}>Close Audit</button>
                             </div>
                         </div>
 
                     </div>
                 </div>
             )}
-
         </div>
     );
 };
 
 const styles = {
-    container: { 
-        display: 'flex', minHeight: '100vh', 
-        background: `linear-gradient(rgba(0, 0, 0, 0.48), rgba(0, 0, 0, 0.48)), url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&q=80&w=2072')`,
-        backgroundSize: 'cover', backgroundPosition: 'center', backgroundAttachment: 'fixed',
-        color: '#fff', fontFamily: "'Inter', sans-serif" 
-    },
-    sidebar: { 
-        width: '320px', position: 'fixed', top: 0, left: 0, bottom: 0,
-        background: 'rgba(10, 10, 10, 0.6)', backdropFilter: 'blur(25px)',
-        borderRight: '1px solid rgba(255, 255, 255, 0.1)', display: 'flex',
-        flexDirection: 'column', padding: '50px 25px', zIndex: 100 
-    },
-    logoCircle: { 
-        width: '100px', height: '100px', background: '#fff', borderRadius: '24px', 
-        margin: '0 auto', display: 'flex', justifyContent: 'center', alignItems: 'center',
-        boxShadow: '0 15px 35px rgba(0,0,0,0.5)', overflow: 'hidden'
-    },
+    container: { display: 'flex', minHeight: '100vh', background: `linear-gradient(rgba(0, 0, 0, 0.48), rgba(0, 0, 0, 0.48)), url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&q=80&w=2072')`, backgroundSize: 'cover', backgroundPosition: 'center', backgroundAttachment: 'fixed', color: '#fff', fontFamily: "'Inter', sans-serif" },
+    sidebar: { width: '320px', position: 'fixed', top: 0, left: 0, bottom: 0, background: 'rgba(10, 10, 10, 0.6)', backdropFilter: 'blur(25px)', borderRight: '1px solid rgba(255, 255, 255, 0.1)', display: 'flex', flexDirection: 'column', padding: '50px 25px', zIndex: 100 },
+    logoCircle: { width: '100px', height: '100px', background: '#fff', borderRadius: '24px', margin: '0 auto', display: 'flex', justifyContent: 'center', alignItems: 'center', boxShadow: '0 15px 35px rgba(0,0,0,0.5)', overflow: 'hidden' },
     logoImg: { width: '85%' },
     logoTitle: { color: '#2ecc71', textAlign: 'center', margin: '20px 0 50px', fontSize: '16px', fontWeight: '900', letterSpacing: '4px' },
     nav: { display: 'flex', flexDirection: 'column', gap: '12px', flex: 1 },
     navBtn: { padding: '16px 20px', background: 'transparent', border: 'none', color: '#bbb', textAlign: 'left', cursor: 'pointer', borderRadius: '15px', transition: 'all 0.4s', fontSize: '15px' },
     navBtnActive: { padding: '16px 20px', background: 'linear-gradient(135deg, #2ecc71 0%, #27ae60 100%)', border: 'none', color: '#fff', textAlign: 'left', borderRadius: '15px', fontWeight: '700' },
-    logoutBtn: { 
-        padding: '15px', border: '1px solid rgba(231, 76, 60, 0.4)', color: '#e74c3c', 
-        background: 'rgba(231, 76, 60, 0.05)', borderRadius: '15px', cursor: 'pointer', 
-        fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '1px', transition: 'all 0.3s ease'
-    },
+    logoutBtn: { padding: '15px', border: '1px solid rgba(231, 76, 60, 0.4)', color: '#e74c3c', background: 'rgba(231, 76, 60, 0.05)', borderRadius: '15px', cursor: 'pointer', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '1px', transition: 'all 0.3s ease' },
     mainContent: { flex: 1, padding: '60px', overflowY: 'auto', marginLeft: '320px', width: 'calc(100% - 320px)' },
-    header: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '60px' },
+    header: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '50px' },
     pageTitle: { fontSize: '32px', fontWeight: '900', margin: 0, letterSpacing: '-1px' },
     subTitle: { color: '#2ecc71', margin: '5px 0 0', fontSize: '14px', letterSpacing: '1px' },
     savePdfBtn: { padding: '12px 25px', background: 'transparent', border: '1px solid #2ecc71', color: '#2ecc71', borderRadius: '12px', fontWeight: 'bold', cursor: 'pointer', transition: '0.3s' },
@@ -829,26 +536,16 @@ const styles = {
     td: { padding: '15px', fontSize: '14px', color: '#ddd', borderRight: '1px solid rgba(255, 255, 255, 0.1)' },
     tdFirst: { padding: '15px', fontSize: '14px', color: '#ddd', borderRight: '1px solid rgba(255, 255, 255, 0.1)', textAlign: 'center' },
     tdLast: { padding: '15px', fontSize: '14px', color: '#ddd' },
-    statsGrid: { display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '20px', marginBottom: '40px' },
-    statCard: {
-        background: 'rgba(255, 255, 255, 0.05)', padding: '25px', borderRadius: '15px',
-        backdropFilter: 'blur(10px)', border: '1px solid rgba(255, 255, 255, 0.1)',
-        textAlign: 'center', transition: '0.3s'
-    },
-    approveBtn: {
-        background: 'rgba(46, 204, 113, 0.15)', color: '#2ecc71', border: '1px solid rgba(46, 204, 113, 0.4)',
-        padding: '8px 16px', borderRadius: '8px', cursor: 'pointer', fontSize: '13px',
-        fontWeight: '600', marginRight: '8px', transition: 'all 0.3s ease',
-        backdropFilter: 'blur(5px)', textTransform: 'uppercase', letterSpacing: '0.5px'
-    },
+    statsGrid: { display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '20px', marginBottom: '20px' },
+    statCard: { background: 'rgba(255, 255, 255, 0.05)', padding: '25px', borderRadius: '15px', backdropFilter: 'blur(10px)', border: '1px solid rgba(255, 255, 255, 0.1)', textAlign: 'center', transition: '0.3s' },
     statLabel: { fontSize: '12px', color: '#2ecc71', letterSpacing: '1px', fontWeight: 'bold', textTransform: 'uppercase' },
-    statValue: { fontSize: '35px', margin: '10px 0 0', fontWeight: '900', color: '#fff' },
+    statValue: { fontSize: '32px', margin: '8px 0 0', fontWeight: '900', color: '#fff' },
+    roleButtonsGrid: { display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '15px', marginBottom: '30px' },
+    roleCardBox: { background: 'rgba(255, 255, 255, 0.04)', padding: '20px 15px', borderRadius: '20px', border: '1px solid rgba(255, 255, 255, 0.1)', textAlign: 'center', cursor: 'pointer', transition: '0.3s', backdropFilter: 'blur(10px)' },
+    approveBtn: { background: 'rgba(46, 204, 113, 0.15)', color: '#2ecc71', border: '1px solid rgba(46, 204, 113, 0.4)', padding: '8px 16px', borderRadius: '8px', cursor: 'pointer', fontSize: '13px', fontWeight: '600', textTransform: 'uppercase' },
     deleteBtn: { background: 'rgba(231, 76, 60, 0.1)', color: '#e74c3c', border: '1px solid #e74c3c', padding: '6px 12px', borderRadius: '8px', cursor: 'pointer', fontSize: '12px', fontWeight: 'bold' },
-    docLink: {
-        background: 'rgba(52, 152, 219, 0.15)', color: '#3498db', border: '1px solid rgba(52, 152, 219, 0.4)',
-        padding: '5px 10px', borderRadius: '6px', textDecoration: 'none', fontSize: '11px',
-        fontWeight: '600', display: 'inline-flex', alignItems: 'center', gap: '4px', transition: '0.3s'
-    },
+    pageBtn: { padding: '10px 16px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(46, 204, 113, 0.3)', color: '#2ecc71', borderRadius: '10px', cursor: 'pointer', fontWeight: 'bold' },
+    docButton: { background: 'rgba(52, 152, 219, 0.15)', color: '#3498db', border: '1px solid rgba(52, 152, 219, 0.3)', padding: '8px 14px', borderRadius: '8px', cursor: 'pointer', fontSize: '12px', fontWeight: 'bold' }
 };
 
 export default UserManagement;
