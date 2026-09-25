@@ -10,7 +10,7 @@ const UserDashboardNavbar = () => {
         { name: "Electronic EPR", path: "/electronic-order", color: "#4facfe", icon: "🔌" },
         { name: "Plastic EPR", path: "/plastic-order", color: "#00f2fe", icon: "♻️" },
         { name: "Solar EPR", path: "/solar-order", color: "#f9d423", icon: "☀️" },
-        { name: "Agro EPR", path: "/agro-order", color: "#43e97b", icon: "🌱" },
+        { name: "Chemical EPR", path: "/agro-order", color: "#43e97b", icon: "🌱" },
         { name: "Battery EPR", path: "/battery-order", color: "#fa709a", icon: "🔋" },
         { name: "Oil EPR", path: "/oil-order", color: "#84fab0", icon: "🛢️" }
     ];
