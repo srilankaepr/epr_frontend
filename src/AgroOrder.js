@@ -18,7 +18,7 @@ const AgroOrder = () => {
     const doc = new jsPDF();
 
         doc.setFontSize(18);
-        doc.text("Agro Order History Report", 14, 20);
+        doc.text("Chemical Order History Report", 14, 20);
         doc.setFontSize(11);
         doc.text(`Company: ${user.companyName}`, 14, 30);
         doc.text(`User: ${user.fullName} (${user.email})`, 14, 38);
@@ -121,7 +121,7 @@ const AgroOrder = () => {
             const response = await API.post(`orders/create`, orderData);
 
             if (response.status === 201) {
-                alert("✅ Your Agro Invoice successfully saved!");
+                alert("✅ Your Chemical Invoice successfully saved!");
                 setInvoice(null);
                 setInvoiceBase64(""); 
                 
@@ -162,7 +162,7 @@ const AgroOrder = () => {
                     </div>
                     <div>
                         <h2 style={styles.brandName}>EPR SYSTEM</h2>
-                        <div style={{...styles.subTitle, color: '#27ae60', fontWeight: 'bold'}}>Agro Division</div>
+                        <div style={{...styles.subTitle, color: '#27ae60', fontWeight: 'bold'}}>Chemical Division</div>
                     </div>
                 </div>
 
@@ -224,7 +224,7 @@ const AgroOrder = () => {
                             </div>
 
                             <div style={styles.qrCard} className="qr-card">
-                                <h3 style={styles.cardTitle}>Upload Agro Invoice</h3>
+                                <h3 style={styles.cardTitle}>Upload Chemical Invoice</h3>
                                 <label style={styles.uploadArea} className="upload-area">
                                     <input type="file" style={{display: 'none'}} onChange={handleInvoiceUpload} accept=".pdf,image/*" />
                                     <span style={{fontSize: '30px'}}>📂</span>
@@ -242,10 +242,10 @@ const AgroOrder = () => {
                         <div style={{textAlign: 'center', marginTop: '30px'}}>
                             <div style={styles.qrPlaceholder}>
                                 <div style={{...styles.qrBox, color: '#27ae60'}}>
-                                    {activeTab === 'ORDER QR' ? "🔳 Agro QR" : "🌱 Agro Product"}
+                                    {activeTab === 'ORDER QR' ? "🔳 Chemical QR" : "🌱 Chemical Product"}
                                 </div>
                                 <p style={{fontSize: '14px', color: '#ccc', marginTop: '10px'}}>
-                                    Requesting {activeTab} for Agro Division
+                                    Requesting {activeTab} for Chemical Division
                                 </p>
                             </div>
                             {invoice && (
@@ -258,7 +258,7 @@ const AgroOrder = () => {
                 ) : (
                     <div style={{padding: '10px'}}>
                         <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px'}}>
-                            <h3 style={{...styles.cardTitle, border: 'none', margin: 0}}>Agro Order History</h3>
+                            <h3 style={{...styles.cardTitle, border: 'none', margin: 0}}>Chemical Order History</h3>
                             {orders.length > 0 && (
                                 <button onClick={generateReport} style={styles.reportBtn}>
                                     📄 Download Report
@@ -318,7 +318,7 @@ const AgroOrder = () => {
                                 </table>
                             </div>
                         ) : (
-                            <p style={{textAlign: 'center', color: '#777', padding: '20px'}}>No Agro order history found.</p>
+                            <p style={{textAlign: 'center', color: '#777', padding: '20px'}}>No Chemical order history found.</p>
                         )}
                     </div>
                 )}

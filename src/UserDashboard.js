@@ -151,7 +151,7 @@ const deleteProfilePicture = async () => {
         { name: "Electronic and Electrical EPR", img: elecImg, path: "/electronic-order", desc: "Environmentally friendly disposal and recycling of all discarded electronic devices and electrical household appliances." },
         { name: "Plastic EPR", img: plasticImg, path: "/plastic-order", desc: "Comprehensive plastic waste management focusing on sorting and processing polymers to reduce pollution." },
         { name: "Solar EPR", img: solarImg, path: "/solar-order", desc: "Specialized recycling for end-of-life photovoltaic panels, ensuring hazardous materials are handled safely." },
-        { name: "Agro EPR", img: agroImg, path: "/agro-order", desc: "Efficient transformation of agricultural organic waste into high-quality resources for a circular economy." },
+        { name: "Chemical EPR", img: agroImg, path: "/agro-order", desc: "Efficient transformation of agricultural organic waste into high-quality resources for a circular economy." },
         { name: "Battery EPR", img: batteryImg, path: "/battery-order", desc: "Safe extraction and recycling of lead-acid and lithium-ion batteries using advanced technologies." },
         { name: "Oil EPR", img: oilImg, path: "/oil-order", desc: "Professional collection and re-refining of used automotive and industrial oils to prevent contamination." }
     ];
