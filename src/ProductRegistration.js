@@ -96,7 +96,7 @@ const handleSubmit = async (e) => {
                         <option value="Electronic and Electrical" style={{background: '#222', color: '#fff'}}>Electronic and Electrical</option>
                         <option value="Plastic" style={{background: '#222', color: '#fff'}}>Plastic</option>
                         <option value="Solar" style={{background: '#222', color: '#fff'}}>Solar</option>
-                        <option value="Agro" style={{background: '#222', color: '#fff'}}>Agro</option>
+                        <option value="Chemical" style={{background: '#222', color: '#fff'}}>Agro</option>
                         <option value="Battery" style={{background: '#222', color: '#fff'}}>Battery</option>
                         <option value="Oil" style={{background: '#222', color: '#fff'}}>Oil</option>
                     </select>
