@@ -18,14 +18,8 @@ const WasteRegister = () => {
         phone: '',
         whatsapp: '',
 
-        isCollector: false,
-        isTransporter: false,
-        isRecycler: false,
-        isPyrolysis: false,
-        isMetalRefining: false,
-        isThermalDestruction: false,
-        isChemicalDestruction: false,
-        isWasteToEnergy: false,
+        // 🚀 Multi-selection roles state
+        selectedRoles: [],
 
         companyName: '',
         companyWebsite: '',
@@ -124,18 +118,16 @@ const WasteRegister = () => {
         }));
     };
 
-    const handleEntityRoleChange = (selectedRoleField) => {
-        setFormData(prev => ({
-            ...prev,
-            isCollector: selectedRoleField === 'isCollector',
-            isTransporter: selectedRoleField === 'isTransporter',
-            isRecycler: selectedRoleField === 'isRecycler',
-            isPyrolysis: selectedRoleField === 'isPyrolysis',
-            isMetalRefining: selectedRoleField === 'isMetalRefining',
-            isThermalDestruction: selectedRoleField === 'isThermalDestruction',
-            isChemicalDestruction: selectedRoleField === 'isChemicalDestruction',
-            isWasteToEnergy: selectedRoleField === 'isWasteToEnergy'
-        }));
+    // 🚀 Multi-selection handler for roles
+    const handleRoleCheckbox = (roleName) => {
+        setFormData(prev => {
+            const currentRoles = prev.selectedRoles || [];
+            if (currentRoles.includes(roleName)) {
+                return { ...prev, selectedRoles: currentRoles.filter(r => r !== roleName) };
+            } else {
+                return { ...prev, selectedRoles: [...currentRoles, roleName] };
+            }
+        });
     };
 
     const handleCheckboxGroup = (e, fieldName, value) => {
@@ -162,6 +154,13 @@ const WasteRegister = () => {
     };
 
     const handleNextStep = () => {
+        if (step === 1) {
+            if (!formData.selectedRoles || formData.selectedRoles.length === 0) {
+                alert("❌ Please select at least one operational role!");
+                return;
+            }
+        }
+
         if (step === 3) {
             if (formData.regType === 'Individual' && !fileStrings.nic) {
                 alert("❌ National ID (NIC) or Passport scan is required for Individual registration!");
@@ -189,12 +188,6 @@ const WasteRegister = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
-        const needsPassword = formData.isRecycler || formData.isPyrolysis || formData.isMetalRefining || formData.isWasteToEnergy;
-        if (needsPassword && formData.password !== formData.confirmPassword) {
-            alert("❌ Passwords do not match!");
-            return;
-        }
 
         if (!validatePhone(formData.phone) || !validatePhone(formData.contactPersonMobile)) {
             alert("❌ Please enter valid 10-digit Phone Numbers.");
@@ -276,7 +269,7 @@ const WasteRegister = () => {
                     {/* Step 1: Entity Type Selection */}
                     {step === 1 && (
                         <div>
-                            <h3 style={styles.sectionHeader}>Step 1: Entity Type Selection (Select Only One)</h3>
+                            <h3 style={styles.sectionHeader}>Step 1: Entity Type Selection (Multi-Select Enabled)</h3>
                             <div style={{ display: 'flex', gap: '15px', marginBottom: '25px' }}>
                                 {['Company', 'Individual'].map((t) => (
                                     <button key={t} type="button" onClick={() => setFormData({ ...formData, regType: t })} style={{ flex: 1, padding: '14px', borderRadius: '12px', fontWeight: 'bold', cursor: 'pointer', background: formData.regType === t ? 'rgba(243,156,18,0.15)' : 'rgba(255,255,255,0.03)', border: formData.regType === t ? '2px solid #f39c12' : '1px solid rgba(255,255,255,0.1)', color: formData.regType === t ? '#f39c12' : '#aaa', transition: '0.3s' }}>
@@ -286,20 +279,23 @@ const WasteRegister = () => {
                             </div>
                             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '10px' }}>
                                 {[
-                                    { field: 'isCollector', label: 'Collector', id: 'role_collector' },
-                                    { field: 'isTransporter', label: 'Transporter', id: 'role_transporter' },
-                                    { field: 'isRecycler', label: 'ecycler', id: 'role_recycler' },
-                                    { field: 'isPyrolysis', label: 'Pyrolysis', id: 'role_pyrolysis' },
-                                    { field: 'isMetalRefining', label: 'Metal Refining', id: 'role_metal_refining' },
-                                    { field: 'isThermalDestruction', label: 'Thermal Destruction', id: 'role_thermal_destruction' },
-                                    { field: 'isChemicalDestruction', label: 'Chemical Destruction', id: 'role_chemical_destruction' },
-                                    { field: 'isWasteToEnergy', label: 'Waste-to-Energy', id: 'role_waste_to_energy' }
-                                ].map((item) => (
-                                    <label key={item.id} style={{ display: 'flex', alignItems: 'center', gap: '15px', cursor: 'pointer', color: formData[item.field] ? '#f39c12' : '#ccc', fontSize: '15px', background: formData[item.field] ? 'rgba(243,156,18,0.04)' : 'rgba(255,255,255,0.02)', padding: '12px 15px', borderRadius: '12px', border: formData[item.field] ? '1px solid #f39c12' : '1px solid rgba(255,255,255,0.05)', transition: '0.2s' }}>
-                                        <input type="radio" name="entity_type_selection" checked={formData[item.field]} onChange={() => handleEntityRoleChange(item.field)} style={{ width: '18px', height: '18px', cursor: 'pointer', accentColor: '#f39c12' }} />
-                                        {item.label}
-                                    </label>
-                                ))}
+                                    { name: 'Collector', label: '🚛 1. Collector', id: 'role_collector' },
+                                    { name: 'Transporter', label: '🚚 2. Transporter', id: 'role_transporter' },
+                                    { name: 'Recycler', label: '♻️ 3. Recycler', id: 'role_recycler' },
+                                    { name: 'Pyrolysis', label: '🔥 4. Pyrolysis', id: 'role_pyrolysis' },
+                                    { name: 'Metal Refining', label: '⚙️ 5. Metal Refining', id: 'role_metal_refining' },
+                                    { name: 'Thermal Destruction', label: '🌡️ 6. Thermal Destruction', id: 'role_thermal_destruction' },
+                                    { name: 'Chemical Destruction', label: '🧪 7. Chemical Destruction', id: 'role_chemical_destruction' },
+                                    { name: 'Waste-to-Energy', label: '⚡ 8. Waste-to-Energy', id: 'role_waste_to_energy' }
+                                ].map((item) => {
+                                    const isSelected = formData.selectedRoles.includes(item.name);
+                                    return (
+                                        <label key={item.id} style={{ display: 'flex', alignItems: 'center', gap: '15px', cursor: 'pointer', color: isSelected ? '#f39c12' : '#ccc', fontSize: '15px', background: isSelected ? 'rgba(243,156,18,0.04)' : 'rgba(255,255,255,0.02)', padding: '12px 15px', borderRadius: '12px', border: isSelected ? '1px solid #f39c12' : '1px solid rgba(255,255,255,0.05)', transition: '0.2s' }}>
+                                            <input type="checkbox" checked={isSelected} onChange={() => handleRoleCheckbox(item.name)} style={{ width: '18px', height: '18px', cursor: 'pointer', accentColor: '#f39c12' }} />
+                                            {item.label}
+                                        </label>
+                                    );
+                                })}
                             </div>
                         </div>
                     )}
@@ -427,7 +423,7 @@ const WasteRegister = () => {
                             <h3 style={styles.sectionHeader}>Step 5: Operational Role Specs & Operator Details</h3>
                             
                             {/* Collector Sub-form */}
-                            {formData.isCollector && (
+                            {formData.selectedRoles.includes('Collector') && (
                                 <div style={styles.conditionalBox}>
                                     <h4 style={{ color: '#f39c12', margin: '0 0 12px 0', fontSize: '15px' }}> 📦 Collector Infrastructure Configurations</h4>
                                     <label style={styles.label}>TYPE OF COLLECTION SYSTEM *</label>
@@ -449,8 +445,8 @@ const WasteRegister = () => {
                                 </div>
                             )}
 
-                            {/* Recycler / Processing Roles Sub-form */}
-                            {(formData.isRecycler || formData.isPyrolysis || formData.isMetalRefining || formData.isThermalDestruction || formData.isChemicalDestruction || formData.isWasteToEnergy) && (
+                            {/* Processing / Recycler Roles Sub-form */}
+                            {(formData.selectedRoles.includes('Recycler') || formData.selectedRoles.includes('Pyrolysis') || formData.selectedRoles.includes('Metal Refining') || formData.selectedRoles.includes('Thermal Destruction') || formData.selectedRoles.includes('Chemical Destruction') || formData.selectedRoles.includes('Waste-to-Energy')) && (
                                 <div style={{ ...styles.conditionalBox, marginTop: '20px' }}>
                                     <h4 style={{ color: '#f39c12', margin: '0 0 12px 0', fontSize: '15px' }}>♻️ Facility & Processing Configurations</h4>
                                     <label style={styles.label}>TYPE OF FACILITY *</label>
@@ -476,7 +472,7 @@ const WasteRegister = () => {
                             )}
 
                             {/* Transporter Sub-form */}
-                            {formData.isTransporter && (
+                            {formData.selectedRoles.includes('Transporter') && (
                                 <div style={{ ...styles.conditionalBox, marginTop: '20px' }}>
                                     <h4 style={{ color: '#f39c12', margin: '0 0 12px 0', fontSize: '15px' }}>🚚 Transporter Logistics Fleet Configurations</h4>
                                     <label style={styles.label}>VEHICLE FLEET TYPE *</label>
@@ -511,7 +507,7 @@ const WasteRegister = () => {
                             )}
 
                             {/* Operator Details Box */}
-                            {(formData.isCollector || formData.isTransporter) && (
+                            {(formData.selectedRoles.includes('Collector') || formData.selectedRoles.includes('Transporter')) && (
                                 <div style={{ marginTop: '20px', padding: '20px', background: 'rgba(52, 152, 219, 0.08)', borderRadius: '15px', border: '1px solid rgba(52, 152, 219, 0.3)' }}>
                                     <h4 style={{ color: '#3498db', margin: '0 0 15px 0', fontSize: '15px' }}>👤 Operator / Field Agent Details</h4>
                                     <div style={styles.row}>
