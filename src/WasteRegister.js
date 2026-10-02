@@ -279,14 +279,14 @@ const WasteRegister = () => {
                             </div>
                             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '10px' }}>
                                 {[
-                                    { name: 'Collector', label: '🚛 1. Collector', id: 'role_collector' },
-                                    { name: 'Transporter', label: '🚚 2. Transporter', id: 'role_transporter' },
-                                    { name: 'Recycler', label: '♻️ 3. Recycler', id: 'role_recycler' },
-                                    { name: 'Pyrolysis', label: '🔥 4. Pyrolysis', id: 'role_pyrolysis' },
-                                    { name: 'Metal Refining', label: '⚙️ 5. Metal Refining', id: 'role_metal_refining' },
-                                    { name: 'Thermal Destruction', label: '🌡️ 6. Thermal Destruction', id: 'role_thermal_destruction' },
-                                    { name: 'Chemical Destruction', label: '🧪 7. Chemical Destruction', id: 'role_chemical_destruction' },
-                                    { name: 'Waste-to-Energy', label: '⚡ 8. Waste-to-Energy', id: 'role_waste_to_energy' }
+                                    { name: 'Collector', label: 'Collector', id: 'role_collector' },
+                                    { name: 'Transporter', label: 'Transporter', id: 'role_transporter' },
+                                    { name: 'Recycler', label: 'Recycler', id: 'role_recycler' },
+                                    { name: 'Pyrolysis', label: 'Pyrolysis', id: 'role_pyrolysis' },
+                                    { name: 'Metal Refining', label: 'Metal Refining', id: 'role_metal_refining' },
+                                    { name: 'Thermal Destruction', label: 'Thermal Destruction', id: 'role_thermal_destruction' },
+                                    { name: 'Chemical Destruction', label: 'Chemical Destruction', id: 'role_chemical_destruction' },
+                                    { name: 'Waste-to-Energy', label: 'Waste-to-Energy', id: 'role_waste_to_energy' }
                                 ].map((item) => {
                                     const isSelected = formData.selectedRoles.includes(item.name);
                                     return (
