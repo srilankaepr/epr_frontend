@@ -286,14 +286,14 @@ const WasteRegister = () => {
                             </div>
                             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '10px' }}>
                                 {[
-                                    { field: 'isCollector', label: '🚛 1. Collector', id: 'role_collector' },
-                                    { field: 'isTransporter', label: '🚚 2. Transporter', id: 'role_transporter' },
-                                    { field: 'isRecycler', label: '♻️ 3. Recycler', id: 'role_recycler' },
-                                    { field: 'isPyrolysis', label: '🔥 4. Pyrolysis', id: 'role_pyrolysis' },
-                                    { field: 'isMetalRefining', label: '⚙️ 5. Metal Refining', id: 'role_metal_refining' },
-                                    { field: 'isThermalDestruction', label: '🌡️ 6. Thermal Destruction', id: 'role_thermal_destruction' },
-                                    { field: 'isChemicalDestruction', label: '🧪 7. Chemical Destruction', id: 'role_chemical_destruction' },
-                                    { field: 'isWasteToEnergy', label: '⚡ 8. Waste-to-Energy', id: 'role_waste_to_energy' }
+                                    { field: 'isCollector', label: 'Collector', id: 'role_collector' },
+                                    { field: 'isTransporter', label: 'Transporter', id: 'role_transporter' },
+                                    { field: 'isRecycler', label: 'ecycler', id: 'role_recycler' },
+                                    { field: 'isPyrolysis', label: 'Pyrolysis', id: 'role_pyrolysis' },
+                                    { field: 'isMetalRefining', label: 'Metal Refining', id: 'role_metal_refining' },
+                                    { field: 'isThermalDestruction', label: 'Thermal Destruction', id: 'role_thermal_destruction' },
+                                    { field: 'isChemicalDestruction', label: 'Chemical Destruction', id: 'role_chemical_destruction' },
+                                    { field: 'isWasteToEnergy', label: 'Waste-to-Energy', id: 'role_waste_to_energy' }
                                 ].map((item) => (
                                     <label key={item.id} style={{ display: 'flex', alignItems: 'center', gap: '15px', cursor: 'pointer', color: formData[item.field] ? '#f39c12' : '#ccc', fontSize: '15px', background: formData[item.field] ? 'rgba(243,156,18,0.04)' : 'rgba(255,255,255,0.02)', padding: '12px 15px', borderRadius: '12px', border: formData[item.field] ? '1px solid #f39c12' : '1px solid rgba(255,255,255,0.05)', transition: '0.2s' }}>
                                         <input type="radio" name="entity_type_selection" checked={formData[item.field]} onChange={() => handleEntityRoleChange(item.field)} style={{ width: '18px', height: '18px', cursor: 'pointer', accentColor: '#f39c12' }} />
