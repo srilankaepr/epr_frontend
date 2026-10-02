@@ -19,9 +19,13 @@ const WasteRegister = () => {
         whatsapp: '',
 
         isCollector: false,
-        isRecycler: false,
         isTransporter: false,
-        isTotalSolutionProvider: false,
+        isRecycler: false,
+        isPyrolysis: false,
+        isMetalRefining: false,
+        isThermalDestruction: false,
+        isChemicalDestruction: false,
+        isWasteToEnergy: false,
 
         companyName: '',
         companyWebsite: '',
@@ -124,9 +128,13 @@ const WasteRegister = () => {
         setFormData(prev => ({
             ...prev,
             isCollector: selectedRoleField === 'isCollector',
-            isRecycler: selectedRoleField === 'isRecycler',
             isTransporter: selectedRoleField === 'isTransporter',
-            isTotalSolutionProvider: selectedRoleField === 'isTotalSolutionProvider'
+            isRecycler: selectedRoleField === 'isRecycler',
+            isPyrolysis: selectedRoleField === 'isPyrolysis',
+            isMetalRefining: selectedRoleField === 'isMetalRefining',
+            isThermalDestruction: selectedRoleField === 'isThermalDestruction',
+            isChemicalDestruction: selectedRoleField === 'isChemicalDestruction',
+            isWasteToEnergy: selectedRoleField === 'isWasteToEnergy'
         }));
     };
 
@@ -182,7 +190,7 @@ const WasteRegister = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        const needsPassword = formData.isRecycler || formData.isTotalSolutionProvider;
+        const needsPassword = formData.isRecycler || formData.isPyrolysis || formData.isMetalRefining || formData.isWasteToEnergy;
         if (needsPassword && formData.password !== formData.confirmPassword) {
             alert("❌ Passwords do not match!");
             return;
@@ -221,7 +229,6 @@ const WasteRegister = () => {
 
         try {
            const response = await API.post('/customers/register', finalPayload);
-            //const response = await API.post('/waste/register', finalPayload);
             if (response.status === 201 || response.status === 200) {
                 alert("✅ Waste Management Registration Request Submitted Successfully!");
                 navigate('/'); 
@@ -247,7 +254,7 @@ const WasteRegister = () => {
                         <img src={logo} alt="EPR Logo" style={styles.logoImg} />
                     </div>
                     <h2 style={styles.title}>WASTE MANAGEMENT PORTAL</h2>
-                    <p style={styles.subText}>Collector, Recycler, Transporter & Total Solution Provider Unified Form</p>
+                    <p style={styles.subText}>EPR Compliance Unified Registration Form</p>
                 </div>
 
                 <form onSubmit={handleSubmit} style={styles.form}>
@@ -277,15 +284,19 @@ const WasteRegister = () => {
                                     </button>
                                 ))}
                             </div>
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: '15px', marginTop: '10px' }}>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '10px' }}>
                                 {[
-                                    { field: 'isCollector', label: '🚛 Collector', id: 'role_collector' },
-                                    { field: 'isRecycler', label: '♻️ Recycler', id: 'role_recycler' },
-                                    { field: 'isTransporter', label: '🚚 Transporter', id: 'role_transporter' },
-                                    { field: 'isTotalSolutionProvider', label: '🌐 All (Recycler, Collector, Transporter)', id: 'role_total' }
+                                    { field: 'isCollector', label: '🚛 1. Collector', id: 'role_collector' },
+                                    { field: 'isTransporter', label: '🚚 2. Transporter', id: 'role_transporter' },
+                                    { field: 'isRecycler', label: '♻️ 3. Recycler', id: 'role_recycler' },
+                                    { field: 'isPyrolysis', label: '🔥 4. Pyrolysis', id: 'role_pyrolysis' },
+                                    { field: 'isMetalRefining', label: '⚙️ 5. Metal Refining', id: 'role_metal_refining' },
+                                    { field: 'isThermalDestruction', label: '🌡️ 6. Thermal Destruction', id: 'role_thermal_destruction' },
+                                    { field: 'isChemicalDestruction', label: '🧪 7. Chemical Destruction', id: 'role_chemical_destruction' },
+                                    { field: 'isWasteToEnergy', label: '⚡ 8. Waste-to-Energy', id: 'role_waste_to_energy' }
                                 ].map((item) => (
-                                    <label key={item.id} style={{ display: 'flex', alignItems: 'center', gap: '15px', cursor: 'pointer', color: formData[item.field] ? '#f39c12' : '#ccc', fontSize: '16px', background: formData[item.field] ? 'rgba(243,156,18,0.04)' : 'rgba(255,255,255,0.02)', padding: '15px', borderRadius: '12px', border: formData[item.field] ? '1px solid #f39c12' : '1px solid rgba(255,255,255,0.05)', transition: '0.2s' }}>
-                                        <input type="radio" name="entity_type_selection" checked={formData[item.field]} onChange={() => handleEntityRoleChange(item.field)} style={{ width: '20px', height: '20px', cursor: 'pointer', accentColor: '#f39c12' }} />
+                                    <label key={item.id} style={{ display: 'flex', alignItems: 'center', gap: '15px', cursor: 'pointer', color: formData[item.field] ? '#f39c12' : '#ccc', fontSize: '15px', background: formData[item.field] ? 'rgba(243,156,18,0.04)' : 'rgba(255,255,255,0.02)', padding: '12px 15px', borderRadius: '12px', border: formData[item.field] ? '1px solid #f39c12' : '1px solid rgba(255,255,255,0.05)', transition: '0.2s' }}>
+                                        <input type="radio" name="entity_type_selection" checked={formData[item.field]} onChange={() => handleEntityRoleChange(item.field)} style={{ width: '18px', height: '18px', cursor: 'pointer', accentColor: '#f39c12' }} />
                                         {item.label}
                                     </label>
                                 ))}
@@ -302,18 +313,16 @@ const WasteRegister = () => {
                                 <input name="officialEmail" value={formData.officialEmail} type="email" placeholder="partner-login@domain.com" style={styles.input} onChange={handleChange} required />
                             </div>
                             
-                            {(formData.isRecycler || formData.isTotalSolutionProvider) && (
-                                <div style={styles.row}>
-                                    <div style={styles.rowItem}>
-                                        <label style={styles.label}>PASSWORD *</label>
-                                        <input name="password" value={formData.password} type="password" placeholder="••••••••" style={styles.input} onChange={handleChange} required />
-                                    </div>
-                                    <div style={styles.rowItem}>
-                                        <label style={styles.label}>CONFIRM PASSWORD *</label>
-                                        <input name="confirmPassword" value={formData.confirmPassword} type="password" placeholder="••••••••" style={styles.input} onChange={handleChange} required />
-                                    </div>
+                            <div style={styles.row}>
+                                <div style={styles.rowItem}>
+                                    <label style={styles.label}>PASSWORD *</label>
+                                    <input name="password" value={formData.password} type="password" placeholder="••••••••" style={styles.input} onChange={handleChange} required />
                                 </div>
-                            )}
+                                <div style={styles.rowItem}>
+                                    <label style={styles.label}>CONFIRM PASSWORD *</label>
+                                    <input name="confirmPassword" value={formData.confirmPassword} type="password" placeholder="••••••••" style={styles.input} onChange={handleChange} required />
+                                </div>
+                            </div>
 
                             <div style={styles.inputWrapper}>
                                 <label style={styles.label}>MOBILE NUMBER *</label>
@@ -418,7 +427,7 @@ const WasteRegister = () => {
                             <h3 style={styles.sectionHeader}>Step 5: Operational Role Specs & Operator Details</h3>
                             
                             {/* Collector Sub-form */}
-                            {(formData.isCollector || formData.isTotalSolutionProvider) && (
+                            {formData.isCollector && (
                                 <div style={styles.conditionalBox}>
                                     <h4 style={{ color: '#f39c12', margin: '0 0 12px 0', fontSize: '15px' }}> 📦 Collector Infrastructure Configurations</h4>
                                     <label style={styles.label}>TYPE OF COLLECTION SYSTEM *</label>
@@ -440,13 +449,13 @@ const WasteRegister = () => {
                                 </div>
                             )}
 
-                            {/* Recycler Sub-form */}
-                            {(formData.isRecycler || formData.isTotalSolutionProvider) && (
+                            {/* Recycler / Processing Roles Sub-form */}
+                            {(formData.isRecycler || formData.isPyrolysis || formData.isMetalRefining || formData.isThermalDestruction || formData.isChemicalDestruction || formData.isWasteToEnergy) && (
                                 <div style={{ ...styles.conditionalBox, marginTop: '20px' }}>
-                                    <h4 style={{ color: '#f39c12', margin: '0 0 12px 0', fontSize: '15px' }}>♻️ Recycler Facility Configurations</h4>
+                                    <h4 style={{ color: '#f39c12', margin: '0 0 12px 0', fontSize: '15px' }}>♻️ Facility & Processing Configurations</h4>
                                     <label style={styles.label}>TYPE OF FACILITY *</label>
                                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '15px' }}>
-                                        {["Mechanical recycling", "Chemical recycling", "Material recovery facility (MRF)", "Refining / metal recovery", "Hazardous waste treatment", "Incineration", "Other"].map(t => (
+                                        {["Mechanical recycling", "Chemical recycling", "Pyrolysis plant", "Metal refining", "Thermal destruction / Incineration", "Chemical destruction", "Waste-to-Energy", "Other"].map(t => (
                                             <label key={t} style={{ fontSize: '13px', color: '#ccc', display: 'flex', alignItems: 'center', gap: '8px' }}>
                                                 <input type="checkbox" checked={formData.facilityRecyclingType.includes(t)} onChange={(e) => handleCheckboxGroup(e, 'facilityRecyclingType', t)} />
                                                 {t}
@@ -467,7 +476,7 @@ const WasteRegister = () => {
                             )}
 
                             {/* Transporter Sub-form */}
-                            {(formData.isTransporter || formData.isTotalSolutionProvider) && (
+                            {formData.isTransporter && (
                                 <div style={{ ...styles.conditionalBox, marginTop: '20px' }}>
                                     <h4 style={{ color: '#f39c12', margin: '0 0 12px 0', fontSize: '15px' }}>🚚 Transporter Logistics Fleet Configurations</h4>
                                     <label style={styles.label}>VEHICLE FLEET TYPE *</label>
@@ -502,7 +511,7 @@ const WasteRegister = () => {
                             )}
 
                             {/* Operator Details Box */}
-                            {(formData.isCollector || formData.isTransporter || formData.isTotalSolutionProvider) && (
+                            {(formData.isCollector || formData.isTransporter) && (
                                 <div style={{ marginTop: '20px', padding: '20px', background: 'rgba(52, 152, 219, 0.08)', borderRadius: '15px', border: '1px solid rgba(52, 152, 219, 0.3)' }}>
                                     <h4 style={{ color: '#3498db', margin: '0 0 15px 0', fontSize: '15px' }}>👤 Operator / Field Agent Details</h4>
                                     <div style={styles.row}>
@@ -582,7 +591,7 @@ const WasteRegister = () => {
                                     <input name="estimatedMonthlyCollectionVolume" value={formData.estimatedMonthlyCollectionVolume} type="text" placeholder="e.g. 200 Tons" style={styles.input} onChange={handleChange} required />
                                 </div>
                                 <div style={styles.rowItem}>
-                                    <label style={styles.label}>ESTIMATED MONTHLY PROCESSING (IF RECYCLER) *</label>
+                                    <label style={styles.label}>ESTIMATED MONTHLY PROCESSING *</label>
                                     <input name="estimatedMonthlyProcessingVolume" value={formData.estimatedMonthlyProcessingVolume} type="text" placeholder="e.g. 150 Tons" style={styles.input} onChange={handleChange} required />
                                 </div>
                             </div>
