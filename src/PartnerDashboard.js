@@ -395,7 +395,7 @@ return (
             WebkitTextFillColor: 'transparent',
             fontWeight: 'bold'
           }}>
-            EPR Co-Partner Dashboard
+            EPR Collector Dashboard
           </h1>
         </div>
 
@@ -554,7 +554,7 @@ return (
 </div>
 <div style={styles.idBadgeContainer}>
   <div style={styles.idBadge}>
-     <span style={styles.idLabel}>PARTNER ID</span>
+     <span style={styles.idLabel}>COLLECTOR ID</span>
         <span style={styles.idValue}>{partnerId}</span>
           </div>
         </div>
