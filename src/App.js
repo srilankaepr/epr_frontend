@@ -80,7 +80,8 @@ function App() {
         <Route path="/authority-dashboard" element={<ProtectedRoute allowedRole="CUSTOMER"><AuthorityDashboard /></ProtectedRoute>} />
 
         {/* 3. Co-partner */}
-        <Route path="/partner-dashboard" element={<ProtectedRoute allowedRole="PARTNER"><PartnerDashboard /></ProtectedRoute>} />
+        {/* 3. Co-partner */}
+        <Route path="/partner-dashboard" element={<ProtectedRoute allowedRole="PARTNER, CUSTOMER"><PartnerDashboard /></ProtectedRoute>} />
         <Route path="/co-partner/scan" element={<ProtectedRoute allowedRole="PARTNER"><CoPartnerScan /></ProtectedRoute>} />
 
         {/* 4. Recycler Facility */}

@@ -17,10 +17,15 @@ const ProtectedRoute = ({ children, allowedRole }) => {
         return <Navigate to="/" replace />;
     }
 
-    // 2. යූසර්ට අදාළ පේජ් එකට යන්න අවසර තිබේදැයි බැලීම
-    if (allowedRole && userRole.toUpperCase() !== allowedRole.toUpperCase()) {
-        console.error(`Access Denied! Role Mismatch. Expected: ${allowedRole}, Found: ${userRole}`);
-        return <Navigate to="/" replace />;
+   // 2. යූසර්ට අදාළ පේජ් එකට යන්න අවසර තිබේදැයි බැලීම
+    if (allowedRole) {
+        // කමා (,) වලින් වෙන් කරලා රෝල්ස් කිහිපයක් දුන්නොත් ඒවා වෙන් කරගැනීම
+        const allowedRolesList = allowedRole.split(',').map(role => role.trim().toUpperCase());
+        
+        if (!allowedRolesList.includes(userRole.toUpperCase())) {
+            console.error(`Access Denied! Role Mismatch. Expected one of: ${allowedRole}, Found: ${userRole}`);
+            return <Navigate to="/" replace />;
+        }
     }
 
     // සියල්ල හරි නම් අදාළ Component එක පෙන්වයි
