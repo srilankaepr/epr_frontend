@@ -209,8 +209,19 @@ const WasteRegister = () => {
             ...formData.metalIndustrialWasteStreams
         ];
 
-        const finalPayload = {
+    const finalPayload = {
             ...formData,
+            
+            // 👇 මේ Role ටික අලුතින් එකතු කළා
+            isCollector: formData.selectedRoles.includes('Collector'),
+            isTransporter: formData.selectedRoles.includes('Transporter'),
+            isRecycler: formData.selectedRoles.includes('Recycler'),
+            isPyrolysis: formData.selectedRoles.includes('Pyrolysis'),
+            isMetalRefining: formData.selectedRoles.includes('Metal Refining'),
+            isThermalDestruction: formData.selectedRoles.includes('Thermal Destruction'),
+            isChemicalDestruction: formData.selectedRoles.includes('Chemical Destruction'),
+            isWasteToEnergy: formData.selectedRoles.includes('Waste-to-Energy'),
+
             managedWasteCategories: totalWasteCategories,
             
             nic: formData.regType === 'Individual' ? fileStrings.nic : "",

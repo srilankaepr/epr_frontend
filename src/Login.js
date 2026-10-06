@@ -53,9 +53,11 @@ const handleSubmit = useCallback(async (e) => {
                 
                 if (orgRole === 'authority') {
                     targetPath = '/authority-dashboard'; 
+                } else if (data.user.isCollector || orgRole.includes('collector')) {
+                    // 👈 Collector කෙනෙක් නම් Partner Dashboard එකට යවයි
+                    targetPath = '/partner-dashboard';
                 } else if (
                     orgRole.includes('recycler') || 
-                    orgRole.includes('collector') || 
                     orgRole.includes('transporter') || 
                     data.user.isRecycler || 
                     data.user.isTotalSolutionProvider ||
@@ -82,8 +84,7 @@ const handleSubmit = useCallback(async (e) => {
     } finally {
         setLoading(false); 
     }
-}, [navigate, login]); 
-
+}, [navigate, login]);
 //......................................................................................................................
     return (
         <div style={styles.container}>
