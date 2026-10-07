@@ -24,16 +24,15 @@ import API from './api';
   const [notifications, setNotifications] = useState([]);
   const [showNotifications, setShowNotifications] = useState(false);
 
-
-  const userName = localStorage.getItem('userName') || 'Partner';
-  const partnerId = localStorage.getItem('coPartnerId') || 'N/A';
+  // 👇 මෙතන තමයි අපි වෙනස් කරපු පළවෙනි තැන (අලුත් Collector ගේ විස්තර ගන්නවා)
+  const userName = localStorage.getItem('userName') || localStorage.getItem('name') || 'Collector';
+  const partnerId = localStorage.getItem('coPartnerId') || localStorage.getItem('userId') || 'N/A';
   
 useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth <= 768);
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
-
 
  const fetchDashboardData = async (isAuto = false) => {
     if (!isAuto) setLoading(true);
@@ -179,7 +178,10 @@ if (loading) {
     fontWeight: 'bold',
     boxShadow: '0 0 15px rgba(46,204,113,0.4)'
   };
-  const myRecords = recentCollected.filter(req => req.cpId === partnerId);
+
+  // 👇 මෙතන තමයි අපි වෙනස් කරපු දෙවෙනි තැන (පරණ ID එකයි අලුත් ID එකයි දෙකෙන්ම ෆිල්ටර් කරනවා)
+  const myRecords = recentCollected.filter(req => req.cpId === partnerId || req.collectorId === partnerId);
+  
   const lifetimeCount = myRecords.length;
   const today = new Date().toDateString();
   const todayCount = myRecords.filter(req => 
