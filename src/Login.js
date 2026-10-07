@@ -32,6 +32,18 @@ const handleSubmit = useCallback(async (e) => {
             console.log("Logged in User Role:", data.user.adminRole || data.user.orgRole || data.role);
             login(data.user, data.role, data.token, data.user.adminRole); 
 
+            // 👇 අලුතින් එකතු කරන කොටස (Collector ගේ ID එක ඩෑෂ්බෝඩ් එකට යැවීමට)
+            if (data.user) {
+                localStorage.setItem('user', JSON.stringify(data.user)); 
+                if (data.user._id || data.user.id) {
+                    localStorage.setItem('userId', data.user._id || data.user.id);
+                }
+                localStorage.setItem('userName', data.user.name || data.user.firstName || data.user.email);
+                localStorage.setItem('userEmail', data.user.email);
+            }
+            localStorage.setItem('userRole', data.role);
+            // 👆 -------------------------------------------------------------
+
             if (data.user && data.user.profilePic) {
                 localStorage.setItem('userPhoto', data.user.profilePic);
             } else {
