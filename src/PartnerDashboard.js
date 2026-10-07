@@ -6,7 +6,7 @@ import autoTable from 'jspdf-autotable';
 import bgImage from './assets/copartner.jpg';
 import API from './api';
 
-const CoPartnerDashboard = () => {
+  const CoPartnerDashboard = () => {
   const navigate = useNavigate();
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
@@ -24,31 +24,22 @@ const CoPartnerDashboard = () => {
   const [notifications, setNotifications] = useState([]);
   const [showNotifications, setShowNotifications] = useState(false);
 
-  // 👇 මෙතනයි වෙනස වුණේ: N/A ප්‍රශ්නය විසඳීමට LocalStorage එකෙන් user object එක පාර්ස් කරලා ID එක ගන්නවා
-  let savedUser = {};
-  try {
-      const userString = localStorage.getItem('user');
-      if (userString && userString !== 'undefined') {
-          savedUser = JSON.parse(userString);
-      }
-  } catch (e) {
-      console.error("Error parsing user data");
-  }
 
-  const userName = localStorage.getItem('userName') || savedUser.name || savedUser.firstName || 'Collector';
-  const partnerId = localStorage.getItem('coPartnerId') || localStorage.getItem('userId') || savedUser._id || savedUser.id || 'N/A';
+  const userName = localStorage.getItem('userName') || 'Partner';
+  const partnerId = localStorage.getItem('coPartnerId') || 'N/A';
   
-  useEffect(() => {
+useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth <= 768);
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  const fetchDashboardData = async (isAuto = false) => {
+
+ const fetchDashboardData = async (isAuto = false) => {
     if (!isAuto) setLoading(true);
     try {
-      const res = await API.get('/qr/dashboard'); 
-      const data = res.data; 
+const res = await API.get('/qr/dashboard'); 
+const data = res.data; 
 
         setStats({
           totalQR: data.totalQR || 0,
@@ -114,7 +105,7 @@ const CoPartnerDashboard = () => {
   }, []); 
 
 
-  const formatCollectedTime = (dateString) => {
+ const formatCollectedTime = (dateString) => {
     if (!dateString) return "N/A";
 
     const date = new Date(dateString);
@@ -136,7 +127,7 @@ const CoPartnerDashboard = () => {
     navigate('/co-partner/scan');
   };
 
-  const handleLogout = () => {
+ const handleLogout = () => {
     if (window.confirm("Do you want to logout?")) {
       localStorage.clear();
       sessionStorage.clear(); 
@@ -188,14 +179,7 @@ if (loading) {
     fontWeight: 'bold',
     boxShadow: '0 0 15px rgba(46,204,113,0.4)'
   };
-
-  // 👇 මෙතනදී පරණ ID එකයි, අලුත් ID එකයි දෙකෙන්ම ඩේටා Filter කරනවා
-  const myRecords = recentCollected.filter(req => 
-    req.cpId === partnerId || 
-    req.collectorId === partnerId || 
-    req.collectedBy === partnerId
-  );
-  
+  const myRecords = recentCollected.filter(req => req.cpId === partnerId);
   const lifetimeCount = myRecords.length;
   const today = new Date().toDateString();
   const todayCount = myRecords.filter(req => 
