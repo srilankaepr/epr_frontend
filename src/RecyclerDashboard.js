@@ -15,10 +15,18 @@ const RecyclerDashboard = () => {
     
     const [scanInput, setScanInput] = useState('');
     const [isCameraOpen, setIsCameraOpen] = useState(false);
+
+    // 👇 අලුතින් එකතු කළ Material Breakdown Modal States
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [selectedRequestId, setSelectedRequestId] = useState(null);
+    const [materialBreakdown, setMaterialBreakdown] = useState([
+        { materialName: 'Copper', weightKg: '' },
+        { materialName: 'Iron', weightKg: '' },
+        { materialName: 'Plastic', weightKg: '' }
+    ]);
     
     const scanInputRef = useRef(null);
     const requestsRef = useRef([]);
-    
     const isProcessingRef = useRef(false);
 
     useEffect(() => {
@@ -43,19 +51,53 @@ const RecyclerDashboard = () => {
         }
     };
 
-    const handleMarkAsRecycled = async (requestId) => {
+    // 🟢 Modal එක ඕපන් කිරීම
+    const openRecycleModal = (requestId) => {
+        setSelectedRequestId(requestId);
+        setMaterialBreakdown([
+            { materialName: 'Copper', weightKg: '' },
+            { materialName: 'Iron', weightKg: '' },
+            { materialName: 'Plastic', weightKg: '' }
+        ]);
+        setIsModalOpen(true);
+    };
+
+    const handleMaterialChange = (index, field, value) => {
+        const updated = [...materialBreakdown];
+        updated[index][field] = value;
+        setMaterialBreakdown(updated);
+    };
+
+    const addMaterialRow = () => {
+        setMaterialBreakdown([...materialBreakdown, { materialName: '', weightKg: '' }]);
+    };
+
+    const removeMaterialRow = (index) => {
+        const updated = materialBreakdown.filter((_, i) => i !== index);
+        setMaterialBreakdown(updated);
+    };
+
+    // 🟢 බර සමඟ රීසයික්ල් කිරීම සේව් කිරීම
+    const handleConfirmRecycleWithMaterials = async () => {
         try {
-            setActionLoading(requestId);
+            setActionLoading(selectedRequestId);
             
             const currentRecyclerName = user?.companyName || user?.name || "Recycler Facility";
             
-            const response = await API.put(`/qr/recycler/complete/${requestId}`, {
+            const formattedBreakdown = materialBreakdown.map(item => ({
+                materialName: item.materialName,
+                weightKg: parseFloat(item.weightKg) || 0
+            }));
+
+            const response = await API.put(`/qr/recycler/complete/${selectedRequestId}`, {
                 recycledBy: user?.officialEmail || user?.email || "Unknown",
-                recyclerName: currentRecyclerName === "1" ? "Eco Recycler Partner" : currentRecyclerName
+                recyclerName: currentRecyclerName === "1" ? "Eco Recycler Partner" : currentRecyclerName,
+                materialBreakdown: formattedBreakdown
             });
 
             if (response.status === 200) {
-                alert("✅ Successfully marked as Recycled! Circular loop completed.");
+                alert("✅ Successfully marked as Recycled with Material Breakdown!");
+                setIsModalOpen(false);
                 setIsCameraOpen(false); 
                 fetchRecycleRequests(); 
             }
@@ -64,6 +106,7 @@ const RecyclerDashboard = () => {
             alert("❌ Failed to update status.");
         } finally {
             setActionLoading(null);
+            setSelectedRequestId(null);
             setTimeout(() => { isProcessingRef.current = false; }, 1500);
         }
     };
@@ -120,7 +163,8 @@ const RecyclerDashboard = () => {
                 return;
             }
 
-            await handleMarkAsRecycled(targetRequest._id);
+            // ස්කෑන් කළ පසු Modal එක ඕපන් වීම
+            openRecycleModal(targetRequest._id);
             setScanInput(''); 
 
         } catch (error) {
@@ -264,7 +308,7 @@ const RecyclerDashboard = () => {
                                             <td style={styles.td}>
                                                 {req.status !== 'Recycled' ? (
                                                     <button 
-                                                        onClick={() => handleMarkAsRecycled(req._id)}
+                                                        onClick={() => openRecycleModal(req._id)}
                                                         disabled={actionLoading === req._id}
                                                         style={styles.processBtn}
                                                     >
@@ -282,6 +326,43 @@ const RecyclerDashboard = () => {
                     )}
                 </div>
             </div>
+
+            {/* 👇 Material Breakdown Input Modal */}
+            {isModalOpen && (
+                <div style={styles.modalOverlay}>
+                    <div style={styles.modalContent}>
+                        <h3 style={{ color: '#2ecc71', marginTop: 0 }}>♻️ Enter Dismantled Material Weights</h3>
+                        <p style={{ fontSize: '13px', color: '#aaa', marginBottom: '20px' }}>Please specify the recovered material weights (in Kg) for this item.</p>
+                        
+                        {materialBreakdown.map((item, index) => (
+                            <div key={index} style={{ display: 'flex', gap: '10px', marginBottom: '10px' }}>
+                                <input 
+                                    type="text" 
+                                    placeholder="Material Name (e.g. Copper)" 
+                                    value={item.materialName}
+                                    onChange={(e) => handleMaterialChange(index, 'materialName', e.target.value)}
+                                    style={styles.modalInput}
+                                />
+                                <input 
+                                    type="number" 
+                                    placeholder="Weight (Kg)" 
+                                    value={item.weightKg}
+                                    onChange={(e) => handleMaterialChange(index, 'weightKg', e.target.value)}
+                                    style={{ ...styles.modalInput, width: '120px' }}
+                                />
+                                <button onClick={() => removeMaterialRow(index)} style={styles.removeRowBtn}>❌</button>
+                            </div>
+                        ))}
+
+                        <button onClick={addMaterialRow} style={styles.addRowBtn}>➕ Add Another Material</button>
+
+                        <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px', marginTop: '25px' }}>
+                            <button onClick={() => setIsModalOpen(false)} style={styles.cancelModalBtn}>Cancel</button>
+                            <button onClick={handleConfirmRecycleWithMaterials} style={styles.confirmModalBtn}>Save & Complete</button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
@@ -316,7 +397,15 @@ const styles = {
     tr: { borderBottom: '1px solid rgba(255,255,255,0.05)' },
     td: { padding: '15px 12px', color: '#ddd' },
     badge: { padding: '6px 12px', borderRadius: '20px', fontSize: '11px', fontWeight: 'bold', letterSpacing: '0.5px' },
-    processBtn: { padding: '8px 14px', borderRadius: '8px', background: '#2ecc71', color: '#000', border: 'none', fontWeight: 'bold', cursor: 'pointer', fontSize: '12px', boxShadow: '0 0 15px rgba(46, 204, 113, 0.3)' }
+    processBtn: { padding: '8px 14px', borderRadius: '8px', background: '#2ecc71', color: '#000', border: 'none', fontWeight: 'bold', cursor: 'pointer', fontSize: '12px', boxShadow: '0 0 15px rgba(46, 204, 113, 0.3)' },
+    // Modal Styles
+    modalOverlay: { position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.8)', zIndex: 10, display: 'flex', justifyContent: 'center', alignItems: 'center', backdropFilter: 'blur(5px)' },
+    modalContent: { background: '#111', border: '1px solid rgba(255,255,255,0.2)', padding: '30px', borderRadius: '20px', width: '100%', maxWidth: '500px', color: '#fff', boxShadow: '0 20px 50px rgba(0,0,0,0.9)' },
+    modalInput: { flex: 1, padding: '10px 15px', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.2)', background: 'rgba(255,255,255,0.05)', color: '#fff', outline: 'none' },
+    addRowBtn: { background: 'rgba(46, 204, 113, 0.1)', color: '#2ecc71', border: '1px dashed #2ecc71', padding: '10px 15px', borderRadius: '8px', cursor: 'pointer', width: '100%', marginTop: '10px', fontWeight: 'bold' },
+    removeRowBtn: { background: 'rgba(231, 76, 60, 0.2)', color: '#e74c3c', border: 'none', padding: '0 12px', borderRadius: '8px', cursor: 'pointer', fontWeight: 'bold' },
+    cancelModalBtn: { background: 'rgba(255,255,255,0.1)', color: '#fff', border: 'none', padding: '10px 20px', borderRadius: '8px', cursor: 'pointer', fontWeight: 'bold' },
+    confirmModalBtn: { background: '#2ecc71', color: '#000', border: 'none', padding: '10px 20px', borderRadius: '8px', cursor: 'pointer', fontWeight: 'bold' }
 };
 
 export default RecyclerDashboard;
