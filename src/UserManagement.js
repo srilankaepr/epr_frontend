@@ -432,7 +432,8 @@ const UserManagement = () => {
                     })()}
                 </div>
             </div>
-{/* AUDIT MODAL VIEWER */}
+
+            {/* AUDIT MODAL VIEWER */}
             {selectedUser && (
                 <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.85)', backdropFilter: 'blur(20px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 10000, padding: '20px' }}>
                     <div style={{ background: '#0c0c0c', borderRadius: '32px', maxWidth: '850px', width: '100%', maxHeight: '90vh', border: '1px solid rgba(46, 204, 113, 0.3)', boxShadow: '0 50px 120px rgba(0,0,0,0.9)', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
@@ -467,26 +468,42 @@ const UserManagement = () => {
                                 <div style={{ fontSize: '13px', color: '#ccc', marginTop: '4px' }}>Address: {selectedUser.address1 || '-'}</div>
                             </div>
 
-                            {/* ♻️ WASTE MANAGEMENT & OPERATIONAL ROLES (ಅලුතින් එකතු කළ කොටස) */}
-                            {(selectedUser.isCollector || selectedUser.isRecycler || selectedUser.isTransporter || selectedUser.isTotalSolutionProvider) && (
+                            {/* ♻️ WASTE MANAGEMENT & OPERATIONAL ROLES & FACILITIES */}
+                            {((selectedUser.facilityRecyclingType && selectedUser.facilityRecyclingType.length > 0) || 
+                              selectedUser.isCollector || selectedUser.isRecycler || selectedUser.isTransporter || selectedUser.isTotalSolutionProvider) && (
                                 <div style={{ gridColumn: 'span 2', background: 'rgba(46, 204, 113, 0.05)', border: '1px solid rgba(46, 204, 113, 0.2)', padding: '20px', borderRadius: '15px' }}>
                                     <div style={{ fontSize: '12px', color: '#2ecc71', textTransform: 'uppercase', marginBottom: '12px', fontWeight: 'bold' }}>♻️ Waste Management & Operational Roles</div>
-                                    <div style={{ display: 'flex', gap: '15px', flexWrap: 'wrap', marginBottom: '15px' }}>
-                                        <span style={{ background: selectedUser.isCollector ? 'rgba(46, 204, 113, 0.2)' : 'rgba(255,255,255,0.05)', color: selectedUser.isCollector ? '#2ecc71' : '#777', padding: '6px 12px', borderRadius: '8px', fontSize: '12px', fontWeight: 'bold' }}>
-                                            Collector: {selectedUser.isCollector ? 'Yes' : 'No'}
-                                        </span>
-                                        <span style={{ background: selectedUser.isRecycler ? 'rgba(46, 204, 113, 0.2)' : 'rgba(255,255,255,0.05)', color: selectedUser.isRecycler ? '#2ecc71' : '#777', padding: '6px 12px', borderRadius: '8px', fontSize: '12px', fontWeight: 'bold' }}>
-                                            Recycler: {selectedUser.isRecycler ? 'Yes' : 'No'}
-                                        </span>
-                                        <span style={{ background: selectedUser.isTransporter ? 'rgba(46, 204, 113, 0.2)' : 'rgba(255,255,255,0.05)', color: selectedUser.isTransporter ? '#2ecc71' : '#777', padding: '6px 12px', borderRadius: '8px', fontSize: '12px', fontWeight: 'bold' }}>
-                                            Transporter: {selectedUser.isTransporter ? 'Yes' : 'No'}
-                                        </span>
-                                        <span style={{ background: selectedUser.isTotalSolutionProvider ? 'rgba(46, 204, 113, 0.2)' : 'rgba(255,255,255,0.05)', color: selectedUser.isTotalSolutionProvider ? '#2ecc71' : '#777', padding: '6px 12px', borderRadius: '8px', fontSize: '12px', fontWeight: 'bold' }}>
-                                            Total Solution Provider: {selectedUser.isTotalSolutionProvider ? 'Yes' : 'No'}
-                                        </span>
+                                    
+                                    <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', marginBottom: '15px' }}>
+                                        {selectedUser.isCollector && (
+                                            <span style={{ background: 'rgba(46, 204, 113, 0.2)', color: '#2ecc71', padding: '6px 12px', borderRadius: '8px', fontSize: '12px', fontWeight: 'bold' }}>Collector: Yes</span>
+                                        )}
+                                        {selectedUser.isRecycler && (
+                                            <span style={{ background: 'rgba(46, 204, 113, 0.2)', color: '#2ecc71', padding: '6px 12px', borderRadius: '8px', fontSize: '12px', fontWeight: 'bold' }}>Recycler: Yes</span>
+                                        )}
+                                        {selectedUser.isTransporter && (
+                                            <span style={{ background: 'rgba(46, 204, 113, 0.2)', color: '#2ecc71', padding: '6px 12px', borderRadius: '8px', fontSize: '12px', fontWeight: 'bold' }}>Transporter: Yes</span>
+                                        )}
+                                        {selectedUser.isTotalSolutionProvider && (
+                                            <span style={{ background: 'rgba(46, 204, 113, 0.2)', color: '#2ecc71', padding: '6px 12px', borderRadius: '8px', fontSize: '12px', fontWeight: 'bold' }}>Total Solution Provider: Yes</span>
+                                        )}
+
+                                        {/* Pyrolysis, Metal Refining, Thermal Destruction, Chemical Destruction, Waste-to-Energy etc. */}
+                                        {selectedUser.facilityRecyclingType && selectedUser.facilityRecyclingType.map((type, idx) => (
+                                            <span key={idx} style={{ background: 'rgba(52, 152, 219, 0.2)', color: '#3498db', border: '1px solid rgba(52, 152, 219, 0.4)', padding: '6px 12px', borderRadius: '8px', fontSize: '12px', fontWeight: 'bold' }}>
+                                                {type}: Yes
+                                            </span>
+                                        ))}
                                     </div>
-                                    <div style={{ fontSize: '13px', color: '#ccc' }}>Collection Area Coverage: <span style={{ color: '#fff', fontWeight: 'bold' }}>{selectedUser.collectionAreaCoverage || 'N/A'}</span></div>
-                                    <div style={{ fontSize: '13px', color: '#ccc', marginTop: '4px' }}>Est. Monthly Collection Volume: <span style={{ color: '#fff', fontWeight: 'bold' }}>{selectedUser.estimatedMonthlyCollectionVolume || 'N/A'}</span></div>
+
+                                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginTop: '12px', fontSize: '13px', color: '#ccc' }}>
+                                        <div>Collection Area Coverage: <span style={{ color: '#fff', fontWeight: 'bold' }}>{selectedUser.collectionAreaCoverage || 'N/A'}</span></div>
+                                        <div>Facility Location: <span style={{ color: '#fff', fontWeight: 'bold' }}>{selectedUser.facilityLocation || 'N/A'}</span></div>
+                                        <div>Installed Capacity: <span style={{ color: '#fff', fontWeight: 'bold' }}>{selectedUser.installedProcessingCapacity || 'N/A'}</span></div>
+                                        <div>Est. Monthly Collection: <span style={{ color: '#fff', fontWeight: 'bold' }}>{selectedUser.estimatedMonthlyCollectionVolume || 'N/A'}</span></div>
+                                        <div>Est. Monthly Processing: <span style={{ color: '#fff', fontWeight: 'bold' }}>{selectedUser.estimatedMonthlyProcessingVolume || 'N/A'}</span></div>
+                                        <div>Employee Count: <span style={{ color: '#fff', fontWeight: 'bold' }}>{selectedUser.employeeCount || '0'}</span></div>
+                                    </div>
                                 </div>
                             )}
 
