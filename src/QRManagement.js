@@ -628,6 +628,7 @@ function QRManagement() {
                         <button onClick={() => setActiveTab('company')} style={activeTab === 'company' ? styles.activeNavBtn : styles.navBtn}>Add Company</button>
                         <button onClick={() => setActiveTab('product')} style={activeTab === 'product' ? styles.activeNavBtn : styles.navBtn}>Add Product</button>
                         <button onClick={() => setActiveTab('batch')} style={activeTab === 'batch' ? styles.activeNavBtn : styles.navBtn}>Batch QR Generation</button>
+                        <button onClick={() => setActiveTab('summary')} style={activeTab === 'summary' ? styles.activeNavBtn : styles.navBtn}>Direct Collections</button>
                         <button onClick={() => setActiveTab('user_management')} style={activeTab === 'user_management' ? styles.activeNavBtn : styles.navBtn}>QR User Management</button>
                     </div>
 
@@ -747,6 +748,10 @@ function QRManagement() {
                             </div>
                         )}
 
+                        {activeTab === 'summary' && (
+                            <DirectCollections />
+                        )}
+
                         {activeTab === 'user_management' && (
                             <div className="glass-card" style={styles.card}>
                                 <h3 style={styles.cardTitle}>QR User Management</h3>
@@ -786,7 +791,7 @@ function QRManagement() {
                                         QR Master Audit Log
                                     </button>
 
-                                    {/* 🚀 අලුතින් එකතු කළ Direct Collections සබ්-ටැබ් එක */}
+                                    {/* 🚀 Direct Collections Sub-tab */}
                                     <button 
                                         onClick={() => setActiveSubTab('direct_collections')} 
                                         style={activeSubTab === 'direct_collections' ? styles.activeSubNavBtn : styles.subNavBtn}
@@ -1285,7 +1290,7 @@ function QRManagement() {
                                         </div>
                                     )}
 
-                                    {/* 🚀 Direct Collections Sub-tab Content View */}
+                                    {/* 🚀 Direct Collections Sub-tab Content */}
                                     {activeSubTab === 'direct_collections' && (
                                         <div style={{ marginTop: '20px', animation: 'fadeIn 0.5s ease-in' }}>
                                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '25px' }}>
