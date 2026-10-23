@@ -1,177 +1,170 @@
-import React, { useState } from 'react';
-import API from './api';
-import JSZip from 'jszip';
-import { saveAs } from 'file-saver';
-import QRCode from 'qrcode';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 
-const DirectCollections = () => {
-    const [companyName, setCompanyName] = useState('');
-    const [itemType, setItemType] = useState('');
-    const [weight, setWeight] = useState('');
-    const [qty, setQty] = useState('');
-    const [isGenerating, setIsGenerating] = useState(false);
-    const [progress, setProgress] = useState(0);
+const DirectVerify = () => { 
+    // URL එකෙන් QR ID එක ගන්නවා (උදා: ?id=DIR-261023-0001-ABCD)
+    const [qrId, setQrId] = useState('');
 
-    const generateDirectQRs = async () => {
-        const finalCompanyName = companyName.trim();
-        const finalItemType = itemType.trim();
-        const finalWeight = weight.trim();
-        const finalQty = parseInt(qty);
-
-        if (!finalCompanyName || !finalItemType || !finalWeight || isNaN(finalQty) || finalQty <= 0 || finalQty > 1000) {
-            alert("Please fill in Company Name, Item Type, Weight, and a valid Quantity (1-1000)!");
-            return;
+    useEffect(() => {
+        const queryParams = new URLSearchParams(window.location.search);
+        const idFromUrl = queryParams.get('id');
+        if (idFromUrl) {
+            setQrId(idFromUrl);
+            setFormData(prev => ({ ...prev, qrId: idFromUrl }));
         }
+    }, []);
 
-        setIsGenerating(true);
-        setProgress(0);
+    // ෆෝම් එකේ ඩේටා තියාගන්න State එක
+    const [formData, setFormData] = useState({
+        qrId: '', 
+        companyName: '',
+        personName: '',
+        contactNumber: '',
+        item: '',
+        weight: '',
+        quantity: '',
+        vehicleNumber: '',
+        gsnGrnNumber: '',
+        date: new Date().toISOString().split('T')[0] // අද දවස default වැටෙන්න
+    });
 
-        const zip = new JSZip();
-        const now = new Date();
-        const dateCode = `${now.getFullYear().toString().slice(-2)}${(now.getMonth() + 1).toString().padStart(2, '0')}${now.getDate().toString().padStart(2, '0')}`;
-        
+    const [loading, setLoading] = useState(false);
+    const [message, setMessage] = useState('');
+
+    const handleChange = (e) => {
+        setFormData({ ...formData, [e.target.name]: e.target.value });
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setLoading(true);
+        setMessage('');
+
         try {
-            const canvas = document.createElement('canvas'); 
-            const ctx = canvas.getContext('2d');
-            canvas.width = 500;  
-            canvas.height = 640; // අලුත් විස්තර පෙන්වීමට කැන්වස් උස තරමක් වැඩි කළෙමු
-            const qrImg = new Image(); 
-
-            for (let i = 1; i <= finalQty; i++) {
-                const randomStr = Math.random().toString(36).substring(2, 7).toUpperCase();
-                const fullID = `DIR-${dateCode}-${i.toString().padStart(4, '0')}-${randomStr}`;
-                const currentQrUrl = `https://www.epr-srilanka.com/direct-verify?id=${fullID}`;
-                const qrOnlyDataURL = await QRCode.toDataURL(currentQrUrl, { width: 500, margin: 2 });
-
-                await new Promise((resolve) => {
-                    qrImg.onload = () => {
-                        ctx.fillStyle = "white";
-                        ctx.fillRect(0, 0, canvas.width, canvas.height);
-                        
-                        // QR රූපය ඉහළින් ඇඳීම
-                        ctx.drawImage(qrImg, 0, 0);
-                        
-                        // යටින් අලුත් විස්තර මුದ್ರණය කිරීම
-                        ctx.fillStyle = "black"; 
-                        ctx.textAlign = "center";
-                        
-                        // 1. Company Name
-                        ctx.font = "bold 20px Arial"; 
-                        ctx.fillText(`Company: ${finalCompanyName}`, canvas.width / 2, 530); 
-
-                        // 2. Item & Weight
-                        ctx.font = "16px Arial"; 
-                        ctx.fillText(`Item: ${finalItemType} | Weight: ${finalWeight}`, canvas.width / 2, 565); 
-
-                        // 3. Unique QR ID
-                        ctx.font = "bold 15px Arial"; 
-                        ctx.fillText(`ID: ${fullID}`, canvas.width / 2, 605); 
-                        
-                        resolve();
-                    };
-                    qrImg.src = qrOnlyDataURL;
+            // 🚀 මෙතන තමයි වෙනස! ලෝකල්හොස්ට් අයින් කරලා ලයිව් URL එකම දුන්නා.
+            const response = await axios.post('https://www.epr-srilanka.com/api/qr/submit-direct-collection', formData);
+            
+            if (response.data.success) {
+                setMessage('✅ Collection Details Submitted Successfully!');
+                // ෆෝම් එක සබ්මිට් වුණාට පස්සේ හිස් කරන්න ඕන නම් මේක තියාගන්න
+                setFormData({
+                    ...formData,
+                    companyName: '',
+                    personName: '',
+                    contactNumber: '',
+                    item: '',
+                    weight: '',
+                    quantity: '',
+                    vehicleNumber: '',
+                    gsnGrnNumber: ''
                 });
-
-                const base64Data = canvas.toDataURL("image/png").split(',')[1];
-
-                await API.post('/qr/save-qr-direct', {
-                    qrId: fullID,
-                    companyName: finalCompanyName,
-                    itemType: finalItemType,
-                    weight: finalWeight,
-                    batchDate: dateCode,
-                    status: 'Generated' 
-                });
-
-                zip.file(`${fullID}.png`, base64Data, { base64: true });
-
-                if (i % 10 === 0 || i === finalQty) {
-                    setProgress(Math.round((i / finalQty) * 100));
-                }
             }
-
-            // ZIP ඩවුන්ලෝඩ් කිරීම
-            const content = await zip.generateAsync({ type: "blob" });
-            saveAs(content, `Direct_QR_${finalCompanyName.replace(/\s+/g, '_')}_${dateCode}.zip`);
-            alert(`✅ Successfully generated ${finalQty} QRs and saved to Database!`);
-
-        } catch (err) {
-            console.error("Generation Error:", err);
-            alert("Error: " + (err.response?.data?.message || err.message));
+        } catch (error) {
+            setMessage('❌ Failed to submit details. Please try again.');
+            console.error("Submit Error:", error);
         } finally {
-            setIsGenerating(false);
-            setProgress(0);
+            setLoading(false);
         }
     };
 
     return (
-        <div style={styles.card}>
-            <h3 style={{ color: '#2ecc71', marginBottom: '25px' }}>Direct QR Generation (Bulk)</h3>
-            
-            <div style={styles.formGrid}>
-                <div style={styles.inputGroup}>
-                    <label style={styles.label}>Company Name</label>
-                    <input 
-                        type="text" 
-                        value={companyName} 
-                        onChange={(e) => setCompanyName(e.target.value)} 
-                        placeholder="e.g. ABC Industries"
-                        style={styles.input}
-                    />
-                </div>
-                <div style={styles.inputGroup}>
-                    <label style={styles.label}>Item Type</label>
-                    <input 
-                        type="text" 
-                        value={itemType} 
-                        onChange={(e) => setItemType(e.target.value)} 
-                        placeholder="e.g. Plastic / E-Waste"
-                        style={styles.input}
-                    />
-                </div>
-                <div style={styles.inputGroup}>
-                    <label style={styles.label}>Weight (e.g. 50kg / 2tons)</label>
-                    <input 
-                        type="text" 
-                        value={weight} 
-                        onChange={(e) => setWeight(e.target.value)} 
-                        placeholder="e.g. 50 Kg"
-                        style={styles.input}
-                    />
-                </div>
-                <div style={styles.inputGroup}>
-                    <label style={styles.label}>Quantity (Max 1000)</label>
-                    <input 
-                        type="number" 
-                        value={qty} 
-                        onChange={(e) => setQty(e.target.value)} 
-                        placeholder="100"
-                        style={styles.input}
-                    />
-                </div>
-            </div>
+        <div style={{ 
+            minHeight: '100vh', 
+            display: 'flex', 
+            flexDirection: 'column', 
+            alignItems: 'center', 
+            background: '#121212', 
+            color: '#fff',
+            padding: '40px 20px'
+        }}>
+            <h2 style={{ color: '#2ecc71', marginBottom: '10px' }}>✔ Direct Collection Verified</h2>
+            <p style={{ color: '#aaa', marginBottom: '30px' }}>
+                QR ID: <strong style={{ color: '#fff' }}>{qrId || 'Scanning...'}</strong><br/>
+                Please fill the collection details below.
+            </p>
 
-            <button 
-                onClick={generateDirectQRs} 
-                disabled={isGenerating}
-                style={{
-                    ...styles.btn,
-                    background: isGenerating ? '#444' : 'linear-gradient(135deg, #2ecc71 0%, #27ae60 100%)'
-                }}
-            >
-                {isGenerating ? `Processing... ${progress}%` : 'Generate & Save to DB'}
-            </button>
+            {message && (
+                <div style={{ 
+                    padding: '12px', 
+                    marginBottom: '20px', 
+                    width: '100%', 
+                    maxWidth: '400px',
+                    textAlign: 'center',
+                    backgroundColor: message.includes('✅') ? '#1e4620' : '#4a1515', 
+                    border: message.includes('✅') ? '1px solid #2ecc71' : '1px solid #e74c3c',
+                    borderRadius: '8px' 
+                }}>
+                    {message}
+                </div>
+            )}
+
+            <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', width: '100%', maxWidth: '400px', gap: '15px' }}>
+                
+                <input type="text" name="companyName" placeholder="Company Name *" required
+                    value={formData.companyName} onChange={handleChange} 
+                    style={inputStyle} />
+
+                <input type="text" name="personName" placeholder="Person Name *" required
+                    value={formData.personName} onChange={handleChange} 
+                    style={inputStyle} />
+
+                <input type="text" name="contactNumber" placeholder="Contact Number *" required
+                    value={formData.contactNumber} onChange={handleChange} 
+                    style={inputStyle} />
+
+                <input type="text" name="item" placeholder="Item Type *" required
+                    value={formData.item} onChange={handleChange} 
+                    style={inputStyle} />
+
+                <input type="text" name="weight" placeholder="Weight (e.g., 50kg) *" required
+                    value={formData.weight} onChange={handleChange} 
+                    style={inputStyle} />
+
+                <input type="number" name="quantity" placeholder="Quantity *" required
+                    value={formData.quantity} onChange={handleChange} 
+                    style={inputStyle} />
+
+                <input type="text" name="vehicleNumber" placeholder="Vehicle Number *" required
+                    value={formData.vehicleNumber} onChange={handleChange} 
+                    style={inputStyle} />
+
+                <input type="date" name="date" required
+                    value={formData.date} onChange={handleChange} 
+                    style={inputStyle} />
+
+                {/* GSN/GRN Number - Optional (required දාලා නෑ) */}
+                <input type="text" name="gsnGrnNumber" placeholder="GSN/GRN Number (Optional)"
+                    value={formData.gsnGrnNumber} onChange={handleChange} 
+                    style={inputStyle} />
+
+                <button type="submit" disabled={loading} style={{
+                    padding: '15px',
+                    backgroundColor: loading ? '#444' : '#2ecc71',
+                    color: loading ? '#aaa' : '#000',
+                    border: 'none',
+                    borderRadius: '8px',
+                    fontWeight: 'bold',
+                    fontSize: '16px',
+                    cursor: loading ? 'not-allowed' : 'pointer',
+                    marginTop: '10px',
+                    transition: '0.3s'
+                }}>
+                    {loading ? 'Submitting...' : 'Submit Collection Data'}
+                </button>
+            </form>
         </div>
     );
 };
 
-const styles = {
-    card: { background: 'rgba(255, 255, 255, 0.03)', padding: '40px', borderRadius: '30px', border: '1px solid rgba(255, 255, 255, 0.1)' },
-    formGrid: { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '30px', marginBottom: '30px' },
-    inputGroup: { display: 'flex', flexDirection: 'column', gap: '10px' },
-    label: { color: '#fbf9f9', fontSize: '14px' },
-    input: { padding: '15px', borderRadius: '12px', background: 'rgba(0,0,0,0.4)', border: '1px solid #333', color: '#fff', fontSize: '16px' },
-    btn: { width: '100%', padding: '18px', borderRadius: '15px', color: '#000', fontWeight: '800', border: 'none', cursor: 'pointer', fontSize: '16px', transition: '0.3s' }
+// Input fields වලට පොදු Style එකක්
+const inputStyle = {
+    padding: '14px',
+    borderRadius: '8px',
+    border: '1px solid #333',
+    backgroundColor: '#1e1e1e',
+    color: '#fff',
+    fontSize: '15px',
+    outline: 'none'
 };
 
-export default DirectCollections;
+export default DirectVerify;
