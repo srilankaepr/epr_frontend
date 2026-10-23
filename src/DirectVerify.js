@@ -1,10 +1,22 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
-const DirectVerify = ({ qrId }) => { // qrId එක prop එකක් විදිහට හරි, useParams() හරහා හරි ගන්න පුළුවන්
+const DirectVerify = () => { 
+    // URL එකෙන් QR ID එක ගන්නවා (උදා: ?id=DIR-261023-0001-ABCD)
+    const [qrId, setQrId] = useState('');
+
+    useEffect(() => {
+        const queryParams = new URLSearchParams(window.location.search);
+        const idFromUrl = queryParams.get('id');
+        if (idFromUrl) {
+            setQrId(idFromUrl);
+            setFormData(prev => ({ ...prev, qrId: idFromUrl }));
+        }
+    }, []);
+
     // ෆෝම් එකේ ඩේටා තියාගන්න State එක
     const [formData, setFormData] = useState({
-        qrId: qrId || 'TEST-QR-001', // මෙතනට ස්කෑන් වුණ QR ID එක එන්න ඕනේ
+        qrId: '', 
         companyName: '',
         personName: '',
         contactNumber: '',
@@ -29,12 +41,23 @@ const DirectVerify = ({ qrId }) => { // qrId එක prop එකක් විද�
         setMessage('');
 
         try {
-            // ඔයාගේ Backend URL එකට හරියටම Path එක දෙන්න (උදා: /api/qr/submit-direct-collection)
-            const response = await axios.post('http://localhost:5000/api/qr/submit-direct-collection', formData);
+            // 🚀 මෙතන තමයි වෙනස! ලෝකල්හොස්ට් අයින් කරලා ලයිව් URL එකම දුන්නා.
+            const response = await axios.post('https://www.epr-srilanka.com/api/qr/submit-direct-collection', formData);
             
             if (response.data.success) {
                 setMessage('✅ Collection Details Submitted Successfully!');
-                // ඕන නම් submit වුණාට පස්සේ form එක clear කරන්න පුළුවන්
+                // ෆෝම් එක සබ්මිට් වුණාට පස්සේ හිස් කරන්න ඕන නම් මේක තියාගන්න
+                setFormData({
+                    ...formData,
+                    companyName: '',
+                    personName: '',
+                    contactNumber: '',
+                    item: '',
+                    weight: '',
+                    quantity: '',
+                    vehicleNumber: '',
+                    gsnGrnNumber: ''
+                });
             }
         } catch (error) {
             setMessage('❌ Failed to submit details. Please try again.');
@@ -55,10 +78,22 @@ const DirectVerify = ({ qrId }) => { // qrId එක prop එකක් විද�
             padding: '40px 20px'
         }}>
             <h2 style={{ color: '#2ecc71', marginBottom: '10px' }}>✔ Direct Collection Verified</h2>
-            <p style={{ color: '#aaa', marginBottom: '30px' }}>Please fill the collection details below.</p>
+            <p style={{ color: '#aaa', marginBottom: '30px' }}>
+                QR ID: <strong style={{ color: '#fff' }}>{qrId || 'Scanning...'}</strong><br/>
+                Please fill the collection details below.
+            </p>
 
             {message && (
-                <div style={{ padding: '10px', marginBottom: '20px', backgroundColor: message.includes('✅') ? '#1e4620' : '#4a1515', borderRadius: '5px' }}>
+                <div style={{ 
+                    padding: '12px', 
+                    marginBottom: '20px', 
+                    width: '100%', 
+                    maxWidth: '400px',
+                    textAlign: 'center',
+                    backgroundColor: message.includes('✅') ? '#1e4620' : '#4a1515', 
+                    border: message.includes('✅') ? '1px solid #2ecc71' : '1px solid #e74c3c',
+                    borderRadius: '8px' 
+                }}>
                     {message}
                 </div>
             )}
@@ -103,14 +138,16 @@ const DirectVerify = ({ qrId }) => { // qrId එක prop එකක් විද�
                     style={inputStyle} />
 
                 <button type="submit" disabled={loading} style={{
-                    padding: '12px',
-                    backgroundColor: '#2ecc71',
-                    color: '#000',
+                    padding: '15px',
+                    backgroundColor: loading ? '#444' : '#2ecc71',
+                    color: loading ? '#aaa' : '#000',
                     border: 'none',
-                    borderRadius: '5px',
+                    borderRadius: '8px',
                     fontWeight: 'bold',
+                    fontSize: '16px',
                     cursor: loading ? 'not-allowed' : 'pointer',
-                    marginTop: '10px'
+                    marginTop: '10px',
+                    transition: '0.3s'
                 }}>
                     {loading ? 'Submitting...' : 'Submit Collection Data'}
                 </button>
@@ -121,11 +158,12 @@ const DirectVerify = ({ qrId }) => { // qrId එක prop එකක් විද�
 
 // Input fields වලට පොදු Style එකක්
 const inputStyle = {
-    padding: '12px',
-    borderRadius: '5px',
+    padding: '14px',
+    borderRadius: '8px',
     border: '1px solid #333',
     backgroundColor: '#1e1e1e',
     color: '#fff',
+    fontSize: '15px',
     outline: 'none'
 };
 
