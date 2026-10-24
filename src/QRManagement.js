@@ -72,17 +72,19 @@ function QRManagement() {
         }
     };
 
-    // Export to CSV Function
+   // Export to CSV Function
     const exportDirectCollectionsToCSV = () => {
         if (directCollectionsList.length === 0) {
             alert("No data available to export!");
             return;
         }
 
-        const headers = ["QR ID", "Company Name", "Person Name", "Contact", "Item", "Weight", "Quantity", "Vehicle Number", "GSN/GRN", "Date"];
+        const headers = ["QR ID", "Sending Company", "Receiving Company", "Person Name", "Contact", "Item", "Weight", "Quantity", "Vehicle Number", "GSN/GRN", "Date"];
+        
         const rows = directCollectionsList.map(item => [
             item.qrId,
-            `"${item.companyName}"`,
+            `"${item.sendingCompany || '-'}"`,
+            `"${item.receivingCompany || '-'}"`,
             `"${item.personName}"`,
             item.contactNumber,
             `"${item.item}"`,
@@ -1290,7 +1292,7 @@ function QRManagement() {
                                         </div>
                                     )}
 
-                                    {/* 🚀 Direct Collections Sub-tab Content */}
+                                  {/* 🚀 Direct Collections Sub-tab Content */}
                                     {activeSubTab === 'direct_collections' && (
                                         <div style={{ marginTop: '20px', animation: 'fadeIn 0.5s ease-in' }}>
                                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '25px' }}>
@@ -1326,7 +1328,7 @@ function QRManagement() {
                                                 <thead>
                                                     <tr style={styles.tableHead}>
                                                         <th style={{ padding: '15px', color: '#2ecc71', textAlign: 'left' }}>QR ID</th>
-                                                        <th style={{ padding: '15px', color: '#2ecc71', textAlign: 'left' }}>Company</th>
+                                                        <th style={{ padding: '15px', color: '#2ecc71', textAlign: 'left' }}>Companies</th> {/* 🔴 වෙනස 1: Company වෙනුවට Companies කියලා හැදුවා */}
                                                         <th style={{ padding: '15px', color: '#2ecc71', textAlign: 'left' }}>Person</th>
                                                         <th style={{ padding: '15px', color: '#2ecc71', textAlign: 'left' }}>Contact</th>
                                                         <th style={{ padding: '15px', color: '#2ecc71', textAlign: 'left' }}>Item</th>
@@ -1340,14 +1342,20 @@ function QRManagement() {
                                                     {directCollectionsList.length > 0 ? (
                                                         directCollectionsList
                                                             .filter(item => 
-                                                                item.companyName.toLowerCase().includes(directSearchTerm.toLowerCase()) ||
-                                                                item.personName.toLowerCase().includes(directSearchTerm.toLowerCase()) ||
-                                                                item.item.toLowerCase().includes(directSearchTerm.toLowerCase())
+                                                                // 🔴 වෙනස 2: සර්ච් ෆිල්ටර් එකේ companyName වෙනුවට අලුත් නම් දෙකෙන් සර්ච් වෙන්න හැදුවා
+                                                                (item.sendingCompany || "").toLowerCase().includes(directSearchTerm.toLowerCase()) ||
+                                                                (item.receivingCompany || "").toLowerCase().includes(directSearchTerm.toLowerCase()) ||
+                                                                (item.personName || "").toLowerCase().includes(directSearchTerm.toLowerCase()) ||
+                                                                (item.item || "").toLowerCase().includes(directSearchTerm.toLowerCase())
                                                             )
                                                             .map((item, index) => (
                                                                 <tr key={index} style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
                                                                     <td style={{ padding: '15px', color: '#2ecc71', fontWeight: 'bold' }}>{item.qrId}</td>
-                                                                    <td style={{ padding: '15px', color: '#fff' }}>{item.companyName}</td>
+                                                                    <td style={{ padding: '15px', color: '#fff' }}>
+                                                                        {/* 🔴 වෙනස 3: කම්පැනි දෙකම ලස්සනට එක යට එක පෙන්නන්න හැදුවා */}
+                                                                        <div style={{ fontSize: '11px', color: '#aaa' }}>Sender: <span style={{ color: '#fff', fontSize: '13px' }}>{item.sendingCompany || '-'}</span></div>
+                                                                        <div style={{ fontSize: '11px', color: '#aaa', marginTop: '4px' }}>Receiver: <span style={{ color: '#2ecc71', fontSize: '13px' }}>{item.receivingCompany || '-'}</span></div>
+                                                                    </td>
                                                                     <td style={{ padding: '15px', color: '#ccc' }}>{item.personName}</td>
                                                                     <td style={{ padding: '15px', color: '#ccc' }}>{item.contactNumber}</td>
                                                                     <td style={{ padding: '15px', color: '#ccc' }}>{item.item}</td>
@@ -1368,6 +1376,7 @@ function QRManagement() {
                                             </table>
                                         </div>
                                     )}
+                                    
                                 </div>
                             </div>
                         )}
