@@ -5,19 +5,11 @@ const DirectVerify = () => {
     // URL එකෙන් QR ID එක ගන්නවා (උදා: ?id=DIR-261023-0001-ABCD)
     const [qrId, setQrId] = useState('');
 
-    useEffect(() => {
-        const queryParams = new URLSearchParams(window.location.search);
-        const idFromUrl = queryParams.get('id');
-        if (idFromUrl) {
-            setQrId(idFromUrl);
-            setFormData(prev => ({ ...prev, qrId: idFromUrl }));
-        }
-    }, []);
-
-    // ෆෝම් එකේ ඩේටා තියාගන්න State එක
+    // ෆෝම් එකේ ඩේටා තියාගන්න State එක (අලුත් කම්පැනි නම් දෙකත් එක්ක)
     const [formData, setFormData] = useState({
         qrId: '', 
-        companyName: '',
+        sendingCompany: '',   // 👈 බඩු එවපු කම්පැනිය (QR එකෙන් ඔටෝ වැටෙනවා)
+        receivingCompany: '', // 👈 බඩු බාරගන්න කම්පැනිය (යූසර් අතින් පුරවනවා)
         personName: '',
         contactNumber: '',
         item: '',
@@ -31,6 +23,30 @@ const DirectVerify = () => {
     const [loading, setLoading] = useState(false);
     const [message, setMessage] = useState('');
 
+    useEffect(() => {
+        const queryParams = new URLSearchParams(window.location.search);
+        const idFromUrl = queryParams.get('id');
+        if (idFromUrl) {
+            setQrId(idFromUrl);
+            setFormData(prev => ({ ...prev, qrId: idFromUrl }));
+            
+            // 🚀 QR ID එකෙන් ඩේටාබේස් එකට කතා කරලා Goods Sending Company එක ඔටෝ ෆෙච් කරගැනීම
+            axios.post('https://www.epr-srilanka.com/api/qr/verify-direct-qr', { qrId: idFromUrl })
+                .then(res => {
+                    if (res.data.status === "NEW_DIRECT" && res.data.details) {
+                        setFormData(prev => ({
+                            ...prev,
+                            // ඔටෝ වැටෙන බඩු එවපු සමාගම (Sending Company)
+                            sendingCompany: res.data.details.companyName || res.data.details.comp || '',
+                            item: res.data.details.itemType || res.data.details.product || '',
+                            weight: res.data.details.weight || ''
+                        }));
+                    }
+                })
+                .catch(err => console.error("Error fetching QR details:", err));
+        }
+    }, []);
+
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
@@ -41,15 +57,15 @@ const DirectVerify = () => {
         setMessage('');
 
         try {
-            // 🚀 මෙතන තමයි වෙනස! ලෝකල්හොස්ට් අයින් කරලා ලයිව් URL එකම දුන්නා.
+            // 🚀 ලයිව් URL එකට ඩේටා යැවීම
             const response = await axios.post('https://www.epr-srilanka.com/api/qr/submit-direct-collection', formData);
             
             if (response.data.success) {
                 setMessage('✅ Collection Details Submitted Successfully!');
-                // ෆෝම් එක සබ්මිට් වුණාට පස්සේ හිස් කරන්න ඕන නම් මේක තියාගන්න
-                setFormData({
-                    ...formData,
-                    companyName: '',
+                // ෆෝම් එක සබ්මිට් වුණාට පස්සේ අතින් පුරවපු විස්තර පමණක් හිස් කිරීම (Sending Company එක එහෙමම තියෙනවා)
+                setFormData(prev => ({
+                    ...prev,
+                    receivingCompany: '',
                     personName: '',
                     contactNumber: '',
                     item: '',
@@ -57,7 +73,7 @@ const DirectVerify = () => {
                     quantity: '',
                     vehicleNumber: '',
                     gsnGrnNumber: ''
-                });
+                }));
             }
         } catch (error) {
             setMessage('❌ Failed to submit details. Please try again.');
@@ -100,8 +116,17 @@ const DirectVerify = () => {
 
             <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', width: '100%', maxWidth: '400px', gap: '15px' }}>
                 
-                <input type="text" name="companyName" placeholder="Company Name *" required
-                    value={formData.companyName} onChange={handleChange} 
+                {/* 🏢 1. Goods Sending Company (Read-only / ඔටෝ වැටෙන එක) */}
+                <div>
+                    <label style={{ fontSize: '12px', color: '#2ecc71', display: 'block', marginBottom: '5px' }}>Goods Sending Company (Auto-filled)</label>
+                    <input type="text" name="sendingCompany" placeholder="Sending Company Name *" required readOnly
+                        value={formData.sendingCompany} onChange={handleChange} 
+                        style={{ ...inputStyle, backgroundColor: '#222', color: '#2ecc71', fontWeight: 'bold', cursor: 'not-allowed' }} />
+                </div>
+
+                {/* 🏢 2. Goods Receiving Company (යූසර් අතින් පුරවන එක) */}
+                <input type="text" name="receivingCompany" placeholder="Goods Receiving Company *" required
+                    value={formData.receivingCompany} onChange={handleChange} 
                     style={inputStyle} />
 
                 <input type="text" name="personName" placeholder="Person Name *" required
@@ -164,7 +189,9 @@ const inputStyle = {
     backgroundColor: '#1e1e1e',
     color: '#fff',
     fontSize: '15px',
-    outline: 'none'
+    outline: 'none',
+    width: '100%',
+    boxSizing: 'border-box'
 };
 
 export default DirectVerify;
