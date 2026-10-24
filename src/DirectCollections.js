@@ -5,7 +5,8 @@ import { saveAs } from 'file-saver';
 import QRCode from 'qrcode';
 
 const DirectCollections = () => {
-    const [companyName, setCompanyName] = useState('');
+    // 🔴 වෙනස: state එකේ නම sendingCompany කියලා පැහැදිලිව වෙනස් කළා
+    const [sendingCompany, setSendingCompany] = useState('');
     const [itemType, setItemType] = useState('');
     const [weight, setWeight] = useState('');
     const [qty, setQty] = useState('');
@@ -13,13 +14,14 @@ const DirectCollections = () => {
     const [progress, setProgress] = useState(0);
 
     const generateDirectQRs = async () => {
-        const finalCompanyName = companyName.trim();
+        const finalSendingCompany = sendingCompany.trim();
         const finalItemType = itemType.trim();
         const finalWeight = weight.trim();
         const finalQty = parseInt(qty);
 
-        if (!finalCompanyName || !finalItemType || !finalWeight || isNaN(finalQty) || finalQty <= 0 || finalQty > 1000) {
-            alert("Please fill in Company Name, Item Type, Weight, and a valid Quantity (1-1000)!");
+        // 🔴 වෙනස: Alert මැසේජ් එක අප්ඩේට් කළා
+        if (!finalSendingCompany || !finalItemType || !finalWeight || isNaN(finalQty) || finalQty <= 0 || finalQty > 1000) {
+            alert("Please fill in Goods Sending Company, Item Type, Weight, and a valid Quantity (1-1000)!");
             return;
         }
 
@@ -34,7 +36,7 @@ const DirectCollections = () => {
             const canvas = document.createElement('canvas'); 
             const ctx = canvas.getContext('2d');
             canvas.width = 500;  
-            canvas.height = 640; // අලුත් විස්තර පෙන්වීමට කැන්වස් උස තරමක් වැඩි කළෙමු
+            canvas.height = 640; 
             const qrImg = new Image(); 
 
             for (let i = 1; i <= finalQty; i++) {
@@ -48,22 +50,18 @@ const DirectCollections = () => {
                         ctx.fillStyle = "white";
                         ctx.fillRect(0, 0, canvas.width, canvas.height);
                         
-                        // QR රූපය ඉහළින් ඇඳීම
                         ctx.drawImage(qrImg, 0, 0);
                         
-                        // යටින් අලුත් විස්තර මුದ್ರණය කිරීම
                         ctx.fillStyle = "black"; 
                         ctx.textAlign = "center";
                         
-                        // 1. Company Name
+                        // 🔴 වෙනස: QR රූපය උඩ ප්‍රින්ට් වෙද්දිත් "Sender:" විදිහට ප්‍රින්ට් වෙන්න හැදුවා
                         ctx.font = "bold 20px Arial"; 
-                        ctx.fillText(`Company: ${finalCompanyName}`, canvas.width / 2, 530); 
+                        ctx.fillText(`Sender: ${finalSendingCompany}`, canvas.width / 2, 530); 
 
-                        // 2. Item & Weight
                         ctx.font = "16px Arial"; 
                         ctx.fillText(`Item: ${finalItemType} | Weight: ${finalWeight}`, canvas.width / 2, 565); 
 
-                        // 3. Unique QR ID
                         ctx.font = "bold 15px Arial"; 
                         ctx.fillText(`ID: ${fullID}`, canvas.width / 2, 605); 
                         
@@ -74,9 +72,10 @@ const DirectCollections = () => {
 
                 const base64Data = canvas.toDataURL("image/png").split(',')[1];
 
+                // 🔴 Database එකට යවද්දි කලින් තිබ්බ විදිහටම 'companyName' කියලා යවනවා (Backend එකේ DirectQR model එක වෙනස් කරලා නැති නිසා)
                 await API.post('/qr/save-qr-direct', {
                     qrId: fullID,
-                    companyName: finalCompanyName,
+                    companyName: finalSendingCompany, 
                     itemType: finalItemType,
                     weight: finalWeight,
                     batchDate: dateCode,
@@ -90,9 +89,8 @@ const DirectCollections = () => {
                 }
             }
 
-            // ZIP ඩවුන්ලෝඩ් කිරීම
             const content = await zip.generateAsync({ type: "blob" });
-            saveAs(content, `Direct_QR_${finalCompanyName.replace(/\s+/g, '_')}_${dateCode}.zip`);
+            saveAs(content, `Direct_QR_${finalSendingCompany.replace(/\s+/g, '_')}_${dateCode}.zip`);
             alert(`✅ Successfully generated ${finalQty} QRs and saved to Database!`);
 
         } catch (err) {
@@ -110,11 +108,12 @@ const DirectCollections = () => {
             
             <div style={styles.formGrid}>
                 <div style={styles.inputGroup}>
-                    <label style={styles.label}>Company Name</label>
+                    {/* 🔴 වෙනස: ලේබල් එක පැහැදිලිව වෙනස් කළා */}
+                    <label style={styles.label}>Goods Sending Company</label>
                     <input 
                         type="text" 
-                        value={companyName} 
-                        onChange={(e) => setCompanyName(e.target.value)} 
+                        value={sendingCompany} 
+                        onChange={(e) => setSendingCompany(e.target.value)} 
                         placeholder="e.g. ABC Industries"
                         style={styles.input}
                     />
